@@ -42,7 +42,7 @@ export default function Header({
     <>
       <header className="sticky top-0 inset-x-0 z-50 bg-[#1C1C1C]/95 backdrop-blur-md border-b border-white/10 shadow-md transition-all duration-300">
         {/* Top Dynamic Announcement Banner */}
-        <AnnouncementBanner />
+        <AnnouncementBanner business={business} />
 
         <div className="container mx-auto px-4 py-3 sm:py-3.5 flex items-center justify-between">
           {/* Logo */}
