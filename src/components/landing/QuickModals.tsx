@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Clock, Calendar, Phone, MapPin, Share2, Copy, Check, ExternalLink, Scissors, MessageCircle } from 'lucide-react';
 import { SHOP_INFO } from '@/lib/utils';
-import { INITIAL_BRANCHES } from '@/lib/store';
 import { BusinessConfig } from '@/types/business';
 import Link from 'next/link';
 
@@ -28,19 +27,19 @@ export function OpeningHoursModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" dir="rtl">
+    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs" dir="rtl">
       <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-lg bg-[#222222] border rounded-3xl p-6 text-white shadow-2xl z-10"
-        style={{ borderColor: `${themeColor}40` }}
+        className="relative w-full max-w-lg bg-[#222222] border rounded-3xl p-6 shadow-2xl z-10"
+        style={{ borderColor: `${themeColor}40`, backgroundColor: '#1E1E1E', color: '#FFFFFF' }}
       >
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
           <div className="flex items-center gap-2.5">
             <div
-              className="w-10 h-10 rounded-2xl flex items-center justify-center border"
+              className="w-10 h-10 rounded-2xl flex items-center justify-center border shadow-xs"
               style={{
                 backgroundColor: `${themeColor}15`,
                 borderColor: `${themeColor}40`,
@@ -50,13 +49,13 @@ export function OpeningHoursModal({
               <Clock className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-white">שעות פתיחה ופעילות</h3>
-              <p className="text-xs text-[#9E9891]">{bizName} · {business?.city || 'ישראל'}</p>
+              <h3 className="text-lg font-black text-white" style={{ color: '#FFFFFF' }}>שעות פתיחה ופעילות</h3>
+              <p className="text-xs text-zinc-400">{bizName} · {business?.city || 'ישראל'}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-[#9E9891] hover:text-white transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -72,7 +71,7 @@ export function OpeningHoursModal({
                 className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
                   isToday
                     ? 'border-white/40 shadow-md text-white'
-                    : 'bg-white/5 border-white/5 text-[#E0E0E0]'
+                    : 'bg-white/5 border-white/5 text-zinc-200'
                 }`}
                 style={{
                   backgroundColor: isToday ? `${themeColor}20` : undefined,
@@ -80,7 +79,7 @@ export function OpeningHoursModal({
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm">{schedule.day}</span>
+                  <span className="font-bold text-sm" style={{ color: isToday ? '#FFFFFF' : '#E2E8F0' }}>{schedule.day}</span>
                   {isToday && (
                     <span
                       className="text-[#1C1C1C] text-[10px] font-black px-2 py-0.5 rounded-full"
@@ -90,7 +89,7 @@ export function OpeningHoursModal({
                     </span>
                   )}
                   {schedule.branch && !business?.branches?.length && (
-                    <span className="text-xs text-[#9E9891] mr-1">({schedule.branch})</span>
+                    <span className="text-xs text-zinc-400 mr-1">({schedule.branch})</span>
                   )}
                 </div>
 
@@ -98,9 +97,7 @@ export function OpeningHoursModal({
                   {schedule.closed ? (
                     <span className="text-red-400">סגור</span>
                   ) : (
-                    <span dir="ltr">
-                      {schedule.open} – {schedule.close}
-                    </span>
+                    <span style={{ color: isToday ? '#FFFFFF' : '#E2E8F0' }}>{schedule.open} – {schedule.close}</span>
                   )}
                 </div>
               </div>
@@ -114,14 +111,14 @@ export function OpeningHoursModal({
             {business.branches.map((b, i) => (
               <p key={i} className="flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5" style={{ color: themeColor }} />
-                <strong className="text-white">{b.name}:</strong> <span>{b.address}</span>
+                <strong className="text-white" style={{ color: '#FFFFFF' }}>{b.name}:</strong> <span>{b.address}</span>
               </p>
             ))}
           </div>
         ) : (
           <div className="bg-white/5 rounded-2xl p-3.5 border border-white/10 text-xs text-[#9E9891] space-y-1 mb-5">
-            <p>📍 <strong className="text-white">סניף אריאל:</strong> ימים א׳, ב׳, ג׳ (מעונות הסטודנטים)</p>
-            <p>📍 <strong className="text-white">סניף רחובות:</strong> ימים ד׳, ה׳, ו׳ (קליניקה פרטית)</p>
+            <p>📍 <strong className="text-white" style={{ color: '#FFFFFF' }}>סניף אריאל:</strong> ימים א׳, ב׳, ג׳ (מעונות הסטודנטים)</p>
+            <p>📍 <strong className="text-white" style={{ color: '#FFFFFF' }}>סניף רחובות:</strong> ימים ד׳, ה׳, ו׳ (קליניקה פרטית)</p>
           </div>
         )}
 
@@ -155,6 +152,7 @@ export function MyAppointmentsModal({
   const [isLoading, setIsLoading] = useState(false);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [justCancelled, setJustCancelled] = useState(false);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   const themeColor = business?.themeColor || '#C9A84C';
   const bizName = business?.name || 'המספרה של דביר';
@@ -213,20 +211,46 @@ export function MyAppointmentsModal({
     }
   };
 
+  const handleCancelAppointment = async (aptId: string) => {
+    const confirmCancel = window.confirm('האם אתה בטוח שברצונך לבטל את התור?');
+    if (!confirmCancel) return;
+
+    setCancellingId(aptId);
+    try {
+      await fetch(`/api/appointments?id=${encodeURIComponent(aptId)}`, {
+        method: 'DELETE',
+      });
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('thecut_customer_appointments_v3');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const updated = parsed.filter((item: any) => item.id !== aptId);
+          localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
+        }
+      }
+      setAppointments((prev) => prev.filter((a) => a.id !== aptId));
+      setJustCancelled(true);
+    } catch {
+      alert('אירעה שגיאה בביטול התור.');
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" dir="rtl">
+    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs" dir="rtl">
       <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="relative w-full max-w-md bg-[#222222] border rounded-3xl p-6 text-white shadow-2xl z-10"
-        style={{ borderColor: `${themeColor}40` }}
+        style={{ borderColor: `${themeColor}40`, backgroundColor: '#1E1E1E', color: '#FFFFFF' }}
       >
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
           <div className="flex items-center gap-2.5">
             <div
-              className="w-10 h-10 rounded-2xl flex items-center justify-center border"
+              className="w-10 h-10 rounded-2xl flex items-center justify-center border shadow-xs"
               style={{
                 backgroundColor: `${themeColor}15`,
                 borderColor: `${themeColor}40`,
@@ -236,13 +260,13 @@ export function MyAppointmentsModal({
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-white">התורים שלי</h3>
-              <p className="text-xs text-[#9E9891]">{bizName} · איתור וניהול תור מהיר</p>
+              <h3 className="text-lg font-black text-white" style={{ color: '#FFFFFF' }}>התורים שלי</h3>
+              <p className="text-xs text-zinc-400">{bizName} · איתור וניהול תור מהיר</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-[#9E9891] hover:text-white transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -251,7 +275,7 @@ export function MyAppointmentsModal({
         {/* Search Phone Input Form */}
         <form onSubmit={handleSearch} className="space-y-3 mb-4">
           <div>
-            <label className="block text-xs font-bold text-[#E0E0E0] mb-1.5">הזן מספר טלפון נייד:</label>
+            <label className="block text-xs font-bold text-zinc-200 mb-1.5">הזן מספר טלפון נייד:</label>
             <div className="relative">
               <input
                 type="tel"
@@ -259,7 +283,7 @@ export function MyAppointmentsModal({
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="050-1234567"
                 required
-                className="w-full bg-[#1A1A1A] border border-white/15 focus:border-white rounded-2xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors"
+                className="w-full bg-[#141414] border border-white/15 focus:border-white rounded-2xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors"
               />
               <Phone className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -284,7 +308,7 @@ export function MyAppointmentsModal({
                 .map((apt) => (
                   <div
                     key={apt.id}
-                    className="p-4 rounded-2xl bg-[#1A1A1A] border-2 space-y-2.5 shadow-md text-right"
+                    className="p-4 rounded-2xl bg-[#141414] border-2 space-y-2.5 shadow-md text-right"
                     style={{ borderColor: `${themeColor}60` }}
                   >
                     <div className="flex items-center justify-between text-xs font-bold">
@@ -298,65 +322,39 @@ export function MyAppointmentsModal({
 
                     <div className="text-xs text-zinc-200 flex items-center justify-between">
                       <span className="font-semibold">📅 {apt.date}</span>
-                      <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded-md" dir="ltr">
-                        ⏰ {apt.time}
-                      </span>
+                      <span className="font-semibold">⏰ {apt.time}</span>
                     </div>
 
-                    <div className="text-[11px] text-zinc-400">
-                      📍 {apt.branchName || apt.branch || 'סניף המספרה'}
+                    <div className="text-xs text-zinc-400">
+                      📍 {apt.branchName || 'סניף מרכזי'}
                     </div>
 
-                    {/* Action buttons inside modal */}
-                    <div className="pt-2 flex gap-2">
+                    <div className="pt-2 border-t border-white/10 flex items-center justify-between gap-2">
                       <button
-                        onClick={async () => {
-                          const confirmCancel = window.confirm(
-                            `האם אתה בטוח שברצונך לבטל את התור לתאריך ${apt.date} בשעה ${apt.time}?`
-                          );
-                          if (!confirmCancel) return;
-
-                          try {
-                            await fetch(`/api/appointments?id=${encodeURIComponent(apt.id)}`, {
-                              method: 'DELETE',
-                            });
-
-                            if (typeof window !== 'undefined') {
-                              const stored = localStorage.getItem('thecut_customer_appointments_v3');
-                              if (stored) {
-                                const parsed = JSON.parse(stored);
-                                const updated = parsed.filter((item: any) => item.id !== apt.id);
-                                localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
-                              }
-                            }
-
-                            setAppointments((prev) => prev.filter((a) => a.id !== apt.id));
-                            setJustCancelled(true);
-                          } catch (err) {
-                            alert('אירעה שגיאה בביטול התור.');
-                          }
-                        }}
-                        className="flex-1 py-2 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 text-center text-xs font-bold transition-colors cursor-pointer"
+                        onClick={() => handleCancelAppointment(apt.id)}
+                        disabled={cancellingId === apt.id}
+                        className="text-xs text-red-400 hover:text-red-300 font-bold underline transition-colors disabled:opacity-50 cursor-pointer"
                       >
-                        בטל ומחק תור זה ❌
+                        {cancellingId === apt.id ? 'מבטל תור...' : 'בטל תור זה'}
                       </button>
 
-                      <Link
-                        href={`/booking/manage?phone=${phone}`}
-                        onClick={onClose}
-                        className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-center text-xs font-bold transition-colors"
+                      <a
+                        href={`https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(
+                          `היי ${business?.ownerName || 'דביר'}, לגבי התור שלי בתאריך ${apt.date} בשעה ${apt.time}`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1"
                       >
-                        פרטים מלאים
-                      </Link>
+                        <MessageCircle className="w-3.5 h-3.5" /> הודעה לספר
+                      </a>
                     </div>
                   </div>
                 ))
             ) : (
-              <div className="text-center py-6 bg-white/5 rounded-2xl border border-white/5">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-2" style={{ color: themeColor }}>
-                  <Calendar className="w-5 h-5" />
-                </div>
-                <p className="text-sm font-bold text-white mb-1">
+              <div className="text-center py-6">
+                <div className="text-3xl mb-2">{justCancelled ? '✓' : '🔍'}</div>
+                <p className="text-sm font-bold text-white mb-1" style={{ color: '#FFFFFF' }}>
                   {justCancelled
                     ? 'התור בוטל בהצלחה! המשבצת פונתה במערכת'
                     : 'לא נמצאו תורים עתידיים למספר זה'}
@@ -420,17 +418,17 @@ export function ShareBarbershopModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" dir="rtl">
+    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs" dir="rtl">
       <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="relative w-full max-w-sm bg-[#222222] border rounded-3xl p-6 text-white shadow-2xl z-10 text-center"
-        style={{ borderColor: `${themeColor}40` }}
+        style={{ borderColor: `${themeColor}40`, backgroundColor: '#1E1E1E', color: '#FFFFFF' }}
       >
         <div
-          className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 border"
+          className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 border shadow-xs"
           style={{
             backgroundColor: `${themeColor}15`,
             borderColor: `${themeColor}40`,
@@ -440,8 +438,8 @@ export function ShareBarbershopModal({
           <Share2 className="w-6 h-6" />
         </div>
 
-        <h3 className="text-lg font-black text-white mb-1">שתף את {bizName}</h3>
-        <p className="text-xs text-[#9E9891] mb-5">שתף קישור מהיר לקביעת תורים עם חברים</p>
+        <h3 className="text-lg font-black text-white mb-1" style={{ color: '#FFFFFF' }}>שתף את {bizName}</h3>
+        <p className="text-xs text-zinc-400 mb-5">שתף קישור מהיר לקביעת תורים עם חברים</p>
 
         <div className="space-y-2.5 mb-4">
           <button
@@ -454,6 +452,7 @@ export function ShareBarbershopModal({
           <button
             onClick={handleCopy}
             className="w-full py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors border border-white/10 cursor-pointer"
+            style={{ color: '#FFFFFF' }}
           >
             {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
             {copied ? 'הקישור הועתק!' : 'העתק קישור להזמנה'}

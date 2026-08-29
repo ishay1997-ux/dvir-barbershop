@@ -17,9 +17,12 @@ import { ShareBarbershopModal } from '@/components/landing/QuickModals';
 import BugReportModal from '@/components/common/BugReportModal';
 import { SHORT_VERSION_LABEL } from '@/config/version';
 
+import { BusinessConfig } from '@/types/business';
+
 interface SidebarDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  business?: Partial<BusinessConfig>;
 }
 
 // Detective / Spy icon for Privacy Policy (Matching Reference)
@@ -99,7 +102,7 @@ function IllustratedGuestAvatar() {
   );
 }
 
-export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
+export default function SidebarDrawer({ isOpen, onClose, business }: SidebarDrawerProps) {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isBugModalOpen, setIsBugModalOpen] = useState(false);
   const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(false);
@@ -168,9 +171,10 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
                 {/* 1. שתפו עם חבר */}
                 <button
                   onClick={() => {
+                    onClose();
                     setIsShareOpen(true);
                   }}
-                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group cursor-pointer"
                 >
                   <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
                     שתפו עם חבר
@@ -180,8 +184,11 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
 
                 {/* 2. רוצה The Cut גם אצלך בעסק? */}
                 <button
-                  onClick={() => setIsBusinessModalOpen(true)}
-                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
+                  onClick={() => {
+                    onClose();
+                    setIsBusinessModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group cursor-pointer"
                 >
                   <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
                     רוצה The Cut גם אצלך בעסק?
@@ -191,8 +198,11 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
 
                 {/* 3. דווחו לנו על תקלה */}
                 <button
-                  onClick={() => setIsBugModalOpen(true)}
-                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
+                  onClick={() => {
+                    onClose();
+                    setIsBugModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group cursor-pointer"
                 >
                   <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
                     דווחו לנו על תקלה
@@ -277,6 +287,7 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
       <ShareBarbershopModal
         isOpen={isShareOpen}
         onClose={() => setIsShareOpen(false)}
+        business={business}
       />
 
       {/* Bug Report Modal */}

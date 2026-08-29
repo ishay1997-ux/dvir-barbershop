@@ -126,7 +126,11 @@ export default function Header({
       </header>
 
       {/* Slide-out Sidebar Drawer */}
-      <SidebarDrawer isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <SidebarDrawer
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        business={business}
+      />
     </>
   );
 }
