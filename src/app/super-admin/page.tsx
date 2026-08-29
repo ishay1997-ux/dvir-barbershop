@@ -86,6 +86,12 @@ interface Business {
   announcement?: string;
   themeColor?: string;
   instagramHandle?: string;
+  instagramUrl?: string;
+  facebookUrl?: string;
+  tiktokUrl?: string;
+  wazeUrl?: string;
+  whatsappNumber?: string;
+  websiteUrl?: string;
   branchesCount: number;
   status: 'active' | 'pending' | 'suspended';
   plan: 'pro' | 'starter' | 'enterprise';
@@ -279,7 +285,7 @@ const defaultBusinessesList: Business[] = [
 
   // Edit Business Customization State
   const [editingBiz, setEditingBiz] = useState<Business | null>(null);
-  const [editTab, setEditTab] = useState<'branding' | 'services' | 'branches' | 'banner'>('branding');
+  const [editTab, setEditTab] = useState<'branding' | 'social' | 'services' | 'branches' | 'banner'>('branding');
   const [isSavingBiz, setIsSavingBiz] = useState(false);
   const [saveNotice, setSaveNotice] = useState(false);
 
@@ -1477,6 +1483,15 @@ const defaultBusinessesList: Business[] = [
               </button>
               <button
                 type="button"
+                onClick={() => setEditTab('social')}
+                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
+                  editTab === 'social' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                🔗 רשתות וקישורים
+              </button>
+              <button
+                type="button"
                 onClick={() => setEditTab('services')}
                 className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
                   editTab === 'services' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
@@ -1592,6 +1607,99 @@ const defaultBusinessesList: Business[] = [
                       <option value="pending">בהקמה / טיוטה 🟡</option>
                       <option value="suspended">מושהה זמנית 🔴</option>
                     </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: SOCIAL & EXTERNAL LINKS */}
+            {editTab === 'social' && (
+              <div className="space-y-3.5 text-xs">
+                <p className="text-zinc-400 text-[11px] mb-2 leading-relaxed bg-[#141414] p-3 rounded-xl border border-white/10">
+                  💡 <strong>התאמת רשתות וקישורים לאתר:</strong> קישורים שיוזנו יוצגו ככפתורי פעולה זוהרים בדף הבית. קישורים שיישארו ריקים יוצגו אוטומטית באפור (לא פעיל) – בדיוק כמו בתבנית המקורית.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                      <span>📸 אינסטגרם (Instagram):</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={editingBiz.instagramUrl || editingBiz.instagramHandle || ''}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, instagramUrl: e.target.value, instagramHandle: e.target.value })}
+                      placeholder="https://instagram.com/username או @username"
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                      <span>👤 פייסבוק (Facebook):</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={editingBiz.facebookUrl || ''}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, facebookUrl: e.target.value })}
+                      placeholder="https://facebook.com/page_name"
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                      <span>🎵 טיקטוק (TikTok):</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={editingBiz.tiktokUrl || ''}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, tiktokUrl: e.target.value })}
+                      placeholder="https://tiktok.com/@username או @username"
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                      <span>💬 וואטסאפ (WhatsApp להודעות):</span>
+                    </label>
+                    <input
+                      type="tel"
+                      value={editingBiz.whatsappNumber || editingBiz.phone || ''}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, whatsappNumber: e.target.value })}
+                      placeholder="050-1234567"
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                      <span>🚗 קישור Waze לניווט:</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={editingBiz.wazeUrl || ''}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, wazeUrl: e.target.value })}
+                      placeholder="https://waze.com/ul?q=..."
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                      <span>🌐 אתר אינטרנט / דומיין מותאם:</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={editingBiz.websiteUrl || ''}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, websiteUrl: e.target.value })}
+                      placeholder="https://my-barbershop.co.il"
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
                   </div>
                 </div>
               </div>

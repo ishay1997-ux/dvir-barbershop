@@ -13,6 +13,13 @@ export interface BusinessItem {
   slogan?: string;
   announcement?: string;
   themeColor?: string;
+  instagramHandle?: string;
+  instagramUrl?: string;
+  facebookUrl?: string;
+  tiktokUrl?: string;
+  wazeUrl?: string;
+  whatsappNumber?: string;
+  websiteUrl?: string;
   branchesCount: number;
   status: 'active' | 'pending' | 'suspended';
   plan: 'pro' | 'starter' | 'enterprise';
@@ -32,6 +39,9 @@ const defaultBusinesses: BusinessItem[] = [
     slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
     announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מראש!',
     themeColor: '#C9A84C',
+    instagramHandle: 'dvir_barber',
+    instagramUrl: 'https://instagram.com/dvir_barber',
+    whatsappNumber: '0521234567',
     branchesCount: 2,
     status: 'active',
     plan: 'enterprise',

@@ -52,5 +52,11 @@ export interface BusinessConfig {
   testimonials?: TestimonialItem[];
   faqs?: FaqItem[];
   instagramHandle?: string;
+  instagramUrl?: string;
+  facebookUrl?: string;
+  tiktokUrl?: string;
+  wazeUrl?: string;
+  whatsappNumber?: string;
+  websiteUrl?: string;
   experienceYears?: number;
 }
