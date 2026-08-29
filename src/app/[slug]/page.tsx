@@ -2,6 +2,15 @@
 
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import BarbershopHeroHub from '@/components/landing/BarbershopHeroHub';
+import PriceListAndGallerySection from '@/components/landing/PriceListAndGallerySection';
+import BarberShowcase from '@/components/landing/BarberShowcase';
+import BranchNavigationSection from '@/components/landing/BranchNavigationSection';
+import BeforeAfterSection from '@/components/landing/BeforeAfterSection';
+import ReviewsSection from '@/components/landing/ReviewsSection';
+import FaqSection from '@/components/landing/FaqSection';
 import {
   Scissors,
   Calendar,
@@ -41,7 +50,30 @@ export default function DynamicBusinessLandingPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = use(params);
-  const slug = resolvedParams.slug;
+  const slug = resolvedParams.slug.toLowerCase().trim();
+
+  // If this is Dvir's barbershop, render the full rich flagship experience
+  if (slug === 'dvir' || slug === 'thecut') {
+    return (
+      <>
+        <Header />
+        <main id="main-content">
+          <BarbershopHeroHub />
+          <PriceListAndGallerySection />
+          <div id="about">
+            <BarberShowcase />
+          </div>
+          <BranchNavigationSection />
+          <BeforeAfterSection />
+          <ReviewsSection />
+          <div id="faq">
+            <FaqSection />
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   const [business, setBusiness] = useState<BusinessProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -118,7 +150,7 @@ export default function DynamicBusinessLandingPage({
     <div className="min-h-screen bg-[#141414] text-white font-sans selection:bg-[#C9A84C] selection:text-black" dir="rtl">
       {/* Announcement Banner if present */}
       {business.announcement && (
-        <div className="bg-gradient-to-r from-[#C9A84C] via-[#DFCA85] to-[#C9A84C] text-[#1C1C1C] py-2 px-4 text-center font-black text-xs flex items-center justify-center gap-2 shadow-md">
+        <div className="bg-gradient-to-r from-[#C9A84C] via-[#DFCA85] to-[#C9A84C] text-[#1C1C1C] py-2.5 px-4 text-center font-black text-xs flex items-center justify-center gap-2 shadow-md">
           <Megaphone className="w-3.5 h-3.5" />
           <span>{business.announcement}</span>
         </div>
