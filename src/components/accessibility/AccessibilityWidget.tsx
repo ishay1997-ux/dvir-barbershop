@@ -955,7 +955,7 @@ export default function AccessibilityWidget() {
 
               <section>
                 <h3 className="text-xl font-bold mb-2">יצירת קשר והזמנת תורים</h3>
-                <p>טלפון: 052-123-4567 | הזמנת תורים מקוונת: dvir-barbershop-reg-in.vercel.app</p>
+                <p>טלפון: 052-123-4567 | הזמנת תורים מקוונת: thecut-reg-in.vercel.app</p>
               </section>
             </div>
           </div>

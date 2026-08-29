@@ -86,7 +86,7 @@ export default function TermsPage() {
               <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-1 font-bold">
                 <p>📍 המספרה של דביר · אריאל & רחובות</p>
                 <p>📞 טלפון / וואטסאפ: 052-123-4567</p>
-                <p>🌐 כתובת האתר: dvir-barbershop-reg-in.vercel.app</p>
+                <p>🌐 כתובת האתר: thecut-reg-in.vercel.app</p>
               </div>
             </section>
           </div>

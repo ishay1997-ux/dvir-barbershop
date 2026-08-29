@@ -201,20 +201,11 @@ function ReportAppointmentHelper({
 export default function SuperAdminPage() {
   const router = useRouter();
   const { success, error, info, showConfirm } = useToast();
+  // Always starts with false so the Super Admin Login screen is always shown on entry
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState(false);
-
-  // Check persistent session on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedAuth = localStorage.getItem('thecut_superadmin_auth_v1');
-      if (savedAuth === 'true') {
-        setIsAuthenticated(true);
-      }
-    }
-  }, []);
 
   const [activeTab, setActiveTab] = useState<'reports' | 'businesses'>('businesses');
 
@@ -265,9 +256,6 @@ export default function SuperAdminPage() {
   const executeLogin = () => {
     setIsAuthenticated(true);
     setAuthError(false);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('thecut_superadmin_auth_v1', 'true');
-    }
     success('ברוך הבא ישי!', 'התחברת בהצלחה לפאנל ה-Super Admin');
   };
 
@@ -285,9 +273,7 @@ export default function SuperAdminPage() {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('thecut_superadmin_auth_v1');
-    }
+    setPassword('');
     info('התנתקת בהצלחה', 'להתראות!');
   };
 

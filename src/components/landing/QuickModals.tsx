@@ -358,7 +358,7 @@ export function ShareBarbershopModal({
   onClose: () => void;
 }) {
   const [copied, setCopied] = useState(false);
-  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://dvir-barbershop-reg-in.vercel.app';
+  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://thecut-reg-in.vercel.app';
   const shareText = 'המספרה של דביר – תספורות גברים פרימיום ודירוגים באריאל וברחובות. לקביעת תור מהיר:';
 
   if (!isOpen) return null;

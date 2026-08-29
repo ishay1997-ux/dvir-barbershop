@@ -50,7 +50,7 @@ const jsonLd = {
   name: 'The Cut Platform',
   applicationCategory: 'BusinessApplication',
   description: 'פלטפורמת זימון תורים חכמה וניהול יומן למספרות ועסקים בישראל',
-  url: 'https://dvir-barbershop-reg-in.vercel.app',
+  url: 'https://thecut-reg-in.vercel.app',
   priceRange: '₪₪',
 };
 
