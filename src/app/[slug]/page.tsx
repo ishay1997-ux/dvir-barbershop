@@ -257,10 +257,11 @@ export default function DynamicBusinessLandingPage({
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#C9A84C]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-3xl mx-auto relative z-10">
-          {/* Circular Gold Monogram Logo */}
+          {/* Circular Gold Monogram Logo with First Letter */}
           <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#DFCA85] via-[#C9A84C] to-[#9A7B2C] p-1 mx-auto mb-4 shadow-2xl">
-            <div className="w-full h-full rounded-full bg-[#1C1C1C] flex items-center justify-center text-[#C9A84C]">
-              <Scissors className="w-10 h-10 -rotate-45" />
+            <div className="w-full h-full rounded-full bg-[#1C1C1C] flex flex-col items-center justify-center text-[#C9A84C]">
+              <span className="text-3xl font-black">{business.name.trim().charAt(0)}</span>
+              <Scissors className="w-4 h-4 text-[#C9A84C]/70 -rotate-45 mt-0.5" />
             </div>
           </div>
 
@@ -299,7 +300,7 @@ export default function DynamicBusinessLandingPage({
             </a>
 
             <a
-              href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`היי ${business.ownerName}, אני מעוניין במידע נוסף:`)}`}
+              href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`היי ${business.ownerName}, אני מעוניין במידע נוסף אודות ${business.name}:`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-3.5 rounded-2xl bg-emerald-950/50 hover:bg-emerald-900/70 text-emerald-400 font-bold text-xs inline-flex items-center gap-2 border border-emerald-500/30 transition-colors cursor-pointer"
@@ -320,7 +321,7 @@ export default function DynamicBusinessLandingPage({
             PREMIUM SERVICES & GALLERY
           </div>
           <h3 className="text-2xl sm:text-3xl font-black text-white mb-2">מחירון שירותים וגלריית עבודות</h3>
-          <p className="text-xs text-[#9E9891]">בחר את הטיפול המושלם עבורך וקבע תור בשניות</p>
+          <p className="text-xs text-[#9E9891]">בחר את הטיפול המושלם עבורך אצל {business.name} וקבע תור בשניות</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -359,7 +360,7 @@ export default function DynamicBusinessLandingPage({
             ))}
 
             <div className="p-4 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/30 text-center text-xs text-zinc-300">
-              ⚡ <strong>חוויית VIP:</strong> כל תספורת כוללת ייעוץ אישי, התאמת קווי פנים וחומרי טיפוח מהמובילים בעולם.
+              ⚡ <strong>חוויית VIP:</strong> כל תספורת אצל {business.ownerName} כוללת ייעוץ אישי, התאמת קווי פנים וחומרי טיפוח מובחרים.
             </div>
           </div>
 
@@ -392,16 +393,12 @@ export default function DynamicBusinessLandingPage({
       {/* ============================================================ */}
       <section className="py-12 px-4 bg-[#181818] border-y border-white/10">
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-          <div className="relative rounded-3xl overflow-hidden aspect-square border-2 border-[#C9A84C]/40 shadow-2xl bg-[#222]">
-            <Image
-              src="/images/barber_profile.png"
-              alt={business.ownerName}
-              fill
-              className="object-cover"
-            />
-            <div className="absolute bottom-3 right-3 left-3 bg-black/75 backdrop-blur-xs rounded-xl p-2 text-center text-xs font-bold text-white border border-white/10">
-              מאסטר ברבר {business.ownerName}
+          <div className="relative rounded-3xl overflow-hidden aspect-square border-2 border-[#C9A84C]/40 shadow-2xl bg-gradient-to-br from-[#2A2A2A] to-[#161616] flex flex-col items-center justify-center text-center p-6">
+            <div className="w-20 h-20 rounded-full bg-[#C9A84C]/20 border-2 border-[#C9A84C] flex items-center justify-center text-[#C9A84C] mb-3 shadow-lg">
+              <span className="text-3xl font-black">{business.ownerName.charAt(0)}</span>
             </div>
+            <h4 className="text-base font-black text-white">{business.ownerName}</h4>
+            <span className="text-xs text-[#C9A84C] font-bold mt-0.5">מאסטר ברבר מוסמך</span>
           </div>
 
           <div className="md:col-span-2 space-y-3.5 text-right">
@@ -414,7 +411,7 @@ export default function DynamicBusinessLandingPage({
             </h3>
 
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans">
-              ב-{business.name} אנחנו מאמינים שתספורת היא כרטיס הביקור של כל גבר. כל לקוח מקבל יחס אישי, התאמה מדויקת למבנה הפנים, ושימוש במכשור החדשני והסטרילי ביותר.
+              ב-{business.name} אנחנו מאמינים שתספורת היא כרטיס הביקור של כל גבר. {business.ownerName} מעניק לכל לקוח יחס אישי, התאמה מדויקת למבנה הפנים, ושימוש במכשור החדשני והסטרילי ביותר.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
