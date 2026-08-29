@@ -2,67 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, isFirebaseConfigured } from '@/lib/firebase';
+import { useAuth } from '@/contexts/AuthContext';
+import { ShieldCheck, AlertCircle } from 'lucide-react';
 
 export default function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const { user, loading, isAuthenticated, isSuperAdmin, isBusinessAdmin, firebaseUser } = useAuth();
 
-  useEffect(() => {
-    // If we're on the login page, don't block
-    if (pathname === '/admin/login') {
-      setCheckingAuth(false);
-      return;
-    }
-
-    // 1. Check local admin session storage (Quick access / persistent PIN)
-    if (typeof window !== 'undefined') {
-      const localAuth = localStorage.getItem('thecut_admin_authenticated');
-      if (localAuth === 'true') {
-        setIsAuthenticated(true);
-        setCheckingAuth(false);
-        return;
-      }
-    }
-
-    // 2. Check Firebase Auth if configured
-    if (isFirebaseConfigured && auth) {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setIsAuthenticated(true);
-        } else {
-          const localAuth = typeof window !== 'undefined' ? localStorage.getItem('thecut_admin_authenticated') : null;
-          if (localAuth !== 'true') {
-            setIsAuthenticated(false);
-            router.replace('/admin/login');
-          }
-        }
-        setCheckingAuth(false);
-      });
-      return () => unsubscribe();
-    } else {
-      // If neither, redirect to login
-      const localAuth = typeof window !== 'undefined' ? localStorage.getItem('thecut_admin_authenticated') : null;
-      if (localAuth === 'true') {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-        router.replace('/admin/login');
-      }
-      setCheckingAuth(false);
-    }
-  }, [pathname, router]);
-
-  // If on login page, render children directly
+  // If we're on the login page, don't block
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
 
-  // Loading spinner
-  if (checkingAuth) {
+  // Loading spinner while checking auth
+  if (loading) {
     return (
       <div className="flex-1 min-h-screen bg-[#1C1C1C] flex flex-col items-center justify-center gap-4 text-white" dir="rtl">
         <div className="w-10 h-10 border-3 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin" />
@@ -71,9 +25,38 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
     );
   }
 
-  if (!isAuthenticated) {
+  // Not logged in to Firebase at all
+  if (!firebaseUser) {
+    router.replace('/admin/login');
     return null;
   }
 
+  // Logged in to Firebase but no valid role
+  if (!isAuthenticated) {
+    return (
+      <div className="flex-1 min-h-screen bg-[#1C1C1C] flex flex-col items-center justify-center gap-4 text-white p-4" dir="rtl">
+        <div className="max-w-md text-center space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-red-950/30 border border-red-500/30 flex items-center justify-center mx-auto">
+            <AlertCircle className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-xl font-black text-white">אין הרשאה</h2>
+          <p className="text-sm text-[#9E9891]">
+            החשבון <span className="text-white font-bold">{firebaseUser.email}</span> אינו מורשה לגשת למערכת הניהול.
+          </p>
+          <p className="text-xs text-[#9E9891]">
+            אנא פנה למנהל המערכת כדי לקבל הרשאת גישה.
+          </p>
+          <button
+            onClick={() => router.replace('/admin/login')}
+            className="mt-4 px-6 py-2.5 rounded-xl bg-[#C9A84C] text-black font-black text-sm hover:bg-[#DFCA85] transition-colors cursor-pointer"
+          >
+            חזרה למסך ההתחברות
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // User has valid role (super_admin or business_admin)
   return <>{children}</>;
 }

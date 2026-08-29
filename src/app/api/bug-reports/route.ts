@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { requireRole } from '@/lib/firebase-admin';
 
 export interface BugReportPayload {
   id: string;
@@ -68,8 +69,13 @@ export async function POST(request: Request) {
 }
 
 // 2. GET ALL BUG REPORTS (GET)
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const authResult = await requireRole(request, ['super_admin', 'business_admin']);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
+
     if (isFirebaseConfigured && db) {
       try {
         const q = query(collection(db, 'bug_reports'), orderBy('createdAt', 'desc'));
@@ -99,6 +105,11 @@ export async function GET() {
 // 3. UPDATE STATUS (PATCH)
 export async function PATCH(request: Request) {
   try {
+    const authResult = await requireRole(request, ['super_admin', 'business_admin']);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
+
     const body = await request.json();
     const { id, status } = body;
 
@@ -136,6 +147,11 @@ export async function PATCH(request: Request) {
 // 4. DELETE REPORT (DELETE)
 export async function DELETE(request: Request) {
   try {
+    const authResult = await requireRole(request, ['super_admin']);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 

@@ -20,6 +20,7 @@ import {
   TrendingUp,
   User,
   Coffee,
+  Trash2,
 } from 'lucide-react';
 import { useShopStore } from '@/lib/store';
 import type { Customer } from '@/lib/types';
@@ -167,6 +168,31 @@ export default function CustomersPage() {
     });
     setSavedNotice(true);
     setTimeout(() => setSavedNotice(false), 2000);
+  };
+
+  const handleDeleteCustomer = async (customer: Customer) => {
+    if (!window.confirm(`האם למחוק את הלקוח "${customer.name}" (${customer.phone}) ואת כל התורים שלו מהמערכת לצמיתות?`)) {
+      return;
+    }
+
+    try {
+      // 1. Delete all appointments for this customer from Firestore
+      await fetch(`/api/appointments?phone=${encodeURIComponent(customer.phone)}`, {
+        method: 'DELETE',
+      });
+
+      // 2. Remove from local store / zustand
+      const cleanTargetPhone = customer.phone.replace(/\D/g, '');
+      const updated = localCustomers.filter(
+        (c) => c.phone.replace(/\D/g, '') !== cleanTargetPhone
+      );
+      setLocalCustomers(updated);
+      saveCustomers(updated);
+      setSelectedCustomer(null);
+    } catch (err) {
+      console.error('Failed to delete customer:', err);
+      alert('שגיאה במחיקת הלקוח');
+    }
   };
 
   const generateRetentionWhatsAppUrl = (customer: Customer) => {
@@ -361,9 +387,18 @@ export default function CustomersPage() {
 
               <button
                 onClick={() => openCustomerModal(customer)}
-                className="btn-shimmer text-xs font-bold text-[#1C1C1C] py-2 px-3 rounded-xl shadow-sm"
+                className="btn-shimmer text-xs font-bold text-[#1C1C1C] py-2 px-3 rounded-xl shadow-sm cursor-pointer"
               >
                 פתח כרטיס לקוח 360 ←
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDeleteCustomer(customer)}
+                title="מחק לקוח מהמערכת"
+                className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
@@ -379,7 +414,7 @@ export default function CustomersPage() {
             {/* Close */}
             <button
               onClick={() => setSelectedCustomer(null)}
-              className="absolute left-6 top-6 p-2 rounded-full hover:bg-zinc-100 text-[#6B6560] transition-colors"
+              className="absolute left-6 top-6 p-2 rounded-full hover:bg-zinc-100 text-[#6B6560] transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -526,6 +561,15 @@ export default function CustomersPage() {
 
             {/* Modal Bottom Actions */}
             <div className="flex items-center gap-3 pt-6 border-t border-[#F0EBE1] mt-6">
+              <button
+                type="button"
+                onClick={() => handleDeleteCustomer(selectedCustomer)}
+                className="py-3 px-4 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>מחק לקוח</span>
+              </button>
+
               <a
                 href={generateRetentionWhatsAppUrl(selectedCustomer)}
                 target="_blank"

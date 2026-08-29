@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
 import { collection, getDocs, doc, query, where, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { verifyAuth, requireRole } from '@/lib/firebase-admin';
 
 export interface BusinessItem {
   id: string;
@@ -98,7 +99,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Business not found' }, { status: 404 });
     }
 
-    // 2. Fetch ALL businesses for Super Admin Dashboard
+    // 2. Fetch ALL businesses for Super Admin Dashboard (requires auth)
+    const authResult = await requireRole(request, ['super_admin']);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
+
     let firestoreList: BusinessItem[] = [];
 
     if (isFirebaseConfigured && db) {
@@ -153,6 +159,11 @@ export async function GET(request: Request) {
 // POST /api/admin/businesses (Add New Business with Archetype & Rich Tailoring)
 export async function POST(request: Request) {
   try {
+    const authResult = await requireRole(request, ['super_admin']);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
+
     const body = await request.json();
     const {
       name,
@@ -237,6 +248,11 @@ export async function POST(request: Request) {
 // PATCH /api/admin/businesses (Update Business Customization & Settings)
 export async function PATCH(request: Request) {
   try {
+    const authResult = await requireRole(request, ['super_admin', 'business_admin']);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
+
     const body = await request.json();
     const { slug, id, ...updates } = body;
 
@@ -245,6 +261,14 @@ export async function PATCH(request: Request) {
     }
 
     const targetSlug = slug?.toLowerCase().trim();
+
+    // If caller is business_admin, verify they have access to this businessSlug
+    if (authResult.role === 'business_admin') {
+      const allowedSlugs = authResult.businessSlugs || [];
+      if (!allowedSlugs.includes(targetSlug)) {
+        return NextResponse.json({ error: 'אין הרשאה לערוך עסק זה' }, { status: 403 });
+      }
+    }
     const targetDocId = id || (targetSlug ? `biz-${targetSlug}` : `biz-${Date.now()}`);
 
     if (isFirebaseConfigured && db) {
@@ -316,6 +340,11 @@ export async function PATCH(request: Request) {
 // DELETE /api/admin/businesses?id=...&slug=...
 export async function DELETE(request: Request) {
   try {
+    const authResult = await requireRole(request, ['super_admin']);
+    if (authResult instanceof NextResponse) {
+      return authResult;
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const slug = searchParams.get('slug')?.toLowerCase().trim();

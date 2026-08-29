@@ -3,6 +3,7 @@ import { Heebo, Playfair_Display } from 'next/font/google';
 import SkipToContent from '@/components/accessibility/SkipToContent';
 import AccessibilityWidget from '@/components/accessibility/AccessibilityWidget';
 import { ToastProvider } from '@/components/common/ToastProvider';
+import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 
 const heebo = Heebo({
@@ -68,13 +69,14 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ToastProvider>
-          <SkipToContent />
-          {children}
-          <AccessibilityWidget />
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <SkipToContent />
+            {children}
+            <AccessibilityWidget />
+          </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );
 }
-

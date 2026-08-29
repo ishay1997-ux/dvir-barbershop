@@ -7,8 +7,7 @@ import {
   Scissors, LogOut, Menu, X, ExternalLink 
 } from 'lucide-react';
 import { useState } from 'react';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -22,6 +21,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { logout } = useAuth();
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -77,16 +77,7 @@ export default function AdminSidebar() {
 
         <button
           onClick={async () => {
-            try {
-              if (typeof window !== 'undefined') {
-                localStorage.removeItem('thecut_admin_authenticated');
-              }
-              if (auth) {
-                await signOut(auth);
-              }
-            } catch (err) {
-              console.error('Logout error:', err);
-            }
+            await logout();
             router.push('/admin/login');
           }}
           className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-[#9E9891] hover:bg-red-900/20 hover:text-red-400 transition-all w-full text-xs font-bold active:scale-95 cursor-pointer"

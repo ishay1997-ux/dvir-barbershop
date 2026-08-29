@@ -37,12 +37,16 @@ import {
   Award,
   Crown,
   Share2,
+  Users,
+  UserPlus,
+  Mail,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { useToast } from '@/components/common/ToastProvider';
 import { BUSINESS_ARCHETYPES, THEME_PALETTES, generateTailoredBusinessConfig } from '@/lib/archetypes';
 import { auth, isFirebaseConfigured } from '@/lib/firebase';
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface BugReport {
   id: string;
@@ -203,15 +207,19 @@ function ReportAppointmentHelper({
 export default function SuperAdminPage() {
   const router = useRouter();
   const { success, error, info, showConfirm } = useToast();
-  // Always starts with false so the Super Admin Login screen is always shown on entry
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [adminUser, setAdminUser] = useState<{ email: string; displayName?: string; photoURL?: string } | null>(null);
+  const { user: authUser, loading: authLoading, isSuperAdmin, authFetch, logout, firebaseUser } = useAuth();
+
+  // Auth state
+  const isAuthenticated = isSuperAdmin;
+  const adminUser = authUser ? {
+    email: authUser.email,
+    displayName: authUser.displayName,
+    photoURL: authUser.photoURL,
+  } : null;
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'reports' | 'businesses'>('businesses');
+  const [activeTab, setActiveTab] = useState<'reports' | 'businesses' | 'users'>('businesses');
 
   // Reports state
   const [reports, setReports] = useState<BugReport[]>([]);
@@ -256,13 +264,14 @@ export default function SuperAdminPage() {
   const [newBranchName, setNewBranchName] = useState('');
   const [newBranchAddress, setNewBranchAddress] = useState('');
 
-  // Master Login Handler (PIN / Password)
-  const executeLogin = () => {
-    setIsAuthenticated(true);
-    setAdminUser({ email: 'ishay@thecut.co.il', displayName: 'ישי' });
-    setAuthError(false);
-    success('ברוך הבא ישי!', 'התחברת בהצלחה לפאנל ה-Super Admin');
-  };
+  // User Management State
+  const [managedUsers, setManagedUsers] = useState<any[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserRole, setNewUserRole] = useState<'super_admin' | 'business_admin'>('business_admin');
+  const [newUserDisplayName, setNewUserDisplayName] = useState('');
+  const [newUserBusinessSlugs, setNewUserBusinessSlugs] = useState('');
+  const [isAddingUser, setIsAddingUser] = useState(false);
 
   // Google Sign-In Handler
   const handleGoogleLogin = async () => {
@@ -276,18 +285,8 @@ export default function SuperAdminPage() {
 
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      if (user) {
-        setAdminUser({
-          email: user.email || '',
-          displayName: user.displayName || user.email?.split('@')[0] || 'מנהל על',
-          photoURL: user.photoURL || '',
-        });
-        setIsAuthenticated(true);
-        success('התחברת בהצלחה עם Google! 🎉', `ברוך הבא ${user.displayName || user.email}`);
-      }
+      await signInWithPopup(auth, provider);
+      // AuthContext handles the rest — verifies role via /api/auth/me
     } catch (err: any) {
       console.error('Google Sign-In error:', err);
       const code = err?.code || '';
@@ -302,32 +301,15 @@ export default function SuperAdminPage() {
       } else if (code === 'auth/operation-not-allowed') {
         error('שירות Google Sign-In כבוי', 'יש להפעיל את Google Provider ב-Firebase Console תחת Sign-in method');
       } else {
-        error('שגיאה בהתחברות עם Google', err?.message || 'נסה שוב או השתמש בסיסמה');
+        error('שגיאה בהתחברות עם Google', err?.message || 'נסה שוב');
       }
     } finally {
       setGoogleLoading(false);
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const clean = password.trim().toLowerCase();
-    const validCodes = ['1997', 'ishay', 'admin', '1234', 'ishay2025', 'ishay1997', 'dvir', '0000', 'thecut'];
-    if (validCodes.includes(clean) || clean.length >= 3) {
-      executeLogin();
-    } else {
-      setAuthError(true);
-      error('סיסמה שגויה', 'בדוק את הסיסמה ונסה שנית');
-    }
-  };
-
-  const handleLogout = () => {
-    if (auth && isFirebaseConfigured) {
-      signOut(auth).catch(() => {});
-    }
-    setIsAuthenticated(false);
-    setAdminUser(null);
-    setPassword('');
+  const handleLogout = async () => {
+    await logout();
     info('התנתקת בהצלחה', 'להתראות!');
   };
 
@@ -335,7 +317,7 @@ export default function SuperAdminPage() {
   const fetchReports = async () => {
     setReportsLoading(true);
     try {
-      const res = await fetch('/api/bug-reports');
+      const res = await authFetch('/api/bug-reports');
       if (res.ok) {
         const data = await res.json();
         setReports(data.reports || []);
@@ -351,7 +333,7 @@ export default function SuperAdminPage() {
   const fetchBusinesses = async () => {
     setBusinessesLoading(true);
     try {
-      const res = await fetch('/api/admin/businesses');
+      const res = await authFetch('/api/admin/businesses');
       if (res.ok) {
         const data = await res.json();
         setBusinesses(data.businesses || []);
@@ -363,17 +345,93 @@ export default function SuperAdminPage() {
     }
   };
 
+  // Fetch Users
+  const fetchUsers = async () => {
+    setUsersLoading(true);
+    try {
+      const res = await authFetch('/api/auth/users');
+      if (res.ok) {
+        const data = await res.json();
+        setManagedUsers(data.users || []);
+      }
+    } catch (err) {
+      console.error('Error fetching users:', err);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  // Add User
+  const handleAddUser = async () => {
+    if (!newUserEmail.trim() || !newUserEmail.includes('@')) {
+      error('אימייל לא תקין', 'אנא הזן כתובת אימייל חוקית');
+      return;
+    }
+    setIsAddingUser(true);
+    try {
+      const res = await authFetch('/api/auth/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: newUserEmail.trim(),
+          role: newUserRole,
+          displayName: newUserDisplayName.trim() || newUserEmail.split('@')[0],
+          businessSlugs: newUserBusinessSlugs.split(',').map(s => s.trim()).filter(Boolean),
+        }),
+      });
+      if (res.ok) {
+        success('משתמש נוסף בהצלחה! ✓', `${newUserEmail} נרשם כ-${newUserRole === 'super_admin' ? 'מנהל-על' : 'מנהל עסק'}`);
+        setNewUserEmail('');
+        setNewUserDisplayName('');
+        setNewUserBusinessSlugs('');
+        fetchUsers();
+      } else {
+        const data = await res.json();
+        error('שגיאה בהוספת משתמש', data.error || 'נסה שוב');
+      }
+    } catch (err) {
+      error('שגיאת תקשורת');
+    } finally {
+      setIsAddingUser(false);
+    }
+  };
+
+  // Delete User
+  const handleDeleteUser = (uid: string, email: string) => {
+    showConfirm({
+      title: 'מחיקת משתמש',
+      message: `האם למחוק את המשתמש ${email}? לא יוכל להתחבר יותר למערכת.`,
+      confirmText: 'מחק משתמש',
+      type: 'danger',
+      onConfirm: async () => {
+        try {
+          const res = await authFetch(`/api/auth/users?uid=${uid}`, { method: 'DELETE' });
+          if (res.ok) {
+            success('משתמש נמחק בהצלחה');
+            fetchUsers();
+          } else {
+            const data = await res.json();
+            error('שגיאה במחיקה', data.error);
+          }
+        } catch (err) {
+          error('שגיאת תקשורת');
+        }
+      },
+    });
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchReports();
       fetchBusinesses();
+      fetchUsers();
     }
   }, [isAuthenticated]);
 
   // Update Report Status
   const handleStatusChange = async (reportId: string, newStatus: BugReport['status']) => {
     try {
-      await fetch('/api/bug-reports', {
+      await authFetch('/api/bug-reports', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: reportId, status: newStatus }),
@@ -397,7 +455,7 @@ export default function SuperAdminPage() {
       type: 'danger',
       onConfirm: async () => {
         try {
-          const res = await fetch(`/api/bug-reports?id=${encodeURIComponent(reportId)}`, {
+          const res = await authFetch(`/api/bug-reports?id=${encodeURIComponent(reportId)}`, {
             method: 'DELETE',
           });
           if (res.ok) {
@@ -444,7 +502,7 @@ export default function SuperAdminPage() {
 
     setIsCreatingBiz(true);
     try {
-      const res = await fetch('/api/admin/businesses', {
+      const res = await authFetch('/api/admin/businesses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -490,7 +548,7 @@ export default function SuperAdminPage() {
     if (!editingBiz) return;
     setIsSavingBiz(true);
     try {
-      const res = await fetch('/api/admin/businesses', {
+      const res = await authFetch('/api/admin/businesses', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingBiz),
@@ -526,7 +584,7 @@ export default function SuperAdminPage() {
       type: 'danger',
       onConfirm: async () => {
         try {
-          const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(slug)}`, {
+          const res = await authFetch(`/api/admin/businesses?slug=${encodeURIComponent(slug)}`, {
             method: 'DELETE',
           });
           if (res.ok) {
@@ -547,9 +605,51 @@ export default function SuperAdminPage() {
     if (statusFilter === 'all') return true;
     return r.status === statusFilter;
   });
+  // ============================================================
+  // LOADING STATE
+  // ============================================================
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#0E0E10] text-white flex items-center justify-center p-4" dir="rtl">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-3 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin mx-auto" />
+          <p className="text-xs text-zinc-400 font-bold">בודק הרשאות גישה...</p>
+        </div>
+      </div>
+    );
+  }
 
   // ============================================================
-  // LOGIN SCREEN (If not authenticated) - Professional Enterprise SaaS
+  // UNAUTHORIZED (Logged in to Firebase but no super_admin role)
+  // ============================================================
+  if (firebaseUser && !isSuperAdmin) {
+    return (
+      <div className="min-h-screen bg-[#0E0E10] text-white flex items-center justify-center p-4 relative overflow-hidden font-sans" dir="rtl">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,_rgba(201,168,76,0.12)_0%,_transparent_65%)] pointer-events-none" />
+        <div className="relative max-w-md w-full bg-[#18181B]/90 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] text-center">
+          <div className="w-16 h-16 rounded-2xl bg-red-950/30 border border-red-500/30 flex items-center justify-center mx-auto mb-5">
+            <AlertCircle className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-xl font-black text-white mb-2">אין הרשאת Super Admin</h2>
+          <p className="text-sm text-zinc-400 mb-2">
+            החשבון <span className="text-white font-bold">{firebaseUser.email}</span> אינו מורשה לגשת לפאנל ניהול-על.
+          </p>
+          <p className="text-xs text-zinc-500 mb-6">
+            רק חשבונות שהוגדרו כמנהלי-על רשאים לגשת למסך זה.
+          </p>
+          <button
+            onClick={handleLogout}
+            className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#C9A84C] to-[#DFCA85] text-[#18181B] font-black text-sm cursor-pointer hover:opacity-95 active:scale-[0.99] transition-all"
+          >
+            התנתק ונסה עם חשבון אחר
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ============================================================
+  // LOGIN SCREEN (Not authenticated) - Professional Enterprise SaaS
   // ============================================================
   if (!isAuthenticated) {
     return (
@@ -589,7 +689,7 @@ export default function SuperAdminPage() {
           </div>
 
           <div className="space-y-4">
-            {/* 1. Primary Google Workspace SSO Button */}
+            {/* Primary Google Workspace SSO Button */}
             <button
               type="button"
               onClick={handleGoogleLogin}
@@ -609,70 +709,26 @@ export default function SuperAdminPage() {
               <span>{googleLoading ? 'מתחבר למערכת...' : 'המשך עם חשבון Google'}</span>
             </button>
 
-            {/* Elegant Divider */}
-            <div className="relative flex py-2 items-center">
-              <div className="flex-grow border-t border-white/10" />
-              <span className="flex-shrink mx-3 text-[11px] text-zinc-400 font-medium font-sans">או באמצעות מפתח גישה</span>
-              <div className="flex-grow border-t border-white/10" />
-            </div>
-
-            {/* 2. Secure Passkey Form */}
-            <form onSubmit={handleLogin} className="space-y-3.5">
-              <div className="text-right">
-                <label className="block text-xs font-bold text-zinc-300 mb-1.5">
-                  מפתח אבטחה ראשי
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      if (authError) setAuthError(false);
-                    }}
-                    placeholder="הזן סיסמת גישה מורשית..."
-                    className="w-full bg-[#121214] border border-white/15 focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/50 rounded-2xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-all text-right font-sans"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="w-8 h-8 text-zinc-400 hover:text-white absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer transition-colors"
-                    title={showPassword ? 'הסתר סיסמה' : 'הצג סיסמה'}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+            {authError && (
+              <div className="p-3 rounded-2xl bg-red-950/40 border border-red-500/30 text-xs text-red-300 font-medium text-right flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <span>שגיאה באימות. נסה שוב.</span>
               </div>
+            )}
 
-              {authError && (
-                <div className="p-3 rounded-2xl bg-red-950/40 border border-red-500/30 text-xs text-red-300 font-medium text-right flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                  <span>מפתח הגישה שגוי. נסה שוב או השתמש ב-Google SSO.</span>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#C9A84C] to-[#DFCA85] hover:opacity-95 text-[#18181B] font-black text-sm transition-all shadow-lg hover:shadow-[#C9A84C]/20 active:scale-[0.99] cursor-pointer"
-              >
-                אימות וכניסה למערכת ←
-              </button>
-            </form>
+            {/* Info text */}
+            <p className="text-[11px] text-zinc-500 leading-relaxed">
+              כניסה מאובטחת באמצעות חשבון Google מורשה בלבד.
+              <br />
+              רק חשבונות שהוגדרו ע&quot;י מנהל-על רשאים לגשת.
+            </p>
           </div>
 
-          {/* Footer Navigation & Security Badges */}
-          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-zinc-400">
-            <Link
-              href="/"
-              className="hover:text-white transition-colors inline-flex items-center gap-1.5 font-medium"
-            >
-              <ArrowRight className="w-3.5 h-3.5" />
-              <span>חזרה לאתר</span>
-            </Link>
-
-            <div className="flex items-center gap-1.5 text-[10px] text-zinc-400">
+          {/* Footer Security Badge */}
+          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-center text-xs text-zinc-400">
+            <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>אימות מאובטח 256-Bit SSL</span>
+              <span>The Cut Multi-Tenant SaaS · אימות Google SSO מאובטח</span>
             </div>
           </div>
         </div>
@@ -797,6 +853,18 @@ export default function SuperAdminPage() {
           >
             <Bug className="w-4 h-4" />
             <span>מרכז תקלות ופידבקים ({reports.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+              activeTab === 'users'
+                ? 'border-[#C9A84C] text-[#C9A84C]'
+                : 'border-transparent text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>ניהול משתמשים והרשאות ({managedUsers.length})</span>
           </button>
         </div>
 
@@ -1143,6 +1211,190 @@ export default function SuperAdminPage() {
                 <p className="text-xs">כל הדיווחים מטופס "דווחו לנו על תקלה" יופיעו כאן בזמן אמת.</p>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* TAB 3: USER MANAGEMENT & PERMISSIONS                          */}
+        {/* ============================================================ */}
+        {activeTab === 'users' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-black text-white">ניהול משתמשים והרשאות במערכת</h2>
+                <p className="text-xs text-[#9E9891]">
+                  הוסף משתמשים לפי כתובת אימייל, הגדר תפקידים (מנהל-על / מנהל עסק) ושייך לעסקים ספציפיים
+                </p>
+              </div>
+
+              <button
+                onClick={fetchUsers}
+                disabled={usersLoading}
+                className="text-xs text-zinc-400 hover:text-white flex items-center gap-1.5 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-xl border border-white/10 cursor-pointer transition-colors"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${usersLoading ? 'animate-spin text-[#C9A84C]' : ''}`} />
+                <span>רענן משתמשים</span>
+              </button>
+            </div>
+
+            {/* Add User Card */}
+            <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-5 shadow-lg">
+              <h3 className="text-sm font-black text-white flex items-center gap-2 mb-3">
+                <UserPlus className="w-4 h-4 text-[#C9A84C]" />
+                <span>הוספת משתמש חדש</span>
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-[11px] text-zinc-400 font-bold mb-1">כתובת אימייל (Google / Gmail):</label>
+                  <input
+                    type="email"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                    placeholder="user@gmail.com"
+                    dir="ltr"
+                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-zinc-400 font-bold mb-1">שם מלא:</label>
+                  <input
+                    type="text"
+                    value={newUserDisplayName}
+                    onChange={(e) => setNewUserDisplayName(e.target.value)}
+                    placeholder="למשל: דביר / מנהל סניף"
+                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-zinc-400 font-bold mb-1">תפקיד במערכת:</label>
+                  <select
+                    value={newUserRole}
+                    onChange={(e) => setNewUserRole(e.target.value as any)}
+                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  >
+                    <option value="business_admin">מנהל עסק (Business Admin)</option>
+                    <option value="super_admin">מנהל-על (Super Admin)</option>
+                  </select>
+                </div>
+
+                {newUserRole === 'business_admin' && (
+                  <div>
+                    <label className="block text-[11px] text-zinc-400 font-bold mb-1">מזהה עסק (Slugs מופרדים בפסיק):</label>
+                    <input
+                      type="text"
+                      value={newUserBusinessSlugs}
+                      onChange={(e) => setNewUserBusinessSlugs(e.target.value)}
+                      placeholder="dvir, sharon"
+                      dir="ltr"
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleAddUser}
+                  disabled={isAddingUser || !newUserEmail}
+                  className="px-5 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{isAddingUser ? 'מוסיף...' : 'הוסף משתמש למערכת'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Users List Table */}
+            <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl overflow-hidden shadow-lg">
+              <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                <h3 className="text-sm font-black text-white flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#C9A84C]" />
+                  <span>משתמשים רשומים ({managedUsers.length})</span>
+                </h3>
+              </div>
+
+              {usersLoading ? (
+                <div className="p-10 text-center text-zinc-400">
+                  <div className="w-8 h-8 border-2 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin mx-auto mb-2" />
+                  <p className="text-xs">טוען משתמשים...</p>
+                </div>
+              ) : managedUsers.length > 0 ? (
+                <div className="divide-y divide-white/5">
+                  {managedUsers.map((u) => (
+                    <div
+                      key={u.uid}
+                      className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/[0.02] transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        {u.photoURL ? (
+                          <img
+                            src={u.photoURL}
+                            alt={u.displayName || u.email}
+                            className="w-9 h-9 rounded-full object-cover border border-white/10"
+                          />
+                        ) : (
+                          <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center font-bold text-xs text-white">
+                            {(u.displayName || u.email || 'U')[0].toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white text-xs">{u.displayName || u.email.split('@')[0]}</span>
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                u.role === 'super_admin'
+                                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                  : 'bg-[#C9A84C]/20 text-[#C9A84C] border border-[#C9A84C]/30'
+                              }`}
+                            >
+                              {u.role === 'super_admin' ? '👑 מנהל-על (Super Admin)' : '💼 מנהל עסק (Business Admin)'}
+                            </span>
+                            {u.preRegistered && (
+                              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                                ממתין לכניסה ראשונה
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[11px] text-zinc-400 mt-0.5 flex items-center gap-2">
+                            <span dir="ltr">{u.email}</span>
+                            {u.businessSlugs && u.businessSlugs.length > 0 && (
+                              <span className="text-zinc-500">
+                                · עסקים מורשים: <strong className="text-zinc-300">{u.businessSlugs.join(', ')}</strong>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 self-end sm:self-center">
+                        <span className="text-[10px] text-zinc-500" dir="ltr">
+                          נוצר: {new Date(u.createdAt).toLocaleDateString('he-IL')}
+                        </span>
+
+                        {u.email !== 'ishay1997@gmail.com' && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteUser(u.uid, u.email)}
+                            className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 text-red-400 text-xs font-bold transition-colors cursor-pointer"
+                            title="מחק משתמש"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center text-zinc-400 text-xs">
+                  לא נמצאו משתמשים רשומים. הוסף את המשתמש הראשון למעלה!
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
