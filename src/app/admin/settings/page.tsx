@@ -297,6 +297,14 @@ export default function SettingsPage() {
     notifySave();
   };
 
+  const handleDeleteBarber = (id: string) => {
+    if (id === 'dvir') return;
+    const updated = localBarbers.filter((b) => b.id !== id);
+    setLocalBarbers(updated);
+    saveBarbers(updated);
+    notifySave();
+  };
+
   // 4. General Settings
   const handleSaveGeneral = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1195,14 +1203,25 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleToggleBarberActive(barber.id)}
-                    className={`text-xs px-2.5 py-1 rounded-lg font-bold ${
-                      barber.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-zinc-100 text-zinc-500'
-                    }`}
-                  >
-                    {barber.is_active ? 'פעיל לקבלת תורים' : 'לא פעיל'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleToggleBarberActive(barber.id)}
+                      className={`text-xs px-2.5 py-1 rounded-lg font-bold transition-colors ${
+                        barber.is_active ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'
+                      }`}
+                    >
+                      {barber.is_active ? 'פעיל' : 'לא פעיל'}
+                    </button>
+                    {barber.id !== 'dvir' && (
+                      <button
+                        onClick={() => handleDeleteBarber(barber.id)}
+                        className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="מחק ספר"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
