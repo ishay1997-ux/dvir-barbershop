@@ -14,6 +14,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { ShareBarbershopModal } from '@/components/landing/QuickModals';
+import BugReportModal from '@/components/common/BugReportModal';
 
 interface SidebarDrawerProps {
   isOpen: boolean;
@@ -265,38 +266,10 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
       />
 
       {/* Bug Report Modal */}
-      {isBugModalOpen && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs" dir="rtl">
-          <div className="absolute inset-0" onClick={() => setIsBugModalOpen(false)} />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative max-w-sm w-full bg-[#222222] border border-[#C9A84C]/30 rounded-3xl p-6 text-white shadow-2xl z-10 text-center"
-          >
-            <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-3 text-red-400">
-              <Bug className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black mb-1">דיווח על תקלה במערכת</h3>
-            <p className="text-xs text-[#9E9891] mb-5">
-              נתקלת בבעיה בהזמנת תור? שלח הודעה ישירה לוואטסאפ של דביר ונטפל מיד.
-            </p>
-            <a
-              href={`https://wa.me/972521234567?text=${encodeURIComponent('היי דביר, נתקלתי בבעיה/תקלה באתר זימון התורים:')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs flex items-center justify-center gap-2 transition-colors mb-2"
-            >
-              <MessageCircle className="w-4 h-4" /> פתח שיחה בוואטסאפ
-            </a>
-            <button
-              onClick={() => setIsBugModalOpen(false)}
-              className="w-full py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 text-xs text-zinc-300 transition-colors"
-            >
-              סגור
-            </button>
-          </motion.div>
-        </div>
-      )}
+      <BugReportModal
+        isOpen={isBugModalOpen}
+        onClose={() => setIsBugModalOpen(false)}
+      />
 
       {/* Business Inquiry Modal */}
       {isBusinessModalOpen && (
