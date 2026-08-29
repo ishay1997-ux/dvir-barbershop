@@ -4,7 +4,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 
 export const metadata = {
-  title: 'תקנון ותנאי שימוש | The Cut & iTor זימון תורים',
+  title: 'תקנון ותנאי שימוש | The Cut זימון תורים',
   description: 'תקנון ותנאי השימוש המלאים במערכת זימון התורים והאפליקציה.',
 };
 
@@ -32,11 +32,11 @@ export default function TermsPage() {
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-black text-white">תקנון ותנאי שימוש</h1>
-                <p className="text-xs sm:text-sm text-[#9E9891]">iTor / The Cut · מערכת לזימון תורים</p>
+                <p className="text-xs sm:text-sm text-[#9E9891]">The Cut · מערכת לזימון תורים</p>
               </div>
             </div>
             <p className="text-xs text-zinc-400">
-              גרסה 2.1 · עודכן לאחרונה
+              גרסה 2.1 · עודכן לאחרונה: 30 באוגוסט 2026
             </p>
           </div>
 
@@ -44,7 +44,7 @@ export default function TermsPage() {
           <div className="bg-[#1C1C1C] border border-white/10 rounded-3xl p-6 sm:p-10 space-y-8 text-sm sm:text-base text-zinc-300 leading-relaxed">
             <div className="bg-[#C9A84C]/10 border border-[#C9A84C]/30 rounded-2xl p-5 text-sm text-zinc-200">
               משתמש/ת יקר/ה!<br />
-              ברוך הבא ל-<strong>iTor / The Cut</strong> – זימון תורים בקלות. אנו מודים לך על ביקורך ו/או תחילת שימושך באפליקציית זימון התורים (להלן: &quot;המערכת&quot;, &quot;מערכת הניהול&quot;, &quot;התוכנה&quot;, &quot;המוצר&quot;, &quot;האתר&quot; ו/או &quot;האפליקציה&quot;).
+              ברוך הבא ל-<strong>The Cut</strong> – זימון תורים בקלות. אנו מודים לך על ביקורך ו/או תחילת שימושך באפליקציית זימון התורים (להלן: &quot;המערכת&quot;, &quot;מערכת הניהול&quot;, &quot;התוכנה&quot;, &quot;המוצר&quot;, &quot;האתר&quot; ו/או &quot;האפליקציה&quot;).
             </div>
 
             {/* 1 */}

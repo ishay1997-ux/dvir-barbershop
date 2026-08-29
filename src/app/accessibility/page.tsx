@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function AccessibilityPage() {
-  const lastUpdated = '1 בספטמבר 2025';
+  const lastUpdated = '30 באוגוסט 2026';
 
   return (
     <>

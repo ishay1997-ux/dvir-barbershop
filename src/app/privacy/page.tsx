@@ -4,7 +4,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 
 export const metadata = {
-  title: 'מדיניות פרטיות | The Cut & iTor זימון תורים',
+  title: 'מדיניות פרטיות | The Cut זימון תורים',
   description: 'מדיניות הפרטיות, איסוף הנתונים ואבטחת המידע במערכת.',
 };
 
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
               </div>
             </div>
             <p className="text-xs text-zinc-400">
-              גרסה 2.1 · עודכן לאחרונה
+              גרסה 2.1 · עודכן לאחרונה: 30 באוגוסט 2026
             </p>
           </div>
 

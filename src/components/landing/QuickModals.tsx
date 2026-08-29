@@ -557,7 +557,7 @@ export function BusinessLeadModal({
         {/* Content & Form */}
         <div className="p-6 pt-2 text-center">
           <h3 className="text-xl font-black text-slate-900 mb-1">
-            רוצה iTor גם אצלך בעסק?
+            רוצה The Cut גם אצלך בעסק?
           </h3>
           <p className="text-xs text-slate-600 font-medium mb-6">
             מלא/י את הטופס ונציג יחזור אליכם בהקדם
