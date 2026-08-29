@@ -630,10 +630,6 @@ const defaultBusinessesList: Business[] = [
 
   // Delete Business Handler
   const handleDeleteBusiness = (slug: string, name: string) => {
-    if (slug === 'dvir') {
-      error('פעולה חסומה', 'לא ניתן למחוק את עסק הדגל של דביר');
-      return;
-    }
     showConfirm({
       title: `מחיקת ${name}`,
       message: `האם אתה בטוח שברצונך למחוק לצמיתות את המספרה "${name}" (thecut.co.il/${slug})?`,
@@ -993,19 +989,15 @@ const defaultBusinessesList: Business[] = [
                   return (
                     <div
                       key={biz.id}
-                      className={`bg-[#1C1C1C] border rounded-2xl p-5 shadow-lg space-y-4 relative group transition-all ${
-                        isDvir
-                          ? 'border-[#C9A84C] shadow-[#C9A84C]/10 ring-1 ring-[#C9A84C]/30 bg-linear-to-b from-[#222019] to-[#1C1C1C]'
-                          : 'border-white/10 hover:border-white/20'
-                      }`}
+                      className="bg-[#1C1C1C] border border-white/10 hover:border-white/20 rounded-2xl p-5 shadow-lg space-y-4 relative group transition-all"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
                           <div
                             className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-base shadow-md"
                             style={{
-                              backgroundColor: isDvir ? '#C9A84C' : 'rgba(255,255,255,0.08)',
-                              color: isDvir ? '#1C1C1C' : bizColor,
+                              backgroundColor: 'rgba(255,255,255,0.08)',
+                              color: bizColor,
                               border: `1px solid ${bizColor}`,
                             }}
                           >
@@ -1014,14 +1006,9 @@ const defaultBusinessesList: Business[] = [
                           <div>
                             <div className="flex items-center gap-2">
                               <h3 className="text-base font-black text-white">{biz.name}</h3>
-                              {isDvir && (
-                                <span className="bg-[#C9A84C]/20 text-[#DFCA85] border border-[#C9A84C]/50 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
-                                  👑 עסק דגל (ראשי)
-                                </span>
-                              )}
                             </div>
                             <span className="text-xs font-bold" style={{ color: bizColor }} dir="ltr">
-                              {isDvir ? 'thecut.co.il / thecut.co.il/dvir' : `thecut.co.il/${biz.slug}`}
+                              {`thecut.co.il/${biz.slug}`}
                             </span>
                           </div>
                         </div>
@@ -1076,7 +1063,7 @@ const defaultBusinessesList: Business[] = [
                         </button>
 
                         <Link
-                          href={isDvir ? '/' : `/${biz.slug}`}
+                          href={`/${biz.slug}`}
                           target="_blank"
                           className="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-center text-xs font-bold text-white transition-colors flex items-center gap-1"
                         >
@@ -1085,9 +1072,6 @@ const defaultBusinessesList: Business[] = [
 
                         <button
                           onClick={() => {
-                            if (typeof window !== 'undefined') {
-                              localStorage.setItem('thecut_admin_authenticated', 'true');
-                            }
                             router.push('/admin');
                           }}
                           className="py-2 px-3 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-500/30 text-center text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
@@ -1096,15 +1080,13 @@ const defaultBusinessesList: Business[] = [
                           <Key className="w-3.5 h-3.5" /> כניסה כמנהל
                         </button>
 
-                        {!isDvir && (
-                          <button
-                            onClick={() => handleDeleteBusiness(biz.slug, biz.name)}
-                            className="p-2 rounded-xl bg-red-950/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 transition-colors cursor-pointer"
-                            title="מחק מספרה זו"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => handleDeleteBusiness(biz.slug, biz.name)}
+                          className="p-2 rounded-xl bg-red-950/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 transition-colors cursor-pointer"
+                          title="מחק מספרה זו"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
                   );
