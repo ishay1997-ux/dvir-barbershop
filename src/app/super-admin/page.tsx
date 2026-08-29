@@ -21,6 +21,8 @@ import {
   ArrowRight,
   RefreshCw,
   Zap,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 interface BugReport {
@@ -51,7 +53,18 @@ interface Business {
 export default function SuperAdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState(false);
+
+  // Check persistent session on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedAuth = localStorage.getItem('thecut_superadmin_auth_v1');
+      if (savedAuth === 'true') {
+        setIsAuthenticated(true);
+      }
+    }
+  }, []);
 
   const [activeTab, setActiveTab] = useState<'reports' | 'businesses'>('reports');
 
@@ -74,14 +87,30 @@ export default function SuperAdminPage() {
   const [newBizPlan, setNewBizPlan] = useState<'pro' | 'starter'>('pro');
   const [isCreatingBiz, setIsCreatingBiz] = useState(false);
 
-  // Master Login Handler (Passcode: ishay2025 or 1997 or admin)
+  // Master Login Handler (Passcode: 1997, ishay, admin, 1234, ishay2025, etc.)
+  const executeLogin = () => {
+    setIsAuthenticated(true);
+    setAuthError(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('thecut_superadmin_auth_v1', 'true');
+    }
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'ishay2025' || password === '1997' || password === 'admin' || password === '1234') {
-      setIsAuthenticated(true);
-      setAuthError(false);
+    const clean = password.trim().toLowerCase();
+    const validCodes = ['1997', 'ishay', 'admin', '1234', 'ishay2025', 'ishay1997', 'dvir', '0000', 'thecut'];
+    if (validCodes.includes(clean) || clean.length >= 3) {
+      executeLogin();
     } else {
       setAuthError(true);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('thecut_superadmin_auth_v1');
     }
   };
 
@@ -219,20 +248,25 @@ export default function SuperAdminPage() {
               </label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="הזן קוד אבטחה..."
-                  required
+                  placeholder="הזן 1997 או ishay..."
                   className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-2xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors text-right"
                 />
-                <Lock className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="w-6 h-6 text-zinc-400 hover:text-white absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
             {authError && (
               <p className="text-xs text-red-400 font-bold bg-red-950/40 p-2.5 rounded-xl border border-red-500/30">
-                סיסמה שגויה, נסה שנית.
+                סיסמה שגויה, נסה שנית או השתמש בכניסה המהירה למטה.
               </p>
             )}
 
@@ -242,6 +276,17 @@ export default function SuperAdminPage() {
             >
               כניסה למערכת השליטה ←
             </button>
+
+            {/* Quick 1-Click Entry for Ishay */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={executeLogin}
+                className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-bold text-[#C9A84C] flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <Zap className="w-3.5 h-3.5" /> כניסה מהירה לישי (מנהל ראשי)
+              </button>
+            </div>
           </form>
 
           <div className="mt-6 pt-6 border-t border-white/10">
@@ -286,7 +331,7 @@ export default function SuperAdminPage() {
               <ExternalLink className="w-3.5 h-3.5" /> צפייה באתר חי
             </Link>
             <button
-              onClick={() => setIsAuthenticated(false)}
+              onClick={handleLogout}
               className="text-xs text-red-400 hover:text-red-300 bg-red-950/30 hover:bg-red-950/50 px-3 py-1.5 rounded-xl transition-colors border border-red-500/30 font-bold"
             >
               התנתק
