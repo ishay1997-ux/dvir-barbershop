@@ -29,6 +29,14 @@ import {
   Move,
   Delete,
   ArrowLeftRight,
+  Play,
+  Pause,
+  ChevronsLeft,
+  ChevronsRight,
+  FileText,
+  Settings,
+  Minus,
+  Plus,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -181,6 +189,23 @@ const A11Y_I18N = {
     readerAboutContent:
       'המספרה של דביר פועלת בשני סניפים מרכזיים: סניף אריאל וסניף רחובות. דביר אטיאס מתמחה בעיצובי שיער גברים, פיידים מדויקים ועיצוב זקן ברמה הגבוהה ביותר.',
     readerServicesTitle: 'מחירון שירותים מובילים',
+
+    // Speech Player
+    speechPlayerTitle: 'נגן הקראה קולית',
+    continuousReadingTitle: 'הקראה ממושכת',
+    continuousReadingDesc: 'העבר את סמן העכבר מעל כל טקסט או כותרת לקריאה קולית אוטומטית',
+    speechSettingsTitle: 'הגדרות הקראה קולית',
+    speechPitch: 'גובה צליל',
+    speechRate: 'קצב',
+    speechVoice: 'קול הקראה',
+    speechClose: 'סגור נגן הקראה',
+    speechRestart: 'התחל מחדש',
+    speechPrev: 'קטע קודם',
+    speechNext: 'קטע הבא',
+    speechPause: 'השהה',
+    speechPlay: 'נגן',
+    speechMute: 'השתק',
+    speechUnmute: 'בטל השתקה',
   },
 
   en: {
@@ -262,6 +287,23 @@ const A11Y_I18N = {
     readerAboutContent:
       'Dvir Barbershop operates across two branches in Ariel and Rehovot. Dvir Attias specializes in precision fades, executive men styling, and custom beard sculpting.',
     readerServicesTitle: 'Featured Pricing & Services',
+
+    // Speech Player
+    speechPlayerTitle: 'Text-to-Speech Player',
+    continuousReadingTitle: 'Continuous Reading',
+    continuousReadingDesc: 'Hover over any text or heading to automatically listen to it',
+    speechSettingsTitle: 'Speech Settings',
+    speechPitch: 'Pitch',
+    speechRate: 'Speed',
+    speechVoice: 'Voice',
+    speechClose: 'Close Speech Player',
+    speechRestart: 'Restart',
+    speechPrev: 'Previous',
+    speechNext: 'Next',
+    speechPause: 'Pause',
+    speechPlay: 'Play',
+    speechMute: 'Mute',
+    speechUnmute: 'Unmute',
   },
 
   ar: {
@@ -343,6 +385,23 @@ const A11Y_I18N = {
     readerAboutContent:
       'يعمل صالون دبير في فرعين رئيسيين: فرع أريئيل وفرع رحوفوت. دبير أتياس خبير في تصفيف شعر الرجال وقصات الفيد الدقيقة وتصميم اللحى بأعلى المعايير.',
     readerServicesTitle: 'قائمة الأسعار والخدمات المميزة',
+
+    // Speech Player
+    speechPlayerTitle: 'مشغل القراءة الصوتية',
+    continuousReadingTitle: 'قراءة مستمرة',
+    continuousReadingDesc: 'مرر مؤشر الفأرة فوق أي نص للاستماع إليه تلقائيًا',
+    speechSettingsTitle: 'إعدادات الصوت',
+    speechPitch: 'طبقة الصوت',
+    speechRate: 'السرعة',
+    speechVoice: 'الصوت',
+    speechClose: 'إغلاق مشغل الصوت',
+    speechRestart: 'إعادة البدء',
+    speechPrev: 'السابق',
+    speechNext: 'التالي',
+    speechPause: 'إيقاف مؤقت',
+    speechPlay: 'تشغيل',
+    speechMute: 'كتم الصوت',
+    speechUnmute: 'إلغاء الكتم',
   },
 
   ru: {
@@ -424,6 +483,23 @@ const A11Y_I18N = {
     readerAboutContent:
       'Барбершоп Двира работает в двух филиалах: Ариэль и Реховот. Двир Аттиас специализируется на безупречных мужских стрижках, фейдах и моделировании бороды.',
     readerServicesTitle: 'Прайс-лист популярных услуг',
+
+    // Speech Player
+    speechPlayerTitle: 'Плеер озвучивания текста',
+    continuousReadingTitle: 'Непрерывное чтение',
+    continuousReadingDesc: 'Наведите курсор мыши на любой текст для автоматического чтения',
+    speechSettingsTitle: 'Настройки голоса',
+    speechPitch: 'Высота тона',
+    speechRate: 'Скорость',
+    speechVoice: 'Голос',
+    speechClose: 'Закрыть плеер',
+    speechRestart: 'Начать сначала',
+    speechPrev: 'Назад',
+    speechNext: 'Вперед',
+    speechPause: 'Пауза',
+    speechPlay: 'Слушать',
+    speechMute: 'Без звука',
+    speechUnmute: 'Включить звук',
   },
 };
 
@@ -461,12 +537,27 @@ export default function AccessibilityWidget() {
   const [state, setState] = useState<A11yState>(defaultState);
   const [isClient, setIsClient] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [showReaderModal, setShowReaderModal] = useState(false);
   const [isHiddenTemporarily, setIsHiddenTemporarily] = useState(false);
   const [hoveredTile, setHoveredTile] = useState<{ id: string; title: string; desc: string } | null>(null);
   const [activeInput, setActiveInput] = useState<HTMLInputElement | HTMLTextAreaElement | null>(null);
   const colorSliderRef = useRef<HTMLDivElement>(null);
+
+  // Floating Speech Player & Settings State (Matching user screenshots)
+  const [isSpeechBarOpen, setIsSpeechBarOpen] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [continuousReading, setContinuousReading] = useState(false);
+  const [isSpeechSettingsOpen, setIsSpeechSettingsOpen] = useState(false);
+  const [speechRate, setSpeechRate] = useState(1.0);
+  const [speechPitch, setSpeechPitch] = useState(1.0);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [speechElements, setSpeechElements] = useState<HTMLElement[]>([]);
+  const [speechIndex, setSpeechIndex] = useState(0);
+  const isPlayingRef = useRef(false);
+  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   // Load from local storage
   useEffect(() => {
@@ -611,57 +702,301 @@ export default function AccessibilityWidget() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Text-To-Speech Reader with current language locale
-  const handleToggleSpeech = useCallback(() => {
+  // Load browser speech voices and match to current selected language
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return;
+      setAvailableVoices(voices);
+
+      const langCode =
+        state.language === 'he'
+          ? 'he'
+          : state.language === 'ar'
+          ? 'ar'
+          : state.language === 'ru'
+          ? 'ru'
+          : 'en';
+
+      const match = voices.find((v) => v.lang.toLowerCase().startsWith(langCode));
+      if (match) {
+        setSelectedVoice(match);
+      } else if (voices.length > 0) {
+        setSelectedVoice((prev) => prev || voices[0]);
+      }
+    };
+
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, [state.language]);
+
+  // Extract all meaningful readable text elements across the page
+  const extractReadableElements = useCallback((): HTMLElement[] => {
+    if (typeof document === 'undefined') return [];
+    const elements = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        'h1, h2, h3, h4, h5, h6, p, li, [role="heading"], button, a, [role="button"], td, th, span.font-bold'
+      )
+    );
+
+    return elements.filter((el) => {
+      if (el.closest('.a11y-ignore')) return false;
+      const style = window.getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+        return false;
+      }
+      const text = (el.innerText || el.textContent || '').trim();
+      return text.length >= 2;
+    });
+  }, []);
+
+  // Remove active highlight from all elements
+  const clearSpeechHighlights = useCallback(() => {
+    if (typeof document === 'undefined') return;
+    document.querySelectorAll('.a11y-speech-active').forEach((el) => {
+      el.classList.remove('a11y-speech-active');
+    });
+  }, []);
+
+  // Speak element at specific index in sequence
+  const speakElementAtIndex = useCallback(
+    (index: number, elementsList?: HTMLElement[]) => {
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+      const list = elementsList && elementsList.length > 0 ? elementsList : speechElements;
+
+      if (!list || list.length === 0) {
+        const freshList = extractReadableElements();
+        setSpeechElements(freshList);
+        if (freshList.length === 0) return;
+        speakElementAtIndex(0, freshList);
+        return;
+      }
+
+      if (index < 0 || index >= list.length) {
+        clearSpeechHighlights();
+        setIsSpeaking(false);
+        setIsPaused(false);
+        isPlayingRef.current = false;
+        setSpeechIndex(0);
+        return;
+      }
+
+      clearSpeechHighlights();
+      const target = list[index];
+      if (!target) return;
+
+      target.classList.add('a11y-speech-active');
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      window.speechSynthesis.cancel();
+      const text = (target.innerText || target.textContent || '').trim();
+      if (!text) {
+        if (isPlayingRef.current) speakElementAtIndex(index + 1, list);
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      utterance.lang =
+        state.language === 'he'
+          ? 'he-IL'
+          : state.language === 'ar'
+          ? 'ar-SA'
+          : state.language === 'ru'
+          ? 'ru-RU'
+          : 'en-US';
+
+      utterance.rate = speechRate;
+      utterance.pitch = speechPitch;
+      utterance.volume = isMuted ? 0 : 1;
+
+      utterance.onend = () => {
+        if (isPlayingRef.current) {
+          speakElementAtIndex(index + 1, list);
+        } else {
+          clearSpeechHighlights();
+          setIsSpeaking(false);
+        }
+      };
+
+      utterance.onerror = () => {
+        clearSpeechHighlights();
+        setIsSpeaking(false);
+      };
+
+      currentUtteranceRef.current = utterance;
+      setSpeechIndex(index);
+      setIsSpeaking(true);
+      setIsPaused(false);
+      isPlayingRef.current = true;
+      window.speechSynthesis.speak(utterance);
+    },
+    [
+      speechElements,
+      extractReadableElements,
+      clearSpeechHighlights,
+      selectedVoice,
+      state.language,
+      speechRate,
+      speechPitch,
+      isMuted,
+    ]
+  );
+
+  // Play / Pause Toggle
+  const handlePlayPause = useCallback(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       alert('דפדפן זה אינו תומך בהקראת טקסט (Web Speech API).');
       return;
     }
 
     if (isSpeaking) {
+      isPlayingRef.current = false;
       window.speechSynthesis.cancel();
+      clearSpeechHighlights();
       setIsSpeaking(false);
-      return;
+      setIsPaused(true);
+    } else {
+      isPlayingRef.current = true;
+      const list = speechElements.length > 0 ? speechElements : extractReadableElements();
+      setSpeechElements(list);
+      speakElementAtIndex(speechIndex, list);
     }
+  }, [
+    isSpeaking,
+    speechElements,
+    extractReadableElements,
+    speakElementAtIndex,
+    speechIndex,
+    clearSpeechHighlights,
+  ]);
 
-    const mainContent = document.querySelector('main') || document.body;
-    const textToRead = (mainContent.textContent || '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 1500);
+  // Forward >> (Next block)
+  const handleNextSentence = useCallback(() => {
+    isPlayingRef.current = true;
+    const list = speechElements.length > 0 ? speechElements : extractReadableElements();
+    setSpeechElements(list);
+    const nextIdx = Math.min(list.length - 1, speechIndex + 1);
+    speakElementAtIndex(nextIdx, list);
+  }, [speechElements, extractReadableElements, speechIndex, speakElementAtIndex]);
 
-    if (!textToRead) return;
+  // Rewind << (Previous block)
+  const handlePrevSentence = useCallback(() => {
+    isPlayingRef.current = true;
+    const list = speechElements.length > 0 ? speechElements : extractReadableElements();
+    setSpeechElements(list);
+    const prevIdx = Math.max(0, speechIndex - 1);
+    speakElementAtIndex(prevIdx, list);
+  }, [speechElements, extractReadableElements, speechIndex, speakElementAtIndex]);
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(textToRead);
+  // Restart 🔄 (From beginning)
+  const handleRestartSpeech = useCallback(() => {
+    isPlayingRef.current = true;
+    const list = extractReadableElements();
+    setSpeechElements(list);
+    speakElementAtIndex(0, list);
+  }, [extractReadableElements, speakElementAtIndex]);
 
-    // Match speech locale to selected language
-    utterance.lang =
-      state.language === 'he'
-        ? 'he-IL'
-        : state.language === 'ar'
-        ? 'ar-SA'
-        : state.language === 'ru'
-        ? 'ru-RU'
-        : 'en-US';
-
-    utterance.rate = 0.95;
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
-    setIsSpeaking(true);
-  }, [isSpeaking, state.language]);
-
-  // Reset all accessibility modifications
-  const handleResetAll = useCallback(() => {
+  // Close floating speech player bar
+  const handleCloseSpeech = useCallback(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
+    isPlayingRef.current = false;
+    clearSpeechHighlights();
+    setIsSpeechBarOpen(false);
     setIsSpeaking(false);
+    setIsPaused(false);
+    setContinuousReading(false);
+    setIsSpeechSettingsOpen(false);
+  }, [clearSpeechHighlights]);
+
+  // Toggle Mute 🔊 / 🔇
+  const handleToggleMute = useCallback(() => {
+    setIsMuted((prev) => !prev);
+  }, []);
+
+  // Toggle Continuous Reading 📑 (Hover over any text to read)
+  const handleToggleContinuous = useCallback(() => {
+    setContinuousReading((prev) => {
+      const next = !prev;
+      if (!next && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        clearSpeechHighlights();
+        setIsSpeaking(false);
+      }
+      return next;
+    });
+  }, [clearSpeechHighlights]);
+
+  // Continuous Reading Listener (Hover-to-read across all elements)
+  useEffect(() => {
+    if (!continuousReading || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    let hoverTimeout: NodeJS.Timeout | null = null;
+    let hoveredEl: HTMLElement | null = null;
+
+    const handleHover = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target || target.closest('.a11y-ignore')) return;
+
+      const text = (target.innerText || target.textContent || '').trim();
+      if (!text || text.length < 2) return;
+
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      hoverTimeout = setTimeout(() => {
+        if (hoveredEl) hoveredEl.classList.remove('a11y-speech-active');
+        hoveredEl = target;
+        target.classList.add('a11y-speech-active');
+
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        if (selectedVoice) utterance.voice = selectedVoice;
+        utterance.lang =
+          state.language === 'he'
+            ? 'he-IL'
+            : state.language === 'ar'
+            ? 'ar-SA'
+            : state.language === 'ru'
+            ? 'ru-RU'
+            : 'en-US';
+        utterance.rate = speechRate;
+        utterance.pitch = speechPitch;
+        utterance.volume = isMuted ? 0 : 1;
+        utterance.onend = () => {
+          target.classList.remove('a11y-speech-active');
+        };
+        utterance.onerror = () => {
+          target.classList.remove('a11y-speech-active');
+        };
+        window.speechSynthesis.speak(utterance);
+      }, 150);
+    };
+
+    document.addEventListener('mouseover', handleHover);
+    return () => {
+      document.removeEventListener('mouseover', handleHover);
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      if (hoveredEl) (hoveredEl as HTMLElement).classList.remove('a11y-speech-active');
+    };
+  }, [continuousReading, selectedVoice, speechRate, speechPitch, isMuted, state.language]);
+
+  // Reset all accessibility modifications
+  const handleResetAll = useCallback(() => {
+    handleCloseSpeech();
     setShowReaderModal(false);
     saveState(defaultState);
-  }, [saveState]);
+  }, [handleCloseSpeech, saveState]);
 
   // Color Spectrum Click Handler
   const handleColorSpectrumClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -805,11 +1140,23 @@ export default function AccessibilityWidget() {
     },
     {
       id: 'speech',
-      title: isSpeaking ? t.speechStopTitle : t.speechTitle,
+      title: isSpeaking || isSpeechBarOpen ? t.speechStopTitle : t.speechTitle,
       desc: t.speechDesc,
-      icon: isSpeaking ? <VolumeX className="w-6 h-6 text-red-500 animate-pulse" /> : <Volume2 className="w-6 h-6 text-[#373C44]" />,
-      active: isSpeaking,
-      onClick: handleToggleSpeech,
+      icon: (
+        <Volume2
+          className={`w-6 h-6 ${
+            isSpeaking ? 'text-[#0088A9] animate-pulse' : 'text-[#373C44]'
+          }`}
+        />
+      ),
+      active: isSpeechBarOpen || isSpeaking,
+      onClick: () => {
+        setIsSpeechBarOpen(true);
+        setIsOpen(false);
+        if (!isSpeaking) {
+          handlePlayPause();
+        }
+      },
     },
     {
       id: 'contrastDark',
@@ -1483,6 +1830,311 @@ export default function AccessibilityWidget() {
           </div>
         </div>
       )}
+
+      {/* 5. Floating Speech Player Bar (Exact Match for Image 1) */}
+      <AnimatePresence>
+        {isSpeechBarOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-[999999] bg-white rounded-2xl sm:rounded-3xl shadow-[0_12px_45px_rgba(0,0,0,0.18)] border border-slate-200/90 py-2 sm:py-2.5 px-3 sm:px-4 flex items-center gap-1.5 sm:gap-3 select-none a11y-ignore"
+            dir="ltr"
+          >
+            {/* Top-Left Floating Circular Close X Button */}
+            <button
+              onClick={handleCloseSpeech}
+              className="absolute -top-3 -left-3 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white border border-slate-300 shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:scale-110 active:scale-95 transition-all cursor-pointer"
+              aria-label={t.speechClose}
+              title={t.speechClose}
+            >
+              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </button>
+
+            {/* 1. Volume / Mute Speaker (🔊 / 🔇) */}
+            <button
+              onClick={handleToggleMute}
+              className={`p-1.5 sm:p-2 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+                isMuted
+                  ? 'text-red-500 bg-red-50 hover:bg-red-100'
+                  : 'text-[#0088A9] hover:bg-[#0088A9]/10'
+              }`}
+              title={isMuted ? t.speechUnmute : t.speechMute}
+              aria-label={isMuted ? t.speechUnmute : t.speechMute}
+            >
+              {isMuted ? (
+                <VolumeX className="w-5 h-5" />
+              ) : (
+                <Volume2
+                  className={`w-5 h-5 ${
+                    isSpeaking ? 'animate-pulse text-[#0088A9]' : 'text-[#0088A9]'
+                  }`}
+                />
+              )}
+            </button>
+
+            {/* Vertical Divider */}
+            <div className="w-[1px] h-6 bg-slate-200" />
+
+            {/* 2. Play / Pause (▶️ / ⏸️) */}
+            <button
+              onClick={handlePlayPause}
+              className="p-1.5 sm:p-2 rounded-xl text-[#0088A9] hover:bg-[#0088A9]/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+              title={isSpeaking ? t.speechPause : t.speechPlay}
+              aria-label={isSpeaking ? t.speechPause : t.speechPlay}
+            >
+              {isSpeaking ? (
+                <Pause className="w-5 h-5 fill-current" />
+              ) : (
+                <Play className="w-5 h-5 fill-current" />
+              )}
+            </button>
+
+            {/* 3. Rewind << (Previous section) */}
+            <button
+              onClick={handlePrevSentence}
+              className="p-1.5 sm:p-2 rounded-xl text-[#0088A9] hover:bg-[#0088A9]/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+              title={t.speechPrev}
+              aria-label={t.speechPrev}
+            >
+              <ChevronsLeft className="w-5 h-5" />
+            </button>
+
+            {/* 4. Forward >> (Next section) */}
+            <button
+              onClick={handleNextSentence}
+              className="p-1.5 sm:p-2 rounded-xl text-[#0088A9] hover:bg-[#0088A9]/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+              title={t.speechNext}
+              aria-label={t.speechNext}
+            >
+              <ChevronsRight className="w-5 h-5" />
+            </button>
+
+            {/* Vertical Divider */}
+            <div className="w-[1px] h-6 bg-slate-200" />
+
+            {/* 5. Restart 🔄 (From beginning) */}
+            <button
+              onClick={handleRestartSpeech}
+              className="p-1.5 sm:p-2 rounded-xl text-[#0088A9] hover:bg-[#0088A9]/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+              title={t.speechRestart}
+              aria-label={t.speechRestart}
+            >
+              <RotateCcw className="w-5 h-5" />
+            </button>
+
+            {/* Vertical Divider */}
+            <div className="w-[1px] h-6 bg-slate-200" />
+
+            {/* 6. Continuous / Hover-To-Read Mode 📑 (Notepad icon for continuous reading) */}
+            <button
+              onClick={handleToggleContinuous}
+              className={`p-1.5 sm:p-2 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+                continuousReading
+                  ? 'bg-[#0088A9] text-white shadow-md ring-2 ring-[#0088A9]/30'
+                  : 'text-[#0088A9] hover:bg-[#0088A9]/10'
+              }`}
+              title={`${t.continuousReadingTitle}: ${t.continuousReadingDesc}`}
+              aria-label={t.continuousReadingTitle}
+              aria-pressed={continuousReading}
+            >
+              <FileText className="w-5 h-5" />
+            </button>
+
+            {/* Vertical Divider */}
+            <div className="w-[1px] h-6 bg-slate-200" />
+
+            {/* 7. Settings Gear ⚙️ (Opens Image 2 popup) */}
+            <button
+              onClick={() => setIsSpeechSettingsOpen((prev) => !prev)}
+              className={`p-1.5 sm:p-2 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+                isSpeechSettingsOpen
+                  ? 'bg-[#0088A9] text-white shadow-md'
+                  : 'text-[#0088A9] hover:bg-[#0088A9]/10'
+              }`}
+              title={t.speechSettingsTitle}
+              aria-label={t.speechSettingsTitle}
+              aria-expanded={isSpeechSettingsOpen}
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 6. Speech Settings Modal Dialog (Exact Match for Image 2) */}
+      <AnimatePresence>
+        {isSpeechSettingsOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+            className="fixed bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 z-[9999999] w-[92vw] max-w-[370px] bg-white rounded-3xl shadow-[0_16px_50px_rgba(0,0,0,0.22)] border border-slate-200 p-4 sm:p-5 a11y-ignore text-slate-800 select-none"
+            dir="rtl"
+          >
+            {/* Top Close X Button */}
+            <div className="flex items-center justify-end pb-1 mb-2">
+              <button
+                onClick={() => setIsSpeechSettingsOpen(false)}
+                className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-[#0088A9] hover:text-black transition-colors cursor-pointer"
+                aria-label={t.close}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Top Voice Selector Banner (Teal / Cyan Banner with Flag & Name) */}
+            <div className="bg-[#0088A9] text-white rounded-2xl px-3.5 py-2.5 flex items-center justify-between gap-2 mb-4 shadow-sm">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <span className="text-lg">
+                  {LANGUAGES.find((l) => l.code === state.language)?.flag || '🇮🇱'}
+                </span>
+                <select
+                  value={selectedVoice?.name || ''}
+                  onChange={(e) => {
+                    const voice = availableVoices.find((v) => v.name === e.target.value);
+                    if (voice) setSelectedVoice(voice);
+                  }}
+                  className="bg-transparent text-white font-bold text-xs outline-none w-full truncate cursor-pointer"
+                  aria-label={t.speechVoice}
+                >
+                  {availableVoices.length > 0 ? (
+                    availableVoices.map((v) => (
+                      <option key={v.name} value={v.name} className="bg-slate-900 text-white">
+                        {v.name} ({v.lang})
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" className="bg-slate-900 text-white">
+                      Microsoft Asaf - Hebrew (Israel)
+                    </option>
+                  )}
+                </select>
+              </div>
+              <ChevronDown className="w-4 h-4 text-white/80 pointer-events-none shrink-0" />
+            </div>
+
+            {/* 2 Circular Gauge Controls Side-by-Side (גובה צליל & קצב) */}
+            <div className="grid grid-cols-2 gap-3 py-2 relative">
+              {/* Vertical Center Divider */}
+              <div className="absolute top-2 bottom-2 left-1/2 w-[1px] bg-slate-200 -translate-x-1/2" />
+
+              {/* 1. גובה צליל (Pitch) */}
+              <div className="flex flex-col items-center text-center">
+                <span className="text-xs font-bold text-[#0088A9] mb-2.5">
+                  {t.speechPitch}
+                </span>
+
+                <div className="flex items-center justify-center gap-2 w-full">
+                  {/* Minus Button */}
+                  <button
+                    onClick={() =>
+                      setSpeechPitch((p) => Math.max(0.5, Number((p - 0.1).toFixed(1))))
+                    }
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-[#0088A9] font-black text-sm flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+                    title="הנמך גובה צליל"
+                    aria-label="הנמך גובה צליל"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+
+                  {/* Rotary Dial Gauge */}
+                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-[#0088A9] flex items-center justify-center bg-white shadow-xs">
+                    {/* Inner Solid Circle with Current Value */}
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#0088A9] flex items-center justify-center text-white font-black text-xs shadow-xs">
+                      {speechPitch.toFixed(1)}
+                    </div>
+
+                    {/* Indicator Dot on the outer ring */}
+                    <div
+                      className="absolute w-3 h-3 rounded-full bg-[#0088A9] border-2 border-white shadow-sm"
+                      style={{
+                        top: `${50 - 46 * Math.cos(((speechPitch - 0.5) / 1.3) * 2 * Math.PI)}%`,
+                        left: `${50 + 46 * Math.sin(((speechPitch - 0.5) / 1.3) * 2 * Math.PI)}%`,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    />
+                  </div>
+
+                  {/* Plus Button */}
+                  <button
+                    onClick={() =>
+                      setSpeechPitch((p) => Math.min(1.8, Number((p + 0.1).toFixed(1))))
+                    }
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-[#0088A9] font-black text-sm flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+                    title="הגבר גובה צליל"
+                    aria-label="הגבר גובה צליל"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* 2. קצב (Rate / Speed) */}
+              <div className="flex flex-col items-center text-center">
+                <span className="text-xs font-bold text-[#0088A9] mb-2.5">
+                  {t.speechRate}
+                </span>
+
+                <div className="flex items-center justify-center gap-2 w-full">
+                  {/* Minus Button */}
+                  <button
+                    onClick={() =>
+                      setSpeechRate((r) => Math.max(0.5, Number((r - 0.1).toFixed(1))))
+                    }
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-[#0088A9] font-black text-sm flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+                    title="האט קצב"
+                    aria-label="האט קצב"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+
+                  {/* Rotary Dial Gauge */}
+                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-[#0088A9] flex items-center justify-center bg-white shadow-xs">
+                    {/* Inner Solid Circle with Current Value */}
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#0088A9] flex items-center justify-center text-white font-black text-xs shadow-xs">
+                      {speechRate.toFixed(1)}
+                    </div>
+
+                    {/* Indicator Dot on the outer ring */}
+                    <div
+                      className="absolute w-3 h-3 rounded-full bg-[#0088A9] border-2 border-white shadow-sm"
+                      style={{
+                        top: `${50 - 46 * Math.cos(((speechRate - 0.5) / 1.5) * 2 * Math.PI)}%`,
+                        left: `${50 + 46 * Math.sin(((speechRate - 0.5) / 1.5) * 2 * Math.PI)}%`,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    />
+                  </div>
+
+                  {/* Plus Button */}
+                  <button
+                    onClick={() =>
+                      setSpeechRate((r) => Math.min(2.0, Number((r + 0.1).toFixed(1))))
+                    }
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-[#0088A9] font-black text-sm flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+                    title="הגבר קצב"
+                    aria-label="הגבר קצב"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Left Circular Close Button (Matches Image 2) */}
+            <div className="flex items-center justify-start pt-2 mt-2 border-t border-slate-100">
+              <button
+                onClick={() => setIsSpeechSettingsOpen(false)}
+                className="w-7 h-7 rounded-full bg-white border border-slate-300 shadow-sm flex items-center justify-center text-slate-500 hover:text-black transition-colors cursor-pointer"
+                aria-label={t.close}
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -707,6 +707,18 @@ html.a11y-keyboard-nav *:focus-visible {
 }
 
 /* ============================================================
+   12. ACTIVE SPEECH / READING HIGHLIGHT
+   ============================================================ */
+.a11y-speech-active {
+  outline: 3px solid #0088A9 !important;
+  outline-offset: 3px !important;
+  background-color: rgba(0, 136, 169, 0.18) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 0 12px rgba(0, 136, 169, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+
+/* ============================================================
    PHONE INPUT
    ============================================================ */
 input[type="tel"] {
