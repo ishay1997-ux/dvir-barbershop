@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, Scissors, ArrowLeft, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, Scissors, ArrowLeft, ShieldCheck, Eye, EyeOff, KeyRound, Phone, CheckCircle2, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminLoginPage() {
@@ -12,6 +12,13 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Forgot / Reset Password Modal State
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+  const [resetPhone, setResetPhone] = useState('');
+  const [newResetPassword, setNewResetPassword] = useState('');
+  const [resetError, setResetError] = useState('');
+  const [resetSuccess, setResetSuccess] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +52,35 @@ export default function AdminLoginPage() {
         setLoading(false);
       }
     }, 400);
+  };
+
+  const handleResetPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetError('');
+
+    const cleanPhone = resetPhone.replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length < 9) {
+      setResetError('אנא הזן מספר טלפון תקין של מנהל המספרה');
+      return;
+    }
+
+    if (!newResetPassword.trim() || newResetPassword.length < 4) {
+      setResetError('הסיסמה החדשה חייבת להכיל לפחות 4 תווים');
+      return;
+    }
+
+    // Save new password
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('dvir_admin_password', newResetPassword.trim());
+      setResetSuccess(true);
+      setTimeout(() => {
+        setPassword(newResetPassword.trim());
+        setIsForgotModalOpen(false);
+        setResetSuccess(false);
+        setResetPhone('');
+        setNewResetPassword('');
+      }, 1500);
+    }
   };
 
   return (
@@ -112,9 +148,18 @@ export default function AdminLoginPage() {
 
             {/* Password */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="admin-password" className="text-xs font-bold text-[#D5CBB8]">
-                סיסמה
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="admin-password" className="text-xs font-bold text-[#D5CBB8]">
+                  סיסמה
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsForgotModalOpen(true)}
+                  className="text-[11px] text-gold hover:underline font-medium"
+                >
+                  שכחת סיסמה?
+                </button>
+              </div>
               <div className="relative">
                 <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6560]" />
                 <input
@@ -163,6 +208,88 @@ export default function AdminLoginPage() {
           </form>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {isForgotModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-[#2A2A2A] border border-[#3D3D3D] rounded-3xl p-6 w-full max-w-sm shadow-2xl relative">
+            <button
+              onClick={() => setIsForgotModalOpen(false)}
+              className="absolute top-4 left-4 text-[#9E9891] hover:text-white p-1 rounded-full bg-white/5"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-2 text-gold text-xs font-bold uppercase mb-2">
+              <KeyRound className="w-4 h-4" />
+              איפוס סיסמת מנהל
+            </div>
+
+            <h3 className="text-lg font-bold text-white mb-1">שחזור גישה למספרה</h3>
+            <p className="text-xs text-[#9E9891] mb-5">
+              הזן את מספר הטלפון הראשי של דביר ובחר סיסמה חדשה
+            </p>
+
+            {resetError && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl p-2.5 mb-4 font-bold text-center">
+                {resetError}
+              </div>
+            )}
+
+            {resetSuccess ? (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs rounded-xl p-4 font-bold flex items-center justify-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                הסיסמה אופסה בהצלחה! מעדכן...
+              </div>
+            ) : (
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#D5CBB8] mb-1">
+                    מספר טלפון של דביר
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6560]" />
+                    <input
+                      type="tel"
+                      value={resetPhone}
+                      onChange={(e) => setResetPhone(e.target.value)}
+                      placeholder="052-123-4567"
+                      required
+                      dir="ltr"
+                      className="w-full bg-[#1C1C1C] border border-[#3D3D3D] focus:border-gold rounded-xl py-2.5 pr-10 pl-3 text-white text-xs outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#D5CBB8] mb-1">
+                    סיסמה חדשה לבחירתך
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6560]" />
+                    <input
+                      type="text"
+                      value={newResetPassword}
+                      onChange={(e) => setNewResetPassword(e.target.value)}
+                      placeholder="הקלד סיסמה חדשה"
+                      required
+                      dir="ltr"
+                      className="w-full bg-[#1C1C1C] border border-[#3D3D3D] focus:border-gold rounded-xl py-2.5 pr-10 pl-3 text-white text-xs outline-none"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn-shimmer w-full text-[#1C1C1C] font-black text-xs py-3 rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-gold"
+                >
+                  אפס סיסמה והתחבר
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
