@@ -1615,6 +1615,46 @@ const defaultBusinessesList: Business[] = [
                   באפשרותך לקבוע את סגנון ההירו העליון, עיצוב הכרטיסים ולהפעיל או לכבות סקשנים לפי העדפת הספר.
                 </div>
 
+                {/* Website Background Theme Selector */}
+                <div>
+                  <label className="block text-zinc-300 font-bold mb-2">ערכת רקע ואווירה כללית לאתר (Website Theme):</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    {[
+                      { id: 'dark-obsidian', name: 'שחור אובסידיאן', sub: 'Dark Obsidian', icon: '🌑', bg: 'bg-[#121212]', border: 'border-white/20' },
+                      { id: 'brand-midnight', name: 'כהה גוון מותג', sub: 'Brand Midnight', icon: '🌌', bg: 'bg-[#080c10]', border: 'border-emerald-500/40' },
+                      { id: 'luxury-light', name: 'בהיר פרימיום', sub: 'Luxury Light', icon: '☀️', bg: 'bg-slate-100 text-slate-900', border: 'border-slate-300' },
+                      { id: 'cyber-carbon', name: 'קרבון וניאון', sub: 'Cyber Carbon', icon: '⚡', bg: 'bg-[#09090B]', border: 'border-purple-500/40' },
+                    ].map((th) => {
+                      const currentBg = editingBiz.layout?.bgTheme || 'dark-obsidian';
+                      const isSelected = currentBg === th.id;
+                      return (
+                        <button
+                          key={th.id}
+                          type="button"
+                          onClick={() => {
+                            setEditingBiz({
+                              ...editingBiz,
+                              layout: {
+                                ...(editingBiz.layout || {}),
+                                bgTheme: th.id as any,
+                              },
+                            });
+                          }}
+                          className={`p-3 rounded-xl border flex flex-col items-center text-center cursor-pointer transition-all ${
+                            isSelected
+                              ? 'border-[#C9A84C] bg-white/10 shadow-md ring-1 ring-[#C9A84C]'
+                              : 'border-white/10 bg-[#141414] hover:bg-white/5 opacity-80'
+                          }`}
+                        >
+                          <span className="text-xl mb-1">{th.icon}</span>
+                          <span className="text-xs font-bold text-white">{th.name}</span>
+                          <span className="text-[10px] text-zinc-400">{th.sub}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Section Visibility Toggles */}
                 <div>
                   <label className="block text-zinc-300 font-bold mb-2">מודולים וסקשנים פעילים בעמוד הבית:</label>

@@ -88,6 +88,51 @@ export default function DynamicBusinessLandingPage({
 
   const themeColor = business?.themeColor || '#C9A84C';
   const cleanPhone = (business?.phone || '052-1234567').replace(/\D/g, '').replace(/^0/, '972');
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+
+  // Dynamic Background Theme Styles
+  const bgStyles = (() => {
+    switch (bgTheme) {
+      case 'brand-midnight':
+        return {
+          backgroundColor: '#080c10',
+          backgroundImage: `
+            radial-gradient(ellipse 90% 60% at 50% 0%, ${themeColor}38, transparent 75%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, ${themeColor}22, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, ${themeColor}22, transparent 70%),
+            linear-gradient(to bottom, transparent, #05070a 95%)
+          `,
+        };
+      case 'luxury-light':
+        return {
+          backgroundColor: '#F8FAFC',
+          backgroundImage: `
+            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}25, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, ${themeColor}15, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, ${themeColor}15, transparent 70%)
+          `,
+        };
+      case 'cyber-carbon':
+        return {
+          backgroundColor: '#09090B',
+          backgroundImage: `
+            radial-gradient(circle at 50% 20%, ${themeColor}30, transparent 65%),
+            radial-gradient(circle at 100% 80%, ${themeColor}18, transparent 50%),
+            radial-gradient(circle at 0% 50%, ${themeColor}18, transparent 50%)
+          `,
+        };
+      case 'dark-obsidian':
+      default:
+        return {
+          backgroundColor: '#121212',
+          backgroundImage: `
+            radial-gradient(ellipse 80% 50% at 50% 0%, ${themeColor}1A, transparent 70%),
+            radial-gradient(ellipse 60% 40% at 100% 30%, ${themeColor}10, transparent 70%),
+            radial-gradient(ellipse 60% 40% at 0% 70%, ${themeColor}10, transparent 70%)
+          `,
+        };
+    }
+  })();
 
   return (
     <>
@@ -95,14 +140,7 @@ export default function DynamicBusinessLandingPage({
       <main
         id="main-content"
         className="relative overflow-hidden transition-colors duration-500"
-        style={{
-          backgroundColor: '#121212',
-          backgroundImage: `
-            radial-gradient(ellipse 80% 50% at 50% 0%, ${themeColor}1A, transparent 70%),
-            radial-gradient(ellipse 60% 40% at 100% 30%, ${themeColor}10, transparent 70%),
-            radial-gradient(ellipse 60% 40% at 0% 70%, ${themeColor}10, transparent 70%)
-          `,
-        }}
+        style={bgStyles}
       >
         {/* 1. Sleek Hero Banner Hub: Cover Image, Monogram Logo, Waze, WhatsApp & 4 Action Pills */}
         <BarbershopHeroHub business={business || undefined} />

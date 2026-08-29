@@ -104,6 +104,7 @@ function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: Business
     testimonials: raw.testimonials && raw.testimonials.length > 0 ? raw.testimonials : base.testimonials,
     faqs: raw.faqs && raw.faqs.length > 0 ? raw.faqs : base.faqs,
     layout: {
+      bgTheme: raw.layout?.bgTheme || base.layout?.bgTheme || 'dark-obsidian',
       heroStyle: raw.layout?.heroStyle || base.layout?.heroStyle || 'hub-monogram',
       servicesStyle: raw.layout?.servicesStyle || base.layout?.servicesStyle || 'split-gallery',
       cardStyle: raw.layout?.cardStyle || base.layout?.cardStyle || 'glass',

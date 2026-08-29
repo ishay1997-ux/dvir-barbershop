@@ -32,6 +32,7 @@ export interface FaqItem {
 }
 
 export interface BusinessLayoutConfig {
+  bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
   heroStyle?: 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
   servicesStyle?: 'split-gallery' | 'cards-grid' | 'accordion-list';
   cardStyle?: 'glass' | 'solid-dark' | 'bordered-neon';
