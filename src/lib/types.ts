@@ -58,6 +58,15 @@ export interface Appointment {
   created_at: string;
 }
 
+export interface HaircutFormula {
+  sides?: string;      // e.g. "0.5 סקין פייד"
+  top?: string;        // e.g. "מספריים, קיצור בינוני"
+  beard?: string;      // e.g. "קווים חדים בתער"
+  beverage?: string;   // e.g. "אספרסו קצר בלי סוכר"
+  notes?: string;      // e.g. "עור רגיש בעורף"
+  updatedAt?: string;
+}
+
 export interface CustomerPreferences {
   machineNumber?: string; // e.g. "0.5 בצדדים, 2 למעלה"
   fadeType?: string;      // e.g. "Low Fade", "Mid Fade", "Skin Fade"
@@ -76,6 +85,31 @@ export interface Customer {
   favoriteBarberId?: string;
   favoriteBranchId?: string;
   preferences?: CustomerPreferences;
+  haircutFormula?: HaircutFormula;
+}
+
+export interface ProductAddon {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  icon?: string;
+  category?: 'styling' | 'beard' | 'care';
+}
+
+export interface WaitlistEntry {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  date: string; // YYYY-MM-DD
+  preferredTimeRange: 'morning' | 'afternoon' | 'evening' | 'any';
+  serviceId?: string;
+  serviceName?: string;
+  branchId: string;
+  branchName: string;
+  notes?: string;
+  createdAt: string;
+  status: 'waiting' | 'notified' | 'booked' | 'cancelled';
 }
 
 export interface BookingState {
@@ -87,6 +121,7 @@ export interface BookingState {
   selectedTime: string | null;
   customerName: string;
   customerPhone: string;
+  selectedAddons?: ProductAddon[];
 }
 
 export interface Review {

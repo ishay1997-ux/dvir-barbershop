@@ -1,7 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Branch, Service, Barber, Customer, ShopSettings, BlockedDate, WorkingHours } from './types';
+import type {
+  Branch,
+  Service,
+  Barber,
+  Customer,
+  ShopSettings,
+  BlockedDate,
+  WorkingHours,
+  ProductAddon,
+  WaitlistEntry,
+  HaircutFormula,
+} from './types';
 
 // ============================================================
 // INITIAL SEED DATA FOR "המספרה של דביר"
@@ -307,6 +318,49 @@ export function getEffectiveShiftForDate(
   };
 }
 
+export const INITIAL_PRODUCT_ADDONS: ProductAddon[] = [
+  {
+    id: 'addon-wax',
+    name: 'ווקס חימר מט פרימיום (Matte Clay Wax)',
+    price: 50,
+    description: 'אחיזה חזקה בגימור טבעי ללא ברק, מתאים לכל סוגי השיער',
+    icon: '🏺',
+    category: 'styling',
+  },
+  {
+    id: 'addon-oil',
+    name: 'שמן עץ האלון וארגן לזקן (Beard Oil)',
+    price: 45,
+    description: 'ריכוך, הזנה עמוקה וברק בריא לזקן עם ניחוח יוקרתי',
+    icon: '💧',
+    category: 'beard',
+  },
+  {
+    id: 'addon-mask',
+    name: 'מסיכת פחם שחורה ופילינג פנים (Face Mask)',
+    price: 30,
+    description: 'ניקוי עמוק של נקבוביות ורענון עור הפנים במגבת חמה',
+    icon: '🧖',
+    category: 'care',
+  },
+];
+
+export const INITIAL_WAITLIST: WaitlistEntry[] = [
+  {
+    id: 'w1',
+    customerName: 'עמית שפירא',
+    customerPhone: '054-9988771',
+    date: new Date().toISOString().split('T')[0],
+    preferredTimeRange: 'evening',
+    serviceName: 'תספורת גברים פרימיום',
+    branchId: 'ariel',
+    branchName: 'סניף אריאל – מתחם האוניברסיטה',
+    notes: 'מעדיף שעות 18:00-20:00',
+    createdAt: new Date().toISOString(),
+    status: 'waiting',
+  },
+];
+
 // ============================================================
 // REACT HOOK FOR GLOBAL DATA STORE
 // ============================================================
@@ -317,17 +371,16 @@ export function useShopStore() {
   const [barbers, setBarbers] = useState<Barber[]>(INITIAL_BARBERS);
   const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
   const [settings, setSettings] = useState<ShopSettings>(INITIAL_SETTINGS);
+  const [waitlist, setWaitlist] = useState<WaitlistEntry[]>(INITIAL_WAITLIST);
+  const [productAddons, setProductAddons] = useState<ProductAddon[]>(INITIAL_PRODUCT_ADDONS);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from localStorage on client mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const CURRENT_STORE_VERSION = 'v3_solo_dvir';
+      const CURRENT_STORE_VERSION = 'v4_high_value_suite';
       const storedVersion = localStorage.getItem('thecut_version');
       if (storedVersion !== CURRENT_STORE_VERSION) {
-        localStorage.removeItem('thecut_customers');
-        localStorage.removeItem('thecut_appointments');
-        localStorage.removeItem('thecut_barbers');
         localStorage.setItem('thecut_version', CURRENT_STORE_VERSION);
       }
 
@@ -336,11 +389,15 @@ export function useShopStore() {
       const storedBarbers = localStorage.getItem('thecut_barbers');
       const storedCustomers = localStorage.getItem('thecut_customers');
       const storedSettings = localStorage.getItem('thecut_settings');
+      const storedWaitlist = localStorage.getItem('thecut_waitlist');
+      const storedAddons = localStorage.getItem('thecut_product_addons');
 
       if (storedBranches) setBranches(JSON.parse(storedBranches));
       if (storedServices) setServices(JSON.parse(storedServices));
       if (storedBarbers) setBarbers(JSON.parse(storedBarbers));
       if (storedCustomers) setCustomers(JSON.parse(storedCustomers));
+      if (storedWaitlist) setWaitlist(JSON.parse(storedWaitlist));
+      if (storedAddons) setProductAddons(JSON.parse(storedAddons));
       if (storedSettings) {
         const parsed = JSON.parse(storedSettings);
         setSettings({
@@ -394,17 +451,73 @@ export function useShopStore() {
     }
   };
 
+  const saveWaitlist = (newWaitlist: WaitlistEntry[]) => {
+    setWaitlist(newWaitlist);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('thecut_waitlist', JSON.stringify(newWaitlist));
+      window.dispatchEvent(new Event('thecut_store_updated'));
+    }
+  };
+
+  const addToWaitlist = (entry: Omit<WaitlistEntry, 'id' | 'createdAt' | 'status'>) => {
+    const newEntry: WaitlistEntry = {
+      ...entry,
+      id: `w-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      status: 'waiting',
+    };
+    const updated = [newEntry, ...waitlist];
+    saveWaitlist(updated);
+    return newEntry;
+  };
+
+  const removeFromWaitlist = (id: string) => {
+    const updated = waitlist.filter((w) => w.id !== id);
+    saveWaitlist(updated);
+  };
+
+  const updateWaitlistStatus = (id: string, status: WaitlistEntry['status']) => {
+    const updated = waitlist.map((w) => (w.id === id ? { ...w, status } : w));
+    saveWaitlist(updated);
+  };
+
+  const updateCustomerFormula = (phone: string, formula: HaircutFormula) => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    const updated = customers.map((c) => {
+      const cClean = c.phone.replace(/\D/g, '');
+      if (cClean.endsWith(cleanPhone) || cleanPhone.endsWith(cClean)) {
+        return {
+          ...c,
+          haircutFormula: {
+            ...c.haircutFormula,
+            ...formula,
+            updatedAt: new Date().toISOString(),
+          },
+        };
+      }
+      return c;
+    });
+    saveCustomers(updated);
+  };
+
   return {
     branches,
     services,
     barbers,
     customers,
     settings,
+    waitlist,
+    productAddons,
     isLoaded,
     saveBranches,
     saveServices,
     saveBarbers,
     saveCustomers,
     saveSettings,
+    saveWaitlist,
+    addToWaitlist,
+    removeFromWaitlist,
+    updateWaitlistStatus,
+    updateCustomerFormula,
   };
 }

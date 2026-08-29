@@ -277,6 +277,15 @@ export default function BookingWizard({ initialBarber }: { initialBarber?: strin
                 phone={state.customerPhone}
                 onNameChange={(name) => setState((prev) => ({ ...prev, customerName: name }))}
                 onPhoneChange={(phone) => setState((prev) => ({ ...prev, customerPhone: phone }))}
+                selectedAddons={state.selectedAddons || []}
+                onToggleAddon={(addon) => {
+                  setState((prev) => {
+                    const existing = prev.selectedAddons || [];
+                    const exists = existing.some((a) => a.id === addon.id);
+                    const updated = exists ? existing.filter((a) => a.id !== addon.id) : [...existing, addon];
+                    return { ...prev, selectedAddons: updated };
+                  });
+                }}
               />
             )}
 

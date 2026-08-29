@@ -134,6 +134,8 @@ export default function CustomersPage() {
   const [editSpecs, setEditSpecs] = useState({
     machineNumber: '',
     fadeType: '',
+    beard: '',
+    beverage: '',
     notes: '',
   });
 
@@ -144,7 +146,7 @@ export default function CustomersPage() {
     let status: Customer['status'] = 'active';
     if (c.totalVisits >= 6 && daysSinceVisit <= 21) {
       status = 'vip';
-    } else if (daysSinceVisit >= 30) {
+    } else if (daysSinceVisit >= 25) {
       status = 'at_risk';
     }
     return { ...c, daysSinceVisit, calculatedStatus: status };
@@ -158,7 +160,8 @@ export default function CustomersPage() {
       c.name.includes(search) ||
       c.phone.includes(search) ||
       (c.preferences?.notes && c.preferences.notes.toLowerCase().includes(search.toLowerCase())) ||
-      (c.preferences?.machineNumber && c.preferences.machineNumber.includes(search));
+      (c.preferences?.machineNumber && c.preferences.machineNumber.includes(search)) ||
+      (c.haircutFormula?.sides && c.haircutFormula.sides.includes(search));
 
     if (!matchesSearch) return false;
     if (filterType === 'at_risk') return c.calculatedStatus === 'at_risk';
@@ -170,22 +173,35 @@ export default function CustomersPage() {
   const openCustomerModal = (customer: ProcessedCustomer) => {
     setSelectedCustomer(customer);
     setEditSpecs({
-      machineNumber: customer.preferences?.machineNumber || '',
-      fadeType: customer.preferences?.fadeType || '',
-      notes: customer.preferences?.notes || '',
+      machineNumber: customer.haircutFormula?.sides || customer.preferences?.machineNumber || '',
+      fadeType: customer.haircutFormula?.top || customer.preferences?.fadeType || '',
+      beard: customer.haircutFormula?.beard || customer.preferences?.beardStyle || '',
+      beverage: customer.haircutFormula?.beverage || '',
+      notes: customer.haircutFormula?.notes || customer.preferences?.notes || '',
     });
   };
 
   const handleSaveSpecs = () => {
     if (!selectedCustomer) return;
+    const formulaPayload = {
+      sides: editSpecs.machineNumber,
+      top: editSpecs.fadeType,
+      beard: editSpecs.beard,
+      beverage: editSpecs.beverage,
+      notes: editSpecs.notes,
+      updatedAt: new Date().toISOString(),
+    };
+
     const updated = localCustomers.map((c) => {
       if (c.id === selectedCustomer.id) {
         return {
           ...c,
+          haircutFormula: formulaPayload,
           preferences: {
             ...c.preferences,
             machineNumber: editSpecs.machineNumber,
             fadeType: editSpecs.fadeType,
+            beardStyle: editSpecs.beard,
             notes: editSpecs.notes,
           },
         };
@@ -196,10 +212,12 @@ export default function CustomersPage() {
     saveCustomers(updated);
     setSelectedCustomer({
       ...selectedCustomer,
+      haircutFormula: formulaPayload,
       preferences: {
         ...selectedCustomer.preferences,
         machineNumber: editSpecs.machineNumber,
         fadeType: editSpecs.fadeType,
+        beardStyle: editSpecs.beard,
         notes: editSpecs.notes,
       },
     });
@@ -549,11 +567,11 @@ export default function CustomersPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                 <div>
                   <label className="block text-[11px] font-bold text-[#6B6560] mb-1">
-                    מספרי מכונה (צדדים / למעלה):
+                    ✂️ מספרי מכונה ופייד (צדדים):
                   </label>
                   <input
                     type="text"
-                    placeholder="למשל: 0.5 בצדדים, 3 למעלה"
+                    placeholder="למשל: 0.5 סקין פייד, טייפר נמוך"
                     value={editSpecs.machineNumber}
                     onChange={(e) => setEditSpecs({ ...editSpecs, machineNumber: e.target.value })}
                     className="w-full px-3 py-2 bg-white rounded-xl border border-[#E5DDD0] text-xs outline-none focus:border-gold"
@@ -562,13 +580,39 @@ export default function CustomersPage() {
 
                 <div>
                   <label className="block text-[11px] font-bold text-[#6B6560] mb-1">
-                    סגנון דירוג / פייד:
+                    💈 עיצוב עליון ומספריים:
                   </label>
                   <input
                     type="text"
-                    placeholder="למשל: Low Skin Fade, מספריים"
+                    placeholder="למשל: קיצור חצי אורך, טקסטורה"
                     value={editSpecs.fadeType}
                     onChange={(e) => setEditSpecs({ ...editSpecs, fadeType: e.target.value })}
+                    className="w-full px-3 py-2 bg-white rounded-xl border border-[#E5DDD0] text-xs outline-none focus:border-gold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#6B6560] mb-1">
+                    🪒 זקן וקווי מתאר:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="למשל: קווים חדים בתער, קיצור סנטר"
+                    value={editSpecs.beard}
+                    onChange={(e) => setEditSpecs({ ...editSpecs, beard: e.target.value })}
+                    className="w-full px-3 py-2 bg-white rounded-xl border border-[#E5DDD0] text-xs outline-none focus:border-gold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#6B6560] mb-1">
+                    ☕ שתייה והעדפה במספרה:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="למשל: אספרסו קצר בלי סוכר"
+                    value={editSpecs.beverage}
+                    onChange={(e) => setEditSpecs({ ...editSpecs, beverage: e.target.value })}
                     className="w-full px-3 py-2 bg-white rounded-xl border border-[#E5DDD0] text-xs outline-none focus:border-gold"
                   />
                 </div>
@@ -576,11 +620,11 @@ export default function CustomersPage() {
 
               <div>
                 <label className="block text-[11px] font-bold text-[#6B6560] mb-1">
-                  הערות אישיות של הספר (רגישויות, סגנון, שתייה):
+                  ⚠️ רגישויות והערות אישיות של הספר:
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="למשל: עורף רגיש, מעדיף חימר מט, שותה קפה שחור"
+                  placeholder="למשל: עורף רגיש, מעדיף חימר מט ללא ברק"
                   value={editSpecs.notes}
                   onChange={(e) => setEditSpecs({ ...editSpecs, notes: e.target.value })}
                   className="w-full px-3 py-2 bg-white rounded-xl border border-[#E5DDD0] text-xs outline-none focus:border-gold leading-relaxed"

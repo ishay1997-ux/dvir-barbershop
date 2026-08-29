@@ -57,11 +57,39 @@ export default function DateTimeStep({
   onTimeSelect: (time: string) => void;
 }) {
   const today = startOfToday();
-  const { settings } = useShopStore();
+  const { settings, addToWaitlist } = useShopStore();
 
   const [currentMonth, setCurrentMonth] = useState<Date>(selectedDate || today);
+  const [showWaitlistModal, setShowWaitlistModal] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
+  const [waitlistName, setWaitlistName] = useState('');
   const [waitlistPhone, setWaitlistPhone] = useState('');
+  const [waitlistRange, setWaitlistRange] = useState<'morning' | 'afternoon' | 'evening' | 'any'>('any');
+
+  const handleJoinWaitlist = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!waitlistName.trim() || waitlistPhone.trim().length < 9 || !selectedDate) return;
+
+    addToWaitlist({
+      customerName: waitlistName.trim(),
+      customerPhone: waitlistPhone.trim(),
+      date: format(selectedDate, 'yyyy-MM-dd'),
+      preferredTimeRange: waitlistRange,
+      serviceId: service?.id,
+      serviceName: service?.name || 'תספורת גברים',
+      branchId: branch?.id || 'ariel',
+      branchName: branch?.name || 'סניף אריאל',
+      notes: `הצטרף לרשימת המתנה דרך אשף ההזמנות (${waitlistRange})`,
+    });
+
+    setWaitlistSuccess(true);
+    setTimeout(() => {
+      setWaitlistSuccess(false);
+      setShowWaitlistModal(false);
+      setWaitlistName('');
+      setWaitlistPhone('');
+    }, 2800);
+  };
 
   // 1. Calculate dynamic effective shift for selected date
   const currentShift = useMemo(() => {
@@ -457,8 +485,135 @@ export default function DateTimeStep({
                   </div>
                 </div>
               )}
+              {/* 4. Smart Waitlist Banner */}
+              <div className="mt-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-right">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0">
+                    <Bell className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-black text-[#1C1C1C]">לא מצאת שעה שמתאימה לך לתאריך זה?</h4>
+                    <p className="text-[11px] text-[#6B6560]">הצטרף לרשימת ההמתנה ונודיע לך בוואטסאפ ברגע שיתפנה תור מביטול!</p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowWaitlistModal(true)}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#1C1C1C] text-gold font-bold text-xs hover:bg-[#2C2C2C] active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>הצטרף לרשימת המתנה</span>
+                </button>
+              </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Waitlist Modal */}
+      {showWaitlistModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" dir="rtl">
+          <div className="bg-[#FAF7F2] border border-[#E5DDD0] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-[#E5DDD0] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-gold/20 text-[#856514] flex items-center justify-center">
+                  <Bell className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-black text-sm text-[#1C1C1C]">רשימת המתנה חכמה לתור</h3>
+                  <p className="text-[11px] text-[#6B6560]">
+                    {selectedDate ? format(selectedDate, 'dd/MM/yyyy (EEEE)', { locale: he }) : ''}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowWaitlistModal(false)}
+                className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-xs font-bold text-[#6B6560]"
+              >
+                ✕
+              </button>
+            </div>
+
+            {waitlistSuccess ? (
+              <div className="py-8 text-center space-y-2">
+                <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-600 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h4 className="font-black text-base text-[#1C1C1C]">נוספת לרשימת ההמתנה בהצלחה!</h4>
+                <p className="text-xs text-[#6B6560]">ברגע שיתפנה תור לתאריך זה, תקבל התראה אישית ישירות ל-WhatsApp.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleJoinWaitlist} className="space-y-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">שם מלא</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="ישראל ישראלי"
+                    value={waitlistName}
+                    onChange={(e) => setWaitlistName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5DDD0] bg-white text-xs text-[#1C1C1C] focus:outline-none focus:border-gold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">מספר טלפון לקבלת וואטסאפ</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="050-1234567"
+                    value={waitlistPhone}
+                    onChange={(e) => setWaitlistPhone(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5DDD0] bg-white text-xs text-[#1C1C1C] focus:outline-none focus:border-gold"
+                    dir="ltr"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#1C1C1C] mb-1">טווח שעות מועדף עליך</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'any', label: 'כל שעה שתתפנה' },
+                      { id: 'morning', label: 'בוקר (09:00 - 12:00)' },
+                      { id: 'afternoon', label: 'צהריים (12:00 - 16:30)' },
+                      { id: 'evening', label: 'ערב (16:30 - 20:00)' },
+                    ].map((opt) => (
+                      <button
+                        type="button"
+                        key={opt.id}
+                        onClick={() => setWaitlistRange(opt.id as any)}
+                        className={cn(
+                          'p-2 rounded-xl text-xs font-bold border transition-all text-center',
+                          waitlistRange === opt.id
+                            ? 'bg-[#1C1C1C] text-gold border-gold'
+                            : 'bg-white text-[#6B6560] border-[#E5DDD0] hover:border-gold/50'
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowWaitlistModal(false)}
+                    className="flex-1 py-2.5 rounded-xl bg-white border border-[#E5DDD0] text-xs font-bold text-[#6B6560]"
+                  >
+                    ביטול
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-2.5 rounded-xl bg-gold text-[#1C1C1C] text-xs font-black hover:bg-[#DFCA85] shadow-md transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Bell className="w-3.5 h-3.5" />
+                    <span>שמור אותי ברשימה</span>
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       )}
     </div>
