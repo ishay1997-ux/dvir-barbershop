@@ -28,6 +28,13 @@ export default function HomePage() {
       }
     }
     load();
+
+    const handleUpdate = () => {
+      load();
+    };
+
+    window.addEventListener('thecut_store_updated', handleUpdate);
+    return () => window.removeEventListener('thecut_store_updated', handleUpdate);
   }, []);
 
   const themeColor = business?.themeColor || '#C9A84C';

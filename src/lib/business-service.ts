@@ -11,6 +11,17 @@ import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firesto
 export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
   const cleanSlug = (slug || 'dvir').trim().toLowerCase();
 
+  // 0. Instant Local Storage Overlay for Admin Real-Time Preview
+  let localStoreOverlay: any = null;
+  if (typeof window !== 'undefined' && (cleanSlug === 'dvir' || cleanSlug === 'thecut')) {
+    try {
+      const stored = localStorage.getItem('thecut_settings');
+      if (stored) {
+        localStoreOverlay = JSON.parse(stored);
+      }
+    } catch (_) {}
+  }
+
   // 1. Direct Firestore fetch on Client (Zero-delay, bypasses serverless cache/network blips)
   if (typeof window !== 'undefined' && isFirebaseConfigured && db) {
     try {
@@ -18,14 +29,16 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
       const directDocRef = doc(db, 'businesses', `biz-${cleanSlug}`);
       const directSnap = await getDoc(directDocRef);
       if (directSnap.exists()) {
-        return mergeWithDefaults(directSnap.data() as Partial<BusinessConfig>, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
+        const merged = mergeWithDefaults(directSnap.data() as Partial<BusinessConfig>, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
+        return localStoreOverlay ? mergeWithDefaults(localStoreOverlay, merged) : merged;
       }
 
       // Query by slug field
       const q = query(collection(db, 'businesses'), where('slug', '==', cleanSlug));
       const qSnap = await getDocs(q);
       if (!qSnap.empty) {
-        return mergeWithDefaults(qSnap.docs[0].data() as Partial<BusinessConfig>, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
+        const merged = mergeWithDefaults(qSnap.docs[0].data() as Partial<BusinessConfig>, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
+        return localStoreOverlay ? mergeWithDefaults(localStoreOverlay, merged) : merged;
       }
     } catch (dbErr) {
       console.warn('Direct Firestore client read fallback:', dbErr);

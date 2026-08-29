@@ -10,6 +10,7 @@ export interface Branch {
   googleMapsUrl?: string;
   activeDays: number[]; // e.g. [0, 1, 2] = Sun, Mon, Tue
   phone: string;
+  hours?: string;
   isActive: boolean;
 }
 
@@ -21,6 +22,7 @@ export interface Service {
   price: number;
   category: ServiceCategory;
   icon?: string;
+  popular?: boolean;
   isActive: boolean;
 }
 
@@ -120,15 +122,62 @@ export interface DailyShiftOverride {
   updatedAt?: string;
 }
 
+export interface FaqItem {
+  id?: string;
+  question: string;
+  answer: string;
+}
+
+export interface TestimonialItem {
+  id: string;
+  name: string;
+  comment: string;
+  rating: number; // e.g. 5
+  timeAgo?: string;
+  serviceUsed?: string;
+  avatar?: string;
+}
+
+export interface TransformationItem {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  beforeImage?: string;
+  afterImage?: string;
+  beforeGradient?: string;
+  afterGradient?: string;
+}
+
+export interface BusinessLayoutConfig {
+  bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
+  heroStyle?: 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
+  servicesStyle?: 'split-gallery' | 'cards-grid' | 'accordion-list';
+  cardStyle?: 'glass' | 'solid-dark' | 'bordered-neon';
+  showBeforeAfter?: boolean;
+  showReviews?: boolean;
+  showFaqs?: boolean;
+  showBranches?: boolean;
+  showBio?: boolean;
+}
+
 export interface ShopSettings {
   shopName: string;
   ownerName: string;
   mainPhone: string;
+  city?: string;
+  slogan?: string;
+  bio?: string;
+  experienceYears?: number;
+  themeColor?: string;
+  bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
+  avatarUrl?: string;
+  heroImage?: string;
   whatsappGreeting: string;
   retentionMessageTemplate: string;
   cancellationNoticeHours: number;
   bufferMinutesBetweenAppointments: number;
-  bookingWindowDays: number; // e.g. 14 or 30 days in advance
+  bookingWindowDays: number; // e.g. 14, 21, or 30 days in advance
   lunchBreak?: {
     start: string;
     end: string;
@@ -137,10 +186,22 @@ export interface ShopSettings {
   announcementBanner?: {
     text: string;
     isActive: boolean;
+    style?: 'gold' | 'urgent' | 'promo';
   };
   branchSchedule: Record<number, 'ariel' | 'rehovot' | 'closed'>; // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
   dailyOverrides?: Record<string, DailyShiftOverride>; // Key: YYYY-MM-DD
+  blockedDates?: BlockedDate[];
+  galleryImages?: string[];
+  transformations?: TransformationItem[];
+  faqs?: FaqItem[];
+  testimonials?: TestimonialItem[];
+  layout?: BusinessLayoutConfig;
   instagramUrl?: string;
+  instagramHandle?: string;
   facebookUrl?: string;
   tiktokUrl?: string;
+  wazeUrl?: string;
+  googleMapsUrl?: string;
+  whatsappNumber?: string;
 }
+

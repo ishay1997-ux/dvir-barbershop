@@ -22,6 +22,13 @@ html.a11y-contrast-dark div:not(.a11y-ignore):not(.a11y-ignore *):not(#a11y-trig
   color: #FFFF00 !important;
   border-color: #555555 !important;
   background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.a11y-contrast-dark svg:not(.a11y-ignore *) {
+  stroke: #00FFFF !important;
+  fill: currentColor !important;
 }
 
 html.a11y-contrast-dark h1:not(.a11y-ignore *),
@@ -65,6 +72,7 @@ html.a11y-contrast-dark button:not(.a11y-ignore):not(.a11y-ignore *) {
   border: 2px solid #FFFF00 !important;
   border-radius: 8px !important;
   background-image: none !important;
+  backdrop-filter: none !important;
 }
 
 /* 2. LIGHT HIGH CONTRAST */
@@ -86,6 +94,13 @@ html.a11y-contrast-light div:not(.a11y-ignore):not(.a11y-ignore *):not(#a11y-tri
   color: #000000 !important;
   border-color: #000000 !important;
   background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.a11y-contrast-light svg:not(.a11y-ignore *) {
+  stroke: #000080 !important;
+  fill: currentColor !important;
 }
 
 html.a11y-contrast-light h1:not(.a11y-ignore *),

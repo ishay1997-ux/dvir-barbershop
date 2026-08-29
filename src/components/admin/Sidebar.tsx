@@ -14,7 +14,17 @@ const navItems = [
   { href: '/admin', label: 'לוח בקרה ראשי', icon: LayoutDashboard },
   { href: '/admin/appointments', label: 'יומן תורים', icon: Calendar },
   { href: '/admin/customers', label: 'ספר לקוחות (CRM)', icon: Users },
-  { href: '/admin/settings', label: 'הגדרות ושליטה', icon: Settings },
+  {
+    href: '/admin/settings',
+    label: 'הגדרות ושליטה',
+    icon: Settings,
+    subItems: [
+      { tab: 'schedule', label: 'שיבוץ ושעות', icon: Calendar },
+      { tab: 'services', label: 'מחירון ושירותים', icon: Scissors },
+      { tab: 'design', label: 'סטודיו עיצוב', icon: LayoutDashboard },
+      { tab: 'content', label: 'תוכן וביקורות', icon: Users },
+    ],
+  },
 ];
 
 export default function AdminSidebar() {
@@ -35,31 +45,53 @@ export default function AdminSidebar() {
             <div className="text-white font-black text-sm">
               המספרה של <span className="text-gold">דביר</span>
             </div>
-            <div className="text-[#6B6560] text-[10px]">פורטל ניהול</div>
+            <div className="text-[#6B6560] text-[10px]">פורטל ניהול ועצמאות מלאה</div>
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-4 flex flex-col gap-1.5" aria-label="ניווט ניהול">
-        {navItems.map(({ href, label, icon: Icon }) => {
+      <nav className="flex-1 p-4 flex flex-col gap-1.5 overflow-y-auto no-scrollbar" aria-label="ניווט ניהול">
+        {navItems.map(({ href, label, icon: Icon, subItems }) => {
           const isActive = pathname === href;
+          const isSettingsActive = pathname.startsWith('/admin/settings');
+
           return (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setIsMobileOpen(false)}
-              className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-xs font-bold',
-                isActive
-                  ? 'bg-gold text-[#1C1C1C] shadow-md'
-                  : 'text-[#9E9891] hover:bg-[#2A2A2A] hover:text-white'
+            <div key={href} className="flex flex-col gap-1">
+              <Link
+                href={href}
+                onClick={() => setIsMobileOpen(false)}
+                className={cn(
+                  'flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-xs font-bold',
+                  isActive
+                    ? 'bg-gold text-[#1C1C1C] shadow-md'
+                    : 'text-[#9E9891] hover:bg-[#2A2A2A] hover:text-white'
+                )}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="w-4 h-4 flex-shrink-0" />
+                  <span>{label}</span>
+                </div>
+              </Link>
+
+              {/* Sub items under settings if active */}
+              {subItems && isSettingsActive && (
+                <div className="mr-5 pr-3 border-r border-[#2A2A2A] flex flex-col gap-1 my-1 animate-fadeIn">
+                  {subItems.map((sub) => (
+                    <Link
+                      key={sub.tab}
+                      href={`/admin/settings?tab=${sub.tab}`}
+                      onClick={() => setIsMobileOpen(false)}
+                      className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-[#8C847A] hover:text-gold hover:bg-white/5 transition-colors flex items-center gap-2"
+                    >
+                      <sub.icon className="w-3 h-3 text-gold/70" />
+                      <span>{sub.label}</span>
+                    </Link>
+                  ))}
+                </div>
               )}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <Icon className="w-4 h-4 flex-shrink-0" />
-              {label}
-            </Link>
+            </div>
           );
         })}
       </nav>
