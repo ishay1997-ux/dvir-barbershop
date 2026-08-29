@@ -79,12 +79,11 @@ export default function HomePage() {
   })();
 
   return (
-    <>
+    <div className={`min-h-screen transition-colors duration-500 theme-${bgTheme} ${bgTheme === 'luxury-light' ? 'theme-luxury-light' : ''}`} style={bgStyles}>
       <Header business={business || undefined} />
       <main
         id="main-content"
         className="relative overflow-hidden transition-colors duration-500"
-        style={bgStyles}
       >
         {/* 1. Sleek Hero Banner Hub: Cover Image, Monogram Logo, Waze, WhatsApp & 4 Action Pills */}
         <BarbershopHeroHub business={business || undefined} />
@@ -124,10 +123,14 @@ export default function HomePage() {
       <Footer business={business || undefined} />
 
       {/* Sticky Mobile Floating Booking Bar */}
-      <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-[#181818]/95 backdrop-blur-md border-t border-white/10 p-3 px-4 flex items-center justify-between gap-3 shadow-2xl" dir="rtl">
+      <div className={`fixed bottom-0 inset-x-0 z-40 md:hidden backdrop-blur-md border-t p-3 px-4 flex items-center justify-between gap-3 shadow-2xl transition-colors ${
+        bgTheme === 'luxury-light'
+          ? 'bg-white/95 border-slate-200 text-slate-900'
+          : 'bg-[#181818]/95 border-white/10 text-white'
+      }`} dir="rtl">
         <div className="text-right">
-          <div className="text-[11px] font-bold text-zinc-400">מוכנים למהפך?</div>
-          <div className="text-xs font-black text-white">{business?.name || 'המספרה של דביר'}</div>
+          <div className={`text-[11px] font-bold ${bgTheme === 'luxury-light' ? 'text-slate-500' : 'text-zinc-400'}`}>מוכנים למהפך?</div>
+          <div className={`text-xs font-black ${bgTheme === 'luxury-light' ? 'text-slate-900' : 'text-white'}`}>{business?.name || 'המספרה של דביר'}</div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -151,6 +154,6 @@ export default function HomePage() {
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }

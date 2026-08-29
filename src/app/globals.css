@@ -525,16 +525,93 @@ input[type="tel"] {
 }
 
 /* ============================================================
-   SCROLL-TRIGGERED REVEAL
+   WEBSITE DYNAMIC THEMES (LUXURY LIGHT SYSTEM)
    ============================================================ */
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+.theme-luxury-light {
+  color: #0f172a !important;
+  background-color: #F8FAFC !important;
 }
 
-.reveal.revealed {
-  opacity: 1;
-  transform: translateY(0);
+.theme-luxury-light section {
+  color: #0f172a !important;
+}
+
+.theme-luxury-light .bg-\[\#121212\],
+.theme-luxury-light .bg-\[\#141414\],
+.theme-luxury-light .bg-\[\#181818\],
+.theme-luxury-light .bg-\[\#1A1A1A\],
+.theme-luxury-light .bg-\[\#1C1C1C\],
+.theme-luxury-light .bg-\[\#202020\],
+.theme-luxury-light .bg-\[\#222222\],
+.theme-luxury-light .bg-\[\#242424\],
+.theme-luxury-light .bg-\[\#252525\],
+.theme-luxury-light .bg-zinc-900,
+.theme-luxury-light .bg-black\/60,
+.theme-luxury-light .bg-black\/40 {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  color: #0f172a !important;
+}
+
+.theme-luxury-light .from-\[\#141414\],
+.theme-luxury-light .via-\[\#141414\]\/70,
+.theme-luxury-light .to-black\/60 {
+  --tw-gradient-from: rgba(248, 250, 252, 0.85) !important;
+  --tw-gradient-to: rgba(248, 250, 252, 0.4) !important;
+}
+
+.theme-luxury-light .text-white {
+  color: #0f172a !important;
+}
+
+.theme-luxury-light .text-zinc-200,
+.theme-luxury-light .text-zinc-300,
+.theme-luxury-light .text-zinc-400,
+.theme-luxury-light .text-\[\#9E9891\],
+.theme-luxury-light .text-\[\#E0E0E0\] {
+  color: #475569 !important;
+}
+
+.theme-luxury-light .text-zinc-500 {
+  color: #64748b !important;
+}
+
+.theme-luxury-light .border-white\/5,
+.theme-luxury-light .border-white\/10,
+.theme-luxury-light .border-white\/15,
+.theme-luxury-light .border-white\/20,
+.theme-luxury-light .border-white\/30 {
+  border-color: rgba(226, 232, 240, 0.9) !important;
+}
+
+.theme-luxury-light .bg-white\/5,
+.theme-luxury-light .bg-white\/10,
+.theme-luxury-light .bg-white\/15 {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+  color: #1e293b !important;
+}
+
+.theme-luxury-light .bg-emerald-950\/40,
+.theme-luxury-light .bg-emerald-950\/20 {
+  background-color: rgba(236, 253, 245, 0.9) !important;
+  color: #065f46 !important;
+}
+
+.theme-luxury-light .text-emerald-300,
+.theme-luxury-light .text-emerald-400 {
+  color: #047857 !important;
+}
+
+.theme-luxury-light header,
+.theme-luxury-light footer {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #0f172a !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
+}
+
+.theme-luxury-light .shadow-md,
+.theme-luxury-light .shadow-lg,
+.theme-luxury-light .shadow-xl,
+.theme-luxury-light .shadow-2xl {
+  box-shadow: 0 4px 25px -4px rgba(0, 0, 0, 0.08), 0 2px 10px -2px rgba(0, 0, 0, 0.04) !important;
 }
 
