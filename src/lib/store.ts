@@ -108,18 +108,6 @@ export const INITIAL_BARBERS: Barber[] = [
     branchIds: ['ariel', 'rehovot'],
     is_active: true,
   },
-  {
-    id: 'barber2',
-    name: 'אוראל',
-    role: 'ספר בכיר',
-    bio: 'מתמחה בטקסטורות עשירות, גזירות מספריים ודירוגים חדים.',
-    photo_url: null,
-    specialties: ['קלאסי', 'מספריים', 'זקנים'],
-    color: '#3D3D3D',
-    phone: '054-987-6543',
-    branchIds: ['ariel'],
-    is_active: true,
-  },
 ];
 
 export const INITIAL_CUSTOMERS: Customer[] = [];
@@ -231,11 +219,12 @@ export function useShopStore() {
   // Load from localStorage on client mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const CURRENT_STORE_VERSION = 'v2_clean';
+      const CURRENT_STORE_VERSION = 'v3_solo_dvir';
       const storedVersion = localStorage.getItem('thecut_version');
       if (storedVersion !== CURRENT_STORE_VERSION) {
         localStorage.removeItem('thecut_customers');
         localStorage.removeItem('thecut_appointments');
+        localStorage.removeItem('thecut_barbers');
         localStorage.setItem('thecut_version', CURRENT_STORE_VERSION);
       }
 

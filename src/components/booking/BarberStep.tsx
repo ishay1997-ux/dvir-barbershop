@@ -1,7 +1,8 @@
 'use client';
 
 import { Shuffle } from 'lucide-react';
-import { cn, MOCK_BARBERS } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { useShopStore } from '@/lib/store';
 import type { Barber } from '@/lib/types';
 
 const avatarGradients = [
@@ -17,6 +18,8 @@ export default function BarberStep({
   selected: Barber | null;
   onSelect: (barber: Barber) => void;
 }) {
+  const { barbers } = useShopStore();
+  const activeBarbers = barbers.filter((b) => b.is_active);
   const handleAny = () => {
     const anyBarber: Barber = {
       id: 'any',
@@ -62,7 +65,7 @@ export default function BarberStep({
 
       {/* Individual barbers */}
       <div className="flex flex-col gap-3">
-        {MOCK_BARBERS.map((barber, i) => {
+        {activeBarbers.map((barber, i) => {
           const isSelected = selected?.id === barber.id;
           return (
             <button

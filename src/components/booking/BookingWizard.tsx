@@ -127,6 +127,11 @@ export default function BookingWizard({ initialBarber }: { initialBarber?: strin
     }
   }, [state, goToStep]);
 
+  const visibleSteps = isSoloBarber ? STEPS.filter((s) => s.id !== 3) : STEPS;
+  const currentVisibleIdx = visibleSteps.findIndex((s) => s.id === state.step);
+  const activeIdx = currentVisibleIdx >= 0 ? currentVisibleIdx : 0;
+  const progressRatio = visibleSteps.length > 1 ? activeIdx / (visibleSteps.length - 1) : 0;
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-10 sm:py-14">
       {/* Progress Steps */}
@@ -134,10 +139,10 @@ export default function BookingWizard({ initialBarber }: { initialBarber?: strin
         <div className="absolute top-5 left-5 right-5 h-0.5 bg-[#E5DDD0] -z-10" />
         <div
           className="absolute top-5 right-5 h-0.5 bg-[#C9A84C] -z-10 transition-all duration-500 ease-out"
-          style={{ width: `calc(${((state.step - 1) / 5) * 100}% - 2.5rem)` }}
+          style={{ width: `calc(${progressRatio * 100}% - 2.5rem)` }}
         />
 
-        {STEPS.map((step) => {
+        {visibleSteps.map((step, idx) => {
           const isCompleted = state.step > step.id;
           const isActive = state.step === step.id;
           return (
@@ -146,7 +151,7 @@ export default function BookingWizard({ initialBarber }: { initialBarber?: strin
               onClick={() => isCompleted ? goToStep(step.id) : undefined}
               disabled={!isCompleted}
               className="flex flex-col items-center gap-1.5 group"
-              aria-label={`שלב ${step.id}: ${step.label}${isCompleted ? ' (הושלם)' : isActive ? ' (פעיל)' : ''}`}
+              aria-label={`שלב ${idx + 1}: ${step.label}${isCompleted ? ' (הושלם)' : isActive ? ' (פעיל)' : ''}`}
             >
               <div
                 className={`step-indicator ${
@@ -154,7 +159,7 @@ export default function BookingWizard({ initialBarber }: { initialBarber?: strin
                   isActive ? 'active' : 'inactive'
                 }`}
               >
-                {isCompleted ? <Check className="w-4 h-4" /> : step.id}
+                {isCompleted ? <Check className="w-4 h-4" /> : idx + 1}
               </div>
               <span className={`text-[11px] sm:text-xs font-semibold transition-colors ${
                 isActive ? 'text-gold' : isCompleted ? 'text-[#3D3D3D]' : 'text-[#9E9891]'

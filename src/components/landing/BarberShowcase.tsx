@@ -3,8 +3,8 @@
 import { useRef } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import { Scissors, Star } from 'lucide-react';
-import { MOCK_BARBERS } from '@/lib/utils';
+import { Scissors, Star, Award, Sparkles, MapPin } from 'lucide-react';
+import { useShopStore } from '@/lib/store';
 
 const avatarGradients = [
   'from-amber-700 via-amber-600 to-yellow-500',
@@ -15,6 +15,8 @@ const avatarGradients = [
 export default function BarberShowcase() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const { barbers } = useShopStore();
+  const activeBarbers = barbers.filter((b) => b.is_active);
 
   return (
     <section
@@ -31,22 +33,22 @@ export default function BarberShowcase() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="text-gold text-sm font-bold tracking-[0.2em] uppercase">הצוות שלנו</span>
+          <span className="text-gold text-sm font-bold tracking-[0.2em] uppercase">הספר שלכם</span>
           <h2
             id="barbers-heading"
             className="text-4xl sm:text-5xl font-black text-[#1C1C1C] mt-2 mb-4"
           >
-            הספרים המקצועיים
+            הכירו את דביר
           </h2>
           <div className="gold-divider" />
           <p className="text-[#6B6560] mt-4 max-w-md mx-auto text-base">
-            כל ספר עם סגנון ייחודי, ניסיון עשיר ומומחיות בסגנון שלך.
+            אמן תספורות ומומחה לפיידים מודרניים, פיסול זקן מדויק וחוויית שירות אישית ברמה הגבוהה ביותר.
           </p>
         </motion.div>
 
         {/* Barber Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          {MOCK_BARBERS.map((barber, i) => (
+        <div className={`grid gap-8 mx-auto ${activeBarbers.length === 1 ? 'max-w-lg' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 max-w-4xl'}`}>
+          {activeBarbers.map((barber, i) => (
             <motion.div
               key={barber.id}
               initial={{ opacity: 0, y: 30 }}
