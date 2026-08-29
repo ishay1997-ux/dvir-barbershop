@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import AdminSidebar from '@/components/admin/Sidebar';
 
 export const metadata: Metadata = {
-  title: 'ניהול | The Cut',
+  title: 'ניהול ומערכת יומן | המספרה של דביר',
   robots: { index: false },
 };
 
