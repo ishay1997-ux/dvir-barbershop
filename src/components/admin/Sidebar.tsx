@@ -78,6 +78,9 @@ export default function AdminSidebar() {
         <button
           onClick={async () => {
             try {
+              if (typeof window !== 'undefined') {
+                localStorage.removeItem('thecut_admin_authenticated');
+              }
               if (auth) {
                 await signOut(auth);
               }
