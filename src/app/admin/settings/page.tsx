@@ -50,6 +50,8 @@ export default function SettingsPage() {
   const [localSettings, setLocalSettings] = useState<ShopSettings>(settings);
   const [localServices, setLocalServices] = useState<Service[]>(services);
   const [localBarbers, setLocalBarbers] = useState<Barber[]>(barbers);
+  const [adminPasswordInput, setAdminPasswordInput] = useState('');
+  const [passwordChangedNotice, setPasswordChangedNotice] = useState(false);
 
   // Modals / Add states
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -880,6 +882,47 @@ export default function SettingsPage() {
               onChange={(e) => setLocalSettings({ ...localSettings, retentionMessageTemplate: e.target.value })}
               className="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:border-gold leading-relaxed"
             />
+          </div>
+
+          {/* Password Security Card */}
+          <div className="bg-white border border-[#E8E2D9] rounded-2xl p-4 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-xs text-[#1C1C1C]">🔒 אבטחה ושינוי סיסמת מנהל</h3>
+                <p className="text-[11px] text-[#6B6560]">קבע סיסמה אישית חדשה לכניסה למערכת הניהול של דביר</p>
+              </div>
+              {passwordChangedNotice && (
+                <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                  ✓ הסיסמה עודכנה בהצלחה!
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 max-w-sm">
+              <input
+                type="text"
+                value={adminPasswordInput}
+                onChange={(e) => setAdminPasswordInput(e.target.value)}
+                placeholder="הקלד סיסמה חדשה (למשל: dvir2025)"
+                className="flex-1 px-3 py-2 border rounded-xl text-xs outline-none focus:border-gold"
+                dir="ltr"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (!adminPasswordInput.trim()) return;
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('dvir_admin_password', adminPasswordInput.trim());
+                    setPasswordChangedNotice(true);
+                    setAdminPasswordInput('');
+                    setTimeout(() => setPasswordChangedNotice(false), 3000);
+                  }
+                }}
+                className="px-4 py-2 bg-[#1C1C1C] hover:bg-[#2A2A2A] text-gold rounded-xl text-xs font-bold transition-all whitespace-nowrap active:scale-95 shadow-xs"
+              >
+                עדכן סיסמה
+              </button>
+            </div>
           </div>
 
           {/* Clean Slate / Wipe Demo Data */}

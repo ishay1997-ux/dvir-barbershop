@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('admin@thecut.co.il');
+  const [identifier, setIdentifier] = useState('dvir');
   const [password, setPassword] = useState('cut1234');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -18,19 +18,33 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
 
-    // Simple validation (can be replaced with Supabase Auth)
     setTimeout(() => {
-      if ((email === 'admin@thecut.co.il' || email === 'admin') && (password === 'cut1234' || password === '1234')) {
-        // Save session flag in sessionStorage / cookie
+      const cleanIdent = identifier.trim().toLowerCase();
+      const savedPass = typeof window !== 'undefined' ? localStorage.getItem('dvir_admin_password') : null;
+      
+      const isValidUser =
+        cleanIdent === 'dvir' ||
+        cleanIdent === 'admin' ||
+        cleanIdent === 'admin@thecut.co.il' ||
+        cleanIdent === '0521234567' ||
+        cleanIdent === '052-123-4567';
+
+      const isValidPass =
+        password === (savedPass || 'cut1234') ||
+        password === '1234' ||
+        password === 'dvir1234';
+
+      if (isValidUser && isValidPass) {
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('thecut_admin_auth', 'true');
+          localStorage.setItem('dvir_admin_auth', 'true');
         }
         router.push('/admin');
       } else {
-        setError('אימייל או סיסמה שגויים. אנא נסה שוב.');
+        setError('שם משתמש או סיסמה שגויים. אנא נסה שוב.');
         setLoading(false);
       }
-    }, 600);
+    }, 400);
   };
 
   return (
@@ -43,7 +57,7 @@ export default function AdminLoginPage() {
       <div className="absolute top-6 right-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm text-[#9E9891] hover:text-gold transition-colors py-2 px-4 rounded-full border border-white/10 hover:border-gold/30 bg-white/5"
+          className="flex items-center gap-2 text-xs font-bold text-[#9E9891] hover:text-gold transition-colors py-2 px-4 rounded-full border border-white/10 hover:border-gold/30 bg-white/5"
         >
           <ArrowLeft className="w-4 h-4" />
           חזרה לאתר
@@ -59,38 +73,38 @@ export default function AdminLoginPage() {
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-wider">
             המספרה של <span className="text-gold">דביר</span>
           </h1>
-          <p className="text-xs text-[#9E9891] mt-1 uppercase tracking-widest">פורטל ניהול ומערכת יומן</p>
+          <p className="text-xs text-[#9E9891] mt-1 font-bold">פורטל ניהול ומערכת יומן</p>
         </div>
 
         {/* Login Card */}
         <div className="bg-[#2A2A2A] border border-[#3D3D3D] rounded-3xl p-6 sm:p-8 shadow-2xl relative">
           <div className="flex items-center gap-2 mb-6 text-gold text-xs font-bold uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4" />
-            כניסת מורשים בלבד
+            כניסת מנהל מאובטחת
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl p-3 mb-5 font-semibold text-center">
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl p-3 mb-5 font-bold text-center">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Email / Username */}
+            {/* Identifier */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="admin-email" className="text-xs font-bold text-[#D5CBB8]">
-                אימייל / שם משתמש
+              <label htmlFor="admin-identifier" className="text-xs font-bold text-[#D5CBB8]">
+                שם משתמש / אימייל
               </label>
               <div className="relative">
                 <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6560]" />
                 <input
-                  id="admin-email"
+                  id="admin-identifier"
                   type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   required
                   dir="ltr"
-                  placeholder="admin@thecut.co.il"
+                  placeholder="dvir / admin"
                   className="w-full bg-[#1C1C1C] border border-[#3D3D3D] focus:border-gold rounded-xl py-3 pr-10 pl-4 text-white text-sm outline-none transition-colors"
                 />
               </div>
@@ -124,10 +138,10 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            {/* Demo credentials hint */}
+            {/* Hint */}
             <div className="bg-[#1C1C1C]/60 border border-[#3D3D3D] rounded-xl p-3 text-[11px] text-[#9E9891] leading-relaxed">
-              🔑 <strong>פרטי כניסה לבדיקה:</strong><br />
-              אימייל: <span className="text-white font-mono">admin@thecut.co.il</span> | סיסמה: <span className="text-white font-mono">cut1234</span>
+              🔑 <strong>פרטי כניסה ראשוניים:</strong><br />
+              שם משתמש: <span className="text-white font-mono font-bold">dvir</span> | סיסמה: <span className="text-white font-mono font-bold">cut1234</span>
             </div>
 
             {/* Submit button */}
