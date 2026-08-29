@@ -28,6 +28,7 @@ import {
   FeatureTilesGrid,
   MouseCursorCard,
   FontAdjustmentsCard,
+  FloatingFontToolbar,
   ColorSpectrumCard,
   StopAnimationsCard,
   DrawerFooter,
@@ -66,6 +67,7 @@ export default function AccessibilityWidget({
   const [isHideModalOpen, setIsHideModalOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [showReaderModal, setShowReaderModal] = useState(false);
+  const [showFloatingFontToolbar, setShowFloatingFontToolbar] = useState(false);
   const [hoveredTile, setHoveredTile] = useState<TileItem | null>(null);
   const [activeInput, setActiveInput] = useState<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
@@ -227,6 +229,7 @@ export default function AccessibilityWidget({
   const handleResetAll = useCallback(() => {
     speech.handleCloseSpeech();
     setShowReaderModal(false);
+    setShowFloatingFontToolbar(false);
     resetAllState();
   }, [speech, resetAllState]);
 
@@ -362,13 +365,15 @@ export default function AccessibilityWidget({
         title: t.contentScaleTitle,
         desc: t.contentScaleDesc,
         icon: <Search className="w-6 h-6 text-[#085B7A]" />,
-        active: state.fontScaleLevel > 0,
-        onClick: () =>
+        active: state.fontScaleLevel > 0 || showFloatingFontToolbar,
+        onClick: () => {
+          setShowFloatingFontToolbar((prev) => !prev);
           setState((prev) => ({
             ...prev,
             fontAdjustmentMode: 'size',
-            fontScaleLevel: prev.fontScaleLevel >= 5 ? 0 : prev.fontScaleLevel + 1,
-          })),
+            fontScaleLevel: prev.fontScaleLevel === 0 ? 1 : prev.fontScaleLevel,
+          }));
+        },
       },
       {
         id: 'virtualKeyboard',
@@ -423,7 +428,7 @@ export default function AccessibilityWidget({
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: dockSide === 'right' ? 80 : -80, scale: 0.98 }}
               transition={{ duration: 0.24, ease: 'easeOut' }}
-              className="relative w-full sm:w-[440px] h-full sm:h-auto max-h-full sm:max-h-[96vh] overflow-y-auto bg-white rounded-none sm:rounded-3xl shadow-2xl border border-slate-300 text-[#1C1C1C] flex flex-col z-10 font-sans"
+              className="relative w-full sm:w-[490px] sm:max-w-[94vw] h-full sm:h-auto max-h-full sm:max-h-[96vh] overflow-y-auto bg-white rounded-none sm:rounded-3xl shadow-2xl border border-slate-300 text-[#1C1C1C] flex flex-col z-10 font-sans"
               role="dialog"
               aria-modal="true"
               aria-labelledby="a11y-main-title"
@@ -520,6 +525,21 @@ export default function AccessibilityWidget({
         onBackspace={handleVirtualBackspace}
         t={t}
         currentDirection={currentDirection}
+      />
+
+      {/* 4. On-Screen Floating Font & Spacing Toolbar */}
+      <FloatingFontToolbar
+        isOpen={showFloatingFontToolbar}
+        onClose={() => setShowFloatingFontToolbar(false)}
+        fontAdjustmentMode={state.fontAdjustmentMode}
+        onSelectMode={(mode) => setState((prev) => ({ ...prev, fontAdjustmentMode: mode }))}
+        currentLevel={currentLevel}
+        maxLevel={maxLevel}
+        onStepperIncrease={handleStepperIncrease}
+        onStepperDecrease={handleStepperDecrease}
+        dockSide={dockSide}
+        t={t}
+        isRtl={isRtl}
       />
 
       {/* 4. Accessible Reader & Print Mode Modal */}

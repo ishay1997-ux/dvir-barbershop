@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sliders, RotateCcw } from 'lucide-react';
+import { Droplet, RotateCcw } from 'lucide-react';
 import { A11yState } from '../types';
 import { A11Y_I18N } from '../i18n';
 
@@ -29,19 +29,19 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
   isRtl = true,
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs" dir={currentDirection}>
-      {/* Header with Title and Sliders Icon */}
+    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-4.5 shadow-xs" dir={currentDirection}>
+      {/* Header with Title and Droplet Icon */}
       <div className="flex items-center justify-between mb-3">
         <div className={isRtl ? 'text-right' : 'text-left'}>
-          <h3 className="font-bold text-sm text-[#085B7A] leading-snug">
+          <h3 className="font-bold text-sm sm:text-base text-[#085B7A] leading-snug">
             {t.colorSectionTitle}
           </h3>
-          <p className="text-xs text-[#085B7A]/80 font-medium leading-snug">
+          <p className="text-xs sm:text-[13px] text-[#085B7A]/80 font-medium leading-snug">
             {t.colorSectionDesc}
           </p>
         </div>
         <div className="text-[#085B7A] shrink-0">
-          <Sliders className="w-5 h-5" />
+          <Droplet className="w-5 h-5 sm:w-6 sm:h-6" />
         </div>
       </div>
 
@@ -49,7 +49,7 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
       <div className="grid grid-cols-3 gap-2 mb-3.5">
         <button
           onClick={() => onSelectTarget('background')}
-          className={`py-2 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer text-center ${
+          className={`py-2 px-3 rounded-full text-xs sm:text-[13px] font-bold transition-all border cursor-pointer text-center ${
             colorTarget === 'background'
               ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
               : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
@@ -60,7 +60,7 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
         </button>
         <button
           onClick={() => onSelectTarget('headings')}
-          className={`py-2 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer text-center ${
+          className={`py-2 px-3 rounded-full text-xs sm:text-[13px] font-bold transition-all border cursor-pointer text-center ${
             colorTarget === 'headings'
               ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
               : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
@@ -71,7 +71,7 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
         </button>
         <button
           onClick={() => onSelectTarget('text')}
-          className={`py-2 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer text-center ${
+          className={`py-2 px-3 rounded-full text-xs sm:text-[13px] font-bold transition-all border cursor-pointer text-center ${
             colorTarget === 'text'
               ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
               : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
@@ -86,7 +86,7 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
       <div
         ref={colorSliderRef}
         onClick={onColorSpectrumClick}
-        className="relative h-6 rounded-full cursor-pointer shadow-inner mb-3 border border-black/10 select-none overflow-hidden"
+        className="relative h-7 sm:h-8 rounded-full cursor-pointer shadow-inner mb-3 border border-black/10 select-none overflow-hidden"
         style={{
           background:
             'linear-gradient(to right, #000 0%, #fff 12%, #ff0000 25%, #ffff00 40%, #00ff00 55%, #00ffff 70%, #0000ff 85%, #ff00ff 100%)',
@@ -95,24 +95,24 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
       >
         {currentTargetHue !== null && (
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border-2 border-[#085B7A] shadow-md -ml-3 pointer-events-none"
+            className="absolute top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white border-2 border-[#085B7A] shadow-md -ml-3 pointer-events-none"
             style={{ left: `${(currentTargetHue / 360) * 100}%` }}
           />
         )}
       </div>
 
-      {/* Reset Colors Button (Right-aligned in RTL matching screenshot) */}
+      {/* Reset Colors Button */}
       <div className="flex items-center justify-between pt-0.5">
         <button
           onClick={onResetColors}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#085B7A] hover:underline cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-bold text-[#085B7A] hover:underline cursor-pointer"
         >
           <span>{t.resetColors}</span>
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
 
         {currentTargetHue !== null && (
-          <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">
+          <span className="text-[11px] sm:text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
             {t.activeCustomColor}
           </span>
         )}

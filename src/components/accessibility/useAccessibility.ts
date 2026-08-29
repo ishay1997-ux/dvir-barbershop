@@ -84,7 +84,7 @@ export function useAccessibility(options?: UseAccessibilityOptions) {
 
     // 6. Custom Hues via CSS variables
     if (state.customBgHue !== null) {
-      root.style.setProperty('--a11y-custom-bg', `hsl(${state.customBgHue}, 60%, 95%)`);
+      root.style.setProperty('--a11y-custom-bg', `hsl(${state.customBgHue}, 90%, 48%)`);
       root.classList.add('a11y-has-custom-bg');
     } else {
       root.style.removeProperty('--a11y-custom-bg');
@@ -92,7 +92,7 @@ export function useAccessibility(options?: UseAccessibilityOptions) {
     }
 
     if (state.customHeadingHue !== null) {
-      root.style.setProperty('--a11y-custom-heading', `hsl(${state.customHeadingHue}, 80%, 30%)`);
+      root.style.setProperty('--a11y-custom-heading', `hsl(${state.customHeadingHue}, 95%, 35%)`);
       root.classList.add('a11y-has-custom-heading');
     } else {
       root.style.removeProperty('--a11y-custom-heading');
@@ -100,7 +100,7 @@ export function useAccessibility(options?: UseAccessibilityOptions) {
     }
 
     if (state.customTextHue !== null) {
-      root.style.setProperty('--a11y-custom-text', `hsl(${state.customTextHue}, 80%, 25%)`);
+      root.style.setProperty('--a11y-custom-text', `hsl(${state.customTextHue}, 95%, 28%)`);
       root.classList.add('a11y-has-custom-text');
     } else {
       root.style.removeProperty('--a11y-custom-text');

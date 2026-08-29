@@ -3,6 +3,7 @@ export { DrawerHeader } from './DrawerHeader';
 export { FeatureTilesGrid } from './FeatureTilesGrid';
 export { MouseCursorCard } from './MouseCursorCard';
 export { FontAdjustmentsCard } from './FontAdjustmentsCard';
+export { FloatingFontToolbar } from './FloatingFontToolbar';
 export { ColorSpectrumCard } from './ColorSpectrumCard';
 export { StopAnimationsCard } from './StopAnimationsCard';
 export { DrawerFooter } from './DrawerFooter';
