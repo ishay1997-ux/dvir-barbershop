@@ -8,16 +8,10 @@ import {
   Share2,
   Zap,
   Bug,
-  Smartphone,
-  FileText,
-  ShieldCheck,
-  Accessibility,
-  User,
-  ExternalLink,
+  Laptop,
   MessageCircle,
   Scissors,
-  Check,
-  Download,
+  Clock,
 } from 'lucide-react';
 import { ShareBarbershopModal } from '@/components/landing/QuickModals';
 
@@ -26,13 +20,89 @@ interface SidebarDrawerProps {
   onClose: () => void;
 }
 
+// Detective / Spy icon for Privacy Policy (Matching Reference)
+function SpyPrivacyIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className || 'w-5 h-5 text-gray-700'}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2 10h20" />
+      <path d="M4 10l3-6h10l3 6" />
+      <circle cx="8" cy="16" r="3" />
+      <circle cx="16" cy="16" r="3" />
+      <path d="M11 16h2" />
+    </svg>
+  );
+}
+
+// Wheelchair International Accessibility Icon (Matching Reference)
+function WheelchairA11yIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className || 'w-5 h-5 text-gray-700'}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <circle cx="12" cy="4" r="2" />
+      <path d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.17-.19-.38-.34-.61-.45-.01 0-.01-.01-.02-.01H13c-.35-.2-.75-.3-1.19-.26C10.76 7.11 10 8.04 10 9.09V15c0 1.1.9 2 2 2h5v5h2v-5.5c0-1.1-.9-2-2-2h-3v-3.45c1.45.69 3.09 1.05 5 1.05v-2c-1.2 0-2.34-.34-3.32-.95l.89-.99c.39.43.91.76 1.43.89zM8 18c-2.21 0-4-1.79-4-4s1.79-4 4-4c.48 0 .93.09 1.36.24l1.52-1.52C9.88 8.27 8.97 8 8 8c-3.31 0-6 2.69-6 6s2.69 6 6 6c1.66 0 3.14-.69 4.22-1.78l-1.44-1.44C10.14 17.56 9.13 18 8 18z" />
+    </svg>
+  );
+}
+
+// Illustrated Vector Avatar (Matching Reference)
+function IllustratedGuestAvatar() {
+  return (
+    <div className="w-16 h-16 rounded-full bg-white border-2 border-white shadow-md flex items-center justify-center overflow-hidden">
+      <svg viewBox="0 0 100 100" className="w-full h-full">
+        {/* Skin */}
+        <circle cx="50" cy="48" r="28" fill="#FCE5CD" />
+        {/* Hair */}
+        <path
+          d="M26,42 Q28,14 50,14 Q72,14 74,42 Q68,26 50,26 Q32,26 26,42 Z"
+          fill="#2C3437"
+        />
+        {/* Eyebrows */}
+        <path d="M36,38 Q41,36 46,38" stroke="#2C3437" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <path d="M54,38 Q59,36 64,38" stroke="#2C3437" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        {/* Eyes */}
+        <ellipse cx="41" cy="45" rx="2.5" ry="3.5" fill="#2C3437" />
+        <ellipse cx="59" cy="45" rx="2.5" ry="3.5" fill="#2C3437" />
+        {/* Smile */}
+        <path
+          d="M44,58 Q50,63 56,58"
+          stroke="#C0392B"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Black T-Shirt */}
+        <path
+          d="M20,86 Q50,70 80,86 L80,100 L20,100 Z"
+          fill="#2C3437"
+        />
+        <path
+          d="M42,75 Q50,82 58,75"
+          stroke="#FCE5CD"
+          strokeWidth="2"
+          fill="none"
+        />
+      </svg>
+    </div>
+  );
+}
+
 export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isBugModalOpen, setIsBugModalOpen] = useState(false);
-  const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
   const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(false);
 
-  // Close drawer on Escape
+  // Close drawer on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) onClose();
@@ -46,155 +116,141 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
       <AnimatePresence>
         {isOpen && (
           <div className="fixed inset-0 z-[99999] flex justify-start bg-black/60 backdrop-blur-xs" dir="rtl">
-            {/* Backdrop */}
+            {/* Backdrop Overlay */}
             <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
 
-            {/* Drawer Body (Sliding in from Right in RTL) */}
+            {/* Sliding Drawer Container (Right side in RTL) */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-              className="relative w-full max-w-[320px] sm:max-w-[360px] h-full bg-[#1C1C1C] text-white flex flex-col shadow-2xl z-10 overflow-y-auto border-l border-white/10 font-sans"
+              transition={{ type: 'spring', damping: 26, stiffness: 240 }}
+              className="relative w-[280px] sm:w-[310px] h-full bg-[#F4F4F6] text-[#2C2C2C] flex flex-col shadow-2xl z-10 font-sans border-l border-gray-300 select-none"
             >
               {/* ============================================================ */}
-              {/* 1. TOP AVATAR HEADER (Matching Screenshot)                   */}
+              {/* 1. TOP HEADER (Wood desk + Calendar + Avatar + 'אורח')         */}
               {/* ============================================================ */}
               <div
-                className="relative p-6 pt-8 pb-6 flex flex-col items-center justify-center text-center bg-cover bg-center border-b border-white/10"
+                className="relative h-[150px] flex flex-col items-center justify-center text-center bg-cover bg-center border-b border-gray-300"
                 style={{
-                  backgroundImage: `linear-gradient(to bottom, rgba(20,20,20,0.85), rgba(28,28,28,0.95)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80')`,
+                  backgroundImage: `linear-gradient(to bottom, rgba(30,25,20,0.5), rgba(20,15,10,0.7)), url('https://images.unsplash.com/photo-1506784365847-bbad939e9335?auto=format&fit=crop&w=600&q=80')`,
                 }}
               >
                 {/* Close Button X */}
                 <button
                   onClick={onClose}
-                  className="absolute top-4 left-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                  className="absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center text-white/90 hover:text-white hover:bg-black/20 transition-all"
                   aria-label="סגור תפריט"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5 drop-shadow-md" />
                 </button>
 
-                {/* Avatar Icon */}
-                <div className="w-20 h-20 rounded-full bg-[#2A2A2A] border-2 border-[#C9A84C] flex items-center justify-center text-white shadow-xl mb-2">
-                  <User className="w-10 h-10 text-[#DFCA85]" />
+                {/* Avatar */}
+                <div className="mt-2">
+                  <IllustratedGuestAvatar />
                 </div>
 
-                <h3 className="text-lg font-black text-white">אורח</h3>
-                <p className="text-xs text-[#9E9891]">ברוכים הבאים למספרה של דביר</p>
+                {/* 'אורח' label */}
+                <span
+                  className="text-lg font-black text-white mt-1.5 tracking-wide"
+                  style={{ textShadow: '0 1px 4px rgba(0,0,0,0.85)' }}
+                >
+                  אורח
+                </span>
               </div>
 
               {/* ============================================================ */}
-              {/* 2. MENU ITEMS LIST (Matching Screenshot)                     */}
+              {/* 2. MENU ITEMS LIST (Exact Order and Icons from Screenshot)    */}
               {/* ============================================================ */}
-              <div className="p-3 divide-y divide-white/5 space-y-1 flex-1">
-                {/* 1. Share with friend */}
+              <div className="flex-1 overflow-y-auto py-2 bg-[#F4F4F6]">
+                {/* 1. שתפו עם חבר */}
                 <button
                   onClick={() => {
                     setIsShareOpen(true);
                   }}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-colors text-right group"
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-[#DFCA85] group-hover:scale-110 transition-transform">
-                      <Share2 className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-sm text-[#E0E0E0] group-hover:text-white">שתפו עם חבר</span>
-                  </div>
+                  <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
+                    שתפו עם חבר
+                  </span>
+                  <Share2 className="w-5 h-5 text-gray-700 group-hover:text-black transition-colors flex-shrink-0" />
                 </button>
 
-                {/* 2. Want this app for your business? */}
+                {/* 2. רוצה The Cut גם אצלך בעסק? */}
                 <button
                   onClick={() => setIsBusinessModalOpen(true)}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-colors text-right group"
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-[#33CCFF] group-hover:scale-110 transition-transform">
-                      <Zap className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-sm text-[#E0E0E0] group-hover:text-white">רוצה מערכת כזו לעסק שלך?</span>
-                  </div>
+                  <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
+                    רוצה The Cut גם אצלך בעסק?
+                  </span>
+                  <Zap className="w-5 h-5 text-gray-700 group-hover:text-black transition-colors flex-shrink-0" />
                 </button>
 
-                {/* 3. Report a bug / issue */}
+                {/* 3. דווחו לנו על תקלה */}
                 <button
                   onClick={() => setIsBugModalOpen(true)}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-colors text-right group"
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform">
-                      <Bug className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-sm text-[#E0E0E0] group-hover:text-white">דווחו לנו על תקלה</span>
-                  </div>
+                  <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
+                    דווחו לנו על תקלה
+                  </span>
+                  <Bug className="w-5 h-5 text-gray-700 group-hover:text-black transition-colors flex-shrink-0" />
                 </button>
 
-                {/* 4. Add to home screen shortcut */}
-                <button
-                  onClick={() => setIsPwaModalOpen(true)}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-colors text-right group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                      <Smartphone className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-sm text-[#E0E0E0] group-hover:text-white">הוסף קיצור למסך הבית</span>
-                  </div>
-                </button>
+                {/* Horizontal Divider */}
+                <div className="my-1 border-t border-gray-300/80 mx-2" />
 
-                {/* 5. Terms of Use */}
+                {/* 4. תנאי שימוש */}
                 <Link
                   href="/terms"
                   onClick={onClose}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-colors text-right group"
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-zinc-400 group-hover:scale-110 transition-transform">
-                      <FileText className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-sm text-[#E0E0E0] group-hover:text-white">תנאי שימוש</span>
-                  </div>
+                  <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
+                    תנאי שימוש
+                  </span>
+                  <Laptop className="w-5 h-5 text-gray-700 group-hover:text-black transition-colors flex-shrink-0" />
                 </Link>
 
-                {/* 6. Privacy Policy */}
+                {/* 5. מדיניות פרטיות */}
                 <Link
                   href="/privacy"
                   onClick={onClose}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-colors text-right group"
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-zinc-400 group-hover:scale-110 transition-transform">
-                      <ShieldCheck className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-sm text-[#E0E0E0] group-hover:text-white">מדיניות פרטיות</span>
-                  </div>
+                  <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
+                    מדיניות פרטיות
+                  </span>
+                  <SpyPrivacyIcon className="w-5 h-5 text-gray-700 group-hover:text-black transition-colors flex-shrink-0" />
                 </Link>
 
-                {/* 7. Accessibility Statement */}
+                {/* 6. הצהרת נגישות */}
                 <Link
                   href="/accessibility"
                   onClick={onClose}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-colors text-right group"
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-black/5 active:bg-black/10 transition-colors text-right group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-[#33CCFF] group-hover:scale-110 transition-transform">
-                      <Accessibility className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-sm text-[#E0E0E0] group-hover:text-white">הצהרת נגישות (תקן 5568)</span>
-                  </div>
+                  <span className="font-semibold text-sm text-[#2C2C2C] group-hover:text-black">
+                    הצהרת נגישות
+                  </span>
+                  <WheelchairA11yIcon className="w-5 h-5 text-gray-700 group-hover:text-black transition-colors flex-shrink-0" />
                 </Link>
               </div>
 
               {/* ============================================================ */}
-              {/* 3. FOOTER BRANDING (Matching Reference)                      */}
+              {/* 3. BOTTOM FOOTER (Dark #2E2E2E + Logo + Orange Version)       */}
               {/* ============================================================ */}
-              <div className="p-4 bg-[#141414] border-t border-white/10 text-center mt-auto">
-                <div className="flex items-center justify-center gap-1.5 text-xs font-black text-[#DFCA85]">
-                  <Scissors className="w-3.5 h-3.5" />
-                  <span>The Cut · המספרה של דביר</span>
+              <div className="bg-[#2E2E2E] py-3 px-4 flex flex-col items-center justify-center text-center border-t border-gray-700">
+                <div className="flex items-center gap-1.5 text-white font-black text-lg tracking-wider">
+                  <span>the</span>
+                  <div className="w-5 h-5 rounded-full bg-[#E5832E] flex items-center justify-center text-[#2E2E2E] font-bold text-xs">
+                    ✂️
+                  </div>
+                  <span>cut</span>
                 </div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">
-                  גרסה W2.1.0 · מותאם לתקן ישראלי 5568
+                <div className="text-[11px] font-bold text-[#E5832E] mt-0.5 tracking-wider">
+                  גרסה W1.0.21:40
                 </div>
               </div>
             </motion.div>
@@ -203,36 +259,38 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
       </AnimatePresence>
 
       {/* Share Modal */}
-      <ShareBarbershopModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
+      <ShareBarbershopModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+      />
 
       {/* Bug Report Modal */}
       {isBugModalOpen && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" dir="rtl">
-          <div className="absolute inset-0" onClick={() => setIsBugModalOpen(false)} aria-hidden="true" />
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs" dir="rtl">
+          <div className="absolute inset-0" onClick={() => setIsBugModalOpen(false)} />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative w-full max-w-sm bg-[#222222] border border-white/15 rounded-3xl p-6 text-white shadow-2xl z-10 text-center"
+            className="relative max-w-sm w-full bg-[#222222] border border-[#C9A84C]/30 rounded-3xl p-6 text-white shadow-2xl z-10 text-center"
           >
-            <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 mx-auto mb-3">
+            <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-3 text-red-400">
               <Bug className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-black text-white mb-1">דיווח על תקלה</h3>
-            <p className="text-xs text-zinc-400 mb-5">
-              נתקלת בבעיה באתר? שלח לנו הודעה ישירה בוואטסאפ ונטפל בכך באופן מיידי.
+            <h3 className="text-lg font-black mb-1">דיווח על תקלה במערכת</h3>
+            <p className="text-xs text-[#9E9891] mb-5">
+              נתקלת בבעיה בהזמנת תור? שלח הודעה ישירה לוואטסאפ של דביר ונטפל מיד.
             </p>
             <a
               href={`https://wa.me/972521234567?text=${encodeURIComponent('היי דביר, נתקלתי בבעיה/תקלה באתר זימון התורים:')}`}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setIsBugModalOpen(false)}
-              className="w-full py-3 rounded-2xl bg-[#25D366] text-white font-black text-sm flex items-center justify-center gap-2 mb-3 hover:opacity-95"
+              className="w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs flex items-center justify-center gap-2 transition-colors mb-2"
             >
-              <MessageCircle className="w-4 h-4" /> דווח בוואטסאפ לדביר
+              <MessageCircle className="w-4 h-4" /> פתח שיחה בוואטסאפ
             </a>
             <button
               onClick={() => setIsBugModalOpen(false)}
-              className="text-xs text-zinc-400 hover:text-white"
+              className="w-full py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 text-xs text-zinc-300 transition-colors"
             >
               סגור
             </button>
@@ -240,72 +298,33 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
         </div>
       )}
 
-      {/* Add To Home Screen (PWA) Modal */}
-      {isPwaModalOpen && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" dir="rtl">
-          <div className="absolute inset-0" onClick={() => setIsPwaModalOpen(false)} aria-hidden="true" />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative w-full max-w-md bg-[#222222] border border-[#C9A84C]/30 rounded-3xl p-6 text-white shadow-2xl z-10 text-center"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto mb-3">
-              <Download className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black text-white mb-1">הוסף קיצור למסך הבית</h3>
-            <p className="text-xs text-zinc-400 mb-5">
-              התקן את המספרה של דביר כאפליקציה בטלפון שלך לזימון תורים מהיר בלחיצה אחת:
-            </p>
-
-            <div className="space-y-3 text-right bg-white/5 rounded-2xl p-4 text-xs mb-5">
-              <div>
-                <strong className="text-[#DFCA85] block mb-1">📱 באייפון (iPhone / Safari):</strong>
-                <p className="text-zinc-300">לחץ על כפתור השיתוף (מרובע עם חץ למעלה) בתחתית הדפדפן ➔ בחר &quot;הוסף למסך הבית&quot; (Add to Home Screen).</p>
-              </div>
-              <div className="pt-2 border-t border-white/10">
-                <strong className="text-[#33CCFF] block mb-1">🤖 באנדרואיד (Android / Chrome):</strong>
-                <p className="text-zinc-300">לחץ על 3 הנקודות בפינה העליונה ➔ בחר &quot;התקן אפליקציה&quot; או &quot;הוסף למסך הבית&quot;.</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsPwaModalOpen(false)}
-              className="w-full py-3 rounded-2xl bg-[#C9A84C] text-[#1C1C1C] font-black text-sm hover:bg-[#DFCA85]"
-            >
-              הבנתי, תודה! ✓
-            </button>
-          </motion.div>
-        </div>
-      )}
-
       {/* Business Inquiry Modal */}
       {isBusinessModalOpen && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" dir="rtl">
-          <div className="absolute inset-0" onClick={() => setIsBusinessModalOpen(false)} aria-hidden="true" />
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs" dir="rtl">
+          <div className="absolute inset-0" onClick={() => setIsBusinessModalOpen(false)} />
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative w-full max-w-sm bg-[#222222] border border-[#33CCFF]/30 rounded-3xl p-6 text-white shadow-2xl z-10 text-center"
+            className="relative max-w-sm w-full bg-[#222222] border border-[#C9A84C]/30 rounded-3xl p-6 text-white shadow-2xl z-10 text-center"
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#33CCFF]/15 border border-[#33CCFF]/30 flex items-center justify-center text-[#33CCFF] mx-auto mb-3">
+            <div className="w-12 h-12 rounded-full bg-[#C9A84C]/15 border border-[#C9A84C]/40 flex items-center justify-center mx-auto mb-3 text-[#C9A84C]">
               <Zap className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-black text-white mb-1">רוצה מערכת כזו לעסק שלך?</h3>
-            <p className="text-xs text-zinc-400 mb-5">
-              מערכת זימון תורים, ניהול לקוחות (CRM), תזכורות WhatsApp ולוח זמנים חכם לעסקים ומספרות.
+            <h3 className="text-lg font-black mb-1">רוצה מערכת זימון תורים חכמה לעסק שלך?</h3>
+            <p className="text-xs text-[#9E9891] mb-5">
+              מערכת The Cut מעניקה אתר זימון תורים אולטרה-מהיר, ניהול סניפים, וואטסאפ אוטומטי ופאנל ניהול מתקדם.
             </p>
             <a
-              href={`https://wa.me/972521234567?text=${encodeURIComponent('היי, אשמח לפרטים על מערכת זימון התורים של The Cut עבור העסק שלי:')}`}
+              href={`https://wa.me/972521234567?text=${encodeURIComponent('היי, מעוניין לשמוע פרטים על מערכת זימון תורים The Cut עבור העסק שלי')}`}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setIsBusinessModalOpen(false)}
-              className="w-full py-3 rounded-2xl bg-[#33CCFF] text-[#003344] font-black text-sm flex items-center justify-center gap-2 mb-3"
+              className="w-full py-3 rounded-2xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs flex items-center justify-center gap-2 transition-colors mb-2"
             >
-              <MessageCircle className="w-4 h-4" /> צור קשר בוואטסאפ
+              <MessageCircle className="w-4 h-4" /> דבר איתנו בוואטסאפ
             </a>
             <button
               onClick={() => setIsBusinessModalOpen(false)}
-              className="text-xs text-zinc-400 hover:text-white"
+              className="w-full py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 text-xs text-zinc-300 transition-colors"
             >
               סגור
             </button>
