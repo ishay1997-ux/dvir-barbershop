@@ -615,14 +615,19 @@ html.a11y-letter-2 *:not(.a11y-ignore):not(.a11y-ignore *) { letter-spacing: 0.1
 html.a11y-letter-3 *:not(.a11y-ignore):not(.a11y-ignore *) { letter-spacing: 0.15em !important; }
 
 /* ============================================================
-   9. CUSTOM COLOR HUES
+   9. CUSTOM COLOR HUES (BACKGROUNDS, HEADINGS & TEXT)
    ============================================================ */
+html.a11y-has-custom-bg,
 html.a11y-has-custom-bg body,
 html.a11y-has-custom-bg main,
 html.a11y-has-custom-bg section,
 html.a11y-has-custom-bg header,
 html.a11y-has-custom-bg footer,
-html.a11y-has-custom-bg div:not(.a11y-ignore):not(.a11y-ignore *) {
+html.a11y-has-custom-bg nav,
+html.a11y-has-custom-bg article,
+html.a11y-has-custom-bg aside,
+html.a11y-has-custom-bg form,
+html.a11y-has-custom-bg div:not(.a11y-ignore):not(.a11y-ignore *):not(#a11y-trigger-btn):not(#a11y-trigger-btn *) {
   background-color: var(--a11y-custom-bg) !important;
   background-image: none !important;
 }
@@ -633,17 +638,31 @@ html.a11y-has-custom-heading h3:not(.a11y-ignore *),
 html.a11y-has-custom-heading h4:not(.a11y-ignore *),
 html.a11y-has-custom-heading h5:not(.a11y-ignore *),
 html.a11y-has-custom-heading h6:not(.a11y-ignore *),
-html.a11y-has-custom-heading legend:not(.a11y-ignore *) {
+html.a11y-has-custom-heading [role="heading"]:not(.a11y-ignore *),
+html.a11y-has-custom-heading legend:not(.a11y-ignore *),
+html.a11y-has-custom-heading .font-serif:not(.a11y-ignore *),
+html.a11y-has-custom-heading .font-black:not(.a11y-ignore *),
+html.a11y-has-custom-heading .text-gold:not(.a11y-ignore *),
+html.a11y-has-custom-heading .text-amber-400:not(.a11y-ignore *),
+html.a11y-has-custom-heading .text-yellow-400:not(.a11y-ignore *) {
   color: var(--a11y-custom-heading) !important;
+  -webkit-text-fill-color: var(--a11y-custom-heading) !important;
+  background-image: none !important;
 }
 
 html.a11y-has-custom-text p:not(.a11y-ignore *),
-html.a11y-has-custom-text span:not(.a11y-ignore *),
+html.a11y-has-custom-text span:not(.a11y-ignore *):not([class*="bg-"]):not(button *),
 html.a11y-has-custom-text label:not(.a11y-ignore *),
 html.a11y-has-custom-text li:not(.a11y-ignore *),
 html.a11y-has-custom-text td:not(.a11y-ignore *),
-html.a11y-has-custom-text a:not(.a11y-ignore *) {
+html.a11y-has-custom-text th:not(.a11y-ignore *),
+html.a11y-has-custom-text small:not(.a11y-ignore *),
+html.a11y-has-custom-text strong:not(.a11y-ignore *),
+html.a11y-has-custom-text b:not(.a11y-ignore *),
+html.a11y-has-custom-text i:not(.a11y-ignore *),
+html.a11y-has-custom-text a:not(.a11y-ignore):not(.a11y-ignore *) {
   color: var(--a11y-custom-text) !important;
+  -webkit-text-fill-color: var(--a11y-custom-text) !important;
 }
 
 /* ============================================================
