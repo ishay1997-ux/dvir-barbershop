@@ -64,6 +64,7 @@ interface A11yState {
   screenZoom: boolean;
   stopAnimations: boolean;
   bigCursor: boolean;
+  cursorMode: 'default' | 'white' | 'black';
   keyboardNav: boolean;
   imageAltTooltips: boolean;
   virtualKeyboard: boolean;
@@ -92,6 +93,7 @@ const defaultState: A11yState = {
   screenZoom: false,
   stopAnimations: false,
   bigCursor: false,
+  cursorMode: 'default',
   keyboardNav: false,
   imageAltTooltips: false,
   virtualKeyboard: false,
@@ -161,13 +163,19 @@ const A11Y_I18N = {
     activeCustomColor: 'צבע מותאם פעיל ✓',
 
     // Font section
-    fontSectionTitle: 'התאמות גופן וריווחים',
-    fontSectionDesc: 'שליטה מדויקת בגודל הגופן ובריווח בין מילים ושורות',
+    fontSectionTitle: 'התאמות גופן',
+    fontSectionDesc: 'הגדלת והקטנת הגופן',
     fontSize: 'גודל גופן',
     wordSpacing: 'ריווח בין מילים',
     lineHeight: 'ריווח בין שורות',
     letterSpacing: 'ריווח אותיות',
     levelOf: (lvl: number, max: number) => `דרגה ${lvl} מתוך ${max}`,
+
+    // Mouse Cursor
+    cursorSectionTitle: 'סמן העכבר',
+    cursorSectionDesc: 'הגדלת סמן העכבר ושינוי צבעו',
+    cursorWhite: 'לבן',
+    cursorBlack: 'שחור',
 
     // Extra
     bigCursor: 'סמן עכבר מוגדל',
@@ -259,13 +267,19 @@ const A11Y_I18N = {
     activeCustomColor: 'Custom Color Active ✓',
 
     // Font section
-    fontSectionTitle: 'Typography & Spacing',
-    fontSectionDesc: 'Precise fine-tuning of font sizes, word gaps, and line heights',
+    fontSectionTitle: 'Font Adjustments',
+    fontSectionDesc: 'Enlarge and scale font layout',
     fontSize: 'Font Size',
     wordSpacing: 'Word Spacing',
     lineHeight: 'Line Height',
     letterSpacing: 'Letter Spacing',
     levelOf: (lvl: number, max: number) => `Level ${lvl} of ${max}`,
+
+    // Mouse Cursor
+    cursorSectionTitle: 'Mouse Cursor',
+    cursorSectionDesc: 'Enlarge mouse cursor and change color',
+    cursorWhite: 'White',
+    cursorBlack: 'Black',
 
     // Extra
     bigCursor: 'Large Mouse Cursor',
@@ -357,13 +371,19 @@ const A11Y_I18N = {
     activeCustomColor: 'الألوان المخصصة نشطة ✓',
 
     // Font section
-    fontSectionTitle: 'الخط والمسافات',
-    fontSectionDesc: 'تحكم دقيق بحجم الخطوط والمسافات بين الكلمات والأسطر',
+    fontSectionTitle: 'تعديل الخطوط',
+    fontSectionDesc: 'تكبير وتصغير حجم الخط',
     fontSize: 'حجم الخط',
     wordSpacing: 'تباعد الكلمات',
     lineHeight: 'ارتفاع السطر',
     letterSpacing: 'تباعد الأحرف',
     levelOf: (lvl: number, max: number) => `المستوى ${lvl} من ${max}`,
+
+    // Mouse Cursor
+    cursorSectionTitle: 'مؤشر الفأرة',
+    cursorSectionDesc: 'تكبير مؤشر الفأرة وتغيير لونه',
+    cursorWhite: 'أبيض',
+    cursorBlack: 'أسود',
 
     // Extra
     bigCursor: 'مؤشر فأرة كبير',
@@ -455,13 +475,19 @@ const A11Y_I18N = {
     activeCustomColor: 'Пользовательский цвет активен ✓',
 
     // Font section
-    fontSectionTitle: 'Шрифт и интервалы',
-    fontSectionDesc: 'Точное управление размером шрифта, интервалами слов и строк',
+    fontSectionTitle: 'Настройки шрифта',
+    fontSectionDesc: 'Увеличение и масштабирование шрифта',
     fontSize: 'Размер шрифта',
     wordSpacing: 'Интервал слов',
     lineHeight: 'Высота строки',
     letterSpacing: 'Межбуквенный интервал',
     levelOf: (lvl: number, max: number) => `Уровень ${lvl} из ${max}`,
+
+    // Mouse Cursor
+    cursorSectionTitle: 'Курсор мыши',
+    cursorSectionDesc: 'Увеличение и изменение цвета курсора',
+    cursorWhite: 'Белый',
+    cursorBlack: 'Черный',
 
     // Extra
     bigCursor: 'Увеличенный курсор',
@@ -677,7 +703,11 @@ export default function AccessibilityWidget() {
     root.classList.toggle('a11y-highlight-headings', state.highlightHeadings);
     root.classList.toggle('a11y-screen-zoom', state.screenZoom);
     root.classList.toggle('a11y-stop-animations', state.stopAnimations);
-    body.classList.toggle('a11y-big-cursor', state.bigCursor);
+    body.classList.toggle(
+      'a11y-cursor-black',
+      state.cursorMode === 'black' || (state.bigCursor && state.cursorMode !== 'white')
+    );
+    body.classList.toggle('a11y-cursor-white', state.cursorMode === 'white');
     root.classList.toggle('a11y-keyboard-nav', state.keyboardNav);
     root.classList.toggle('a11y-image-alt-tooltips', state.imageAltTooltips);
 
@@ -1576,123 +1606,279 @@ export default function AccessibilityWidget() {
                 </div>
 
                 {/* ============================================================ */}
-                {/* 4. SECTION: FONT ADJUSTMENTS (התאמות גופן וריווח)           */}
+                {/* 3. SECTION: MOUSE CURSOR (סמן העכבר - Matching Screenshot)   */}
                 {/* ============================================================ */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-3.5">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h3 className="font-black text-xs sm:text-sm text-[#085B7A]">{t.fontSectionTitle}</h3>
-                      <p className="text-[10.5px] text-[#6B6560]">{t.fontSectionDesc}</p>
+                <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs">
+                  <div className="flex items-center justify-between mb-3" dir={currentDirection}>
+                    <div className={isRtl ? 'text-right' : 'text-left'}>
+                      <h3 className="font-bold text-sm text-[#085B7A] leading-snug">
+                        {t.cursorSectionTitle}
+                      </h3>
+                      <p className="text-xs text-[#085B7A]/80 font-medium leading-snug">
+                        {t.cursorSectionDesc}
+                      </p>
                     </div>
-                    <Type className="w-4 h-4 text-[#085B7A]" />
+                    <div className="text-[#085B7A] shrink-0">
+                      <svg
+                        className="w-6 h-6 fill-none stroke-current stroke-2"
+                        viewBox="0 0 24 24"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M3 3l7 18 3-7 7-3L3 3z" />
+                      </svg>
+                    </div>
                   </div>
 
-                  {/* Mode Buttons */}
-                  <div className="grid grid-cols-2 gap-1.5 mb-2.5">
+                  {/* 2 Pills: לבן / שחור */}
+                  <div className="grid grid-cols-2 gap-2.5" dir={currentDirection}>
+                    <button
+                      onClick={() =>
+                        setState((prev) => ({
+                          ...prev,
+                          cursorMode: prev.cursorMode === 'black' ? 'default' : 'black',
+                          bigCursor: prev.cursorMode !== 'black',
+                        }))
+                      }
+                      className={`py-2 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer text-center ${
+                        state.cursorMode === 'black' || (state.bigCursor && state.cursorMode !== 'white')
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                      }`}
+                      aria-pressed={state.cursorMode === 'black'}
+                    >
+                      {t.cursorBlack}
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        setState((prev) => ({
+                          ...prev,
+                          cursorMode: prev.cursorMode === 'white' ? 'default' : 'white',
+                          bigCursor: prev.cursorMode !== 'white',
+                        }))
+                      }
+                      className={`py-2 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer text-center ${
+                        state.cursorMode === 'white'
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                      }`}
+                      aria-pressed={state.cursorMode === 'white'}
+                    >
+                      {t.cursorWhite}
+                    </button>
+                  </div>
+                </div>
+
+                {/* ============================================================ */}
+                {/* 4. SECTION: FONT ADJUSTMENTS (התאמות גופן - Matching Screenshot) */}
+                {/* ============================================================ */}
+                <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs">
+                  <div className="flex items-center justify-between mb-3" dir={currentDirection}>
+                    <div className={isRtl ? 'text-right' : 'text-left'}>
+                      <h3 className="font-bold text-sm text-[#085B7A] leading-snug">
+                        {t.fontSectionTitle}
+                      </h3>
+                      <p className="text-xs text-[#085B7A]/80 font-medium leading-snug">
+                        {t.fontSectionDesc}
+                      </p>
+                    </div>
+                    <div className="text-[#085B7A] shrink-0 font-bold flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 fill-none stroke-current stroke-2"
+                        viewBox="0 0 24 24"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M4 20h16" />
+                        <path d="M8 16l4-10 4 10" />
+                        <path d="M10 12h4" />
+                        <path d="M12 2v2" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* 4 Mode Pills in a single row (RTL order: גודל גופן, ריווח בין שורות, ריווח בין מילים, ריווח אותיות) */}
+                  <div className="grid grid-cols-4 gap-1.5 mb-3.5" dir={currentDirection}>
                     <button
                       onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'size' }))}
-                      className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                      className={`py-1.5 px-1.5 rounded-full text-[11px] font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
                         state.fontAdjustmentMode === 'size'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#085B7A]'
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
                       }`}
                     >
-                      {t.fontSize} {state.fontScaleLevel > 0 && `(+${state.fontScaleLevel * 10}%)`}
+                      {t.fontSize}
                     </button>
-                    <button
-                      onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'word' }))}
-                      className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                        state.fontAdjustmentMode === 'word'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#085B7A]'
-                      }`}
-                    >
-                      {t.wordSpacing}
-                    </button>
+
                     <button
                       onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'line' }))}
-                      className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                      className={`py-1.5 px-1.5 rounded-full text-[11px] font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
                         state.fontAdjustmentMode === 'line'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#085B7A]'
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
                       }`}
                     >
                       {t.lineHeight}
                     </button>
+
+                    <button
+                      onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'word' }))}
+                      className={`py-1.5 px-1.5 rounded-full text-[11px] font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+                        state.fontAdjustmentMode === 'word'
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                      }`}
+                    >
+                      {t.wordSpacing}
+                    </button>
+
                     <button
                       onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'letter' }))}
-                      className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                      className={`py-1.5 px-1.5 rounded-full text-[11px] font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
                         state.fontAdjustmentMode === 'letter'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#085B7A]'
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
                       }`}
                     >
                       {t.letterSpacing}
                     </button>
                   </div>
 
-                  {/* Stepper Control: [-] === [+] */}
-                  <div className="flex items-center gap-3 bg-slate-50 rounded-2xl p-2 border border-slate-200">
+                  {/* Smooth Range Slider Bar (Pill with - on left and + on right) */}
+                  <div
+                    className="relative h-9 bg-slate-100/90 rounded-full flex items-center p-1 border border-slate-200/80 shadow-inner select-none"
+                    dir="ltr"
+                  >
+                    {/* Minus Button */}
                     <button
                       onClick={handleStepperDecrease}
                       disabled={currentLevel <= 0}
-                      className="w-9 h-9 rounded-xl bg-[#085B7A] text-white flex items-center justify-center font-black text-base disabled:opacity-40 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer"
+                      className="w-7 h-7 rounded-full bg-[#085B7A] text-white flex items-center justify-center font-black text-sm disabled:opacity-40 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer shadow-xs shrink-0 z-10"
                       aria-label="Decrease"
                     >
-                      -
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
 
-                    {/* Level Track Bar */}
-                    <div className="flex-1 px-2">
-                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                        <div
-                          className="bg-[#085B7A] h-full transition-all duration-200"
-                          style={{ width: `${(currentLevel / maxLevel) * 100}%` }}
-                        />
-                      </div>
-                      <div className="text-center text-[10px] font-bold text-[#085B7A] mt-1">
-                        {t.levelOf(currentLevel, maxLevel)}
-                      </div>
+                    {/* Blue Filled Range Bar */}
+                    <div className="flex-1 h-full mx-1.5 relative overflow-hidden rounded-full flex items-center bg-slate-200/60">
+                      <div
+                        className="h-full bg-[#085B7A]/75 rounded-full transition-all duration-200 shadow-xs"
+                        style={{
+                          width: `${(currentLevel / maxLevel) * 100}%`,
+                        }}
+                      />
                     </div>
 
+                    {/* Plus Button */}
                     <button
                       onClick={handleStepperIncrease}
                       disabled={currentLevel >= maxLevel}
-                      className="w-9 h-9 rounded-xl bg-[#085B7A] text-white flex items-center justify-center font-black text-base disabled:opacity-40 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer"
+                      className="w-7 h-7 rounded-full bg-[#085B7A] text-white flex items-center justify-center font-black text-sm disabled:opacity-40 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer shadow-xs shrink-0 z-10"
                       aria-label="Increase"
                     >
-                      +
+                      <Plus className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
 
                 {/* ============================================================ */}
-                {/* 5. EXTRA UTILITIES (Big cursor & Stop animations)           */}
+                {/* 5. SECTION: COLOR ADJUSTMENTS (התאמת צבעים אישית)           */}
                 {/* ============================================================ */}
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => setState((prev) => ({ ...prev, bigCursor: !prev.bigCursor }))}
-                    className={`p-2 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                      state.bigCursor
-                        ? 'border-[#085B7A] bg-[#085B7A]/10 text-[#085B7A] font-black'
-                        : 'border-slate-200 bg-white text-[#3D3D3D] hover:border-[#085B7A]'
-                    }`}
-                    aria-pressed={state.bigCursor}
-                  >
-                    <MousePointer className="w-3.5 h-3.5" />
-                    {t.bigCursor}
-                  </button>
+                <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <h3 className="font-bold text-sm text-[#085B7A]">{t.colorSectionTitle}</h3>
+                      <p className="text-xs text-[#085B7A]/80">{t.colorSectionDesc}</p>
+                    </div>
+                    <Sliders className="w-4 h-4 text-[#085B7A]" />
+                  </div>
 
+                  {/* Target Buttons */}
+                  <div className="grid grid-cols-3 gap-1.5 mb-2.5">
+                    <button
+                      onClick={() => setState((prev) => ({ ...prev, colorTarget: 'background' }))}
+                      className={`py-1.5 px-2 rounded-full text-xs font-bold transition-all border cursor-pointer ${
+                        state.colorTarget === 'background'
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                      }`}
+                    >
+                      {t.targetBackground}
+                    </button>
+                    <button
+                      onClick={() => setState((prev) => ({ ...prev, colorTarget: 'headings' }))}
+                      className={`py-1.5 px-2 rounded-full text-xs font-bold transition-all border cursor-pointer ${
+                        state.colorTarget === 'headings'
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                      }`}
+                    >
+                      {t.targetHeadings}
+                    </button>
+                    <button
+                      onClick={() => setState((prev) => ({ ...prev, colorTarget: 'text' }))}
+                      className={`py-1.5 px-2 rounded-full text-xs font-bold transition-all border cursor-pointer ${
+                        state.colorTarget === 'text'
+                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
+                          : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                      }`}
+                    >
+                      {t.targetText}
+                    </button>
+                  </div>
+
+                  {/* Rainbow Spectrum Color Bar */}
+                  <div
+                    ref={colorSliderRef}
+                    onClick={handleColorSpectrumClick}
+                    className="relative h-5 rounded-full cursor-pointer shadow-inner mb-2.5 border border-black/10"
+                    style={{
+                      background:
+                        'linear-gradient(to right, #000 0%, #fff 15%, #ff0000 25%, #ffff00 40%, #00ff00 55%, #00ffff 70%, #0000ff 85%, #ff00ff 100%)',
+                    }}
+                    title={t.colorSectionTitle}
+                  >
+                    {currentTargetHue !== null && (
+                      <div
+                        className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white border-2 border-[#085B7A] shadow-md -ml-2.5 pointer-events-none"
+                        style={{ left: `${(currentTargetHue / 360) * 100}%` }}
+                      />
+                    )}
+                  </div>
+
+                  {/* Reset Colors Button */}
+                  <div className="flex items-center justify-between pt-1">
+                    <button
+                      onClick={handleResetColors}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#085B7A] hover:underline cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      {t.resetColors}
+                    </button>
+
+                    {currentTargetHue !== null && (
+                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">
+                        {t.activeCustomColor}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* ============================================================ */}
+                {/* 6. EXTRA UTILITIES (עצירת אנימציות)                         */}
+                {/* ============================================================ */}
+                <div>
                   <button
                     onClick={() => setState((prev) => ({ ...prev, stopAnimations: !prev.stopAnimations }))}
-                    className={`p-2 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    className={`w-full p-2.5 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       state.stopAnimations
                         ? 'border-[#085B7A] bg-[#085B7A]/10 text-[#085B7A] font-black'
                         : 'border-slate-200 bg-white text-[#3D3D3D] hover:border-[#085B7A]'
                     }`}
                     aria-pressed={state.stopAnimations}
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Sparkles className="w-4 h-4 text-[#085B7A]" />
                     {t.stopAnimations}
                   </button>
                 </div>
