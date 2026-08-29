@@ -26,18 +26,18 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'The Cut | מספרה פרימיום בתל אביב',
-  description: 'מספרה מקצועית בתל אביב – תספורות גברים, עיצוב זקן, גילוח קלאסי. הזמן תור אונליין 24/7.',
-  keywords: ['מספרה', 'תל אביב', 'תספורת גברים', 'עיצוב זקן', 'הזמנת תור', 'ברבר שופ', 'מספרה נגישה'],
-  authors: [{ name: 'The Cut Barbershop' }],
+  title: 'The Cut · פלטפורמת זימון תורים חכמה למספרות ועסקים',
+  description: 'The Cut – מערכת זימון תורים אולטרה-מהירה, ניהול יומן מתקדם וסנכרון ענן מלא למספרות, ברברשופים ומעצבי שיער בישראל.',
+  keywords: ['The Cut', 'זימון תורים', 'מערכת תורים למספרה', 'ברבר שופ', 'תספורת גברים', 'עיצוב שיער', 'הזמנת תור אונליין', 'ניהול יומן'],
+  authors: [{ name: 'The Cut Technologies' }],
   manifest: '/manifest.json',
   icons: {
     icon: '/icon.svg',
     apple: '/icon.svg',
   },
   openGraph: {
-    title: 'The Cut | מספרה פרימיום',
-    description: 'מספרה מקצועית – תספורות, זקן, גילוח קלאסי. הזמן תור עכשיו!',
+    title: 'The Cut · פלטפורמת זימון תורים חכמה למספרות',
+    description: 'מערכת זימון תורים אולטרה-מהירה וניהול יומן חכם למספרות המובילות בישראל.',
     locale: 'he_IL',
     type: 'website',
   },
@@ -45,22 +45,11 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'HairSalon',
-  name: 'The Cut',
-  description: 'מספרה פרימיום בתל אביב',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'רחוב הרצל 1',
-    addressLocality: 'תל אביב',
-    addressCountry: 'IL',
-  },
-  telephone: '052-000-0000',
-  url: 'https://thecut.co.il',
-  openingHoursSpecification: [
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday'], opens: '09:00', closes: '20:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Thursday'], opens: '09:00', closes: '21:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Friday'], opens: '08:00', closes: '14:00' },
-  ],
+  '@type': 'SoftwareApplication',
+  name: 'The Cut Platform',
+  applicationCategory: 'BusinessApplication',
+  description: 'פלטפורמת זימון תורים חכמה וניהול יומן למספרות ועסקים בישראל',
+  url: 'https://dvir-barbershop-reg-in.vercel.app',
   priceRange: '₪₪',
 };
 
