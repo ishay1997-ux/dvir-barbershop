@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Phone, Scissors } from 'lucide-react';
+import { Menu, X, Phone, Scissors, Lock } from 'lucide-react';
 import { SHOP_INFO } from '@/lib/utils';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 
@@ -75,21 +75,39 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* CTA + Phone + Status */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* CTA + Admin Login + Phone */}
+        <div className="hidden md:flex items-center gap-3">
           <OpenStatusBadge className={isScrolled ? '!bg-[#F0EBE1] !border-[#E5DDD0] !text-[#1C1C1C]' : ''} />
+          
           <a
             href={`tel:${SHOP_INFO.phone}`}
-            className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${
               isScrolled
                 ? 'text-[#6B6560] hover:text-gold'
                 : 'text-white/80 hover:text-gold'
             }`}
             aria-label={`חייג: ${SHOP_INFO.phone}`}
           >
-            <Phone className="w-4 h-4 text-gold" />
+            <Phone className="w-3.5 h-3.5 text-gold" />
             <span dir="ltr">{SHOP_INFO.phone}</span>
           </a>
+
+          {/* Prominent Admin Login Button for Dvir */}
+          <Link
+            href="/admin"
+            className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-full border transition-all duration-200 ${
+              isScrolled
+                ? 'bg-[#1C1C1C] text-gold border-[#1C1C1C] hover:bg-black'
+                : 'bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-gold backdrop-blur-xs'
+            }`}
+            id="header-admin-button"
+            title="כניסת מנהל למספרה של דביר"
+          >
+            <Lock className="w-3.5 h-3.5 text-gold" />
+            <span>כניסת מנהל</span>
+          </Link>
+
+          {/* Book Appointment CTA */}
           <Link
             href="/booking"
             className="btn-shimmer text-[#1C1C1C] font-bold text-sm px-5 py-2.5 rounded-full shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300"
@@ -99,19 +117,34 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Mobile Hamburger */}
-        <button
-          className={`md:hidden p-2 rounded-lg transition-colors ${
-            isScrolled
-              ? 'text-[#1C1C1C] hover:bg-[#F0EBE1]'
-              : 'text-white hover:bg-white/10'
-          }`}
-          onClick={() => setIsMobileOpen(!isMobileOpen)}
-          aria-label={isMobileOpen ? 'סגור תפריט' : 'פתח תפריט'}
-          aria-expanded={isMobileOpen}
-        >
-          {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile Header Actions */}
+        <div className="md:hidden flex items-center gap-2">
+          <Link
+            href="/admin"
+            className={`flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full border transition-colors ${
+              isScrolled
+                ? 'bg-[#1C1C1C] text-gold border-[#1C1C1C]'
+                : 'bg-white/15 text-white border-white/20'
+            }`}
+            title="כניסת מנהל"
+          >
+            <Lock className="w-3 h-3 text-gold" />
+            <span>מנהל</span>
+          </Link>
+
+          <button
+            className={`p-2 rounded-lg transition-colors ${
+              isScrolled
+                ? 'text-[#1C1C1C] hover:bg-[#F0EBE1]'
+                : 'text-white hover:bg-white/10'
+            }`}
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            aria-label={isMobileOpen ? 'סגור תפריט' : 'פתח תפריט'}
+            aria-expanded={isMobileOpen}
+          >
+            {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -150,10 +183,11 @@ export default function Header() {
 
             <Link
               href="/admin"
-              className="text-center text-xs font-bold text-[#6B6560] hover:text-gold py-2 transition-colors border-t border-[#E5DDD0]/50 mt-1"
+              className="flex items-center justify-center gap-2 text-center text-xs font-bold text-gold bg-[#1C1C1C] py-2.5 rounded-xl transition-colors mt-1 shadow-xs"
               onClick={() => setIsMobileOpen(false)}
             >
-              כניסת מנהל (דביר) 🔒
+              <Lock className="w-3.5 h-3.5" />
+              כניסת מנהל (דביר)
             </Link>
           </div>
         </div>
