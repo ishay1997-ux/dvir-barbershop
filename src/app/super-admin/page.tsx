@@ -48,6 +48,7 @@ import { auth, db, isFirebaseConfigured } from '@/lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useAuth } from '@/contexts/AuthContext';
+import { BusinessLayoutConfig } from '@/types/business';
 
 interface BugReport {
   id: string;
@@ -101,6 +102,7 @@ interface Business {
   createdAt: string;
   services?: ServiceItem[];
   branches?: BranchItem[];
+  layout?: BusinessLayoutConfig;
 }
 
 // Intelligent Appointment Auto-Finder for Support Tickets
@@ -288,7 +290,7 @@ const defaultBusinessesList: Business[] = [
 
   // Edit Business Customization State
   const [editingBiz, setEditingBiz] = useState<Business | null>(null);
-  const [editTab, setEditTab] = useState<'branding' | 'social' | 'gallery' | 'services' | 'branches' | 'banner'>('branding');
+  const [editTab, setEditTab] = useState<'branding' | 'layout' | 'social' | 'gallery' | 'services' | 'branches' | 'banner'>('branding');
   const [isSavingBiz, setIsSavingBiz] = useState(false);
   const [saveNotice, setSaveNotice] = useState(false);
   const [newGalleryImageUrl, setNewGalleryImageUrl] = useState('');
@@ -1497,6 +1499,15 @@ const defaultBusinessesList: Business[] = [
               </button>
               <button
                 type="button"
+                onClick={() => setEditTab('layout')}
+                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
+                  editTab === 'layout' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                📐 לייאוט ומבנה
+              </button>
+              <button
+                type="button"
                 onClick={() => setEditTab('social')}
                 className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
                   editTab === 'social' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
@@ -1541,6 +1552,61 @@ const defaultBusinessesList: Business[] = [
                 📢 באנר הודעות
               </button>
             </div>
+
+            {/* TAB: LAYOUT & SITE STRUCTURE */}
+            {editTab === 'layout' && (
+              <div className="space-y-4 text-xs">
+                <div className="bg-[#141414] p-3 rounded-xl border border-white/10 text-zinc-300">
+                  <span className="font-bold text-white block mb-1">📐 התאמה אישית של מבנה האתר (Layout & Structure):</span>
+                  באפשרותך לקבוע את סגנון ההירו העליון, עיצוב הכרטיסים ולהפעיל או לכבות סקשנים לפי העדפת הספר.
+                </div>
+
+                {/* Section Visibility Toggles */}
+                <div>
+                  <label className="block text-zinc-300 font-bold mb-2">מודולים וסקשנים פעילים בעמוד הבית:</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {[
+                      { key: 'showBio', label: '✂️ אודות הספר והניסיון (Barber Bio & Philosophy)', desc: 'הצגת פסקת האודות, שנות הניסיון והסטנדרטים' },
+                      { key: 'showBranches', label: '📍 סניפים וניווט Waze (Branches & Hours)', desc: 'הצגת שעות פעילות, כתובת וניווט ישיר' },
+                      { key: 'showBeforeAfter', label: '🌓 סליידר לפני / אחרי (Before & After Slider)', desc: 'סליידר אינטראקטיבי למהפכי תספורת וזקן' },
+                      { key: 'showReviews', label: '⭐ ביקורות והמלצות (Google Reviews 5.0★)', desc: 'הצגת פידבק לקוחות מרוצים וציון ממוצע' },
+                      { key: 'showFaqs', label: '❓ שאלות נפוצות (FAQ Section)', desc: 'אקורדיון שאלות ותשובות לקוחות' },
+                    ].map((sec) => {
+                      const isEnabled = (editingBiz.layout as any)?.[sec.key] !== false;
+                      return (
+                        <div
+                          key={sec.key}
+                          onClick={() => {
+                            setEditingBiz({
+                              ...editingBiz,
+                              layout: {
+                                ...(editingBiz.layout || {}),
+                                [sec.key]: !isEnabled,
+                              },
+                            });
+                          }}
+                          className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                            isEnabled
+                              ? 'bg-emerald-950/20 border-emerald-500/40 text-white'
+                              : 'bg-white/5 border-white/10 text-zinc-500 opacity-60'
+                          }`}
+                        >
+                          <div>
+                            <div className="font-bold text-xs">{sec.label}</div>
+                            <div className="text-[10px] text-zinc-400 mt-0.5">{sec.desc}</div>
+                          </div>
+                          <div className={`w-8 h-5 rounded-full flex items-center px-0.5 transition-colors ${
+                            isEnabled ? 'bg-emerald-500 justify-end' : 'bg-zinc-700 justify-start'
+                          }`}>
+                            <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* TAB 1: BRANDING & GENERAL */}
             {editTab === 'branding' && (

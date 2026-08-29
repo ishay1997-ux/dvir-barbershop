@@ -111,23 +111,33 @@ export default function DynamicBusinessLandingPage({
         <PriceListAndGallerySection business={business || undefined} />
 
         {/* 3. About Master Barber (Bio, Experience, Philosophy) */}
-        <div id="about">
-          <BarberShowcase business={business || undefined} />
-        </div>
+        {business?.layout?.showBio !== false && (
+          <div id="about">
+            <BarberShowcase business={business || undefined} />
+          </div>
+        )}
 
         {/* 4. Interactive Branch Maps & One-Tap Waze Navigation */}
-        <BranchNavigationSection business={business || undefined} />
+        {business?.layout?.showBranches !== false && (
+          <BranchNavigationSection business={business || undefined} />
+        )}
 
         {/* 5. Interactive Before & After Transformation Slider */}
-        <BeforeAfterSection business={business || undefined} />
+        {business?.layout?.showBeforeAfter !== false && (
+          <BeforeAfterSection business={business || undefined} />
+        )}
 
         {/* 6. Customer Testimonials & 5.0★ Google Reviews */}
-        <ReviewsSection business={business || undefined} />
+        {business?.layout?.showReviews !== false && (
+          <ReviewsSection business={business || undefined} />
+        )}
 
         {/* 7. Frequently Asked Questions (FAQ) */}
-        <div id="faq">
-          <FaqSection business={business || undefined} />
-        </div>
+        {business?.layout?.showFaqs !== false && (
+          <div id="faq">
+            <FaqSection business={business || undefined} />
+          </div>
+        )}
       </main>
       <Footer business={business || undefined} />
 

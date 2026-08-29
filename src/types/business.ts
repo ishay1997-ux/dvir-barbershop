@@ -31,6 +31,17 @@ export interface FaqItem {
   answer: string;
 }
 
+export interface BusinessLayoutConfig {
+  heroStyle?: 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
+  servicesStyle?: 'split-gallery' | 'cards-grid' | 'accordion-list';
+  cardStyle?: 'glass' | 'solid-dark' | 'bordered-neon';
+  showBeforeAfter?: boolean;
+  showReviews?: boolean;
+  showFaqs?: boolean;
+  showBranches?: boolean;
+  showBio?: boolean;
+}
+
 export interface BusinessConfig {
   id: string;
   name: string;
@@ -60,4 +71,5 @@ export interface BusinessConfig {
   websiteUrl?: string;
   avatarUrl?: string;
   experienceYears?: number;
+  layout?: BusinessLayoutConfig;
 }

@@ -103,6 +103,16 @@ function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: Business
     branches: raw.branches && raw.branches.length > 0 ? raw.branches : base.branches,
     testimonials: raw.testimonials && raw.testimonials.length > 0 ? raw.testimonials : base.testimonials,
     faqs: raw.faqs && raw.faqs.length > 0 ? raw.faqs : base.faqs,
+    layout: {
+      heroStyle: raw.layout?.heroStyle || base.layout?.heroStyle || 'hub-monogram',
+      servicesStyle: raw.layout?.servicesStyle || base.layout?.servicesStyle || 'split-gallery',
+      cardStyle: raw.layout?.cardStyle || base.layout?.cardStyle || 'glass',
+      showBeforeAfter: raw.layout?.showBeforeAfter !== undefined ? raw.layout.showBeforeAfter : true,
+      showReviews: raw.layout?.showReviews !== undefined ? raw.layout.showReviews : true,
+      showFaqs: raw.layout?.showFaqs !== undefined ? raw.layout.showFaqs : true,
+      showBranches: raw.layout?.showBranches !== undefined ? raw.layout.showBranches : true,
+      showBio: raw.layout?.showBio !== undefined ? raw.layout.showBio : true,
+    },
   };
 }
 
