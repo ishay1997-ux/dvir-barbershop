@@ -35,12 +35,18 @@ import {
   ReaderModal,
   SpeechPlayer,
   SpeechSettingsModal,
+  HideWidgetModal,
+  HideDuration,
 } from './components';
+
+const HIDE_STORAGE_KEY = 'thecut_a11y_hidden_until';
+const HIDE_SESSION_KEY = 'thecut_a11y_hidden_session';
 
 export default function AccessibilityWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [dockSide, setDockSide] = useState<'left' | 'right'>('left');
   const [isHiddenTemporarily, setIsHiddenTemporarily] = useState(false);
+  const [isHideModalOpen, setIsHideModalOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [showReaderModal, setShowReaderModal] = useState(false);
   const [hoveredTile, setHoveredTile] = useState<TileItem | null>(null);
@@ -72,7 +78,26 @@ export default function AccessibilityWidget() {
   const isRtl = state.language === 'he' || state.language === 'ar';
   const currentDirection = isRtl ? 'rtl' : 'ltr';
 
-  // 4. Listen to focus events to support virtual keyboard typing into any active input
+  // 4. Check whether accessibility button was hidden by user preference
+  useEffect(() => {
+    try {
+      const sessionHidden = sessionStorage.getItem(HIDE_SESSION_KEY);
+      if (sessionHidden === 'true') {
+        setIsHiddenTemporarily(true);
+        return;
+      }
+      const hiddenUntil = localStorage.getItem(HIDE_STORAGE_KEY);
+      if (hiddenUntil && Date.now() < Number(hiddenUntil)) {
+        setIsHiddenTemporarily(true);
+      } else if (hiddenUntil) {
+        localStorage.removeItem(HIDE_STORAGE_KEY);
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
+
+  // 5. Listen to focus events to support virtual keyboard typing into any active input
   useEffect(() => {
     const handleFocus = (e: FocusEvent) => {
       const target = e.target as HTMLElement;
@@ -89,7 +114,7 @@ export default function AccessibilityWidget() {
     return () => window.removeEventListener('focusin', handleFocus);
   }, []);
 
-  // 5. Global Keyboard Shortcuts: Alt + A opens accessibility drawer, Escape closes
+  // 6. Global Keyboard Shortcuts: Alt + A opens accessibility drawer, Escape closes
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.altKey && (e.key === 'a' || e.key === 'A' || e.key === 'ש')) {
@@ -100,10 +125,33 @@ export default function AccessibilityWidget() {
         setIsOpen(false);
         setIsLanguageOpen(false);
         setShowReaderModal(false);
+        setIsHideModalOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // 7. Hide Button Handler
+  const handleConfirmHide = useCallback((duration: HideDuration) => {
+    try {
+      if (duration === 'session') {
+        sessionStorage.setItem(HIDE_SESSION_KEY, 'true');
+      } else {
+        const msMap: Record<'24h' | '1w' | '1m', number> = {
+          '24h': 24 * 60 * 60 * 1000,
+          '1w': 7 * 24 * 60 * 60 * 1000,
+          '1m': 30 * 24 * 60 * 60 * 1000,
+        };
+        const until = Date.now() + msMap[duration];
+        localStorage.setItem(HIDE_STORAGE_KEY, until.toString());
+      }
+    } catch {
+      // Ignore
+    }
+    setIsHiddenTemporarily(true);
+    setIsHideModalOpen(false);
+    setIsOpen(false);
   }, []);
 
   // 6. Virtual Keyboard Actions
@@ -352,10 +400,7 @@ export default function AccessibilityWidget() {
                 setIsLanguageOpen={setIsLanguageOpen}
                 language={state.language}
                 onSelectLanguage={(lang) => setState((prev) => ({ ...prev, language: lang }))}
-                onHideWidget={() => {
-                  setIsHiddenTemporarily(true);
-                  setIsOpen(false);
-                }}
+                onHideWidget={() => setIsHideModalOpen(true)}
                 onToggleDockSide={() => setDockSide((prev) => (prev === 'right' ? 'left' : 'right'))}
                 t={t}
                 isRtl={isRtl}
@@ -479,6 +524,16 @@ export default function AccessibilityWidget() {
         speechRate={speech.speechRate}
         setSpeechRate={speech.setSpeechRate}
         t={t}
+      />
+
+      {/* 7. Hide Accessibility Widget Option Modal */}
+      <HideWidgetModal
+        isOpen={isHideModalOpen}
+        onClose={() => setIsHideModalOpen(false)}
+        onConfirmHide={handleConfirmHide}
+        t={t}
+        currentDirection={currentDirection}
+        isRtl={isRtl}
       />
     </>
   );

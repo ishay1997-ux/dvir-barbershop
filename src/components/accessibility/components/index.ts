@@ -10,3 +10,5 @@ export { VirtualKeyboard } from './VirtualKeyboard';
 export { ReaderModal } from './ReaderModal';
 export { SpeechPlayer } from './SpeechPlayer';
 export { SpeechSettingsModal } from './SpeechSettingsModal';
+export { HideWidgetModal } from './HideWidgetModal';
+export type { HideDuration } from './HideWidgetModal';

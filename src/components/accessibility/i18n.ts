@@ -71,6 +71,16 @@ export const A11Y_I18N = {
     statementLink: 'הצהרת נגישות תקן 5568 ←',
     standardBadge: 'נגיש בקליק · WCAG 2.1 AA',
 
+    // Hide Widget Modal
+    hideWidgetTitle: "הסתר ווידג'ט נגישות",
+    hideDurationTitle: 'בחר לכמה זמן יוסתר הכפתור',
+    hideSession: 'להפעלה הנוכחית בכרטיסייה זו בלבד',
+    hide24h: 'ל-24 שעות',
+    hide1w: 'לשבוע',
+    hide1m: 'לחודש',
+    hideConfirmBtn: 'אשר והסר את כפתור הנגישות',
+    hideCancelBtn: 'ביטול',
+
     // Virtual Keyboard
     keyboardTitle: '⌨️ מקלדת וירטואלית על המסך',
     spaceKey: 'רווח (Space)',
@@ -174,6 +184,16 @@ export const A11Y_I18N = {
     resetAll: 'Reset Accessibility',
     statementLink: 'Accessibility Statement (WCAG 2.1) ←',
     standardBadge: 'AccessClick · WCAG 2.1 AA',
+
+    // Hide Widget Modal
+    hideWidgetTitle: 'Hide Accessibility Widget',
+    hideDurationTitle: 'Select how long to hide the button',
+    hideSession: 'For current session / tab only',
+    hide24h: 'For 24 hours',
+    hide1w: 'For 1 week',
+    hide1m: 'For 1 month',
+    hideConfirmBtn: 'Confirm and Hide Accessibility Button',
+    hideCancelBtn: 'Cancel',
 
     // Virtual Keyboard
     keyboardTitle: '⌨️ On-Screen Virtual Keyboard',
@@ -279,13 +299,23 @@ export const A11Y_I18N = {
     statementLink: 'بيان إمكانية الوصول المعياري ←',
     standardBadge: 'متاح بنقرة واحدة · WCAG 2.1 AA',
 
+    // Hide Widget Modal
+    hideWidgetTitle: 'إخفاء أداة إمكانية الوصول',
+    hideDurationTitle: 'اختر المدة التي سيتم إخفاء الزر فيها',
+    hideSession: 'للجلسة الحالية في علامة التبويب هذه فقط',
+    hide24h: 'لمدة 24 ساعة',
+    hide1w: 'لمدة أسبوع',
+    hide1m: 'لمدة شهر',
+    hideConfirmBtn: 'تأكيد وإخفاء زر إمكانية الوصول',
+    hideCancelBtn: 'إلغاء',
+
     // Virtual Keyboard
     keyboardTitle: '⌨️ لوحة مفاتيح افتراضية على الشاشة',
     spaceKey: 'مسافة (Space)',
     backspaceKey: 'حذف',
 
     // Reader Modal
-    readerTitle: 'صالون دبير – عرض قراءة ميسר',
+    readerTitle: 'صالון דביר – عرض قراءة מيسר',
     readerSubtitle: 'مخصص للطباعة والقراءة المكبرة بوضوح تام',
     printBtn: 'طباعة المحتوى',
     readerAboutTitle: 'عن الصالון',
@@ -382,6 +412,16 @@ export const A11Y_I18N = {
     resetAll: 'Сбросить доступность',
     statementLink: 'Заявление о доступности WCAG 2.1 ←',
     standardBadge: 'Доступно в 1 клик · WCAG 2.1 AA',
+
+    // Hide Widget Modal
+    hideWidgetTitle: 'Скрыть виджет доступности',
+    hideDurationTitle: 'Выберите на какое время скрыть кнопку',
+    hideSession: 'Только для текущей вкладки',
+    hide24h: 'На 24 часа',
+    hide1w: 'На 1 неделю',
+    hide1m: 'На 1 месяц',
+    hideConfirmBtn: 'Подтвердить и скрыть кнопку',
+    hideCancelBtn: 'Отмена',
 
     // Virtual Keyboard
     keyboardTitle: '⌨️ Экранная виртуальная клавиатура',
