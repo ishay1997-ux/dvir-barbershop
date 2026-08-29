@@ -211,8 +211,17 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 {confirmDialog.message}
               </p>
 
-              {/* Action Buttons */}
+              {/* Action Buttons - In RTL: Cancel on Right, Destructive on Left */}
               <div className="flex gap-3">
+                <button
+                  type="button"
+                  disabled={isConfirmLoading}
+                  onClick={() => setConfirmDialog(null)}
+                  className="flex-1 py-3.5 px-4 rounded-2xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs sm:text-sm transition-colors cursor-pointer border border-white/10"
+                >
+                  {confirmDialog.cancelText || 'ביטול'}
+                </button>
+
                 <button
                   type="button"
                   disabled={isConfirmLoading}
@@ -231,15 +240,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   ) : (
                     confirmDialog.confirmText || 'אישור'
                   )}
-                </button>
-
-                <button
-                  type="button"
-                  disabled={isConfirmLoading}
-                  onClick={() => setConfirmDialog(null)}
-                  className="flex-1 py-3.5 px-4 rounded-2xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs sm:text-sm transition-colors cursor-pointer border border-white/10"
-                >
-                  {confirmDialog.cancelText || 'ביטול'}
                 </button>
               </div>
             </motion.div>

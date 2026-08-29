@@ -249,26 +249,26 @@ export default function BugReportModal({ isOpen, onClose }: BugReportModalProps)
                 <Pencil className="w-4 h-4 text-gray-400 absolute right-3.5 top-3.5" />
               </div>
 
-              {/* Buttons: שלח/י + ביטול */}
+              {/* Buttons: ביטול (ימין) + שלח/י (שמאל) ב-RTL */}
               <div className="pt-2 flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="flex-1 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 active:scale-98 text-gray-700 font-bold text-sm transition-colors text-center cursor-pointer"
+                >
+                  ביטול
+                </button>
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-3 rounded-xl bg-[#00C48C] hover:bg-[#00B07D] active:scale-98 text-white font-black text-sm transition-all shadow-md flex items-center justify-center gap-1.5 disabled:opacity-50"
+                  className="flex-1 py-3 rounded-xl bg-[#00C48C] hover:bg-[#00B07D] active:scale-98 text-white font-black text-sm transition-all shadow-md flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                   ) : (
                     <span>שלח/י</span>
                   )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="flex-1 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 active:scale-98 text-gray-700 font-bold text-sm transition-colors text-center"
-                >
-                  ביטול
                 </button>
               </div>
             </form>

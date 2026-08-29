@@ -103,8 +103,15 @@ export const HideWidgetModal: React.FC<HideWidgetModalProps> = ({
                 })}
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex justify-end pt-2">
+              {/* Action Buttons: Cancel on Right, Confirm on Left in RTL */}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm py-2.5 px-4 rounded-lg transition-colors cursor-pointer"
+                >
+                  {t.close || 'ביטול'}
+                </button>
                 <button
                   onClick={() => onConfirmHide(selectedDuration)}
                   className="bg-[#085B7A] hover:bg-[#064961] text-white font-bold text-xs sm:text-sm py-2.5 px-6 rounded-lg transition-colors shadow-sm cursor-pointer active:scale-95"
