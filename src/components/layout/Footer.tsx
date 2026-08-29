@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Scissors, Phone, MapPin, Clock } from 'lucide-react';
+import { Scissors, Phone, MapPin, Clock, Lock } from 'lucide-react';
 import { SHOP_INFO } from '@/lib/utils';
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -119,9 +119,9 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-[#2A2A2A] mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-[#6B6560]">
-            © {currentYear} The Cut. כל הזכויות שמורות.
+            © {currentYear} המספרה של דביר. כל הזכויות שמורות.
           </p>
-          <div className="flex items-center gap-6 text-xs text-[#9E9891]">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-[#9E9891]">
             <Link
               href="/accessibility"
               className="hover:text-gold transition-colors flex items-center gap-1.5"
@@ -130,7 +130,13 @@ export default function Footer() {
               הצהרת נגישות (ת"י 5568)
             </Link>
             <span>·</span>
-            <span>עוצב ופותח עם ❤️</span>
+            <Link
+              href="/admin"
+              className="hover:text-gold transition-colors flex items-center gap-1.5 font-bold text-gold/80 hover:text-gold bg-white/5 hover:bg-white/10 px-3 py-1 rounded-full border border-white/10"
+            >
+              <Lock className="w-3 h-3" />
+              כניסת מנהל (דביר)
+            </Link>
           </div>
         </div>
       </div>

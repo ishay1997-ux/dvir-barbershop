@@ -147,6 +147,14 @@ export default function Header() {
             >
               הזמן תור עכשיו
             </Link>
+
+            <Link
+              href="/admin"
+              className="text-center text-xs font-bold text-[#6B6560] hover:text-gold py-2 transition-colors border-t border-[#E5DDD0]/50 mt-1"
+              onClick={() => setIsMobileOpen(false)}
+            >
+              כניסת מנהל (דביר) 🔒
+            </Link>
           </div>
         </div>
       </div>
