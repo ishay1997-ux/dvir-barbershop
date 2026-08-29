@@ -30,7 +30,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#1C1C1C]"
+      className="relative min-h-[calc(100vh-70px)] flex flex-col items-center justify-center overflow-hidden bg-[#1C1C1C] py-14 sm:py-20"
       aria-label="עמוד הבית הראשי"
     >
       {/* Background texture + gradient */}
@@ -61,19 +61,18 @@ export default function HeroSection() {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center flex flex-col items-center">
 
-        {/* Pre-title badge & Live Status */}
+        {/* Pre-title badge */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-3 mb-6"
+          transition={{ duration: 0.5 }}
+          className="flex items-center justify-center mb-6"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#C9A84C]/30 bg-[#C9A84C]/10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#C9A84C]/30 bg-[#C9A84C]/10 shadow-xs">
             <Star className="w-3.5 h-3.5 text-gold fill-gold" />
-            <span className="text-gold text-xs font-semibold tracking-wider">המספרה של דביר · אריאל & רחובות</span>
+            <span className="text-gold text-xs font-bold tracking-wider">המספרה של דביר · אריאל & רחובות</span>
             <Star className="w-3.5 h-3.5 text-gold fill-gold" />
           </div>
-          <OpenStatusBadge />
         </motion.div>
 
         {/* Main heading */}
