@@ -373,6 +373,15 @@ export default function SuperAdminPage() {
     }
   };
 
+  // Initial Data Fetch Effect upon login
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchBusinesses();
+      fetchReports();
+      fetchUsers();
+    }
+  }, [isAuthenticated]);
+
   // Add User
   const handleAddUser = async () => {
     if (!newUserEmail.trim() || !newUserEmail.includes('@')) {
