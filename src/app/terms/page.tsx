@@ -142,7 +142,26 @@ export default function TermsPage() {
 
             {/* 14 */}
             <section className="space-y-2">
-              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">14. הצהרת נגישות</h2>
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">14. קניין רוחני</h2>
+              <p>14.1. כל זכויות הקניין הרוחני באתר ובמערכת, לרבות עיצוב, טקסטים, לוגו, גרפיקה, קוד מקור וממשק המשתמש, שייכים לחברה ומוגנים בחוקי זכויות יוצרים ובדיני הקניין הרוחני.</p>
+              <p>14.2. אין להעתיק, לשכפל, להפיץ, לפרסם, להציג בפומבי או לעשות שימוש מסחרי בכל תוכן מהאתר או מהמערכת ללא אישור בכתב ומראש מהחברה.</p>
+            </section>
+
+            {/* 15 */}
+            <section className="space-y-2">
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">15. מדיניות פרטיות</h2>
+              <p>
+                מדיניות הפרטיות המלאה מפורטת בדף{' '}
+                <Link href="/privacy" className="text-[#DFCA85] underline font-bold">
+                  מדיניות פרטיות ואבטחת מידע
+                </Link>
+                {' '}ומהווה חלק בלתי נפרד מתנאי שימוש אלו.
+              </p>
+            </section>
+
+            {/* 16 */}
+            <section className="space-y-2">
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">16. הצהרת נגישות</h2>
               <p>
                 לעיון בהצהרת הנגישות המלאה של המערכת, היכנס לקישור הבא:{' '}
                 <Link href="/accessibility" className="text-[#DFCA85] underline font-bold">
@@ -151,15 +170,15 @@ export default function TermsPage() {
               </p>
             </section>
 
-            {/* 15 */}
+            {/* 17 */}
             <section className="space-y-2">
-              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">15. סמכות שיפוט והדין החל</h2>
-              <p>15.1. על תנאי שימוש אלו יחולו אך ורק דיני מדינת ישראל, וסמכות השיפוט הבלעדית נתונה לבתי המשפט המוסמכים במחוז תל אביב-יפו.</p>
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">17. סמכות שיפוט והדין החל</h2>
+              <p>17.1. על תנאי שימוש אלו יחולו אך ורק דיני מדינת ישראל, וסמכות השיפוט הבלעדית נתונה לבתי המשפט המוסמכים במחוז תל אביב-יפו.</p>
             </section>
 
-            {/* 16 */}
+            {/* 18 */}
             <section className="space-y-2">
-              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">16. יצירת קשר</h2>
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">18. יצירת קשר</h2>
               <p>לכל שאלה או בירור בנוגע לתנאי שימוש אלו, ניתן לפנות אלינו בכתובת דוא&quot;ל: <a href="mailto:support@thecut.co.il" className="text-[#DFCA85] underline">support@thecut.co.il</a>.</p>
             </section>
 

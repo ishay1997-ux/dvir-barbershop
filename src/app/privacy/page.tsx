@@ -92,9 +92,37 @@ export default function PrivacyPage() {
             </section>
 
             {/* 7 */}
-            <section className="space-y-2">
+            <section className="space-y-3">
               <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">7. עוגיות (Cookies) וטכנולוגיות מעקב</h2>
               <p>המערכת עושה שימוש בעוגיות לצורך זיהוי משתמשים מחוברים, שמירת העדפות נגישות (כגון שפה, ניגודיות וגודל גופן) ושיפור ביצועי האתר.</p>
+              <div className="overflow-x-auto mt-3">
+                <table className="w-full text-xs sm:text-sm border border-white/10 rounded-xl overflow-hidden">
+                  <thead>
+                    <tr className="bg-[#C9A84C]/15 text-[#DFCA85]">
+                      <th className="text-right p-3 font-bold border-b border-white/10">סוג</th>
+                      <th className="text-right p-3 font-bold border-b border-white/10">מטרה</th>
+                      <th className="text-right p-3 font-bold border-b border-white/10">משך</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-zinc-300">
+                    <tr className="border-b border-white/5">
+                      <td className="p-3 font-medium text-white">עוגיות הכרחיות</td>
+                      <td className="p-3">זיהוי משתמש, אימות, הפעלת תכונות חיוניות</td>
+                      <td className="p-3">סשן</td>
+                    </tr>
+                    <tr className="border-b border-white/5 bg-white/[0.02]">
+                      <td className="p-3 font-medium text-white">עוגיות נגישות</td>
+                      <td className="p-3">שמירת העדפות נגישות (שפה, ניגודיות, גופן, סמן)</td>
+                      <td className="p-3">30 יום</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-medium text-white">עוגיות ביצועים</td>
+                      <td className="p-3">שיפור ביצועים ואנליטיקה כללית</td>
+                      <td className="p-3">12 חודשים</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </section>
 
             {/* 8 */}
@@ -105,19 +133,39 @@ export default function PrivacyPage() {
 
             {/* 9 */}
             <section className="space-y-2">
-              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">9. זכויות המשתמש (עיון, תיקון ומחיקה)</h2>
-              <p>לכל משתמש עומדת הזכות לעיין במידע שנשמר אודותיו, לבקש את תיקונו או לדרוש את מחיקתו ממאגרי המידע, בכפוף לחובות שמירת רשומות על פי דין.</p>
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">9. שמירת מידע ומחיקתו</h2>
+              <p>9.1. מידע אישי נשמר כל עוד החשבון פעיל או כנדרש למתן השירות.</p>
+              <p>9.2. לאחר מחיקת חשבון, המידע יימחק תוך 90 יום, למעט מידע שחובה לשמור לפי דין (לדוגמה: רשומות חשבונאיות – עד 7 שנים בהתאם לפקודת מס הכנסה).</p>
             </section>
 
             {/* 10 */}
             <section className="space-y-2">
-              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">10. ילדים מתחת לגיל 14</h2>
-              <p>השירותים אינם מיועדים לרישום עצמאי של ילדים מתחת לגיל 14 ללא אישור והשגחת הורה או אפוטרופוס חוקי.</p>
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">10. העברת מידע לחו&quot;ל</h2>
+              <p>10.1. חלק מהמידע עשוי להישמר בשרתים מחוץ לישראל (כגון שירותי ענן בינלאומיים). במקרים אלו, אנו מוודאים שמדינת היעד מספקת רמת הגנה מספקת או שקיימות ערבויות חוזיות מתאימות בהתאם לדרישות חוק הגנת הפרטיות.</p>
             </section>
 
             {/* 11 */}
             <section className="space-y-2">
-              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">11. יצירת קשר בנושאי פרטיות</h2>
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">11. זכויות המשתמש (עיון, תיקון ומחיקה)</h2>
+              <p>לכל משתמש עומדת הזכות לעיין במידע שנשמר אודותיו, לבקש את תיקונו או לדרוש את מחיקתו ממאגרי המידע, בכפוף לחובות שמירת רשומות על פי דין.</p>
+            </section>
+
+            {/* 12 */}
+            <section className="space-y-2">
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">12. ילדים מתחת לגיל 14</h2>
+              <p>השירותים אינם מיועדים לרישום עצמאי של ילדים מתחת לגיל 14 ללא אישור והשגחת הורה או אפוטרופוס חוקי.</p>
+            </section>
+
+            {/* 13 */}
+            <section className="space-y-2">
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">13. שינויים במדיניות</h2>
+              <p>13.1. אנו עשויים לעדכן מדיניות זו מעת לעת. שינויים מהותיים יפורסמו באתר ו/או ישלחו ללקוחות בדוא&quot;ל.</p>
+              <p>13.2. המשך השימוש במערכת לאחר עדכון המדיניות מהווה הסכמה לתנאים המעודכנים.</p>
+            </section>
+
+            {/* 14 */}
+            <section className="space-y-2">
+              <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">14. יצירת קשר בנושאי פרטיות</h2>
               <p>בכל שאלה, בקשת עיון או מחיקת מידע, ניתן לפנות לנציג הגנת המידע בכתובת דוא&quot;ל: <a href="mailto:support@thecut.co.il" className="text-[#DFCA85] underline">support@thecut.co.il</a>.</p>
             </section>
 
