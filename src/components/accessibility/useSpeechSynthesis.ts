@@ -180,7 +180,7 @@ export function useSpeechSynthesis({ language }: UseSpeechSynthesisProps) {
   // Play / Pause Toggle
   const handlePlayPause = useCallback(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      alert('דפדפן זה אינו תומך בהקראת טקסט (Web Speech API).');
+      console.warn('Speech synthesis is not supported in this environment.');
       return;
     }
 

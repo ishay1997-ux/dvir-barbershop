@@ -26,6 +26,7 @@ import { useShopStore } from '@/lib/store';
 import type { Customer } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
+import { useToast } from '@/components/common/ToastProvider';
 
 const getCustomerHistory = (customer: Customer) => {
   if (!customer.lastVisit) return [];
@@ -170,29 +171,37 @@ export default function CustomersPage() {
     setTimeout(() => setSavedNotice(false), 2000);
   };
 
-  const handleDeleteCustomer = async (customer: Customer) => {
-    if (!window.confirm(`האם למחוק את הלקוח "${customer.name}" (${customer.phone}) ואת כל התורים שלו מהמערכת לצמיתות?`)) {
-      return;
-    }
+  const { showConfirm, success, error } = useToast();
 
-    try {
-      // 1. Delete all appointments for this customer from Firestore
-      await fetch(`/api/appointments?phone=${encodeURIComponent(customer.phone)}`, {
-        method: 'DELETE',
-      });
+  const handleDeleteCustomer = (customer: Customer) => {
+    showConfirm({
+      title: 'מחיקת לקוח לצמיתות',
+      message: `האם למחוק את הלקוח "${customer.name}" (${customer.phone}) ואת כל התורים שלו מהמערכת לצמיתות? פעולה זו אינה ניתנת לביטול.`,
+      confirmText: 'כן, מחק לצמיתות',
+      cancelText: 'ביטול',
+      type: 'danger',
+      onConfirm: async () => {
+        try {
+          // 1. Delete all appointments for this customer from Firestore
+          await fetch(`/api/appointments?phone=${encodeURIComponent(customer.phone)}`, {
+            method: 'DELETE',
+          });
 
-      // 2. Remove from local store / zustand
-      const cleanTargetPhone = customer.phone.replace(/\D/g, '');
-      const updated = localCustomers.filter(
-        (c) => c.phone.replace(/\D/g, '') !== cleanTargetPhone
-      );
-      setLocalCustomers(updated);
-      saveCustomers(updated);
-      setSelectedCustomer(null);
-    } catch (err) {
-      console.error('Failed to delete customer:', err);
-      alert('שגיאה במחיקת הלקוח');
-    }
+          // 2. Remove from local store / zustand
+          const cleanTargetPhone = customer.phone.replace(/\D/g, '');
+          const updated = localCustomers.filter(
+            (c) => c.phone.replace(/\D/g, '') !== cleanTargetPhone
+          );
+          setLocalCustomers(updated);
+          saveCustomers(updated);
+          setSelectedCustomer(null);
+          success('הלקוח נמחק בהצלחה', `הלקוח ${customer.name} וכל התורים שלו הוסרו לצמיתות`);
+        } catch (err) {
+          console.error('Failed to delete customer:', err);
+          error('שגיאה במחיקת הלקוח', 'לא ניתן היה להשלים את הפעולה, אנא נסה שוב.');
+        }
+      },
+    });
   };
 
   const generateRetentionWhatsAppUrl = (customer: Customer) => {

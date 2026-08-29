@@ -6,6 +6,7 @@ import { X, Clock, Calendar, Phone, MapPin, Share2, Copy, Check, ExternalLink, S
 import { SHOP_INFO } from '@/lib/utils';
 import { BusinessConfig } from '@/types/business';
 import Link from 'next/link';
+import { useToast } from '@/components/common/ToastProvider';
 
 // ============================================================
 // 1. OPENING HOURS MODAL (שעות פתיחה)
@@ -211,30 +212,39 @@ export function MyAppointmentsModal({
     }
   };
 
-  const handleCancelAppointment = async (aptId: string) => {
-    const confirmCancel = window.confirm('האם אתה בטוח שברצונך לבטל את התור?');
-    if (!confirmCancel) return;
+  const { showConfirm, success, error } = useToast();
 
-    setCancellingId(aptId);
-    try {
-      await fetch(`/api/appointments?id=${encodeURIComponent(aptId)}`, {
-        method: 'DELETE',
-      });
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('thecut_customer_appointments_v3');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          const updated = parsed.filter((item: any) => item.id !== aptId);
-          localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
+  const handleCancelAppointment = (aptId: string) => {
+    showConfirm({
+      title: 'ביטול תור',
+      message: 'האם אתה בטוח שברצונך לבטל את התור שנקבע? ביטול התור יפנה את השעה ביומן.',
+      confirmText: 'כן, בטל תור',
+      cancelText: 'חזור',
+      type: 'danger',
+      onConfirm: async () => {
+        setCancellingId(aptId);
+        try {
+          await fetch(`/api/appointments?id=${encodeURIComponent(aptId)}`, {
+            method: 'DELETE',
+          });
+          if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('thecut_customer_appointments_v3');
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              const updated = parsed.filter((item: any) => item.id !== aptId);
+              localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
+            }
+          }
+          setAppointments((prev) => prev.filter((a) => a.id !== aptId));
+          setJustCancelled(true);
+          success('התור בוטל בהצלחה', 'השעה פונתה ביומן');
+        } catch {
+          error('שגיאה בביטול התור', 'אירעה שגיאה בביטול התור, אנא נסה שוב.');
+        } finally {
+          setCancellingId(null);
         }
-      }
-      setAppointments((prev) => prev.filter((a) => a.id !== aptId));
-      setJustCancelled(true);
-    } catch {
-      alert('אירעה שגיאה בביטול התור.');
-    } finally {
-      setCancellingId(null);
-    }
+      },
+    });
   };
 
   return (

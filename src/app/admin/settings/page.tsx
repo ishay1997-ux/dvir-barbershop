@@ -25,6 +25,7 @@ import { format, addDays, startOfToday, isSameDay } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { useShopStore, getEffectiveShiftForDate } from '@/lib/store';
 import { formatPrice, formatDuration } from '@/lib/utils';
+import { useToast } from '@/components/common/ToastProvider';
 import type { Branch, Service, Barber, ServiceCategory, ShopSettings, DailyShiftOverride } from '@/lib/types';
 
 const DAYS_META = [
@@ -39,6 +40,7 @@ const DAYS_META = [
 
 export default function SettingsPage() {
   const today = startOfToday();
+  const { showConfirm, success, error } = useToast();
   const {
     branches,
     services,
@@ -254,10 +256,22 @@ export default function SettingsPage() {
   };
 
   const handleDeleteService = (id: string) => {
-    const updated = localServices.filter((s) => s.id !== id);
-    setLocalServices(updated);
-    saveServices(updated);
-    notifySave();
+    const service = localServices.find((s) => s.id === id);
+    const serviceName = service ? service.name : 'השירות';
+    showConfirm({
+      title: 'מחיקת שירות',
+      message: `האם אתה בטוח שברצונך למחוק את "${serviceName}"? השירות יוסר מתפריט ההזמנות.`,
+      confirmText: 'כן, מחק שירות',
+      cancelText: 'ביטול',
+      type: 'danger',
+      onConfirm: () => {
+        const updated = localServices.filter((s) => s.id !== id);
+        setLocalServices(updated);
+        saveServices(updated);
+        notifySave();
+        success('השירות נמחק בהצלחה', `השירות "${serviceName}" הוסר מהתפריט`);
+      },
+    });
   };
 
   const handleToggleServiceActive = (id: string) => {
@@ -288,6 +302,7 @@ export default function SettingsPage() {
     setIsAddingBarber(false);
     setNewBarber({ name: '', role: 'ספר בכיר', phone: '', specialties: ['פייד'] });
     notifySave();
+    success('איש הצוות נוסף בהצלחה', `${created.name} נוסף לרשימת הספרים`);
   };
 
   const handleToggleBarberActive = (id: string) => {
@@ -299,10 +314,22 @@ export default function SettingsPage() {
 
   const handleDeleteBarber = (id: string) => {
     if (id === 'dvir') return;
-    const updated = localBarbers.filter((b) => b.id !== id);
-    setLocalBarbers(updated);
-    saveBarbers(updated);
-    notifySave();
+    const barber = localBarbers.find((b) => b.id === id);
+    const barberName = barber ? barber.name : 'איש הצוות';
+    showConfirm({
+      title: 'הסרת איש צוות',
+      message: `האם אתה בטוח שברצונך להסיר את "${barberName}" מרשימת הספרים?`,
+      confirmText: 'כן, הסר ספר',
+      cancelText: 'ביטול',
+      type: 'danger',
+      onConfirm: () => {
+        const updated = localBarbers.filter((b) => b.id !== id);
+        setLocalBarbers(updated);
+        saveBarbers(updated);
+        notifySave();
+        success('איש הצוות הוסר בהצלחה', `${barberName} הוסר מהמערכת`);
+      },
+    });
   };
 
   // 4. General Settings
@@ -310,6 +337,7 @@ export default function SettingsPage() {
     e.preventDefault();
     saveSettings(localSettings);
     notifySave();
+    success('ההגדרות נשמרו בהצלחה', 'כל הפרטים וההודעות עודכנו');
   };
 
   return (

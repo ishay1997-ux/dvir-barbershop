@@ -1,7 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { CheckCircle2, AlertCircle, Info, X, Sparkles, AlertTriangle } from 'lucide-react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, AlertCircle, Info, X, Sparkles, AlertTriangle, Loader2 } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -86,98 +87,165 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  // Close confirm dialog on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && confirmDialog && !isConfirmLoading) {
+        setConfirmDialog(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [confirmDialog, isConfirmLoading]);
+
   return (
     <ToastContext.Provider value={{ showToast, success, error, info, warning, showConfirm }}>
       {children}
 
-      {/* Floating Stacked Toasts Container (RTL Top-Center / Left) */}
+      {/* Floating Stacked Toasts Container (RTL Top-Center) */}
       <div
-        className="fixed top-5 left-1/2 -translate-x-1/2 z-[999999] flex flex-col gap-2.5 max-w-md w-[92vw] sm:w-full pointer-events-none"
+        className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999999] flex flex-col gap-2.5 max-w-md w-[94vw] sm:w-full pointer-events-none"
         dir="rtl"
       >
-        {toasts.map((toast) => {
-          let bgClass = 'bg-[#1C1C1C] border-emerald-500/50 shadow-emerald-950/40 text-emerald-400';
-          let Icon = CheckCircle2;
+        <AnimatePresence>
+          {toasts.map((toast) => {
+            let borderClass = 'border-emerald-500/40 text-emerald-400';
+            let bgGlow = 'bg-emerald-500/10';
+            let Icon = CheckCircle2;
 
-          if (toast.type === 'error') {
-            bgClass = 'bg-[#1C1C1C] border-red-500/50 shadow-red-950/40 text-red-400';
-            Icon = AlertCircle;
-          } else if (toast.type === 'warning') {
-            bgClass = 'bg-[#1C1C1C] border-amber-500/50 shadow-amber-950/40 text-amber-400';
-            Icon = AlertTriangle;
-          } else if (toast.type === 'info') {
-            bgClass = 'bg-[#1C1C1C] border-[#C9A84C]/50 shadow-[#C9A84C]/20 text-[#C9A84C]';
-            Icon = Sparkles;
-          }
+            if (toast.type === 'error') {
+              borderClass = 'border-red-500/40 text-red-400';
+              bgGlow = 'bg-red-500/10';
+              Icon = AlertCircle;
+            } else if (toast.type === 'warning') {
+              borderClass = 'border-amber-500/40 text-amber-400';
+              bgGlow = 'bg-amber-500/10';
+              Icon = AlertTriangle;
+            } else if (toast.type === 'info') {
+              borderClass = 'border-[#C9A84C]/40 text-[#C9A84C]';
+              bgGlow = 'bg-[#C9A84C]/10';
+              Icon = Sparkles;
+            }
 
-          return (
-            <div
-              key={toast.id}
-              className={`pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border-2 shadow-2xl backdrop-blur-md transition-all duration-300 animate-in fade-in slide-in-from-top-4 ${bgClass}`}
+            return (
+              <motion.div
+                key={toast.id}
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+                className={`pointer-events-auto flex items-start gap-3.5 p-4 rounded-2xl border shadow-2xl backdrop-blur-xl bg-[#18181B]/95 text-white ${borderClass}`}
+              >
+                <div className={`p-2 rounded-xl flex-shrink-0 mt-0.5 border ${borderClass} ${bgGlow}`}>
+                  <Icon className="w-5 h-5" />
+                </div>
+
+                <div className="flex-1 text-right min-w-0">
+                  <h4 className="text-sm font-black text-white leading-snug">{toast.title}</h4>
+                  {toast.message && (
+                    <p className="text-xs text-zinc-300 mt-0.5 leading-relaxed font-sans">{toast.message}</p>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => removeToast(toast.id)}
+                  className="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors flex-shrink-0 cursor-pointer"
+                  aria-label="סגור התראה"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
+      {/* Luxury Custom Confirm Dialog Modal */}
+      <AnimatePresence>
+        {confirmDialog && (
+          <div
+            className="fixed inset-0 z-[99999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            dir="rtl"
+          >
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0"
+              onClick={() => !isConfirmLoading && setConfirmDialog(null)}
+            />
+
+            {/* Modal Dialog Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="relative max-w-md w-full bg-[#1C1C1E] border border-white/15 rounded-3xl p-6 sm:p-7 shadow-2xl z-10 text-center text-white"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="confirm-title"
+              aria-describedby="confirm-desc"
             >
-              <div className="p-1 rounded-xl bg-white/5 flex-shrink-0 mt-0.5">
-                <Icon className="w-5 h-5" />
-              </div>
-
-              <div className="flex-1 text-right">
-                <h4 className="text-sm font-black text-white">{toast.title}</h4>
-                {toast.message && (
-                  <p className="text-xs text-zinc-300 mt-0.5 leading-relaxed font-sans">{toast.message}</p>
+              {/* Top Icon Badge */}
+              <div
+                className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 border ${
+                  confirmDialog.type === 'danger'
+                    ? 'bg-red-500/15 text-red-400 border-red-500/30'
+                    : 'bg-[#C9A84C]/15 text-[#C9A84C] border-[#C9A84C]/30'
+                }`}
+              >
+                {confirmDialog.type === 'danger' ? (
+                  <AlertCircle className="w-7 h-7" />
+                ) : (
+                  <AlertTriangle className="w-7 h-7" />
                 )}
               </div>
 
-              <button
-                onClick={() => removeToast(toast.id)}
-                className="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors flex-shrink-0 cursor-pointer"
-                aria-label="סגור התראה"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          );
-        })}
-      </div>
+              {/* Title & Message */}
+              <h3 id="confirm-title" className="text-lg sm:text-xl font-black text-white mb-2">
+                {confirmDialog.title}
+              </h3>
+              <p id="confirm-desc" className="text-xs sm:text-sm text-zinc-300 mb-6 leading-relaxed font-sans">
+                {confirmDialog.message}
+              </p>
 
-      {/* Luxury Confirm Dialog Modal */}
-      {confirmDialog && (
-        <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs" dir="rtl">
-          <div className="absolute inset-0" onClick={() => !isConfirmLoading && setConfirmDialog(null)} />
-          <div className="relative max-w-sm w-full bg-[#1C1C1C] border-2 border-[#C9A84C]/40 rounded-3xl p-6 shadow-2xl z-10 text-center animate-in zoom-in-95">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-              confirmDialog.type === 'danger' ? 'bg-red-500/15 text-red-400 border border-red-500/30' : 'bg-[#C9A84C]/15 text-[#C9A84C] border border-[#C9A84C]/30'
-            }`}>
-              {confirmDialog.type === 'danger' ? <AlertCircle className="w-7 h-7" /> : <AlertTriangle className="w-7 h-7" />}
-            </div>
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  disabled={isConfirmLoading}
+                  onClick={handleConfirm}
+                  className={`flex-1 py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer shadow-lg disabled:opacity-50 flex items-center justify-center gap-2 ${
+                    confirmDialog.type === 'danger'
+                      ? 'bg-red-600 hover:bg-red-500 text-white shadow-red-950/50'
+                      : 'bg-[#C9A84C] hover:bg-[#DFCA85] text-black shadow-[#C9A84C]/20'
+                  }`}
+                >
+                  {isConfirmLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>מבצע פעולה...</span>
+                    </>
+                  ) : (
+                    confirmDialog.confirmText || 'אישור'
+                  )}
+                </button>
 
-            <h3 className="text-lg font-black text-white mb-1.5">{confirmDialog.title}</h3>
-            <p className="text-xs text-zinc-300 mb-6 leading-relaxed font-sans">{confirmDialog.message}</p>
-
-            <div className="flex gap-2.5">
-              <button
-                type="button"
-                disabled={isConfirmLoading}
-                onClick={handleConfirm}
-                className={`flex-1 py-3 rounded-xl font-black text-xs transition-all cursor-pointer shadow-lg disabled:opacity-50 ${
-                  confirmDialog.type === 'danger'
-                    ? 'bg-red-600 hover:bg-red-500 text-white'
-                    : 'bg-[#C9A84C] hover:bg-[#DFCA85] text-black'
-                }`}
-              >
-                {isConfirmLoading ? 'מבצע פעולה...' : confirmDialog.confirmText || 'אישור'}
-              </button>
-
-              <button
-                type="button"
-                disabled={isConfirmLoading}
-                onClick={() => setConfirmDialog(null)}
-                className="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs transition-colors cursor-pointer"
-              >
-                {confirmDialog.cancelText || 'ביטול'}
-              </button>
-            </div>
+                <button
+                  type="button"
+                  disabled={isConfirmLoading}
+                  onClick={() => setConfirmDialog(null)}
+                  className="flex-1 py-3.5 px-4 rounded-2xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs sm:text-sm transition-colors cursor-pointer border border-white/10"
+                >
+                  {confirmDialog.cancelText || 'ביטול'}
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </ToastContext.Provider>
   );
 }
