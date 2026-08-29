@@ -296,7 +296,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
-   ACCESSIBILITY SYSTEM RULES (תקן ישראלי 5568 / WCAG 2.1 AA)
+   ACCESSIBILITY SYSTEM RULES (תקן ישראלי 5568 / WCAG 2.1 AA & AAA)
    ============================================================ */
 
 /* CSS Variables for Dynamic Font & Color Adjustments */
@@ -306,187 +306,351 @@ h1, h2, h3, h4, h5, h6 {
   --a11y-word-spacing: 0px;
   --a11y-letter-spacing: 0px;
   --a11y-custom-bg: transparent;
-  --a11y-custom-headings: inherit;
+  --a11y-custom-heading: inherit;
   --a11y-custom-text: inherit;
 }
 
-/* Dynamic Font Scaling */
-html.a11y-scaled body,
-html.a11y-scaled p,
-html.a11y-scaled span:not(.a11y-ignore *),
-html.a11y-scaled a:not(.a11y-ignore *),
-html.a11y-scaled button:not(.a11y-ignore *),
-html.a11y-scaled li,
-html.a11y-scaled input,
-html.a11y-scaled textarea,
-html.a11y-scaled select {
-  font-size: calc(1rem * var(--a11y-font-scale, 1)) !important;
-}
-
-/* Dynamic Line Height */
-html.a11y-line-height body,
-html.a11y-line-height p,
-html.a11y-line-height span:not(.a11y-ignore *),
-html.a11y-line-height div:not(.a11y-ignore),
-html.a11y-line-height li {
-  line-height: var(--a11y-line-height, 1.6) !important;
-}
-
-/* Dynamic Word Spacing */
-html.a11y-word-spacing body,
-html.a11y-word-spacing p,
-html.a11y-word-spacing h1,
-html.a11y-word-spacing h2,
-html.a11y-word-spacing h3,
-html.a11y-word-spacing span:not(.a11y-ignore *),
-html.a11y-word-spacing a:not(.a11y-ignore *),
-html.a11y-word-spacing li {
-  word-spacing: var(--a11y-word-spacing, 0px) !important;
-}
-
-/* Dynamic Letter Spacing */
-html.a11y-letter-spacing body,
-html.a11y-letter-spacing p,
-html.a11y-letter-spacing h1,
-html.a11y-letter-spacing h2,
-html.a11y-letter-spacing h3,
-html.a11y-letter-spacing span:not(.a11y-ignore *),
-html.a11y-letter-spacing a:not(.a11y-ignore *),
-html.a11y-letter-spacing li {
-  letter-spacing: var(--a11y-letter-spacing, 0px) !important;
-}
-
-/* Custom Background Color */
-html.a11y-custom-bg body,
-html.a11y-custom-bg main,
-html.a11y-custom-bg section,
-html.a11y-custom-bg div:not(.a11y-ignore) {
-  background-color: var(--a11y-custom-bg) !important;
-}
-
-/* Custom Headings Color */
-html.a11y-custom-headings h1,
-html.a11y-custom-headings h2,
-html.a11y-custom-headings h3,
-html.a11y-custom-headings h4,
-html.a11y-custom-headings h5,
-html.a11y-custom-headings h6 {
-  color: var(--a11y-custom-headings) !important;
-}
-
-/* Custom Text Color */
-html.a11y-custom-text p,
-html.a11y-custom-text span:not(.a11y-ignore *),
-html.a11y-custom-text li,
-html.a11y-custom-text label,
-html.a11y-custom-text a:not(.a11y-ignore *) {
-  color: var(--a11y-custom-text) !important;
-}
-
-/* Readable Font (Dyslexia Friendly) */
-html.a11y-readable-font body,
-html.a11y-readable-font h1,
-html.a11y-readable-font h2,
-html.a11y-readable-font h3,
-html.a11y-readable-font h4,
-html.a11y-readable-font p,
-html.a11y-readable-font span,
-html.a11y-readable-font a,
-html.a11y-readable-font button,
-html.a11y-readable-font input,
-html.a11y-readable-font select {
-  font-family: Arial, Helvetica, system-ui, sans-serif !important;
-}
-
-/* Dark High Contrast */
+/* ============================================================
+   1. DARK HIGH CONTRAST (ניגודיות כהה - שחור מוחלט / צהוב בוהק / ציאן)
+   WCAG 2.1 AAA / תקן 5568
+   ============================================================ */
 html.a11y-contrast-dark,
 html.a11y-contrast-dark body {
   background-color: #000000 !important;
   color: #FFFF00 !important;
 }
-html.a11y-contrast-dark div:not(.a11y-ignore),
-html.a11y-contrast-dark section,
+
+/* Force pure black backgrounds and bright yellow borders across all containers */
+html.a11y-contrast-dark body,
 html.a11y-contrast-dark main,
+html.a11y-contrast-dark section,
 html.a11y-contrast-dark header,
 html.a11y-contrast-dark footer,
+html.a11y-contrast-dark nav,
+html.a11y-contrast-dark aside,
 html.a11y-contrast-dark article,
-html.a11y-contrast-dark nav {
+html.a11y-contrast-dark div:not(.a11y-ignore):not(.a11y-ignore *),
+html.a11y-contrast-dark form:not(.a11y-ignore *),
+html.a11y-contrast-dark dialog,
+html.a11y-contrast-dark table,
+html.a11y-contrast-dark thead,
+html.a11y-contrast-dark tbody,
+html.a11y-contrast-dark tr,
+html.a11y-contrast-dark th,
+html.a11y-contrast-dark td,
+html.a11y-contrast-dark ul,
+html.a11y-contrast-dark ol,
+html.a11y-contrast-dark li:not(.a11y-ignore *) {
   background-color: #000000 !important;
-  color: #FFFF00 !important;
-  border-color: #FFFF00 !important;
-}
-html.a11y-contrast-dark a,
-html.a11y-contrast-dark button:not(.a11y-ignore *),
-html.a11y-contrast-dark p,
-html.a11y-contrast-dark span:not(.a11y-ignore *) {
-  color: #FFFF00 !important;
-}
-html.a11y-contrast-dark h1,
-html.a11y-contrast-dark h2,
-html.a11y-contrast-dark h3,
-html.a11y-contrast-dark h4 {
-  color: #00FFFF !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
-/* Light High Contrast */
+html.a11y-contrast-dark *:not(.a11y-ignore):not(.a11y-ignore *) {
+  border-color: #FFFF00 !important;
+  outline-color: #FFFF00 !important;
+}
+
+/* Headings in High Contrast Bright Cyan */
+html.a11y-contrast-dark h1:not(.a11y-ignore *),
+html.a11y-contrast-dark h2:not(.a11y-ignore *),
+html.a11y-contrast-dark h3:not(.a11y-ignore *),
+html.a11y-contrast-dark h4:not(.a11y-ignore *),
+html.a11y-contrast-dark h5:not(.a11y-ignore *),
+html.a11y-contrast-dark h6:not(.a11y-ignore *),
+html.a11y-contrast-dark legend:not(.a11y-ignore *),
+html.a11y-contrast-dark th:not(.a11y-ignore *) {
+  color: #00FFFF !important;
+  background-color: transparent !important;
+}
+
+/* Text, paragraphs, labels, spans, list items in Bright Yellow */
+html.a11y-contrast-dark p:not(.a11y-ignore *),
+html.a11y-contrast-dark span:not(.a11y-ignore *),
+html.a11y-contrast-dark label:not(.a11y-ignore *),
+html.a11y-contrast-dark td:not(.a11y-ignore *),
+html.a11y-contrast-dark li:not(.a11y-ignore *),
+html.a11y-contrast-dark small:not(.a11y-ignore *),
+html.a11y-contrast-dark code:not(.a11y-ignore *),
+html.a11y-contrast-dark strong:not(.a11y-ignore *),
+html.a11y-contrast-dark b:not(.a11y-ignore *),
+html.a11y-contrast-dark em:not(.a11y-ignore *),
+html.a11y-contrast-dark i:not(.a11y-ignore *) {
+  color: #FFFF00 !important;
+}
+
+/* Links in Bright Cyan with clear underline */
+html.a11y-contrast-dark a:not(.a11y-ignore):not(.a11y-ignore *),
+html.a11y-contrast-dark a:not(.a11y-ignore) *:not(.a11y-ignore *) {
+  color: #00FFFF !important;
+  text-decoration: underline !important;
+  text-decoration-color: #00FFFF !important;
+}
+
+/* Form Inputs, Textareas, Selects & Options */
+html.a11y-contrast-dark input:not(.a11y-ignore *),
+html.a11y-contrast-dark textarea:not(.a11y-ignore *),
+html.a11y-contrast-dark select:not(.a11y-ignore *),
+html.a11y-contrast-dark option:not(.a11y-ignore *) {
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+  border: 2px solid #FFFF00 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+html.a11y-contrast-dark input::placeholder,
+html.a11y-contrast-dark textarea::placeholder {
+  color: #FFFF00 !important;
+  opacity: 0.8 !important;
+}
+
+/* Buttons in Dark Contrast */
+html.a11y-contrast-dark button:not(.a11y-ignore):not(.a11y-ignore *) {
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+  border: 2px solid #FFFF00 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+html.a11y-contrast-dark button:hover:not(.a11y-ignore):not(.a11y-ignore *),
+html.a11y-contrast-dark button:active:not(.a11y-ignore):not(.a11y-ignore *) {
+  background-color: #FFFF00 !important;
+  color: #000000 !important;
+  border-color: #FFFF00 !important;
+}
+
+html.a11y-contrast-dark button:hover:not(.a11y-ignore) *,
+html.a11y-contrast-dark button:active:not(.a11y-ignore) * {
+  color: #000000 !important;
+}
+
+/* Icons & SVGs */
+html.a11y-contrast-dark svg:not(.a11y-ignore):not(.a11y-ignore *) {
+  color: #FFFF00 !important;
+}
+html.a11y-contrast-dark svg:not(.a11y-ignore):not(.a11y-ignore *) path,
+html.a11y-contrast-dark svg:not(.a11y-ignore):not(.a11y-ignore *) circle,
+html.a11y-contrast-dark svg:not(.a11y-ignore):not(.a11y-ignore *) rect,
+html.a11y-contrast-dark svg:not(.a11y-ignore):not(.a11y-ignore *) polygon,
+html.a11y-contrast-dark svg:not(.a11y-ignore):not(.a11y-ignore *) line,
+html.a11y-contrast-dark svg:not(.a11y-ignore):not(.a11y-ignore *) polyline {
+  stroke: #FFFF00 !important;
+}
+
+/* Modal Backdrops & Overlays */
+html.a11y-contrast-dark .fixed.inset-0:not(.a11y-ignore) {
+  background-color: rgba(0, 0, 0, 0.95) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ============================================================
+   2. LIGHT HIGH CONTRAST (ניגודיות בהירה - לבן נקי / שחור / כחול נגיש)
+   ============================================================ */
 html.a11y-contrast-light,
 html.a11y-contrast-light body {
   background-color: #FFFFFF !important;
   color: #000000 !important;
 }
-html.a11y-contrast-light div:not(.a11y-ignore),
-html.a11y-contrast-light section,
+
+html.a11y-contrast-light body,
 html.a11y-contrast-light main,
+html.a11y-contrast-light section,
 html.a11y-contrast-light header,
 html.a11y-contrast-light footer,
-html.a11y-contrast-light article {
+html.a11y-contrast-light nav,
+html.a11y-contrast-light aside,
+html.a11y-contrast-light article,
+html.a11y-contrast-light div:not(.a11y-ignore):not(.a11y-ignore *),
+html.a11y-contrast-light form:not(.a11y-ignore *),
+html.a11y-contrast-light dialog,
+html.a11y-contrast-light table,
+html.a11y-contrast-light thead,
+html.a11y-contrast-light tbody,
+html.a11y-contrast-light tr,
+html.a11y-contrast-light th,
+html.a11y-contrast-light td,
+html.a11y-contrast-light ul,
+html.a11y-contrast-light ol,
+html.a11y-contrast-light li:not(.a11y-ignore *) {
+  background-color: #FFFFFF !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html.a11y-contrast-light *:not(.a11y-ignore):not(.a11y-ignore *) {
+  border-color: #000000 !important;
+  outline-color: #000000 !important;
+}
+
+/* Headings in Deep Accessible Navy Blue */
+html.a11y-contrast-light h1:not(.a11y-ignore *),
+html.a11y-contrast-light h2:not(.a11y-ignore *),
+html.a11y-contrast-light h3:not(.a11y-ignore *),
+html.a11y-contrast-light h4:not(.a11y-ignore *),
+html.a11y-contrast-light h5:not(.a11y-ignore *),
+html.a11y-contrast-light h6:not(.a11y-ignore *),
+html.a11y-contrast-light legend:not(.a11y-ignore *),
+html.a11y-contrast-light th:not(.a11y-ignore *) {
+  color: #000080 !important;
+}
+
+/* Text in Pure Black */
+html.a11y-contrast-light p:not(.a11y-ignore *),
+html.a11y-contrast-light span:not(.a11y-ignore *),
+html.a11y-contrast-light label:not(.a11y-ignore *),
+html.a11y-contrast-light td:not(.a11y-ignore *),
+html.a11y-contrast-light li:not(.a11y-ignore *),
+html.a11y-contrast-light small:not(.a11y-ignore *),
+html.a11y-contrast-light strong:not(.a11y-ignore *),
+html.a11y-contrast-light b:not(.a11y-ignore *) {
+  color: #000000 !important;
+}
+
+/* Links in Accessible Blue with Underline */
+html.a11y-contrast-light a:not(.a11y-ignore):not(.a11y-ignore *),
+html.a11y-contrast-light a:not(.a11y-ignore) *:not(.a11y-ignore *) {
+  color: #0000EE !important;
+  text-decoration: underline !important;
+  font-weight: 700 !important;
+}
+
+/* Form Inputs, Textareas, Selects & Buttons */
+html.a11y-contrast-light input:not(.a11y-ignore *),
+html.a11y-contrast-light textarea:not(.a11y-ignore *),
+html.a11y-contrast-light select:not(.a11y-ignore *),
+html.a11y-contrast-light button:not(.a11y-ignore):not(.a11y-ignore *) {
   background-color: #FFFFFF !important;
   color: #000000 !important;
-  border-color: #000000 !important;
-}
-html.a11y-contrast-light a,
-html.a11y-contrast-light button {
-  color: #0000EE !important;
-}
-
-/* Grayscale / Monochrome */
-html.a11y-grayscale {
-  filter: grayscale(100%) !important;
+  border: 2px solid #000000 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  background-image: none !important;
 }
 
-/* Invert Contrast */
+html.a11y-contrast-light button:hover:not(.a11y-ignore):not(.a11y-ignore *),
+html.a11y-contrast-light button:active:not(.a11y-ignore):not(.a11y-ignore *) {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+html.a11y-contrast-light button:hover:not(.a11y-ignore) *,
+html.a11y-contrast-light button:active:not(.a11y-ignore) * {
+  color: #FFFFFF !important;
+}
+
+/* SVGs in pure black */
+html.a11y-contrast-light svg:not(.a11y-ignore):not(.a11y-ignore *) {
+  color: #000000 !important;
+}
+html.a11y-contrast-light svg:not(.a11y-ignore):not(.a11y-ignore *) path,
+html.a11y-contrast-light svg:not(.a11y-ignore):not(.a11y-ignore *) circle,
+html.a11y-contrast-light svg:not(.a11y-ignore):not(.a11y-ignore *) rect {
+  stroke: #000000 !important;
+}
+
+/* ============================================================
+   3. INVERT CONTRAST & GRAYSCALE
+   ============================================================ */
+html.a11y-contrast-invert,
 html.a11y-invert {
   filter: invert(100%) hue-rotate(180deg) !important;
 }
+html.a11y-contrast-invert img,
+html.a11y-contrast-invert video,
+html.a11y-contrast-invert .a11y-ignore,
 html.a11y-invert img,
 html.a11y-invert video,
 html.a11y-invert .a11y-ignore {
   filter: invert(100%) hue-rotate(180deg) !important;
 }
 
-/* Display Zoom */
-html.a11y-zoom {
-  zoom: 1.15;
+html.a11y-contrast-grayscale,
+html.a11y-grayscale {
+  filter: grayscale(100%) contrast(115%) !important;
 }
 
-/* Keyboard Navigation Enhanced Focus Ring */
-html.a11y-keyboard-nav *:focus-visible {
-  outline: 3px solid #0088cc !important;
-  outline-offset: 3px !important;
-  box-shadow: 0 0 12px rgba(0, 136, 204, 0.7) !important;
+/* ============================================================
+   4. READABLE FONT (DYSLEXIA FRIENDLY)
+   ============================================================ */
+html.a11y-readable-font *:not(.a11y-ignore):not(.a11y-ignore *) {
+  font-family: Arial, Helvetica, "Segoe UI", Roboto, system-ui, sans-serif !important;
+  letter-spacing: 0.02em !important;
 }
 
-/* Stop all animations & motion */
-html.a11y-stop-animations *,
-html.a11y-stop-animations *::before,
-html.a11y-stop-animations *::after {
-  animation: none !important;
-  transition: none !important;
-  scroll-behavior: auto !important;
+/* ============================================================
+   5. FONT SCALING LEVELS (1 to 5)
+   ============================================================ */
+html.a11y-font-1 *:not(.a11y-ignore):not(.a11y-ignore *) { font-size: 110% !important; }
+html.a11y-font-2 *:not(.a11y-ignore):not(.a11y-ignore *) { font-size: 120% !important; }
+html.a11y-font-3 *:not(.a11y-ignore):not(.a11y-ignore *) { font-size: 130% !important; }
+html.a11y-font-4 *:not(.a11y-ignore):not(.a11y-ignore *) { font-size: 140% !important; }
+html.a11y-font-5 *:not(.a11y-ignore):not(.a11y-ignore *) { font-size: 150% !important; }
+
+/* ============================================================
+   6. WORD SPACING LEVELS (1 to 4)
+   ============================================================ */
+html.a11y-word-1 *:not(.a11y-ignore):not(.a11y-ignore *) { word-spacing: 0.15em !important; }
+html.a11y-word-2 *:not(.a11y-ignore):not(.a11y-ignore *) { word-spacing: 0.30em !important; }
+html.a11y-word-3 *:not(.a11y-ignore):not(.a11y-ignore *) { word-spacing: 0.45em !important; }
+html.a11y-word-4 *:not(.a11y-ignore):not(.a11y-ignore *) { word-spacing: 0.60em !important; }
+
+/* ============================================================
+   7. LINE HEIGHT LEVELS (1 to 4)
+   ============================================================ */
+html.a11y-line-1 *:not(.a11y-ignore):not(.a11y-ignore *) { line-height: 1.8 !important; }
+html.a11y-line-2 *:not(.a11y-ignore):not(.a11y-ignore *) { line-height: 2.0 !important; }
+html.a11y-line-3 *:not(.a11y-ignore):not(.a11y-ignore *) { line-height: 2.2 !important; }
+html.a11y-line-4 *:not(.a11y-ignore):not(.a11y-ignore *) { line-height: 2.5 !important; }
+
+/* ============================================================
+   8. LETTER SPACING LEVELS (1 to 3)
+   ============================================================ */
+html.a11y-letter-1 *:not(.a11y-ignore):not(.a11y-ignore *) { letter-spacing: 0.05em !important; }
+html.a11y-letter-2 *:not(.a11y-ignore):not(.a11y-ignore *) { letter-spacing: 0.10em !important; }
+html.a11y-letter-3 *:not(.a11y-ignore):not(.a11y-ignore *) { letter-spacing: 0.15em !important; }
+
+/* ============================================================
+   9. CUSTOM COLOR HUES
+   ============================================================ */
+html.a11y-has-custom-bg body,
+html.a11y-has-custom-bg main,
+html.a11y-has-custom-bg section,
+html.a11y-has-custom-bg header,
+html.a11y-has-custom-bg footer,
+html.a11y-has-custom-bg div:not(.a11y-ignore):not(.a11y-ignore *) {
+  background-color: var(--a11y-custom-bg) !important;
+  background-image: none !important;
 }
 
-/* Highlight Links */
-html.a11y-highlight-links a:not(.a11y-ignore a) {
+html.a11y-has-custom-heading h1:not(.a11y-ignore *),
+html.a11y-has-custom-heading h2:not(.a11y-ignore *),
+html.a11y-has-custom-heading h3:not(.a11y-ignore *),
+html.a11y-has-custom-heading h4:not(.a11y-ignore *),
+html.a11y-has-custom-heading h5:not(.a11y-ignore *),
+html.a11y-has-custom-heading h6:not(.a11y-ignore *),
+html.a11y-has-custom-heading legend:not(.a11y-ignore *) {
+  color: var(--a11y-custom-heading) !important;
+}
+
+html.a11y-has-custom-text p:not(.a11y-ignore *),
+html.a11y-has-custom-text span:not(.a11y-ignore *),
+html.a11y-has-custom-text label:not(.a11y-ignore *),
+html.a11y-has-custom-text li:not(.a11y-ignore *),
+html.a11y-has-custom-text td:not(.a11y-ignore *),
+html.a11y-has-custom-text a:not(.a11y-ignore *) {
+  color: var(--a11y-custom-text) !important;
+}
+
+/* ============================================================
+   10. HIGHLIGHT LINKS & HEADINGS
+   ============================================================ */
+html.a11y-highlight-links a:not(.a11y-ignore):not(.a11y-ignore *),
+html.a11y-highlight-links [role="link"]:not(.a11y-ignore):not(.a11y-ignore *) {
   text-decoration: underline !important;
   text-decoration-thickness: 3px !important;
   text-underline-offset: 4px !important;
@@ -497,30 +661,49 @@ html.a11y-highlight-links a:not(.a11y-ignore a) {
   border: 1px solid #CA8A04 !important;
 }
 
-/* Highlight Headings */
-html.a11y-highlight-headings h1,
-html.a11y-highlight-headings h2,
-html.a11y-highlight-headings h3,
-html.a11y-highlight-headings h4,
-html.a11y-highlight-headings h5,
-html.a11y-highlight-headings h6 {
-  outline: 2px solid #085B7A !important;
+html.a11y-highlight-headings h1:not(.a11y-ignore *),
+html.a11y-highlight-headings h2:not(.a11y-ignore *),
+html.a11y-highlight-headings h3:not(.a11y-ignore *),
+html.a11y-highlight-headings h4:not(.a11y-ignore *),
+html.a11y-highlight-headings h5:not(.a11y-ignore *),
+html.a11y-highlight-headings h6:not(.a11y-ignore *) {
+  outline: 3px solid #085B7A !important;
   outline-offset: 4px !important;
-  background-color: rgba(8, 91, 122, 0.15) !important;
+  background-color: rgba(8, 91, 122, 0.2) !important;
   border-radius: 6px !important;
+  padding: 2px 6px !important;
 }
 
-/* Image Alt Overlay Badge */
-html.a11y-image-descriptions img {
+/* Image Alt Overlay Tooltips */
+html.a11y-image-alt-tooltips img {
   outline: 3px dashed #085B7A !important;
   outline-offset: 2px !important;
-  position: relative !important;
 }
 
-/* Big Cursor */
-html.a11y-big-cursor,
-html.a11y-big-cursor * {
+/* ============================================================
+   11. MOTION, ZOOM & BIG CURSOR
+   ============================================================ */
+html.a11y-screen-zoom {
+  zoom: 1.15;
+}
+
+body.a11y-big-cursor,
+body.a11y-big-cursor * {
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 24 24' fill='%23000000' stroke='%23FFFFFF' stroke-width='1.5'%3E%3Cpath d='M3 3l7 18 3-7 7-3L3 3z'/%3E%3C/svg%3E"), auto !important;
+}
+
+html.a11y-stop-animations *,
+html.a11y-stop-animations *::before,
+html.a11y-stop-animations *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+html.a11y-keyboard-nav *:focus-visible {
+  outline: 4px solid #0088cc !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 16px rgba(0, 136, 204, 0.8) !important;
 }
 
 /* ============================================================
