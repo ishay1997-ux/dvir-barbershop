@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { use, useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/layout/Header';
@@ -33,24 +33,14 @@ import {
   Menu,
   Heart,
   Award,
+  X,
+  Share2,
+  ThumbsUp,
+  Maximize2,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
-
-interface BusinessProfile {
-  id: string;
-  name: string;
-  slug: string;
-  ownerName: string;
-  phone: string;
-  city: string;
-  slogan?: string;
-  announcement?: string;
-  themeColor?: string;
-  branchesCount: number;
-  status: string;
-  branches?: Array<{ name: string; address: string; wazeLink?: string }>;
-  services?: Array<{ name: string; price: number; duration: number }>;
-}
+import { BusinessConfig } from '@/types/business';
+import { getBusinessBySlug } from '@/lib/business-service';
 
 export default function DynamicBusinessLandingPage({
   params,
@@ -83,11 +73,13 @@ export default function DynamicBusinessLandingPage({
     );
   }
 
-  const [business, setBusiness] = useState<BusinessProfile | null>(null);
+  const [business, setBusiness] = useState<BusinessConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedBranchIndex, setSelectedBranchIndex] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [activeLightboxImg, setActiveLightboxImg] = useState<{ src: string; label: string } | null>(null);
 
   // Before/After slider position
   const [sliderPos, setSliderPos] = useState(50);
@@ -96,17 +88,23 @@ export default function DynamicBusinessLandingPage({
   // FAQ accordion state
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  // Greeting by time of day
+  const [greeting, setGreeting] = useState('ברוכים הבאים');
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) setGreeting('בוקר טוב');
+    else if (hour >= 12 && hour < 17) setGreeting('צהריים טובים');
+    else if (hour >= 17 && hour < 21) setGreeting('ערב טוב');
+    else setGreeting('לילה טוב');
+  }, []);
+
   useEffect(() => {
     async function loadBusiness() {
       try {
-        const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(slug)}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.business) {
-            setBusiness(data.business);
-          } else {
-            setNotFound(true);
-          }
+        const data = await getBusinessBySlug(slug);
+        if (data) {
+          setBusiness(data);
         } else {
           setNotFound(true);
         }
@@ -119,6 +117,24 @@ export default function DynamicBusinessLandingPage({
 
     loadBusiness();
   }, [slug]);
+
+  const branches = useMemo(() => {
+    if (!business?.branches || business.branches.length === 0) {
+      return [{ name: `סניף ראשי – ${business?.city || 'מרכז'}`, address: business?.city || 'ישראל', hours: 'א׳-ה׳: 09:00-20:00 | ו׳: 08:30-14:00' }];
+    }
+    return business.branches;
+  }, [business]);
+
+  const services = useMemo(() => {
+    if (!business?.services || business.services.length === 0) {
+      return [
+        { id: '1', name: 'תספורת גברים פרימיום', price: 80, duration: 30, description: 'כולל חפיפה מפנקת ועיצוב', popular: true },
+        { id: '2', name: 'עיצוב ופיסול זקן Master', price: 40, duration: 20, description: 'תיחום קווים בתער ומגבת חמה', popular: false },
+        { id: '3', name: 'חבילת VIP משולבת', price: 110, duration: 45, description: 'תספורת פייד, זקן ומגבת חמה', popular: true },
+      ];
+    }
+    return business.services;
+  }, [business]);
 
   if (loading) {
     return (
@@ -151,55 +167,47 @@ export default function DynamicBusinessLandingPage({
     );
   }
 
-  const branches = business.branches && business.branches.length > 0
-    ? business.branches
-    : [{ name: `סניף ראשי ${business.city}`, address: business.city }];
-
-  const services = business.services && business.services.length > 0
-    ? business.services
-    : [
-        { name: 'תספורת גברים / עיצוב שיער', price: 80, duration: 30 },
-        { name: 'עיצוב וסידור זקן', price: 40, duration: 15 },
-        { name: 'תספורת + זקן VIP', price: 110, duration: 45 },
-      ];
-
-  const cleanPhone = business.phone.replace(/\D/g, '').replace(/^0/, '972');
+  const themeColor = business.themeColor || '#C9A84C';
+  const cleanPhone = business.phone ? business.phone.replace(/\D/g, '').replace(/^0/, '972') : '972500000000';
   const activeBranch = branches[selectedBranchIndex] || branches[0];
 
   const galleryImages = [
     { src: '/images/haircuts/haircut_1.png', label: 'פייד קלאסי מדויק' },
-    { src: '/images/haircuts/haircut_2.png', label: 'סקין פייד גבוה' },
-    { src: '/images/haircuts/haircut_3.png', label: 'עיצוב ופיסול זקן' },
+    { src: '/images/haircuts/haircut_2.png', label: 'סקין פייד גבוה & טקסטורה' },
+    { src: '/images/haircuts/haircut_3.png', label: 'עיצוב ופיסול זקן Master' },
     { src: '/images/haircuts/haircut_4.png', label: 'קרופ מודרני מעוצב' },
     { src: '/images/haircuts/haircut_5.png', label: 'טייפר פייד נקי' },
-    { src: '/images/haircuts/haircut_6.png', label: 'תספורת VIP + זקן' },
+    { src: '/images/haircuts/haircut_6.png', label: 'תספורת VIP + טיפוח' },
   ];
 
-  const faqs = [
-    {
-      q: 'האם חייבים לקבוע תור מראש?',
-      a: `מומלץ מאוד להזמין תור מראש דרך האתר כדי להבטיח שלא תמתינו בתור והשעה תישמר עבורכם במדויק.`,
-    },
-    {
-      q: 'איך מבטלים או משנים תור?',
-      a: `ניתן לבטל או לשנות תור בקלות עד שעתיים לפני המועד דרך קישור ניהול התור שנשלח אליכם בוואטסאפ או בכניסה לעמוד 'ניהול תורים' באתר.`,
-    },
-    {
-      q: 'אילו אמצעי תשלום מתקבלים במספרה?',
-      a: `מזומן, כרטיסי אשראי, Bit, Apple Pay ו-Google Pay.`,
-    },
-    {
-      q: 'האם יש חניה מסודרת ליד הסניף?',
-      a: `כן, ישנה חניה זמינה בקרבת הסניף וגישה נוחה ומהירה.`,
-    },
+  const testimonials = business.testimonials && business.testimonials.length > 0 ? business.testimonials : [
+    { id: '1', name: 'יונתן כהן', comment: `הספר הכי מדויק שיצא לי להסתפר אצלו! פייד מושלם כל פעם מחדש אצל ${business.ownerName}.`, rating: 5, timeAgo: 'לפני 3 ימים', serviceUsed: 'תספורת גברים פרימיום' },
+    { id: '2', name: 'עומר לוי', comment: 'חבילת ה-VIP שווה כל שקל! פיסול הזקן והמגבת החמה זו חוויה של מספרת יוקרה מהשורה הראשונה.', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'חבילת VIP משולבת' },
+    { id: '3', name: 'רועי ששון', comment: 'שירות מעל המצופה, עמידה מדויקת בזמנים, אווירה טובה ומקצוענות שיא!', rating: 5, timeAgo: 'לפני שבועיים', serviceUsed: 'תספורת גברים פרימיום' },
+  ];
+
+  const faqs = business.faqs && business.faqs.length > 0 ? business.faqs : [
+    { question: 'האם חובה לקבוע תור מראש?', answer: 'כן, כדי להבטיח שלא תמתינו אפילו דקה אחת, אנו עובדים במתכונת תורים מוזמנים מראש דרך המערכת.' },
+    { question: 'האם ניתן לבטל או להזיז תור?', answer: 'בהחלט! ניתן לבטל תור בקלות דרך האתר עד שעתיים לפני מועד התור ללא עלות.' },
+    { question: 'אילו אמצעי תשלום מתקבלים במספרה?', answer: 'אנו מקבלים מזומן, כרטיסי אשראי, Bit, PayBox ו-Apple Pay.' },
+    { question: 'האם יש חניה צמודה בסניף?', answer: `כן, בקרבת הסניף ב${business.city} קיימת חניה מסודרת וגישה נוחה ללקוחותינו.` },
   ];
 
   return (
-    <div className="min-h-screen bg-[#141414] text-white font-sans selection:bg-[#C9A84C] selection:text-black" dir="rtl">
+    <div
+      className="min-h-screen bg-[#141414] text-white font-sans selection:bg-[#C9A84C] selection:text-black pb-16 sm:pb-0"
+      dir="rtl"
+      style={{ '--theme-color': themeColor } as React.CSSProperties}
+    >
       {/* Top Announcement Banner */}
-      <div className="bg-gradient-to-r from-[#C9A84C] via-[#DFCA85] to-[#C9A84C] text-[#1C1C1C] py-2 px-4 text-center font-black text-xs flex items-center justify-center gap-2 shadow-md">
+      <div
+        className="text-[#1C1C1C] py-2 px-4 text-center font-black text-xs flex items-center justify-center gap-2 shadow-md"
+        style={{
+          background: `linear-gradient(90deg, ${themeColor}, #ffffff, ${themeColor})`,
+        }}
+      >
         <Megaphone className="w-3.5 h-3.5" />
-        <span>{business.announcement || '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7'}</span>
+        <span>{business.announcement || '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מראש!'}</span>
       </div>
 
       {/* Header Bar */}
@@ -215,8 +223,11 @@ export default function DynamicBusinessLandingPage({
             </button>
 
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-full bg-[#C9A84C] flex items-center justify-center text-[#1C1C1C] shadow-md font-bold">
-                <Scissors className="w-5 h-5 -rotate-45" />
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center text-[#1C1C1C] shadow-md font-black text-sm"
+                style={{ backgroundColor: themeColor }}
+              >
+                {business.name.trim().charAt(0)}
               </div>
               <div className="leading-tight">
                 <h1 className="text-sm sm:text-base font-black text-white">{business.name}</h1>
@@ -227,7 +238,7 @@ export default function DynamicBusinessLandingPage({
 
           <div className="flex items-center gap-2">
             <a
-              href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`היי ${business.ownerName}, אני מעוניין לקבוע תור אצלך:`)}`}
+              href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`היי ${business.ownerName}, אני מעוניין לקבוע תור אצלך ב-${business.name}:`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs transition-colors shadow-sm"
@@ -238,7 +249,8 @@ export default function DynamicBusinessLandingPage({
 
             <Link
               href={`/${slug}/booking`}
-              className="px-4 py-1.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-all shadow-md hover:scale-105"
+              className="px-4 py-1.5 rounded-xl text-[#1C1C1C] font-black text-xs transition-all shadow-md hover:scale-105"
+              style={{ backgroundColor: themeColor }}
             >
               קבע תור עכשיו
             </Link>
@@ -253,26 +265,32 @@ export default function DynamicBusinessLandingPage({
       {/* 1. LUXURY HERO BANNER HUB                                    */}
       {/* ============================================================ */}
       <section className="relative pt-12 pb-16 px-4 bg-gradient-to-b from-[#222222] via-[#1A1A1A] to-[#141414] border-b border-white/10 text-center overflow-hidden">
-        {/* Subtle background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#C9A84C]/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Subtle background dynamic glow */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl pointer-events-none opacity-20"
+          style={{ backgroundColor: themeColor }}
+        />
 
         <div className="max-w-3xl mx-auto relative z-10">
-          {/* Circular Gold Monogram Logo with First Letter */}
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#DFCA85] via-[#C9A84C] to-[#9A7B2C] p-1 mx-auto mb-4 shadow-2xl">
-            <div className="w-full h-full rounded-full bg-[#1C1C1C] flex flex-col items-center justify-center text-[#C9A84C]">
+          {/* Circular Gold Monogram Logo */}
+          <div
+            className="w-24 h-24 rounded-full p-1 mx-auto mb-4 shadow-2xl"
+            style={{ background: `linear-gradient(135deg, ${themeColor}, #ffffff, ${themeColor})` }}
+          >
+            <div className="w-full h-full rounded-full bg-[#1C1C1C] flex flex-col items-center justify-center" style={{ color: themeColor }}>
               <span className="text-3xl font-black">{business.name.trim().charAt(0)}</span>
-              <Scissors className="w-4 h-4 text-[#C9A84C]/70 -rotate-45 mt-0.5" />
+              <Scissors className="w-4 h-4 -rotate-45 mt-0.5 opacity-80" />
             </div>
           </div>
 
-          {/* 5-Star verified badge */}
-          <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3.5 py-1 text-xs font-bold text-[#C9A84C] mb-3 backdrop-blur-xs">
-            <Star className="w-3.5 h-3.5 fill-[#C9A84C]" />
-            <span>דירוג 5.0 כוכבים · {business.city}</span>
+          {/* Greeting & 5-Star verified badge */}
+          <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3.5 py-1 text-xs font-bold mb-3 backdrop-blur-xs" style={{ color: themeColor }}>
+            <Star className="w-3.5 h-3.5 fill-current" />
+            <span>{greeting} · דירוג 5.0 כוכבים · {business.city}</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-black text-white mb-3 tracking-tight">
-            ברוכים הבאים ל<span className="text-[#C9A84C]">{business.name}</span>
+            ברוכים הבאים ל<span style={{ color: themeColor }}>{business.name}</span>
           </h2>
 
           <p className="text-xs sm:text-sm text-zinc-300 mb-8 max-w-lg mx-auto leading-relaxed font-sans">
@@ -283,19 +301,20 @@ export default function DynamicBusinessLandingPage({
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href={`/${slug}/booking`}
-              className="px-7 py-3.5 rounded-2xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-sm transition-all shadow-xl hover:scale-105 flex items-center gap-2 cursor-pointer"
+              className="px-7 py-3.5 rounded-2xl text-[#1C1C1C] font-black text-sm transition-all shadow-xl hover:scale-105 flex items-center gap-2 cursor-pointer"
+              style={{ backgroundColor: themeColor }}
             >
               <Calendar className="w-4 h-4 text-black" />
               <span>קביעת תור מהירה עכשיו</span>
             </Link>
 
             <a
-              href={`https://waze.com/ul?q=${encodeURIComponent(activeBranch.address || activeBranch.name)}`}
+              href={activeBranch.wazeLink || `https://waze.com/ul?q=${encodeURIComponent(activeBranch.address || activeBranch.name)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs inline-flex items-center gap-2 border border-white/15 transition-colors cursor-pointer"
             >
-              <Navigation className="w-4 h-4 text-[#C9A84C]" />
+              <Navigation className="w-4 h-4" style={{ color: themeColor }} />
               <span>נווט ב-Waze</span>
             </a>
 
@@ -308,6 +327,14 @@ export default function DynamicBusinessLandingPage({
               <MessageCircle className="w-4 h-4" />
               <span>וואטסאפ ישיר</span>
             </a>
+
+            <a
+              href={`tel:${business.phone}`}
+              className="px-4 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-zinc-300 font-bold text-xs inline-flex items-center gap-1.5 border border-white/10 transition-colors cursor-pointer"
+            >
+              <Phone className="w-4 h-4" />
+              <span>התקשר</span>
+            </a>
           </div>
         </div>
       </section>
@@ -317,8 +344,8 @@ export default function DynamicBusinessLandingPage({
       {/* ============================================================ */}
       <section className="py-14 px-4 max-w-5xl mx-auto">
         <div className="text-center mb-10">
-          <div className="inline-block text-[11px] font-black text-[#C9A84C] tracking-widest uppercase mb-1">
-            PREMIUM SERVICES & GALLERY
+          <div className="inline-block text-[11px] font-black tracking-widest uppercase mb-1" style={{ color: themeColor }}>
+            PREMIUM SERVICES & PORTFOLIO
           </div>
           <h3 className="text-2xl sm:text-3xl font-black text-white mb-2">מחירון שירותים וגלריית עבודות</h3>
           <p className="text-xs text-[#9E9891]">בחר את הטיפול המושלם עבורך אצל {business.name} וקבע תור בשניות</p>
@@ -330,15 +357,25 @@ export default function DynamicBusinessLandingPage({
             {services.map((srv, idx) => (
               <div
                 key={idx}
-                className="bg-[#1C1C1C] border border-white/10 hover:border-[#C9A84C]/60 rounded-2xl p-4 sm:p-5 flex items-center justify-between transition-all group shadow-md"
+                className="bg-[#1C1C1C] border border-white/10 hover:border-white/25 rounded-2xl p-4 sm:p-5 flex items-center justify-between transition-all group shadow-md"
               >
                 <div>
-                  <h4 className="text-sm sm:text-base font-black text-white group-hover:text-[#C9A84C] transition-colors">
-                    {srv.name}
-                  </h4>
-                  <div className="flex items-center gap-2 text-xs text-zinc-400 mt-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm sm:text-base font-black text-white group-hover:text-[#DFCA85] transition-colors">
+                      {srv.name}
+                    </h4>
+                    {srv.popular && (
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                        מומלץ ⭐
+                      </span>
+                    )}
+                  </div>
+                  {srv.description && (
+                    <p className="text-xs text-zinc-400 mt-1 font-sans">{srv.description}</p>
+                  )}
+                  <div className="flex items-center gap-2 text-xs text-zinc-400 mt-1.5">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-[#C9A84C]" /> {srv.duration} דקות
+                      <Clock className="w-3.5 h-3.5" style={{ color: themeColor }} /> {srv.duration} דקות
                     </span>
                     <span>•</span>
                     <span className="text-emerald-400">כולל חפיפה ועיצוב</span>
@@ -346,12 +383,13 @@ export default function DynamicBusinessLandingPage({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-lg sm:text-xl font-black text-[#C9A84C]">
+                  <span className="text-lg sm:text-xl font-black" style={{ color: themeColor }}>
                     {formatPrice(srv.price)}
                   </span>
                   <Link
                     href={`/${slug}/booking`}
-                    className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-[#C9A84C] hover:text-black text-xs font-bold text-white transition-all cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-black hover:scale-105 shadow-sm"
+                    style={{ backgroundColor: themeColor }}
                   >
                     הזמן
                   </Link>
@@ -359,51 +397,107 @@ export default function DynamicBusinessLandingPage({
               </div>
             ))}
 
-            <div className="p-4 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/30 text-center text-xs text-zinc-300">
-              ⚡ <strong>חוויית VIP:</strong> כל תספורת אצל {business.ownerName} כוללת ייעוץ אישי, התאמת קווי פנים וחומרי טיפוח מובחרים.
+            <div
+              className="p-4 rounded-2xl text-center text-xs text-zinc-300 border"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              ⚡ <strong>חוויית פרימיום:</strong> כל טיפול אצל {business.ownerName} כולל ייעוץ אישי, התאמת קווי פנים וחומרי טיפוח מובחרים.
             </div>
           </div>
 
           {/* Haircuts Gallery Column */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3">
-            {galleryImages.slice(0, 4).map((img, i) => (
-              <div
-                key={i}
-                className="relative rounded-2xl overflow-hidden aspect-square border border-white/10 group bg-[#222]"
-              >
-                <Image
-                  src={img.src}
-                  alt={img.label}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
-                  <span className="text-xs font-bold text-white drop-shadow-md">
-                    {img.label}
-                  </span>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3">
+              {galleryImages.map((img, i) => (
+                <div
+                  key={i}
+                  onClick={() => setActiveLightboxImg(img)}
+                  className="relative rounded-2xl overflow-hidden aspect-square border border-white/10 group bg-[#222] cursor-pointer shadow-md"
+                >
+                  <Image
+                    src={img.src}
+                    alt={img.label}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent flex items-end justify-between p-3 opacity-90 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs font-bold text-white drop-shadow-md">
+                      {img.label}
+                    </span>
+                    <Maximize2 className="w-3.5 h-3.5 text-white/80" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <p className="text-[11px] text-zinc-500 text-center">לחץ על תמונה להגדלה בתצוגה מלאה 🔍</p>
           </div>
         </div>
       </section>
 
+      {/* Lightbox Modal */}
+      {activeLightboxImg && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setActiveLightboxImg(null)}
+        >
+          <div className="relative max-w-xl w-full aspect-square rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
+            <Image
+              src={activeLightboxImg.src}
+              alt={activeLightboxImg.label}
+              fill
+              className="object-contain"
+            />
+            <button
+              onClick={() => setActiveLightboxImg(null)}
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center cursor-pointer border border-white/20"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="absolute bottom-4 inset-x-4 bg-black/75 backdrop-blur-xs p-3 rounded-2xl text-center text-sm font-bold text-white">
+              {activeLightboxImg.label} · {business.name}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ============================================================ */}
-      {/* 3. MASTER BARBER SHOWCASE (ABOUT)                            */}
+      {/* 3. MASTER STYLIST SHOWCASE (ABOUT)                           */}
       {/* ============================================================ */}
-      <section className="py-12 px-4 bg-[#181818] border-y border-white/10">
+      <section className="py-14 px-4 bg-[#181818] border-y border-white/10">
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-          <div className="relative rounded-3xl overflow-hidden aspect-square border-2 border-[#C9A84C]/40 shadow-2xl bg-gradient-to-br from-[#2A2A2A] to-[#161616] flex flex-col items-center justify-center text-center p-6">
-            <div className="w-20 h-20 rounded-full bg-[#C9A84C]/20 border-2 border-[#C9A84C] flex items-center justify-center text-[#C9A84C] mb-3 shadow-lg">
+          <div
+            className="relative rounded-3xl overflow-hidden aspect-square border-2 shadow-2xl bg-gradient-to-br from-[#2A2A2A] to-[#161616] flex flex-col items-center justify-center text-center p-6"
+            style={{ borderColor: themeColor }}
+          >
+            <div
+              className="w-20 h-20 rounded-full flex items-center justify-center mb-3 shadow-lg border-2"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                borderColor: themeColor,
+                color: themeColor,
+              }}
+            >
               <span className="text-3xl font-black">{business.ownerName.charAt(0)}</span>
             </div>
             <h4 className="text-base font-black text-white">{business.ownerName}</h4>
-            <span className="text-xs text-[#C9A84C] font-bold mt-0.5">מאסטר ברבר מוסמך</span>
+            <span className="text-xs font-bold mt-0.5" style={{ color: themeColor }}>
+              מאסטר מעצב שיער מוסמך
+            </span>
           </div>
 
           <div className="md:col-span-2 space-y-3.5 text-right">
-            <div className="inline-flex items-center gap-1 text-[11px] font-black text-[#C9A84C] bg-[#C9A84C]/10 px-3 py-1 rounded-full border border-[#C9A84C]/30">
-              <Award className="w-3.5 h-3.5" /> מאסטר בעיצוב שיער גברים
+            <div
+              className="inline-flex items-center gap-1 text-[11px] font-black px-3 py-1 rounded-full border"
+              style={{
+                color: themeColor,
+                borderColor: themeColor,
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              }}
+            >
+              <Award className="w-3.5 h-3.5" /> מעל {business.experienceYears || 5} שנות מקצוענות ודיוק
             </div>
 
             <h3 className="text-2xl sm:text-3xl font-black text-white">
@@ -411,16 +505,16 @@ export default function DynamicBusinessLandingPage({
             </h3>
 
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans">
-              ב-{business.name} אנחנו מאמינים שתספורת היא כרטיס הביקור של כל גבר. {business.ownerName} מעניק לכל לקוח יחס אישי, התאמה מדויקת למבנה הפנים, ושימוש במכשור החדשני והסטרילי ביותר.
+              ב-{business.name} אנחנו מאמינים שתספורת מושלמת היא שילוב של יחס אישי, הקשבה לרצון הלקוח וטכניקת עבודה מדויקת. {business.ownerName} מעניק חוויית טיפוח ללא פשרות, שימוש בחומרים המובחרים ביותר וחיטוי יסודי.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
               <div className="bg-[#1C1C1C] p-3 rounded-xl border border-white/10 text-center">
-                <span className="block text-base font-black text-[#C9A84C]">100%</span>
+                <span className="block text-base font-black" style={{ color: themeColor }}>100%</span>
                 <span className="text-[10px] text-zinc-400">שביעות רצון</span>
               </div>
               <div className="bg-[#1C1C1C] p-3 rounded-xl border border-white/10 text-center">
-                <span className="block text-base font-black text-[#C9A84C]">סטריליות</span>
+                <span className="block text-base font-black" style={{ color: themeColor }}>סטריליות</span>
                 <span className="text-[10px] text-zinc-400">חיטוי מלא</span>
               </div>
               <div className="bg-[#1C1C1C] p-3 rounded-xl border border-white/10 text-center col-span-2 sm:col-span-1">
@@ -438,18 +532,21 @@ export default function DynamicBusinessLandingPage({
       <section className="py-14 px-4 max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h3 className="text-2xl font-black text-white mb-1">הסניפים ודרכי ההגעה</h3>
-          <p className="text-xs text-[#9E9891]">זמינים עבורכם במיקומים המובילים</p>
+          <p className="text-xs text-[#9E9891]">זמינים עבורכם במיקומים המובילים ב{business.city}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {branches.map((b, i) => (
             <div
               key={i}
-              className="bg-[#1C1C1C] border border-[#C9A84C]/30 rounded-3xl p-6 shadow-xl space-y-4 text-right relative overflow-hidden"
+              className="bg-[#1C1C1C] border border-white/10 hover:border-white/20 rounded-3xl p-6 shadow-xl space-y-4 text-right relative overflow-hidden"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-[#C9A84C]/15 border border-[#C9A84C]/40 flex items-center justify-center text-[#C9A84C]">
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: themeColor }}
+                  >
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
@@ -465,31 +562,28 @@ export default function DynamicBusinessLandingPage({
 
               <div className="text-xs text-zinc-400 bg-[#141414] p-3 rounded-xl border border-white/5 space-y-1">
                 <div className="flex justify-between">
-                  <span>ראשון - רביעי:</span>
+                  <span>ראשון - חמישי:</span>
                   <strong className="text-white">09:00 - 20:00</strong>
                 </div>
                 <div className="flex justify-between">
-                  <span>חמישי:</span>
-                  <strong className="text-white">09:00 - 21:00</strong>
-                </div>
-                <div className="flex justify-between">
                   <span>שישי וערבי חג:</span>
-                  <strong className="text-[#C9A84C]">08:00 - 14:00</strong>
+                  <strong style={{ color: themeColor }}>08:30 - 14:00</strong>
                 </div>
               </div>
 
               <div className="flex gap-2">
                 <a
-                  href={`https://waze.com/ul?q=${encodeURIComponent(b.address || b.name)}`}
+                  href={b.wazeLink || `https://waze.com/ul?q=${encodeURIComponent(b.address || b.name)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl text-black font-black text-xs flex items-center justify-center gap-1.5 transition-colors shadow-md cursor-pointer"
+                  style={{ backgroundColor: themeColor }}
                 >
                   <Navigation className="w-3.5 h-3.5" /> נווט ב-Waze
                 </a>
 
                 <a
-                  href={`tel:${business.phone}`}
+                  href={`tel:${b.phone || business.phone}`}
                   className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10"
                 >
                   <Phone className="w-3.5 h-3.5" /> חייג
@@ -536,7 +630,7 @@ export default function DynamicBusinessLandingPage({
               className="object-cover"
             />
             <div className="absolute bottom-4 left-4 bg-emerald-500/90 backdrop-blur-xs text-white text-xs font-black px-3 py-1 rounded-full shadow-lg">
-              אחרי תספורת ✓
+              אחרי טיפול ✓
             </div>
 
             {/* Before Image (Clipped overlay) */}
@@ -552,17 +646,20 @@ export default function DynamicBusinessLandingPage({
                   className="object-cover filter grayscale"
                 />
                 <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-xs text-white text-xs font-black px-3 py-1 rounded-full border border-white/15">
-                  לפני תספורת
+                  לפני טיפול
                 </div>
               </div>
             </div>
 
             {/* Drag Handle Divider */}
             <div
-              className="absolute top-0 bottom-0 w-1 bg-[#C9A84C] shadow-lg flex items-center justify-center -translate-x-1/2"
-              style={{ left: `${sliderPos}%` }}
+              className="absolute top-0 bottom-0 w-1 shadow-lg flex items-center justify-center -translate-x-1/2"
+              style={{ left: `${sliderPos}%`, backgroundColor: themeColor }}
             >
-              <div className="w-8 h-8 rounded-full bg-[#C9A84C] text-black flex items-center justify-center text-xs font-black shadow-xl">
+              <div
+                className="w-8 h-8 rounded-full text-black flex items-center justify-center text-xs font-black shadow-xl"
+                style={{ backgroundColor: themeColor }}
+              >
                 ⇄
               </div>
             </div>
@@ -575,43 +672,30 @@ export default function DynamicBusinessLandingPage({
       {/* ============================================================ */}
       <section className="py-14 px-4 max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-4 py-1 text-xs font-black text-[#C9A84C] mb-2">
-            <Star className="w-4 h-4 fill-[#C9A84C]" /> 4.9 כוכבים בביקורות מאומתות
+          <div
+            className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-4 py-1 text-xs font-black mb-2"
+            style={{ color: themeColor }}
+          >
+            <Star className="w-4 h-4 fill-current" /> 4.9 כוכבים בביקורות לקוחות מאומתות
           </div>
           <h3 className="text-2xl font-black text-white">מה הלקוחות מספרים עלינו</h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-right">
-          {[
-            {
-              name: 'יונתן א.',
-              text: 'הספר הכי מדויק שיצא לי להסתפר אצלו! פייד נקי וחלק בלי שום פשרות. ממליץ בחום!',
-              date: 'לפני 3 ימים',
-            },
-            {
-              name: 'עידו ש.',
-              text: 'חוויית שירות נדירה! הזמנתי תור מהאתר והתקבלתי בדיוק על הדקה בלי לחכות שנייה.',
-              date: 'לפני שבוע',
-            },
-            {
-              name: 'מתן ל.',
-              text: 'פיסול זקן ברמה הכי גבוהה בארץ. מקום נקי, סטרילי וצוות מקצועי ביותר.',
-              date: 'לפני שבועיים',
-            },
-          ].map((rev, idx) => (
+          {testimonials.map((rev, idx) => (
             <div key={idx} className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-5 shadow-lg space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-black text-white text-sm">{rev.name}</span>
-                <div className="flex text-[#C9A84C]">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-[#C9A84C]" />
+                <div className="flex" style={{ color: themeColor }}>
+                  {[...Array(rev.rating || 5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-current" />
                   ))}
                 </div>
               </div>
               <p className="text-xs text-zinc-300 leading-relaxed font-sans">
-                "{rev.text}"
+                "{rev.comment}"
               </p>
-              <span className="text-[10px] text-zinc-500 block">{rev.date} · לקוח מאומת ✓</span>
+              <span className="text-[10px] text-zinc-500 block">{rev.timeAgo || 'לאחרונה'} · לקוח מאומת ✓</span>
             </div>
           ))}
         </div>
@@ -635,18 +719,19 @@ export default function DynamicBusinessLandingPage({
               <button
                 type="button"
                 onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                className="w-full p-4 text-right flex items-center justify-between text-xs sm:text-sm font-black text-white hover:text-[#C9A84C] cursor-pointer"
+                className="w-full p-4 text-right flex items-center justify-between text-xs sm:text-sm font-black text-white hover:text-white/90 cursor-pointer"
               >
-                <span>{faq.q}</span>
+                <span>{faq.question}</span>
                 <ChevronDown
-                  className={`w-4 h-4 text-[#C9A84C] transition-transform duration-300 ${
+                  className={`w-4 h-4 transition-transform duration-300 ${
                     openFaq === idx ? 'rotate-180' : ''
                   }`}
+                  style={{ color: themeColor }}
                 />
               </button>
               {openFaq === idx && (
                 <div className="p-4 pt-0 text-xs text-zinc-300 leading-relaxed border-t border-white/5 font-sans">
-                  {faq.a}
+                  {faq.answer}
                 </div>
               )}
             </div>
@@ -661,7 +746,7 @@ export default function DynamicBusinessLandingPage({
         <div className="flex items-center justify-center gap-2 font-black text-white text-sm mb-1.5">
           <span>{business.name}</span>
           <span>·</span>
-          <span className="text-[#C9A84C]">מופעל ע״י The Cut Platform</span>
+          <span style={{ color: themeColor }}>מופעל ע״י The Cut Platform</span>
         </div>
         <p className="text-[11px] text-zinc-500 mb-4">
           מערכת זימון תורים חכמה לעסקים ומספרות בישראל · כל הזכויות שמורות
@@ -673,6 +758,29 @@ export default function DynamicBusinessLandingPage({
           <Link href="/accessibility" className="text-zinc-500 hover:text-white transition-colors">הצהרת נגישות</Link>
         </div>
       </footer>
+
+      {/* ============================================================ */}
+      {/* 9. STICKY MOBILE BOTTOM BAR                                  */}
+      {/* ============================================================ */}
+      <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-[#1C1C1C]/95 backdrop-blur-md border-t border-white/10 p-3 flex items-center gap-2 shadow-2xl">
+        <Link
+          href={`/${slug}/booking`}
+          className="flex-1 py-3 rounded-xl text-[#1C1C1C] font-black text-xs flex items-center justify-center gap-1.5 shadow-lg"
+          style={{ backgroundColor: themeColor }}
+        >
+          <Calendar className="w-4 h-4" />
+          <span>קביעת תור מהירה אונליין</span>
+        </Link>
+        <a
+          href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`היי ${business.ownerName}, אני מעוניין לקבוע תור אצלך ב-${business.name}:`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-3 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg"
+          aria-label="וואטסאפ"
+        >
+          <MessageCircle className="w-4 h-4" />
+        </a>
+      </div>
     </div>
   );
 }

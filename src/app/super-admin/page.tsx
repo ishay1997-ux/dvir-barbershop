@@ -20,6 +20,7 @@ import {
   Scissors,
   Lock,
   ArrowRight,
+  ArrowLeft,
   RefreshCw,
   Zap,
   Eye,
@@ -32,9 +33,14 @@ import {
   Palette,
   Layers,
   Key,
+  Check,
+  Award,
+  Crown,
+  Share2,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { useToast } from '@/components/common/ToastProvider';
+import { BUSINESS_ARCHETYPES, THEME_PALETTES, generateTailoredBusinessConfig } from '@/lib/archetypes';
 
 interface BugReport {
   id: string;
@@ -52,11 +58,15 @@ interface ServiceItem {
   name: string;
   price: number;
   duration: number;
+  description?: string;
+  popular?: boolean;
 }
 
 interface BranchItem {
   name: string;
   address: string;
+  wazeLink?: string;
+  phone?: string;
 }
 
 interface Business {
@@ -69,6 +79,7 @@ interface Business {
   slogan?: string;
   announcement?: string;
   themeColor?: string;
+  instagramHandle?: string;
   branchesCount: number;
   status: 'active' | 'pending' | 'suspended';
   plan: 'pro' | 'starter' | 'enterprise';
@@ -217,6 +228,24 @@ export default function SuperAdminPage() {
   const [businessesLoading, setBusinessesLoading] = useState(false);
   const [isNewBizModalOpen, setIsNewBizModalOpen] = useState(false);
 
+  // Smart 3-Step Wizard for New Business Creation
+  const [wizardStep, setWizardStep] = useState<1 | 2 | 3>(1);
+  const [newBizName, setNewBizName] = useState('');
+  const [newBizSlug, setNewBizSlug] = useState('');
+  const [newBizOwner, setNewBizOwner] = useState('');
+  const [newBizPhone, setNewBizPhone] = useState('');
+  const [newBizCity, setNewBizCity] = useState('');
+  const [newBizInstagram, setNewBizInstagram] = useState('');
+  const [newBizPlan, setNewBizPlan] = useState<'pro' | 'starter' | 'enterprise'>('pro');
+  const [newBizArchetype, setNewBizArchetype] = useState<string>('mens-barbershop');
+  const [newBizThemeColor, setNewBizThemeColor] = useState<string>('#C9A84C');
+  const [newBizSlogan, setNewBizSlogan] = useState('');
+  const [newBizAnnouncement, setNewBizAnnouncement] = useState('');
+  const [newBizServices, setNewBizServices] = useState<ServiceItem[]>([]);
+  const [newBizBranches, setNewBizBranches] = useState<BranchItem[]>([]);
+  const [isCreatingBiz, setIsCreatingBiz] = useState(false);
+  const [createdBusinessResult, setCreatedBusinessResult] = useState<Business | null>(null);
+
   // Edit Business Customization State
   const [editingBiz, setEditingBiz] = useState<Business | null>(null);
   const [editTab, setEditTab] = useState<'branding' | 'services' | 'branches' | 'banner'>('branding');
@@ -231,15 +260,6 @@ export default function SuperAdminPage() {
   // New branch inside edit modal
   const [newBranchName, setNewBranchName] = useState('');
   const [newBranchAddress, setNewBranchAddress] = useState('');
-
-  // New business form state
-  const [newBizName, setNewBizName] = useState('');
-  const [newBizSlug, setNewBizSlug] = useState('');
-  const [newBizOwner, setNewBizOwner] = useState('');
-  const [newBizPhone, setNewBizPhone] = useState('');
-  const [newBizCity, setNewBizCity] = useState('');
-  const [newBizPlan, setNewBizPlan] = useState<'pro' | 'starter'>('pro');
-  const [isCreatingBiz, setIsCreatingBiz] = useState(false);
 
   // Master Login Handler
   const executeLogin = () => {
@@ -353,10 +373,34 @@ export default function SuperAdminPage() {
     });
   };
 
-  // Create New Business Handler
+  // When Archetype is chosen, auto-fill Step 3 with tailored services, slogan, announcement & branch
+  const syncArchetypeDefaults = (archetypeKey: string, colorHex?: string) => {
+    const arch = BUSINESS_ARCHETYPES[archetypeKey] || BUSINESS_ARCHETYPES['mens-barbershop'];
+    const color = colorHex || arch.defaultColor;
+    const owner = newBizOwner || newBizName || 'מאסטר ברבר';
+    const city = newBizCity || 'ישראל';
+
+    setNewBizThemeColor(color);
+    setNewBizSlogan(arch.slogan(owner, city, newBizName || 'המספרה'));
+    setNewBizAnnouncement(arch.announcement(owner, city, newBizName || 'המספרה'));
+    setNewBizServices(arch.services);
+    setNewBizBranches([
+      {
+        name: `סניף ראשי – ${city}`,
+        address: `${city} (מרכז העיר)`,
+        wazeLink: `https://waze.com/ul?q=${encodeURIComponent(city)}`,
+        phone: newBizPhone,
+      },
+    ]);
+  };
+
+  // Create New Business Handler (Smart Generator)
   const handleCreateBusiness = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newBizName || !newBizSlug || !newBizPhone) return;
+    if (!newBizName || !newBizSlug || !newBizPhone) {
+      error('נא למלא את כל שדות החובה');
+      return;
+    }
 
     setIsCreatingBiz(true);
     try {
@@ -366,23 +410,31 @@ export default function SuperAdminPage() {
         body: JSON.stringify({
           name: newBizName,
           slug: newBizSlug,
-          ownerName: newBizOwner,
+          ownerName: newBizOwner || newBizName,
           phone: newBizPhone,
-          city: newBizCity,
+          city: newBizCity || 'ישראל',
           plan: newBizPlan,
+          archetypeId: newBizArchetype,
+          themeColor: newBizThemeColor,
+          instagramHandle: newBizInstagram,
+          slogan: newBizSlogan,
+          announcement: newBizAnnouncement,
+          services: newBizServices,
+          branches: newBizBranches,
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        setBusinesses((prev) => [data.business, ...prev]);
-        setIsNewBizModalOpen(false);
-        setNewBizName('');
-        setNewBizSlug('');
-        setNewBizOwner('');
-        setNewBizPhone('');
-        setNewBizCity('');
-        success(`המספרה "${newBizName}" הוקמה בהצלחה! 🎉`, `האתר thecut.co.il/${newBizSlug} זמין באוויר`);
+        setBusinesses((prev) => {
+          const filtered = prev.filter((b) => b.slug !== data.business.slug);
+          // Keep Dvir at top, put new biz at index 1
+          const dvir = filtered.find((b) => b.slug === 'dvir');
+          const others = filtered.filter((b) => b.slug !== 'dvir');
+          return dvir ? [dvir, data.business, ...others] : [data.business, ...others];
+        });
+        setCreatedBusinessResult(data.business);
+        success(`האתר של "${newBizName}" הוקם בהצלחה באוויר! 🎉`, `thecut.co.il/${newBizSlug} זמין כעת לצפייה`);
       } else {
         error('שגיאה בהקמת העסק', 'בדוק את השדות ונסה שנית');
       }
@@ -603,11 +655,11 @@ export default function SuperAdminPage() {
 
           <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-[#9E9891] font-bold">גמישות והתאמה</span>
+              <span className="text-xs text-[#9E9891] font-bold">התאמה אישית</span>
               <Settings2 className="w-4 h-4 text-emerald-400" />
             </div>
             <div className="text-2xl font-black text-emerald-400">100%</div>
-            <span className="text-[10px] text-emerald-400">עריכת מחירון ומיתוג</span>
+            <span className="text-[10px] text-emerald-400">מיתוג & מחירון דינמי</span>
           </div>
         </div>
 
@@ -643,124 +695,204 @@ export default function SuperAdminPage() {
         {/* ============================================================ */}
         {activeTab === 'businesses' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-black text-white">רשימת מספרות ועסקים פעילים</h2>
-                <p className="text-xs text-[#9E9891]">לחץ "ערוך והתאם אישית" כדי לשנות מחירון, סלוגן, באנר וסניפים עבור כל ספר</p>
+                <p className="text-xs text-[#9E9891]">כל עסק מקבל אתר אישי יוקרתי ומערכת זימון תורים מותאמת ב-thecut.co.il/[slug]</p>
               </div>
 
-              <button
-                onClick={() => setIsNewBizModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-colors shadow-md cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>הקמת עסק / מספרה חדשה</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={fetchBusinesses}
+                  disabled={businessesLoading}
+                  className="text-xs text-zinc-400 hover:text-white flex items-center gap-1.5 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-xl border border-white/10 cursor-pointer transition-colors"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${businessesLoading ? 'animate-spin text-[#C9A84C]' : ''}`} />
+                  <span>רענן מספרות</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setWizardStep(1);
+                    setCreatedBusinessResult(null);
+                    setNewBizName('');
+                    setNewBizSlug('');
+                    setNewBizOwner('');
+                    setNewBizPhone('');
+                    setNewBizCity('');
+                    setNewBizInstagram('');
+                    setNewBizArchetype('mens-barbershop');
+                    syncArchetypeDefaults('mens-barbershop');
+                    setIsNewBizModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-colors shadow-md cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>הקמת עסק / מספרה חדשה ✨</span>
+                </button>
+              </div>
             </div>
 
-            {/* Businesses Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {businesses.map((biz) => (
-                <div
-                  key={biz.id}
-                  className="bg-[#1C1C1C] border border-[#C9A84C]/30 rounded-2xl p-5 shadow-lg space-y-4 relative group"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-[#C9A84C]/15 border border-[#C9A84C]/40 flex items-center justify-center text-[#C9A84C]">
-                        <Scissors className="w-6 h-6 -rotate-45" />
+            {/* Businesses Loading Skeleton */}
+            {businessesLoading && businesses.length === 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1, 2].map((i) => (
+                  <div key={i} className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-5 shadow-lg space-y-4 animate-pulse">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-white/5" />
+                        <div className="space-y-1.5">
+                          <div className="w-32 h-4 bg-white/10 rounded" />
+                          <div className="w-24 h-3 bg-white/5 rounded" />
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-base font-black text-white">{biz.name}</h3>
-                        <span className="text-xs text-[#C9A84C] font-bold" dir="ltr">
-                          thecut.co.il/{biz.slug}
+                      <div className="w-20 h-5 bg-white/5 rounded-full" />
+                    </div>
+                    <div className="h-12 bg-white/5 rounded-xl" />
+                    <div className="grid grid-cols-2 gap-2 h-16 bg-white/5 rounded-xl" />
+                  </div>
+                ))}
+              </div>
+            ) : businesses.length > 0 ? (
+              /* Businesses Grid */
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {businesses.map((biz) => {
+                  const isDvir = biz.slug === 'dvir';
+                  const bizColor = biz.themeColor || '#C9A84C';
+
+                  return (
+                    <div
+                      key={biz.id}
+                      className={`bg-[#1C1C1C] border rounded-2xl p-5 shadow-lg space-y-4 relative group transition-all ${
+                        isDvir
+                          ? 'border-[#C9A84C] shadow-[#C9A84C]/10 ring-1 ring-[#C9A84C]/30 bg-linear-to-b from-[#222019] to-[#1C1C1C]'
+                          : 'border-white/10 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-base shadow-md"
+                            style={{
+                              backgroundColor: isDvir ? '#C9A84C' : 'rgba(255,255,255,0.08)',
+                              color: isDvir ? '#1C1C1C' : bizColor,
+                              border: `1px solid ${bizColor}`,
+                            }}
+                          >
+                            {biz.name.trim().charAt(0)}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-base font-black text-white">{biz.name}</h3>
+                              {isDvir && (
+                                <span className="bg-[#C9A84C]/20 text-[#DFCA85] border border-[#C9A84C]/50 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                                  👑 עסק דגל (ראשי)
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-xs font-bold" style={{ color: bizColor }} dir="ltr">
+                              {isDvir ? 'thecut.co.il / thecut.co.il/dvir' : `thecut.co.il/${biz.slug}`}
+                            </span>
+                          </div>
+                        </div>
+
+                        <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                          {biz.status === 'active' ? 'פעיל באוויר ✓' : biz.status}
                         </span>
                       </div>
+
+                      {biz.slogan && (
+                        <p className="text-xs text-zinc-300 italic bg-[#141414] p-2.5 rounded-xl border border-white/5 font-sans">
+                          "{biz.slogan}"
+                        </p>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-2 text-xs text-zinc-300 bg-[#141414] p-3 rounded-xl border border-white/5">
+                        <div>
+                          <span className="text-zinc-500 block text-[10px]">מנהל עסק:</span>
+                          <strong className="text-white">{biz.ownerName}</strong>
+                        </div>
+                        <div>
+                          <span className="text-zinc-500 block text-[10px]">טלפון:</span>
+                          <strong className="text-white" dir="ltr">{biz.phone}</strong>
+                        </div>
+                        <div>
+                          <span className="text-zinc-500 block text-[10px]">סניפים ושירותים:</span>
+                          <strong className="text-white">{biz.branches?.length || biz.branchesCount || 1} סניפים · {biz.services?.length || 3} שירותים</strong>
+                        </div>
+                        <div>
+                          <span className="text-zinc-500 block text-[10px]">חבילה:</span>
+                          <strong className="uppercase" style={{ color: bizColor }}>{biz.plan} Plan</strong>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="pt-2 flex flex-wrap items-center gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingBiz({
+                              ...biz,
+                              services: biz.services || [
+                                { name: 'תספורת גברים / פייד', price: 80, duration: 30 },
+                                { name: 'עיצוב זקן', price: 40, duration: 15 },
+                              ],
+                              branches: biz.branches || [{ name: `סניף ${biz.city}`, address: biz.city }],
+                            });
+                            setEditTab('branding');
+                          }}
+                          className="flex-1 py-2 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black text-center text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                        >
+                          <Edit className="w-3.5 h-3.5" /> ערוך והתאם אישית
+                        </button>
+
+                        <Link
+                          href={isDvir ? '/' : `/${biz.slug}`}
+                          target="_blank"
+                          className="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-center text-xs font-bold text-white transition-colors flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" /> צפה באתר
+                        </Link>
+
+                        <button
+                          onClick={() => {
+                            if (typeof window !== 'undefined') {
+                              localStorage.setItem('thecut_admin_authenticated', 'true');
+                            }
+                            router.push('/admin');
+                          }}
+                          className="py-2 px-3 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-500/30 text-center text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                          title="התחבר כבעל מספרה זו"
+                        >
+                          <Key className="w-3.5 h-3.5" /> כניסה כמנהל
+                        </button>
+
+                        {!isDvir && (
+                          <button
+                            onClick={() => handleDeleteBusiness(biz.slug, biz.name)}
+                            className="p-2 rounded-xl bg-red-950/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 transition-colors cursor-pointer"
+                            title="מחק מספרה זו"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
-
-                    <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                      {biz.status === 'active' ? 'פעיל באוויר ✓' : biz.status}
-                    </span>
-                  </div>
-
-                  {biz.slogan && (
-                    <p className="text-xs text-zinc-300 italic bg-[#141414] p-2.5 rounded-xl border border-white/5 font-sans">
-                      "{biz.slogan}"
-                    </p>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-2 text-xs text-zinc-300 bg-[#141414] p-3 rounded-xl border border-white/5">
-                    <div>
-                      <span className="text-zinc-500 block text-[10px]">מנהל עסק:</span>
-                      <strong className="text-white">{biz.ownerName}</strong>
-                    </div>
-                    <div>
-                      <span className="text-zinc-500 block text-[10px]">טלפון:</span>
-                      <strong className="text-white" dir="ltr">{biz.phone}</strong>
-                    </div>
-                    <div>
-                      <span className="text-zinc-500 block text-[10px]">סניפים ושירותים:</span>
-                      <strong className="text-white">{biz.branches?.length || biz.branchesCount || 1} סניפים · {biz.services?.length || 3} שירותים</strong>
-                    </div>
-                    <div>
-                      <span className="text-zinc-500 block text-[10px]">חבילה:</span>
-                      <strong className="text-[#C9A84C] uppercase">{biz.plan} Plan</strong>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="pt-2 flex flex-wrap items-center gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingBiz({
-                          ...biz,
-                          services: biz.services || [
-                            { name: 'תספורת גברים / פייד', price: 80, duration: 30 },
-                            { name: 'עיצוב זקן', price: 40, duration: 15 },
-                          ],
-                          branches: biz.branches || [{ name: `סניף ${biz.city}`, address: biz.city }],
-                        });
-                        setEditTab('branding');
-                      }}
-                      className="flex-1 py-2 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black text-center text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
-                    >
-                      <Edit className="w-3.5 h-3.5" /> ערוך והתאם אישית
-                    </button>
-
-                    <Link
-                      href={`/${biz.slug}`}
-                      target="_blank"
-                      className="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-center text-xs font-bold text-white transition-colors flex items-center gap-1"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" /> צפה באתר
-                    </Link>
-
-                    <button
-                      onClick={() => {
-                        if (typeof window !== 'undefined') {
-                          localStorage.setItem('thecut_admin_authenticated', 'true');
-                        }
-                        router.push('/admin');
-                      }}
-                      className="py-2 px-3 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-500/30 text-center text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
-                      title="התחבר כבעל מספרה זו"
-                    >
-                      <Key className="w-3.5 h-3.5" /> כניסה כמנהל
-                    </button>
-
-                    {biz.slug !== 'dvir' && (
-                      <button
-                        onClick={() => handleDeleteBusiness(biz.slug, biz.name)}
-                        className="p-2 rounded-xl bg-red-950/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 transition-colors cursor-pointer"
-                        title="מחק מספרה זו"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-10 text-center text-zinc-400 space-y-3">
+                <Building2 className="w-10 h-10 text-[#C9A84C] mx-auto opacity-70" />
+                <p className="text-sm font-bold text-white">לא נמצאו עסקים רשומים</p>
+                <p className="text-xs">לחץ על רענן או הקם עסק חדש</p>
+                <button
+                  onClick={fetchBusinesses}
+                  className="px-4 py-2 bg-[#C9A84C] text-black font-bold text-xs rounded-xl hover:bg-[#DFCA85] cursor-pointer"
+                >
+                  טען מחדש
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -987,6 +1119,28 @@ export default function SuperAdminPage() {
                     onChange={(e) => setEditingBiz({ ...editingBiz, name: e.target.value })}
                     className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
                   />
+                </div>
+
+                {/* Theme Palette Picker */}
+                <div>
+                  <label className="block text-zinc-300 font-bold mb-1.5">פלטת צבעי מיתוג לאתר:</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                    {THEME_PALETTES.map((pal) => (
+                      <button
+                        key={pal.id}
+                        type="button"
+                        onClick={() => setEditingBiz({ ...editingBiz, themeColor: pal.color })}
+                        className={`p-2 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${
+                          editingBiz.themeColor === pal.color
+                            ? 'border-[#C9A84C] bg-white/10'
+                            : 'border-white/10 bg-[#141414] hover:bg-white/5'
+                        }`}
+                      >
+                        <div className="w-4 h-4 rounded-full shadow-xs" style={{ backgroundColor: pal.color }} />
+                        <span className="text-[11px] font-bold text-white truncate">{pal.name.split('·')[0]}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
@@ -1264,122 +1418,366 @@ export default function SuperAdminPage() {
       )}
 
       {/* ============================================================ */}
-      {/* MODAL: CREATE NEW BUSINESS                                    */}
+      {/* MODAL: SMART 3-STEP WIZARD TO CREATE NEW BUSINESS SITE        */}
       {/* ============================================================ */}
       {isNewBizModalOpen && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" dir="rtl">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xs overflow-y-auto" dir="rtl">
           <div className="absolute inset-0" onClick={() => setIsNewBizModalOpen(false)} />
-          <div className="relative max-w-md w-full bg-[#1C1C1C] border border-[#C9A84C]/40 rounded-3xl p-6 shadow-2xl z-10 text-right">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-              <div className="flex items-center gap-2 text-[#C9A84C]">
-                <Building2 className="w-5 h-5" />
-                <h3 className="text-base font-black text-white">הקמת עסק / מספרה חדשה</h3>
-              </div>
-              <button
-                onClick={() => setIsNewBizModalOpen(false)}
-                className="text-zinc-400 hover:text-white cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
+          <div className="relative max-w-xl w-full bg-[#1C1C1C] border-2 border-[#C9A84C]/50 rounded-3xl p-6 shadow-2xl z-10 my-auto text-right">
+            
+            {/* SUCCESS CELEBRATION MODAL */}
+            {createdBusinessResult ? (
+              <div className="text-center py-6 space-y-4">
+                <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 mx-auto shadow-xl animate-bounce">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-black text-white">האתר של {createdBusinessResult.name} באוויר! 🎉</h3>
+                <p className="text-xs text-zinc-300 max-w-md mx-auto leading-relaxed">
+                  הוקם אתר פרימיום מלא ומותאם אישית הכולל מחירון, גלריה, Waze, ביקורות ומערכת זימון תורים חכמה בכתובת:
+                </p>
 
-            <form onSubmit={handleCreateBusiness} className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-gray-300 mb-1">שם העסק / המספרה *</label>
-                <input
-                  type="text"
-                  value={newBizName}
-                  onChange={(e) => {
-                    setNewBizName(e.target.value);
-                    if (!newBizSlug) {
-                      setNewBizSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'));
-                    }
-                  }}
-                  placeholder="למשל: שרון עיצוב שיער"
-                  required
-                  className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"
-                />
-              </div>
+                <div className="bg-[#141414] border border-[#C9A84C]/40 rounded-2xl p-4 text-center">
+                  <span className="text-sm font-black text-[#DFCA85]" dir="ltr">
+                    thecut.co.il/{createdBusinessResult.slug}
+                  </span>
+                </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-300 mb-1">מזהה קישור (Slug) *</label>
-                <div className="flex items-center bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-sm" dir="ltr">
-                  <span className="text-zinc-500 text-xs mr-1">thecut.co.il/</span>
-                  <input
-                    type="text"
-                    value={newBizSlug}
-                    onChange={(e) => setNewBizSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
-                    placeholder="sharon"
-                    required
-                    className="flex-1 bg-transparent text-white outline-none text-xs font-bold text-right"
-                  />
+                <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                  <Link
+                    href={`/${createdBusinessResult.slug}`}
+                    target="_blank"
+                    className="flex-1 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs flex items-center justify-center gap-1.5 shadow-lg"
+                  >
+                    <ExternalLink className="w-4 h-4" /> צפה באתר החדש עכשיו
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        localStorage.setItem('thecut_admin_authenticated', 'true');
+                      }
+                      router.push('/admin');
+                    }}
+                    className="flex-1 py-3 rounded-xl bg-emerald-950/50 hover:bg-emerald-900/70 text-emerald-400 border border-emerald-500/40 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Key className="w-4 h-4" /> כניסה לפאנל הניהול
+                  </button>
+
+                  <button
+                    onClick={() => setIsNewBizModalOpen(false)}
+                    className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs cursor-pointer"
+                  >
+                    סגור
+                  </button>
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1">שם בעל העסק</label>
-                  <input
-                    type="text"
-                    value={newBizOwner}
-                    onChange={(e) => setNewBizOwner(e.target.value)}
-                    placeholder="למשל: שרון"
-                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
-                  />
+            ) : (
+              /* WIZARD FORM */
+              <form onSubmit={handleCreateBusiness} className="space-y-4">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-2 text-[#C9A84C]">
+                    <Sparkles className="w-5 h-5" />
+                    <div>
+                      <h3 className="text-base font-black text-white">הקמת אתר מספרה מותאם אישית</h3>
+                      <span className="text-[11px] text-zinc-400">אשף הקמה חכם ב-3 שלבים</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsNewBizModalOpen(false)}
+                    className="text-zinc-400 hover:text-white cursor-pointer"
+                  >
+                    ✕
+                  </button>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1">טלפון להתקשרות *</label>
-                  <input
-                    type="tel"
-                    value={newBizPhone}
-                    onChange={(e) => setNewBizPhone(e.target.value)}
-                    placeholder="050-1234567"
-                    required
-                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
-                  />
+
+                {/* Wizard Steps Indicator */}
+                <div className="flex items-center justify-between bg-[#141414] p-2.5 rounded-2xl border border-white/10 text-xs font-bold">
+                  <div className={`flex items-center gap-1.5 ${wizardStep === 1 ? 'text-[#C9A84C]' : 'text-zinc-500'}`}>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${wizardStep === 1 ? 'bg-[#C9A84C] text-black font-black' : 'bg-white/10 text-white'}`}>1</span>
+                    <span>פרטי עסק</span>
+                  </div>
+                  <span className="text-zinc-600">←</span>
+                  <div className={`flex items-center gap-1.5 ${wizardStep === 2 ? 'text-[#C9A84C]' : 'text-zinc-500'}`}>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${wizardStep === 2 ? 'bg-[#C9A84C] text-black font-black' : 'bg-white/10 text-white'}`}>2</span>
+                    <span>סגנון ומיתוג</span>
+                  </div>
+                  <span className="text-zinc-600">←</span>
+                  <div className={`flex items-center gap-1.5 ${wizardStep === 3 ? 'text-[#C9A84C]' : 'text-zinc-500'}`}>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${wizardStep === 3 ? 'bg-[#C9A84C] text-black font-black' : 'bg-white/10 text-white'}`}>3</span>
+                    <span>מחירון וסיום</span>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-300 mb-1">עיר וסניפים</label>
-                <input
-                  type="text"
-                  value={newBizCity}
-                  onChange={(e) => setNewBizCity(e.target.value)}
-                  placeholder="למשל: תל אביב (דיזנגוף 120)"
-                  className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
-                />
-              </div>
+                {/* ==================================================== */}
+                {/* STEP 1: BASIC BUSINESS & OWNER DETAILS               */}
+                {/* ==================================================== */}
+                {wizardStep === 1 && (
+                  <div className="space-y-3 text-xs">
+                    <div>
+                      <label className="block font-bold text-gray-300 mb-1">שם העסק / המספרה *</label>
+                      <input
+                        type="text"
+                        value={newBizName}
+                        onChange={(e) => {
+                          setNewBizName(e.target.value);
+                          if (!newBizSlug || newBizSlug === newBizName.toLowerCase().replace(/\s+/g, '-')) {
+                            setNewBizSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '-').replace(/-+/g, '-'));
+                          }
+                        }}
+                        placeholder="למשל: אלון קוצץ עיצוב שיער"
+                        required
+                        className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"
+                      />
+                    </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-300 mb-1">חבילת מנוי</label>
-                <select
-                  value={newBizPlan}
-                  onChange={(e) => setNewBizPlan(e.target.value as any)}
-                  className="w-full bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none cursor-pointer"
-                >
-                  <option value="starter">Starter (מספרה בודדת)</option>
-                  <option value="pro">Pro (מספרה מרובת סניפים + וואטסאפ)</option>
-                </select>
-              </div>
+                    <div>
+                      <label className="block font-bold text-gray-300 mb-1">מזהה קישור ייחודי (Slug) *</label>
+                      <div className="flex items-center bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-sm" dir="ltr">
+                        <span className="text-zinc-500 text-xs mr-1">thecut.co.il/</span>
+                        <input
+                          type="text"
+                          value={newBizSlug}
+                          onChange={(e) => setNewBizSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
+                          placeholder="alon-cut"
+                          required
+                          className="flex-1 bg-transparent text-white outline-none text-xs font-bold text-right"
+                        />
+                      </div>
+                    </div>
 
-              <div className="pt-3 flex gap-2">
-                <button
-                  type="submit"
-                  disabled={isCreatingBiz}
-                  className="flex-1 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-colors disabled:opacity-50 cursor-pointer"
-                >
-                  {isCreatingBiz ? 'מקים עסק...' : 'הקם עסק עכשיו ✓'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsNewBizModalOpen(false)}
-                  className="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs transition-colors cursor-pointer"
-                >
-                  ביטול
-                </button>
-              </div>
-            </form>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div>
+                        <label className="block font-bold text-gray-300 mb-1">שם בעל העסק *</label>
+                        <input
+                          type="text"
+                          value={newBizOwner}
+                          onChange={(e) => setNewBizOwner(e.target.value)}
+                          placeholder="למשל: אלון"
+                          required
+                          className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold text-gray-300 mb-1">טלפון ראשי (לוואטסאפ) *</label>
+                        <input
+                          type="tel"
+                          value={newBizPhone}
+                          onChange={(e) => setNewBizPhone(e.target.value)}
+                          placeholder="050-1234567"
+                          required
+                          className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div>
+                        <label className="block font-bold text-gray-300 mb-1">עיר / כתובת ראשי *</label>
+                        <input
+                          type="text"
+                          value={newBizCity}
+                          onChange={(e) => setNewBizCity(e.target.value)}
+                          placeholder="למשל: ראשון לציון"
+                          required
+                          className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold text-gray-300 mb-1">אינסטגרם (אופציונלי)</label>
+                        <input
+                          type="text"
+                          value={newBizInstagram}
+                          onChange={(e) => setNewBizInstagram(e.target.value)}
+                          placeholder="@barber_alon"
+                          className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-3 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!newBizName || !newBizSlug || !newBizPhone) {
+                            error('נא למלא שם עסק, מזהה קישור וטלפון');
+                            return;
+                          }
+                          syncArchetypeDefaults(newBizArchetype);
+                          setWizardStep(2);
+                        }}
+                        className="px-6 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                      >
+                        <span>המשך לבחירת סגנון ומיתוג</span>
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* ==================================================== */}
+                {/* STEP 2: ARCHETYPE STYLE & COLOR PALETTE             */}
+                {/* ==================================================== */}
+                {wizardStep === 2 && (
+                  <div className="space-y-3.5 text-xs">
+                    <div>
+                      <label className="block font-bold text-gray-300 mb-1.5">בחר את אופי וסגנון המספרה:</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {Object.values(BUSINESS_ARCHETYPES).map((arch) => (
+                          <div
+                            key={arch.id}
+                            onClick={() => {
+                              setNewBizArchetype(arch.id);
+                              syncArchetypeDefaults(arch.id);
+                            }}
+                            className={`p-3 rounded-2xl border text-right cursor-pointer transition-all ${
+                              newBizArchetype === arch.id
+                                ? 'bg-white/10 border-[#C9A84C] shadow-md ring-1 ring-[#C9A84C]/50'
+                                : 'bg-[#141414] border-white/10 hover:border-white/20'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-base">{arch.icon}</span>
+                              {newBizArchetype === arch.id && (
+                                <span className="text-emerald-400 font-bold text-[10px]">נבחר ✓</span>
+                              )}
+                            </div>
+                            <h4 className="font-black text-white text-xs mb-0.5">{arch.name}</h4>
+                            <p className="text-[11px] text-zinc-400 leading-tight">{arch.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-gray-300 mb-1.5">בחר פלטת צבעי יוקרה לאתר:</label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {THEME_PALETTES.map((pal) => (
+                          <div
+                            key={pal.id}
+                            onClick={() => setNewBizThemeColor(pal.color)}
+                            className={`p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${
+                              newBizThemeColor === pal.color
+                                ? 'bg-white/10 border-white'
+                                : 'bg-[#141414] border-white/10 hover:border-white/20'
+                            }`}
+                          >
+                            <div className="w-5 h-5 rounded-full shadow-md" style={{ backgroundColor: pal.color }} />
+                            <span className="text-[11px] font-bold text-white truncate">{pal.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-3 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => setWizardStep(1)}
+                        className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs cursor-pointer flex items-center gap-1"
+                      >
+                        <ArrowRight className="w-3.5 h-3.5" /> חזרה
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setWizardStep(3)}
+                        className="px-6 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                      >
+                        <span>המשך לסקירת מחירון וסיום</span>
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* ==================================================== */}
+                {/* STEP 3: SMART SERVICES, SLOGAN & CONFIRMATION       */}
+                {/* ==================================================== */}
+                {wizardStep === 3 && (
+                  <div className="space-y-3.5 text-xs">
+                    <div>
+                      <label className="block font-bold text-gray-300 mb-1">סלוגן לעמוד הבית:</label>
+                      <input
+                        type="text"
+                        value={newBizSlogan}
+                        onChange={(e) => setNewBizSlogan(e.target.value)}
+                        className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-gray-300 mb-1">מחירון שירותים שנוצר אוטומטית (ניתן לעריכה):</label>
+                      <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1">
+                        {newBizServices.map((srv, idx) => (
+                          <div key={idx} className="flex items-center justify-between gap-2 p-2 rounded-xl bg-[#141414] border border-white/10">
+                            <input
+                              type="text"
+                              value={srv.name}
+                              onChange={(e) => {
+                                const updated = [...newBizServices];
+                                updated[idx].name = e.target.value;
+                                setNewBizServices(updated);
+                              }}
+                              className="flex-1 bg-transparent text-white font-bold text-xs outline-none"
+                            />
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="number"
+                                value={srv.price}
+                                onChange={(e) => {
+                                  const updated = [...newBizServices];
+                                  updated[idx].price = Number(e.target.value);
+                                  setNewBizServices(updated);
+                                }}
+                                className="w-14 bg-[#222] border border-white/15 rounded-lg px-1.5 py-1 text-center text-[#C9A84C] font-bold text-xs outline-none"
+                              />
+                              <span className="text-zinc-500">₪</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-[#141414] border border-white/10 space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-zinc-400">סניף ראשי:</span>
+                        <strong className="text-white">{newBizCity}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-400">צבע מיתוג:</span>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: newBizThemeColor }} />
+                          <span className="text-white font-bold">{newBizThemeColor}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-400">כתובת אתר חי:</span>
+                        <strong className="text-[#C9A84C]" dir="ltr">thecut.co.il/{newBizSlug}</strong>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => setWizardStep(2)}
+                        className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs cursor-pointer flex items-center gap-1"
+                      >
+                        <ArrowRight className="w-3.5 h-3.5" /> חזרה
+                      </button>
+
+                      <button
+                        type="submit"
+                        disabled={isCreatingBiz}
+                        className="px-6 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors shadow-lg flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        {isCreatingBiz ? 'מקים אתר...' : 'הקם אתר מספרה מושלם באוויר 🎉'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </form>
+            )}
           </div>
         </div>
       )}
