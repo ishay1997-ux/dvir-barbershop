@@ -9,11 +9,11 @@ import AnnouncementBanner from '@/components/common/AnnouncementBanner';
 import SidebarDrawer from './SidebarDrawer';
 
 const navLinks = [
-  { label: 'שירותים ומחירון', href: '#services-and-gallery' },
-  { label: 'אודות דביר', href: '#about' },
-  { label: 'סניפים ודרכי הגעה', href: '#locations' },
-  { label: 'ביקורות', href: '#reviews' },
-  { label: 'שאלות ותשובות', href: '#faq' },
+  { label: 'שירותים ומחירון', href: '/#services-and-gallery' },
+  { label: 'אודות דביר', href: '/#about' },
+  { label: 'סניפים ודרכי הגעה', href: '/#locations' },
+  { label: 'ביקורות', href: '/#reviews' },
+  { label: 'שאלות ותשובות', href: '/#faq' },
 ];
 
 export default function Header() {
@@ -53,14 +53,14 @@ export default function Header() {
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-6" aria-label="ניווט ראשי">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className="text-xs font-bold text-white/80 hover:text-gold transition-colors duration-200 relative group py-1"
               >
                 {link.label}
                 <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-gold group-hover:w-full transition-all duration-300" />
-              </a>
+              </Link>
             ))}
           </nav>
 
