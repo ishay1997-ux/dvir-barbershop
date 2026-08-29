@@ -927,54 +927,104 @@ const defaultBusinessesList: Business[] = [
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         {/* KPI Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
-          <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg">
+          <div className={`rounded-2xl p-4 sm:p-5 transition-all ${
+            adminTheme === 'light'
+              ? 'bg-white border border-slate-200/90 text-slate-900 shadow-xs hover:shadow-md'
+              : 'bg-[#1C1C1C] border border-white/10 text-white shadow-lg'
+          }`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-[#9E9891] font-bold">עסקים רשומים</span>
-              <Building2 className="w-4 h-4 text-[#C9A84C]" />
+              <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
+                עסקים רשומים
+              </span>
+              <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-amber-50' : 'bg-white/5'}`}>
+                <Building2 className="w-4 h-4 text-[#C9A84C]" />
+              </div>
             </div>
-            <div className="text-2xl font-black text-white">{businesses.length}</div>
-            <span className="text-[10px] text-emerald-400">
+            <div className={`text-2xl font-black ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+              {businesses.length}
+            </div>
+            <span className={`text-[10px] ${adminTheme === 'light' ? 'text-emerald-600 font-semibold' : 'text-emerald-400'}`}>
               {businesses.length > 0 ? `${businesses.filter(b => b.status === 'active').length} מספרות פעילות באוויר` : 'סנכרון ענן פעיל'}
             </span>
           </div>
 
-          <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg">
+          <div className={`rounded-2xl p-4 sm:p-5 transition-all ${
+            adminTheme === 'light'
+              ? 'bg-white border border-slate-200/90 text-slate-900 shadow-xs hover:shadow-md'
+              : 'bg-[#1C1C1C] border border-white/10 text-white shadow-lg'
+          }`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-[#9E9891] font-bold">דיווחי תקלות חדשים</span>
-              <Bug className="w-4 h-4 text-red-400" />
+              <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
+                דיווחי תקלות חדשים
+              </span>
+              <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-rose-50' : 'bg-white/5'}`}>
+                <Bug className="w-4 h-4 text-rose-500" />
+              </div>
             </div>
-            <div className="text-2xl font-black text-red-400">
+            <div className="text-2xl font-black text-rose-500">
               {reports.filter((r) => r.status === 'new').length}
             </div>
-            <span className="text-[10px] text-zinc-400">מתוך {reports.length} סך הכל</span>
+            <span className={`text-[10px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-400'}`}>
+              מתוך {reports.length} סך הכל
+            </span>
           </div>
 
-          <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg">
+          <div className={`rounded-2xl p-4 sm:p-5 transition-all ${
+            adminTheme === 'light'
+              ? 'bg-white border border-slate-200/90 text-slate-900 shadow-xs hover:shadow-md'
+              : 'bg-[#1C1C1C] border border-white/10 text-white shadow-lg'
+          }`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-[#9E9891] font-bold">תורים בפלטפורמה</span>
-              <Calendar className="w-4 h-4 text-[#DFCA85]" />
+              <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
+                תורים בפלטפורמה
+              </span>
+              <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-amber-50' : 'bg-white/5'}`}>
+                <Calendar className="w-4 h-4 text-[#C9A84C]" />
+              </div>
             </div>
-            <div className="text-2xl font-black text-white">פעיל</div>
-            <span className="text-[10px] text-emerald-400">סנכרון ענן בזמן אמת</span>
+            <div className={`text-2xl font-black ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+              פעיל
+            </div>
+            <span className={`text-[10px] ${adminTheme === 'light' ? 'text-emerald-600 font-semibold' : 'text-emerald-400'}`}>
+              סנכרון ענן בזמן אמת
+            </span>
           </div>
 
-          <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg">
+          <div className={`rounded-2xl p-4 sm:p-5 transition-all ${
+            adminTheme === 'light'
+              ? 'bg-white border border-slate-200/90 text-slate-900 shadow-xs hover:shadow-md'
+              : 'bg-[#1C1C1C] border border-white/10 text-white shadow-lg'
+          }`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-[#9E9891] font-bold">התאמה אישית</span>
-              <Settings2 className="w-4 h-4 text-emerald-400" />
+              <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
+                התאמה אישית
+              </span>
+              <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-emerald-50' : 'bg-white/5'}`}>
+                <Settings2 className="w-4 h-4 text-emerald-600" />
+              </div>
             </div>
-            <div className="text-2xl font-black text-emerald-400">100%</div>
-            <span className="text-[10px] text-emerald-400">מיתוג & מחירון דינמי</span>
+            <div className={`text-2xl font-black ${adminTheme === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`}>
+              100%
+            </div>
+            <span className={`text-[10px] ${adminTheme === 'light' ? 'text-emerald-600 font-semibold' : 'text-emerald-400'}`}>
+              מיתוג & מחירון דינמי
+            </span>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-white/10 mb-6 gap-3">
+        <div className={`flex border-b mb-6 gap-2 sm:gap-3 transition-colors ${
+          adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'
+        }`}>
           <button
             onClick={() => setActiveTab('businesses')}
             className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
               activeTab === 'businesses'
-                ? 'border-[#C9A84C] text-[#C9A84C]'
+                ? adminTheme === 'light'
+                  ? 'border-[#C9A84C] text-[#B89230] bg-amber-50/60 rounded-t-xl'
+                  : 'border-[#C9A84C] text-[#C9A84C]'
+                : adminTheme === 'light'
+                ? 'border-transparent text-slate-500 hover:text-slate-900'
                 : 'border-transparent text-zinc-400 hover:text-white'
             }`}
           >
@@ -986,7 +1036,11 @@ const defaultBusinessesList: Business[] = [
             onClick={() => setActiveTab('reports')}
             className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
               activeTab === 'reports'
-                ? 'border-[#C9A84C] text-[#C9A84C]'
+                ? adminTheme === 'light'
+                  ? 'border-[#C9A84C] text-[#B89230] bg-amber-50/60 rounded-t-xl'
+                  : 'border-[#C9A84C] text-[#C9A84C]'
+                : adminTheme === 'light'
+                ? 'border-transparent text-slate-500 hover:text-slate-900'
                 : 'border-transparent text-zinc-400 hover:text-white'
             }`}
           >
@@ -998,7 +1052,11 @@ const defaultBusinessesList: Business[] = [
             onClick={() => setActiveTab('users')}
             className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
               activeTab === 'users'
-                ? 'border-[#C9A84C] text-[#C9A84C]'
+                ? adminTheme === 'light'
+                  ? 'border-[#C9A84C] text-[#B89230] bg-amber-50/60 rounded-t-xl'
+                  : 'border-[#C9A84C] text-[#C9A84C]'
+                : adminTheme === 'light'
+                ? 'border-transparent text-slate-500 hover:text-slate-900'
                 : 'border-transparent text-zinc-400 hover:text-white'
             }`}
           >
@@ -1014,15 +1072,23 @@ const defaultBusinessesList: Business[] = [
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-black text-white">רשימת מספרות ועסקים פעילים</h2>
-                <p className="text-xs text-[#9E9891]">כל עסק מקבל אתר אישי יוקרתי ומערכת זימון תורים מותאמת ב-thecut.co.il/[slug]</p>
+                <h2 className={`text-base font-black ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                  רשימת מספרות ועסקים פעילים
+                </h2>
+                <p className={`text-xs ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
+                  כל עסק מקבל אתר אישי יוקרתי ומערכת זימון תורים מותאמת ב-thecut.co.il/[slug]
+                </p>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={fetchBusinesses}
                   disabled={businessesLoading}
-                  className="text-xs text-zinc-400 hover:text-white flex items-center gap-1.5 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-xl border border-white/10 cursor-pointer transition-colors"
+                  className={`text-xs flex items-center gap-1.5 px-3 py-2 rounded-xl border cursor-pointer transition-colors ${
+                    adminTheme === 'light'
+                      ? 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-xs'
+                      : 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-400 hover:text-white'
+                  }`}
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${businessesLoading ? 'animate-spin text-[#C9A84C]' : ''}`} />
                   <span>רענן מספרות</span>
@@ -1054,19 +1120,21 @@ const defaultBusinessesList: Business[] = [
             {businessesLoading && businesses.length === 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[1, 2].map((i) => (
-                  <div key={i} className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-5 shadow-lg space-y-4 animate-pulse">
+                  <div key={i} className={`rounded-2xl p-5 space-y-4 animate-pulse ${
+                    adminTheme === 'light' ? 'bg-white border border-slate-200 shadow-xs' : 'bg-[#1C1C1C] border border-white/10 shadow-lg'
+                  }`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-white/5" />
+                        <div className="w-12 h-12 rounded-xl bg-slate-200" />
                         <div className="space-y-1.5">
-                          <div className="w-32 h-4 bg-white/10 rounded" />
-                          <div className="w-24 h-3 bg-white/5 rounded" />
+                          <div className="w-32 h-4 bg-slate-200 rounded" />
+                          <div className="w-24 h-3 bg-slate-200 rounded" />
                         </div>
                       </div>
-                      <div className="w-20 h-5 bg-white/5 rounded-full" />
+                      <div className="w-20 h-5 bg-slate-200 rounded-full" />
                     </div>
-                    <div className="h-12 bg-white/5 rounded-xl" />
-                    <div className="grid grid-cols-2 gap-2 h-16 bg-white/5 rounded-xl" />
+                    <div className="h-12 bg-slate-200 rounded-xl" />
+                    <div className="grid grid-cols-2 gap-2 h-16 bg-slate-200 rounded-xl" />
                   </div>
                 ))}
               </div>
@@ -1080,23 +1148,29 @@ const defaultBusinessesList: Business[] = [
                   return (
                     <div
                       key={biz.id}
-                      className="bg-[#1C1C1C] border border-white/10 hover:border-white/20 rounded-2xl p-5 shadow-lg space-y-4 relative group transition-all"
+                      className={`rounded-2xl p-5 space-y-4 relative group transition-all ${
+                        adminTheme === 'light'
+                          ? 'bg-white border border-slate-200/90 hover:border-slate-300 text-slate-900 shadow-xs hover:shadow-md'
+                          : 'bg-[#1C1C1C] border border-white/10 hover:border-white/20 text-white shadow-lg'
+                      }`}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
                           <div
-                            className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-base shadow-md"
+                            className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-base shadow-xs"
                             style={{
-                              backgroundColor: 'rgba(255,255,255,0.08)',
+                              backgroundColor: adminTheme === 'light' ? `${bizColor}18` : 'rgba(255,255,255,0.08)',
                               color: bizColor,
-                              border: `1px solid ${bizColor}`,
+                              border: `1.5px solid ${bizColor}`,
                             }}
                           >
                             {biz.name.trim().charAt(0)}
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="text-base font-black text-white">{biz.name}</h3>
+                              <h3 className={`text-base font-black ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                                {biz.name}
+                              </h3>
                             </div>
                             <span className="text-xs font-bold" style={{ color: bizColor }} dir="ltr">
                               {`thecut.co.il/${biz.slug}`}
@@ -1104,33 +1178,61 @@ const defaultBusinessesList: Business[] = [
                           </div>
                         </div>
 
-                        <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                          adminTheme === 'light'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                            : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                        }`}>
                           {biz.status === 'active' ? 'פעיל באוויר ✓' : biz.status}
                         </span>
                       </div>
 
                       {biz.slogan && (
-                        <p className="text-xs text-zinc-300 italic bg-[#141414] p-2.5 rounded-xl border border-white/5 font-sans">
+                        <p className={`text-xs italic p-2.5 rounded-xl font-sans border ${
+                          adminTheme === 'light'
+                            ? 'bg-slate-50 border-slate-200/80 text-slate-700'
+                            : 'bg-[#141414] border-white/5 text-zinc-300'
+                        }`}>
                           "{biz.slogan}"
                         </p>
                       )}
 
-                      <div className="grid grid-cols-2 gap-2 text-xs text-zinc-300 bg-[#141414] p-3 rounded-xl border border-white/5">
+                      <div className={`grid grid-cols-2 gap-2 text-xs p-3 rounded-xl border ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200/80 text-slate-800'
+                          : 'bg-[#141414] border-white/5 text-zinc-300'
+                      }`}>
                         <div>
-                          <span className="text-zinc-500 block text-[10px]">מנהל עסק:</span>
-                          <strong className="text-white">{biz.ownerName}</strong>
+                          <span className={`block text-[10px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>
+                            מנהל עסק:
+                          </span>
+                          <strong className={adminTheme === 'light' ? 'text-slate-900 font-bold' : 'text-white'}>
+                            {biz.ownerName}
+                          </strong>
                         </div>
                         <div>
-                          <span className="text-zinc-500 block text-[10px]">טלפון:</span>
-                          <strong className="text-white" dir="ltr">{biz.phone}</strong>
+                          <span className={`block text-[10px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>
+                            טלפון:
+                          </span>
+                          <strong className={adminTheme === 'light' ? 'text-slate-900 font-bold' : 'text-white'} dir="ltr">
+                            {biz.phone}
+                          </strong>
                         </div>
                         <div>
-                          <span className="text-zinc-500 block text-[10px]">סניפים ושירותים:</span>
-                          <strong className="text-white">{biz.branches?.length || biz.branchesCount || 1} סניפים · {biz.services?.length || 3} שירותים</strong>
+                          <span className={`block text-[10px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>
+                            סניפים ושירותים:
+                          </span>
+                          <strong className={adminTheme === 'light' ? 'text-slate-900 font-bold' : 'text-white'}>
+                            {biz.branches?.length || biz.branchesCount || 1} סניפים · {biz.services?.length || 3} שירותים
+                          </strong>
                         </div>
                         <div>
-                          <span className="text-zinc-500 block text-[10px]">חבילה:</span>
-                          <strong className="uppercase" style={{ color: bizColor }}>{biz.plan} Plan</strong>
+                          <span className={`block text-[10px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>
+                            חבילה:
+                          </span>
+                          <strong className="uppercase" style={{ color: bizColor }}>
+                            {biz.plan} Plan
+                          </strong>
                         </div>
                       </div>
 
@@ -1148,7 +1250,7 @@ const defaultBusinessesList: Business[] = [
                             });
                             setEditTab('branding');
                           }}
-                          className="flex-1 py-2 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black text-center text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                          className="flex-1 py-2 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black text-center text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                         >
                           <Edit className="w-3.5 h-3.5" /> ערוך והתאם אישית
                         </button>
@@ -1156,7 +1258,11 @@ const defaultBusinessesList: Business[] = [
                         <Link
                           href={`/${biz.slug}`}
                           target="_blank"
-                          className="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-center text-xs font-bold text-white transition-colors flex items-center gap-1"
+                          className={`py-2 px-3 rounded-xl text-center text-xs font-bold transition-colors flex items-center gap-1 border ${
+                            adminTheme === 'light'
+                              ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-800'
+                              : 'bg-white/10 hover:bg-white/15 border-transparent text-white'
+                          }`}
                         >
                           <ExternalLink className="w-3.5 h-3.5" /> צפה באתר
                         </Link>
@@ -1165,7 +1271,11 @@ const defaultBusinessesList: Business[] = [
                           onClick={() => {
                             router.push('/admin');
                           }}
-                          className="py-2 px-3 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-500/30 text-center text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                          className={`py-2 px-3 rounded-xl border text-center text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer ${
+                            adminTheme === 'light'
+                              ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300'
+                              : 'bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border-emerald-500/30'
+                          }`}
                           title="התחבר כבעל מספרה זו"
                         >
                           <Key className="w-3.5 h-3.5" /> כניסה כמנהל
@@ -1173,7 +1283,11 @@ const defaultBusinessesList: Business[] = [
 
                         <button
                           onClick={() => handleDeleteBusiness(biz.slug, biz.name)}
-                          className="p-2 rounded-xl bg-red-950/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 transition-colors cursor-pointer"
+                          className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+                            adminTheme === 'light'
+                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-600 border-rose-200'
+                              : 'bg-red-950/30 hover:bg-red-900/50 text-red-400 border-red-500/30'
+                          }`}
                           title="מחק מספרה זו"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1184,9 +1298,15 @@ const defaultBusinessesList: Business[] = [
                 })}
               </div>
             ) : (
-              <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-10 text-center text-zinc-400 space-y-3">
+              <div className={`rounded-2xl p-10 text-center space-y-3 border ${
+                adminTheme === 'light'
+                  ? 'bg-white border-slate-200 text-slate-600 shadow-xs'
+                  : 'bg-[#1C1C1C] border-white/10 text-zinc-400'
+              }`}>
                 <Building2 className="w-10 h-10 text-[#C9A84C] mx-auto opacity-70" />
-                <p className="text-sm font-bold text-white">לא נמצאו עסקים רשומים</p>
+                <p className={`text-sm font-bold ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                  לא נמצאו עסקים רשומים
+                </p>
                 <p className="text-xs">לחץ על רענן או הקם עסק חדש</p>
                 <button
                   onClick={fetchBusinesses}
@@ -1205,9 +1325,13 @@ const defaultBusinessesList: Business[] = [
         {activeTab === 'reports' && (
           <div className="space-y-4">
             {/* Header & Filter Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#1C1C1C] p-4 rounded-2xl border border-white/10">
+            <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl border transition-colors ${
+              adminTheme === 'light' ? 'bg-white border-slate-200 shadow-xs' : 'bg-[#1C1C1C] border-white/10'
+            }`}>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-zinc-400">סנן לפי סטטוס:</span>
+                <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                  סנן לפי סטטוס:
+                </span>
                 <div className="flex gap-1.5">
                   {(['all', 'new', 'in_progress', 'resolved'] as const).map((st) => (
                     <button
@@ -1216,6 +1340,8 @@ const defaultBusinessesList: Business[] = [
                       className={`px-3 py-1 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                         statusFilter === st
                           ? 'bg-[#C9A84C] text-[#1C1C1C]'
+                          : adminTheme === 'light'
+                          ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                           : 'bg-white/5 text-zinc-400 hover:text-white'
                       }`}
                     >
@@ -1231,7 +1357,11 @@ const defaultBusinessesList: Business[] = [
               <button
                 onClick={fetchReports}
                 disabled={reportsLoading}
-                className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 cursor-pointer"
+                className={`text-xs flex items-center gap-1 px-3 py-1.5 rounded-xl border cursor-pointer transition-colors ${
+                  adminTheme === 'light'
+                    ? 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-xs'
+                    : 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-400 hover:text-white'
+                }`}
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${reportsLoading ? 'animate-spin' : ''}`} />
                 <span>רענן פניות</span>
@@ -1244,21 +1374,33 @@ const defaultBusinessesList: Business[] = [
                 {filteredReports.map((r) => (
                   <div
                     key={r.id}
-                    className={`bg-[#1C1C1C] border-2 rounded-2xl p-5 shadow-lg transition-all ${
-                      r.status === 'new'
+                    className={`border rounded-2xl p-5 shadow-xs transition-all ${
+                      adminTheme === 'light'
+                        ? r.status === 'new'
+                          ? 'border-emerald-300 bg-emerald-50/40 text-slate-900'
+                          : r.status === 'in_progress'
+                          ? 'border-amber-300 bg-amber-50/40 text-slate-900'
+                          : 'border-slate-200 bg-white text-slate-900 opacity-80'
+                        : r.status === 'new'
                         ? 'border-emerald-500/40 bg-emerald-950/5'
                         : r.status === 'in_progress'
                         ? 'border-amber-500/40 bg-amber-950/5'
                         : 'border-white/10 opacity-75'
                     }`}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10 mb-3">
+                    <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b mb-3 ${
+                      adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'
+                    }`}>
                       <div className="flex items-center gap-2.5">
-                        <span className="font-black text-white text-sm">{r.fullName}</span>
-                        <span className="text-xs text-[#C9A84C] bg-[#C9A84C]/10 px-2 py-0.5 rounded-md font-bold">
+                        <span className={`font-black text-sm ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                          {r.fullName}
+                        </span>
+                        <span className="text-xs text-[#B89230] bg-[#C9A84C]/15 px-2 py-0.5 rounded-md font-bold">
                           {r.category}
                         </span>
-                        <span className="text-[11px] text-zinc-500">📍 {r.businessName}</span>
+                        <span className={`text-[11px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>
+                          📍 {r.businessName}
+                        </span>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -1266,7 +1408,11 @@ const defaultBusinessesList: Business[] = [
                         <select
                           value={r.status}
                           onChange={(e) => handleStatusChange(r.id, e.target.value as any)}
-                          className="bg-[#141414] border border-white/15 rounded-xl px-2.5 py-1 text-xs font-bold text-white outline-none cursor-pointer"
+                          className={`border rounded-xl px-2.5 py-1 text-xs font-bold outline-none cursor-pointer ${
+                            adminTheme === 'light'
+                              ? 'bg-white border-slate-300 text-slate-900'
+                              : 'bg-[#141414] border-white/15 text-white'
+                          }`}
                         >
                           <option value="new">חדש 🟢</option>
                           <option value="in_progress">בטיפול 🟡</option>
@@ -1276,7 +1422,7 @@ const defaultBusinessesList: Business[] = [
                         {/* Delete button */}
                         <button
                           onClick={() => handleDeleteReport(r.id)}
-                          className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-950/30 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
                           title="מחק דיווח"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1285,7 +1431,11 @@ const defaultBusinessesList: Business[] = [
                     </div>
 
                     {/* Message Body */}
-                    <p className="text-sm text-zinc-200 leading-relaxed bg-[#141414] p-3.5 rounded-xl border border-white/5 mb-3 font-sans">
+                    <p className={`text-sm leading-relaxed p-3.5 rounded-xl border mb-3 font-sans ${
+                      adminTheme === 'light'
+                        ? 'bg-white border-slate-200 text-slate-800'
+                        : 'bg-[#141414] border-white/5 text-zinc-200'
+                    }`}>
                       {r.message}
                     </p>
 
@@ -1297,11 +1447,15 @@ const defaultBusinessesList: Business[] = [
                     />
 
                     {/* Contact Actions */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-400 pt-1">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
                       <div className="flex flex-wrap items-center gap-2.5">
                         <a
                           href={`tel:${r.phone}`}
-                          className="inline-flex items-center gap-1 text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-lg border border-white/10 transition-colors"
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border transition-colors ${
+                            adminTheme === 'light'
+                              ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-800'
+                              : 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300 hover:text-white'
+                          }`}
                         >
                           <Phone className="w-3.5 h-3.5 text-[#C9A84C]" /> {r.phone}
                         </a>
@@ -1309,20 +1463,20 @@ const defaultBusinessesList: Business[] = [
                           href={`https://wa.me/972${r.phone.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(`היי ${r.fullName}, קיבלנו את פנייתך במערכת בנושא "${r.category}". נשמח לסייע:`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 bg-emerald-950/30 hover:bg-emerald-950/50 px-2.5 py-1 rounded-lg border border-emerald-500/30 font-bold transition-colors"
+                          className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-300 font-bold transition-colors"
                         >
                           <MessageCircle className="w-3.5 h-3.5" /> מענה בוואטסאפ ללקוח
                         </a>
                         <Link
                           href="/admin/appointments"
                           target="_blank"
-                          className="inline-flex items-center gap-1 text-[#C9A84C] hover:text-[#DFCA85] bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 px-2.5 py-1 rounded-lg border border-[#C9A84C]/30 font-bold transition-colors"
+                          className="inline-flex items-center gap-1 text-[#967425] hover:text-[#7A5D1C] bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-200 font-bold transition-colors"
                         >
                           <Calendar className="w-3.5 h-3.5" /> יומן תורים של {r.businessName} ↗
                         </Link>
                       </div>
 
-                      <span className="text-[11px] text-zinc-500" dir="ltr">
+                      <span className={`text-[11px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`} dir="ltr">
                         {new Date(r.createdAt).toLocaleString('he-IL')}
                       </span>
                     </div>
@@ -1330,9 +1484,13 @@ const defaultBusinessesList: Business[] = [
                 ))}
               </div>
             ) : (
-              <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-10 text-center text-zinc-400">
+              <div className={`rounded-2xl p-10 text-center border ${
+                adminTheme === 'light' ? 'bg-white border-slate-200 text-slate-600 shadow-xs' : 'bg-[#1C1C1C] border-white/10 text-zinc-400'
+              }`}>
                 <CheckCircle className="w-10 h-10 text-emerald-500/50 mx-auto mb-2" />
-                <p className="text-sm font-bold text-white mb-1">אין פניות או תקלות בסטטוס זה</p>
+                <p className={`text-sm font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                  אין פניות או תקלות בסטטוס זה
+                </p>
                 <p className="text-xs">כל הדיווחים מטופס "דווחו לנו על תקלה" יופיעו כאן בזמן אמת.</p>
               </div>
             )}
@@ -1346,8 +1504,10 @@ const defaultBusinessesList: Business[] = [
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-black text-white">ניהול משתמשים והרשאות במערכת</h2>
-                <p className="text-xs text-[#9E9891]">
+                <h2 className={`text-base font-black ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                  ניהול משתמשים והרשאות במערכת
+                </h2>
+                <p className={`text-xs ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
                   הוסף משתמשים לפי כתובת אימייל, הגדר תפקידים (מנהל-על / מנהל עסק) ושייך לעסקים ספציפיים
                 </p>
               </div>
@@ -1355,7 +1515,11 @@ const defaultBusinessesList: Business[] = [
               <button
                 onClick={fetchUsers}
                 disabled={usersLoading}
-                className="text-xs text-zinc-400 hover:text-white flex items-center gap-1.5 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-xl border border-white/10 cursor-pointer transition-colors"
+                className={`text-xs flex items-center gap-1.5 px-3 py-2 rounded-xl border cursor-pointer transition-colors ${
+                  adminTheme === 'light'
+                    ? 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-xs'
+                    : 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-400 hover:text-white'
+                }`}
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${usersLoading ? 'animate-spin text-[#C9A84C]' : ''}`} />
                 <span>רענן משתמשים</span>
@@ -1363,42 +1527,66 @@ const defaultBusinessesList: Business[] = [
             </div>
 
             {/* Add User Card */}
-            <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-5 shadow-lg">
-              <h3 className="text-sm font-black text-white flex items-center gap-2 mb-3">
+            <div className={`rounded-2xl p-5 transition-all border ${
+              adminTheme === 'light'
+                ? 'bg-white border-slate-200 text-slate-900 shadow-xs'
+                : 'bg-[#1C1C1C] border-white/10 text-white shadow-lg'
+            }`}>
+              <h3 className={`text-sm font-black flex items-center gap-2 mb-3 ${
+                adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+              }`}>
                 <UserPlus className="w-4 h-4 text-[#C9A84C]" />
                 <span>הוספת משתמש חדש</span>
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div>
-                  <label className="block text-[11px] text-zinc-400 font-bold mb-1">כתובת אימייל (Google / Gmail):</label>
+                  <label className={`block text-[11px] font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-400'}`}>
+                    כתובת אימייל (Google / Gmail):
+                  </label>
                   <input
                     type="email"
                     value={newUserEmail}
                     onChange={(e) => setNewUserEmail(e.target.value)}
                     placeholder="user@gmail.com"
                     dir="ltr"
-                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-zinc-400 font-bold mb-1">שם מלא:</label>
+                  <label className={`block text-[11px] font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-400'}`}>
+                    שם מלא:
+                  </label>
                   <input
                     type="text"
                     value={newUserDisplayName}
                     onChange={(e) => setNewUserDisplayName(e.target.value)}
                     placeholder="למשל: דביר / מנהל סניף"
-                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-zinc-400 font-bold mb-1">תפקיד במערכת:</label>
+                  <label className={`block text-[11px] font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-400'}`}>
+                    תפקיד במערכת:
+                  </label>
                   <select
                     value={newUserRole}
                     onChange={(e) => setNewUserRole(e.target.value as any)}
-                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors cursor-pointer ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                    }`}
                   >
                     <option value="business_admin">מנהל עסק (Business Admin)</option>
                     <option value="super_admin">מנהל-על (Super Admin)</option>
@@ -1407,14 +1595,20 @@ const defaultBusinessesList: Business[] = [
 
                 {newUserRole === 'business_admin' && (
                   <div>
-                    <label className="block text-[11px] text-zinc-400 font-bold mb-1">מזהה עסק (Slugs מופרדים בפסיק):</label>
+                    <label className={`block text-[11px] font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-400'}`}>
+                      מזהה עסק (Slugs מופרדים בפסיק):
+                    </label>
                     <input
                       type="text"
                       value={newUserBusinessSlugs}
                       onChange={(e) => setNewUserBusinessSlugs(e.target.value)}
                       placeholder="dvir, sharon"
                       dir="ltr"
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                      className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
                 )}
@@ -1434,9 +1628,17 @@ const defaultBusinessesList: Business[] = [
             </div>
 
             {/* Users List Table */}
-            <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl overflow-hidden shadow-lg">
-              <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                <h3 className="text-sm font-black text-white flex items-center gap-2">
+            <div className={`rounded-2xl overflow-hidden border transition-all ${
+              adminTheme === 'light'
+                ? 'bg-white border-slate-200 text-slate-900 shadow-xs'
+                : 'bg-[#1C1C1C] border-white/10 text-white shadow-lg'
+            }`}>
+              <div className={`p-4 border-b flex items-center justify-between ${
+                adminTheme === 'light' ? 'border-slate-200 bg-slate-50/50' : 'border-white/10'
+              }`}>
+                <h3 className={`text-sm font-black flex items-center gap-2 ${
+                  adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                }`}>
                   <Users className="w-4 h-4 text-[#C9A84C]" />
                   <span>משתמשים רשומים ({managedUsers.length})</span>
                 </h3>
@@ -1448,47 +1650,59 @@ const defaultBusinessesList: Business[] = [
                   <p className="text-xs">טוען משתמשים...</p>
                 </div>
               ) : managedUsers.length > 0 ? (
-                <div className="divide-y divide-white/5">
+                <div className={`divide-y ${adminTheme === 'light' ? 'divide-slate-100' : 'divide-white/5'}`}>
                   {managedUsers.map((u) => (
                     <div
                       key={u.uid}
-                      className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/[0.02] transition-colors"
+                      className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                        adminTheme === 'light' ? 'hover:bg-slate-50' : 'hover:bg-white/[0.02]'
+                      }`}
                     >
                       <div className="flex items-center gap-3">
                         {u.photoURL ? (
                           <img
                             src={u.photoURL}
                             alt={u.displayName || u.email}
-                            className="w-9 h-9 rounded-full object-cover border border-white/10"
+                            className="w-9 h-9 rounded-full object-cover border border-slate-300"
                           />
                         ) : (
-                          <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center font-bold text-xs text-white">
+                          <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs ${
+                            adminTheme === 'light' ? 'bg-slate-200 text-slate-800' : 'bg-white/10 text-white'
+                          }`}>
                             {(u.displayName || u.email || 'U')[0].toUpperCase()}
                           </div>
                         )}
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-white text-xs">{u.displayName || u.email.split('@')[0]}</span>
+                            <span className={`font-bold text-xs ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                              {u.displayName || u.email.split('@')[0]}
+                            </span>
                             <span
-                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                                 u.role === 'super_admin'
-                                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                  ? adminTheme === 'light'
+                                    ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                    : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                  : adminTheme === 'light'
+                                  ? 'bg-amber-50 text-amber-800 border-amber-300'
                                   : 'bg-[#C9A84C]/20 text-[#C9A84C] border border-[#C9A84C]/30'
                               }`}
                             >
                               {u.role === 'super_admin' ? '👑 מנהל-על (Super Admin)' : '💼 מנהל עסק (Business Admin)'}
                             </span>
                             {u.preRegistered && (
-                              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                              <span className="bg-amber-500/20 text-amber-600 border border-amber-500/30 text-[10px] font-bold px-1.5 py-0.2 rounded-full">
                                 ממתין לכניסה ראשונה
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-zinc-400 mt-0.5 flex items-center gap-2">
+                          <div className={`text-[11px] mt-0.5 flex items-center gap-2 ${
+                            adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'
+                          }`}>
                             <span dir="ltr">{u.email}</span>
                             {u.businessSlugs && u.businessSlugs.length > 0 && (
-                              <span className="text-zinc-500">
-                                · עסקים מורשים: <strong className="text-zinc-300">{u.businessSlugs.join(', ')}</strong>
+                              <span className={adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}>
+                                · עסקים מורשים: <strong className={adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}>{u.businessSlugs.join(', ')}</strong>
                               </span>
                             )}
                           </div>
@@ -1496,7 +1710,7 @@ const defaultBusinessesList: Business[] = [
                       </div>
 
                       <div className="flex items-center gap-2 self-end sm:self-center">
-                        <span className="text-[10px] text-zinc-500" dir="ltr">
+                        <span className={`text-[10px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`} dir="ltr">
                           נוצר: {new Date(u.createdAt).toLocaleDateString('he-IL')}
                         </span>
 
@@ -1504,7 +1718,11 @@ const defaultBusinessesList: Business[] = [
                           <button
                             type="button"
                             onClick={() => handleDeleteUser(u.uid, u.email)}
-                            className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 text-red-400 text-xs font-bold transition-colors cursor-pointer"
+                            className={`p-1.5 rounded-lg border text-xs font-bold transition-colors cursor-pointer ${
+                              adminTheme === 'light'
+                                ? 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-600'
+                                : 'bg-red-950/40 hover:bg-red-900/60 border-red-500/30 text-red-400'
+                            }`}
                             title="מחק משתמש"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1528,111 +1746,94 @@ const defaultBusinessesList: Business[] = [
       {/* MODAL: EDIT BUSINESS & CUSTOMIZATION SUITE                   */}
       {/* ============================================================ */}
       {editingBiz && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xs overflow-y-auto" dir="rtl">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto" dir="rtl">
           <div className="absolute inset-0" onClick={() => setEditingBiz(null)} />
-          <div className="relative max-w-2xl w-full bg-[#1C1C1C] border-2 border-[#C9A84C]/50 rounded-3xl p-6 shadow-2xl z-10 my-auto text-right">
+          <div className={`relative max-w-2xl w-full border-2 rounded-3xl p-6 shadow-2xl z-10 my-auto text-right transition-colors ${
+            adminTheme === 'light'
+              ? 'bg-white border-[#C9A84C] text-slate-900'
+              : 'bg-[#1C1C1C] border-[#C9A84C]/50 text-white'
+          }`}>
             
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+            <div className={`flex items-center justify-between pb-3 border-b mb-4 ${
+              adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'
+            }`}>
               <div className="flex items-center gap-2 text-[#C9A84C]">
                 <Settings2 className="w-6 h-6" />
                 <div>
-                  <h3 className="text-base font-black text-white">התאמה אישית ועריכת אתר: {editingBiz.name}</h3>
-                  <span className="text-[11px] text-[#9E9891]" dir="ltr">thecut.co.il/{editingBiz.slug}</span>
+                  <h3 className={`text-base font-black ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                    התאמה אישית ועריכת אתר: {editingBiz.name}
+                  </h3>
+                  <span className={`text-[11px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`} dir="ltr">
+                    thecut.co.il/{editingBiz.slug}
+                  </span>
                 </div>
               </div>
               <button
                 onClick={() => setEditingBiz(null)}
-                className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 cursor-pointer"
+                className={`p-1.5 rounded-lg cursor-pointer transition-colors ${
+                  adminTheme === 'light' ? 'text-slate-400 hover:text-slate-700 hover:bg-slate-100' : 'text-zinc-400 hover:text-white hover:bg-white/10'
+                }`}
               >
                 ✕
               </button>
             </div>
 
             {saveNotice && (
-              <div className="mb-4 p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-400 text-xs font-bold text-center flex items-center justify-center gap-1.5">
-                <CheckCircle className="w-4 h-4" /> השינויים נשמרו בהצלחה והאתר עודכן באוויר!
+              <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold text-center flex items-center justify-center gap-1.5 shadow-xs">
+                <CheckCircle className="w-4 h-4 text-emerald-600" /> השינויים נשמרו בהצלחה והאתר עודכן באוויר!
               </div>
             )}
 
             {/* Inner Sub-Tabs */}
-            <div className="flex border-b border-white/10 mb-4 gap-2 text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => setEditTab('branding')}
-                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
-                  editTab === 'branding' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-              >
-                🏷️ מיתוג ופרטים
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditTab('layout')}
-                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
-                  editTab === 'layout' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-              >
-                📐 לייאוט ומבנה
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditTab('social')}
-                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
-                  editTab === 'social' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-              >
-                🔗 רשתות וקישורים
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditTab('gallery')}
-                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
-                  editTab === 'gallery' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-              >
-                🖼️ תמונות וגלריה
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditTab('services')}
-                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
-                  editTab === 'services' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-              >
-                ✂️ מחירון ושירותים ({editingBiz.services?.length || 0})
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditTab('branches')}
-                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
-                  editTab === 'branches' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-              >
-                📍 סניפים ומיקומים ({editingBiz.branches?.length || 0})
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditTab('banner')}
-                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
-                  editTab === 'banner' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
-                }`}
-              >
-                📢 באנר הודעות
-              </button>
+            <div className={`flex border-b mb-4 gap-1 sm:gap-2 text-xs font-bold overflow-x-auto pb-1 ${
+              adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'
+            }`}>
+              {[
+                { id: 'branding', label: '🏷️ מיתוג ופרטים' },
+                { id: 'layout', label: '📐 לייאוט ומבנה' },
+                { id: 'social', label: '🔗 רשתות וקישורים' },
+                { id: 'gallery', label: '🖼️ תמונות וגלריה' },
+                { id: 'services', label: `✂️ מחירון (${editingBiz.services?.length || 0})` },
+                { id: 'branches', label: `📍 סניפים (${editingBiz.branches?.length || 0})` },
+                { id: 'banner', label: '📢 באנר הודעות' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setEditTab(tab.id as any)}
+                  className={`pb-2 px-2.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+                    editTab === tab.id
+                      ? adminTheme === 'light'
+                        ? 'border-[#C9A84C] text-[#B89230] font-black'
+                        : 'border-[#C9A84C] text-[#C9A84C]'
+                      : adminTheme === 'light'
+                      ? 'border-transparent text-slate-500 hover:text-slate-900'
+                      : 'border-transparent text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
             {/* TAB: LAYOUT & SITE STRUCTURE */}
             {editTab === 'layout' && (
               <div className="space-y-4 text-xs">
-                <div className="bg-[#141414] p-3 rounded-xl border border-white/10 text-zinc-300">
-                  <span className="font-bold text-white block mb-1">📐 התאמה אישית של מבנה האתר (Layout & Structure):</span>
+                <div className={`p-3 rounded-xl border ${
+                  adminTheme === 'light' ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-[#141414] border-white/10 text-zinc-300'
+                }`}>
+                  <span className={`font-bold block mb-1 ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                    📐 התאמה אישית של מבנה האתר (Layout & Structure):
+                  </span>
                   באפשרותך לקבוע את סגנון ההירו העליון, עיצוב הכרטיסים ולהפעיל או לכבות סקשנים לפי העדפת הספר.
                 </div>
 
                 {/* Website Background Theme Selector */}
                 <div>
-                  <label className="block text-zinc-300 font-bold mb-2">ערכת רקע ואווירה כללית לאתר (Website Theme):</label>
+                  <label className={`block font-bold mb-2 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                    ערכת רקע ואווירה כללית לאתר (Website Theme):
+                  </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     {[
                       { id: 'dark-obsidian', name: 'שחור אובסידיאן', sub: 'Dark Obsidian', icon: '🌑', bg: 'bg-[#121212]', border: 'border-white/20' },
@@ -1657,13 +1858,19 @@ const defaultBusinessesList: Business[] = [
                           }}
                           className={`p-3 rounded-xl border flex flex-col items-center text-center cursor-pointer transition-all ${
                             isSelected
-                              ? 'border-[#C9A84C] bg-white/10 shadow-md ring-1 ring-[#C9A84C]'
+                              ? 'border-[#C9A84C] bg-amber-500/10 shadow-xs ring-1 ring-[#C9A84C]'
+                              : adminTheme === 'light'
+                              ? 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800'
                               : 'border-white/10 bg-[#141414] hover:bg-white/5 opacity-80'
                           }`}
                         >
                           <span className="text-xl mb-1">{th.icon}</span>
-                          <span className="text-xs font-bold text-white">{th.name}</span>
-                          <span className="text-[10px] text-zinc-400">{th.sub}</span>
+                          <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                            {th.name}
+                          </span>
+                          <span className={`text-[10px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                            {th.sub}
+                          </span>
                         </button>
                       );
                     })}
@@ -1672,7 +1879,9 @@ const defaultBusinessesList: Business[] = [
 
                 {/* Section Visibility Toggles */}
                 <div>
-                  <label className="block text-zinc-300 font-bold mb-2">מודולים וסקשנים פעילים בעמוד הבית:</label>
+                  <label className={`block font-bold mb-2 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                    מודולים וסקשנים פעילים בעמוד הבית:
+                  </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {[
                       { key: 'showBio', label: '✂️ אודות הספר והניסיון (Barber Bio & Philosophy)', desc: 'הצגת פסקת האודות, שנות הניסיון והסטנדרטים' },
@@ -1696,16 +1905,24 @@ const defaultBusinessesList: Business[] = [
                           }}
                           className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
                             isEnabled
-                              ? 'bg-emerald-950/20 border-emerald-500/40 text-white'
+                              ? adminTheme === 'light'
+                                ? 'bg-emerald-50 border-emerald-300 text-slate-900 shadow-xs'
+                                : 'bg-emerald-950/20 border-emerald-500/40 text-white'
+                              : adminTheme === 'light'
+                              ? 'bg-slate-50 border-slate-200 text-slate-400 opacity-70'
                               : 'bg-white/5 border-white/10 text-zinc-500 opacity-60'
                           }`}
                         >
                           <div>
-                            <div className="font-bold text-xs">{sec.label}</div>
-                            <div className="text-[10px] text-zinc-400 mt-0.5">{sec.desc}</div>
+                            <div className={`font-bold text-xs ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                              {sec.label}
+                            </div>
+                            <div className={`text-[10px] mt-0.5 ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                              {sec.desc}
+                            </div>
                           </div>
                           <div className={`w-8 h-5 rounded-full flex items-center px-0.5 transition-colors ${
-                            isEnabled ? 'bg-emerald-500 justify-end' : 'bg-zinc-700 justify-start'
+                            isEnabled ? 'bg-emerald-500 justify-end' : 'bg-zinc-400 justify-start'
                           }`}>
                             <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
                           </div>
@@ -1721,26 +1938,36 @@ const defaultBusinessesList: Business[] = [
             {editTab === 'branding' && (
               <div className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block text-zinc-300 font-bold mb-1">שם המספרה / העסק:</label>
+                  <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                    שם המספרה / העסק:
+                  </label>
                   <input
                     type="text"
                     value={editingBiz.name}
                     onChange={(e) => setEditingBiz({ ...editingBiz, name: e.target.value })}
-                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                    }`}
                   />
                 </div>
 
                 {/* Theme Palette Picker & Custom Color */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-zinc-300 font-bold">פלטת צבעי מיתוג והילת תאורה לאתר:</label>
+                    <label className={`block font-bold ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                      פלטת צבעי מיתוג והילת תאורה לאתר:
+                    </label>
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] text-zinc-400">צבע מותאם אישית:</span>
+                      <span className={`text-[11px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                        צבע מותאם אישית:
+                      </span>
                       <input
                         type="color"
                         value={editingBiz.themeColor || '#C9A84C'}
                         onChange={(e) => setEditingBiz({ ...editingBiz, themeColor: e.target.value })}
-                        className="w-7 h-7 rounded-lg border border-white/20 bg-transparent cursor-pointer"
+                        className="w-7 h-7 rounded-lg border border-slate-300 bg-transparent cursor-pointer"
                         title="בחר צבע חופשי"
                       />
                     </div>
@@ -1753,65 +1980,99 @@ const defaultBusinessesList: Business[] = [
                         onClick={() => setEditingBiz({ ...editingBiz, themeColor: pal.color })}
                         className={`p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${
                           editingBiz.themeColor === pal.color
-                            ? 'border-[#C9A84C] bg-white/10 shadow-sm'
+                            ? 'border-[#C9A84C] bg-amber-500/10 shadow-xs'
+                            : adminTheme === 'light'
+                            ? 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800'
                             : 'border-white/10 bg-[#141414] hover:bg-white/5'
                         }`}
                       >
                         <div className="w-4 h-4 rounded-full shadow-xs flex-shrink-0" style={{ backgroundColor: pal.color }} />
-                        <span className="text-[11px] font-bold text-white truncate">{pal.name.split('·')[0]}</span>
+                        <span className={`text-[11px] font-bold truncate ${adminTheme === 'light' ? 'text-slate-800' : 'text-white'}`}>
+                          {pal.name.split('·')[0]}
+                        </span>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-zinc-300 font-bold mb-1">סלוגן / תיאור קצר לעמוד הבית:</label>
+                  <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                    סלוגן / תיאור קצר לעמוד הבית:
+                  </label>
                   <input
                     type="text"
                     value={editingBiz.slogan || ''}
                     onChange={(e) => setEditingBiz({ ...editingBiz, slogan: e.target.value })}
                     placeholder="למשל: מרכז החלקות אורגניות, בלונד ועיצוב שיער מקצועי"
-                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                    }`}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1">טלפון ראשי (לוואטסאפ של הלקוחות):</label>
+                    <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                      טלפון ראשי (לוואטסאפ של הלקוחות):
+                    </label>
                     <input
                       type="tel"
                       value={editingBiz.phone}
                       onChange={(e) => setEditingBiz({ ...editingBiz, phone: e.target.value })}
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1">שם בעל המספרה:</label>
+                    <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                      שם בעל המספרה:
+                    </label>
                     <input
                       type="text"
                       value={editingBiz.ownerName}
                       onChange={(e) => setEditingBiz({ ...editingBiz, ownerName: e.target.value })}
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1">עיר / אזור פעילות:</label>
+                    <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                      עיר / אזור פעילות:
+                    </label>
                     <input
                       type="text"
                       value={editingBiz.city}
                       onChange={(e) => setEditingBiz({ ...editingBiz, city: e.target.value })}
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1">סטטוס פעילות:</label>
+                    <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
+                      סטטוס פעילות:
+                    </label>
                     <select
                       value={editingBiz.status}
                       onChange={(e) => setEditingBiz({ ...editingBiz, status: e.target.value as any })}
-                      className="w-full bg-[#141414] border border-white/15 rounded-xl px-3.5 py-2.5 text-white outline-none cursor-pointer"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors cursor-pointer ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     >
                       <option value="active">פעיל באוויר 🟢</option>
                       <option value="pending">בהקמה / טיוטה 🟡</option>
@@ -1825,13 +2086,15 @@ const defaultBusinessesList: Business[] = [
             {/* TAB: SOCIAL & EXTERNAL LINKS */}
             {editTab === 'social' && (
               <div className="space-y-3.5 text-xs">
-                <p className="text-zinc-400 text-[11px] mb-2 leading-relaxed bg-[#141414] p-3 rounded-xl border border-white/10">
-                  💡 <strong>התאמת רשתות וקישורים לאתר:</strong> קישורים שיוזנו יוצגו ככפתורי פעולה זוהרים בדף הבית. קישורים שיישארו ריקים יוצגו אוטומטית באפור (לא פעיל) – בדיוק כמו בתבנית המקורית.
+                <p className={`text-[11px] mb-2 leading-relaxed p-3 rounded-xl border ${
+                  adminTheme === 'light' ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-[#141414] border-white/10 text-zinc-400'
+                }`}>
+                  💡 <strong>התאמת רשתות וקישורים לאתר:</strong> קישורים שיוזנו יוצגו ככפתורי פעולה זוהרים בדף הבית. קישורים שיישארו ריקים יוצגו אוטומטית באפור (לא פעיל).
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                    <label className={`block font-bold mb-1 flex items-center gap-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
                       <span>📸 אינסטגרם (Instagram):</span>
                     </label>
                     <input
@@ -1839,12 +2102,16 @@ const defaultBusinessesList: Business[] = [
                       value={editingBiz.instagramUrl || editingBiz.instagramHandle || ''}
                       onChange={(e) => setEditingBiz({ ...editingBiz, instagramUrl: e.target.value, instagramHandle: e.target.value })}
                       placeholder="https://instagram.com/username או @username"
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                    <label className={`block font-bold mb-1 flex items-center gap-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
                       <span>👤 פייסבוק (Facebook):</span>
                     </label>
                     <input
@@ -1852,14 +2119,18 @@ const defaultBusinessesList: Business[] = [
                       value={editingBiz.facebookUrl || ''}
                       onChange={(e) => setEditingBiz({ ...editingBiz, facebookUrl: e.target.value })}
                       placeholder="https://facebook.com/page_name"
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                    <label className={`block font-bold mb-1 flex items-center gap-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
                       <span>🎵 טיקטוק (TikTok):</span>
                     </label>
                     <input
@@ -1867,12 +2138,16 @@ const defaultBusinessesList: Business[] = [
                       value={editingBiz.tiktokUrl || ''}
                       onChange={(e) => setEditingBiz({ ...editingBiz, tiktokUrl: e.target.value })}
                       placeholder="https://tiktok.com/@username או @username"
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                    <label className={`block font-bold mb-1 flex items-center gap-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
                       <span>💬 וואטסאפ (WhatsApp להודעות):</span>
                     </label>
                     <input
@@ -1880,14 +2155,18 @@ const defaultBusinessesList: Business[] = [
                       value={editingBiz.whatsappNumber || editingBiz.phone || ''}
                       onChange={(e) => setEditingBiz({ ...editingBiz, whatsappNumber: e.target.value })}
                       placeholder="050-1234567"
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                    <label className={`block font-bold mb-1 flex items-center gap-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
                       <span>🚗 קישור Waze לניווט:</span>
                     </label>
                     <input
@@ -1895,12 +2174,16 @@ const defaultBusinessesList: Business[] = [
                       value={editingBiz.wazeUrl || ''}
                       onChange={(e) => setEditingBiz({ ...editingBiz, wazeUrl: e.target.value })}
                       placeholder="https://waze.com/ul?q=..."
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-zinc-300 font-bold mb-1 flex items-center gap-1">
+                    <label className={`block font-bold mb-1 flex items-center gap-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'}`}>
                       <span>🌐 אתר אינטרנט / דומיין מותאם:</span>
                     </label>
                     <input
@@ -1908,7 +2191,11 @@ const defaultBusinessesList: Business[] = [
                       value={editingBiz.websiteUrl || ''}
                       onChange={(e) => setEditingBiz({ ...editingBiz, websiteUrl: e.target.value })}
                       placeholder="https://my-barbershop.co.il"
-                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                      className={`w-full rounded-xl px-3.5 py-2.5 outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                   </div>
                 </div>
@@ -1919,19 +2206,23 @@ const defaultBusinessesList: Business[] = [
             {editTab === 'gallery' && (
               <div className="space-y-4 text-xs">
                 {/* 1. Barber Avatar Photo */}
-                <div className="p-3.5 bg-[#141414] border border-white/10 rounded-2xl space-y-3">
+                <div className={`p-3.5 rounded-2xl space-y-3 border ${
+                  adminTheme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-[#141414] border-white/10'
+                }`}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-black text-white text-xs flex items-center gap-1.5">
+                      <h4 className={`font-black text-xs flex items-center gap-1.5 ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
                         <span>👤 תמונת פרופיל / תמונת הספר:</span>
                       </h4>
-                      <p className="text-[11px] text-[#9E9891]">מופיעה בכרטיס המאסטר "הכירו את הספר"</p>
+                      <p className={`text-[11px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
+                        מופיעה בכרטיס המאסטר "הכירו את הספר"
+                      </p>
                     </div>
                     {editingBiz.avatarUrl && (
                       <button
                         type="button"
                         onClick={() => setEditingBiz({ ...editingBiz, avatarUrl: '' })}
-                        className="text-[10px] text-red-400 hover:text-red-300 transition-colors"
+                        className="text-[10px] text-rose-500 hover:text-rose-600 transition-colors cursor-pointer"
                       >
                         הסר תמונה (חזור לאות ראשונה) 🗑️
                       </button>
@@ -1940,8 +2231,12 @@ const defaultBusinessesList: Business[] = [
 
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-14 h-14 rounded-full border-2 overflow-hidden flex items-center justify-center bg-black/60 shrink-0 text-white font-black text-lg shadow-md"
-                      style={{ borderColor: editingBiz.themeColor || '#C9A84C', color: editingBiz.themeColor || '#C9A84C' }}
+                      className="w-14 h-14 rounded-full border-2 overflow-hidden flex items-center justify-center shrink-0 font-black text-lg shadow-xs"
+                      style={{
+                        borderColor: editingBiz.themeColor || '#C9A84C',
+                        color: editingBiz.themeColor || '#C9A84C',
+                        backgroundColor: adminTheme === 'light' ? '#E2E8F0' : 'rgba(0,0,0,0.6)',
+                      }}
                     >
                       {editingBiz.avatarUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -1957,22 +2252,30 @@ const defaultBusinessesList: Business[] = [
                         onChange={(e) => setEditingBiz({ ...editingBiz, avatarUrl: e.target.value })}
                         placeholder="הדבק קישור ישיר לתמונה (URL)..."
                         dir="ltr"
-                        className="w-full bg-[#1C1C1C] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                        className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors ${
+                          adminTheme === 'light'
+                            ? 'bg-white border-slate-200 text-slate-900 focus:border-[#C9A84C]'
+                            : 'bg-[#1C1C1C] border-white/15 text-white focus:border-[#C9A84C]'
+                        }`}
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* 2. Haircut Gallery Photos Grid */}
-                <div className="p-3.5 bg-[#141414] border border-white/10 rounded-2xl space-y-3">
+                <div className={`p-3.5 rounded-2xl space-y-3 border ${
+                  adminTheme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-[#141414] border-white/10'
+                }`}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-black text-white text-xs flex items-center gap-1.5">
+                      <h4 className={`font-black text-xs flex items-center gap-1.5 ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
                         <span>⭐ גלריית עבודות ותספורות:</span>
                       </h4>
-                      <p className="text-[11px] text-[#9E9891]">מופיעה לצד המחירון בעמוד הראשי (לחץ על 🗑️ למחיקה)</p>
+                      <p className={`text-[11px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
+                        מופיעה לצד המחירון בעמוד הראשי (לחץ על 🗑️ למחיקה)
+                      </p>
                     </div>
-                    <span className="text-[10px] text-[#C9A84C] font-bold">
+                    <span className="text-[10px] text-[#B89230] font-bold">
                       {Array.isArray(editingBiz.galleryImages) ? editingBiz.galleryImages.length : 0} תמונות בגלריה
                     </span>
                   </div>
@@ -1981,7 +2284,7 @@ const defaultBusinessesList: Business[] = [
                   {Array.isArray(editingBiz.galleryImages) && editingBiz.galleryImages.length > 0 ? (
                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                       {editingBiz.galleryImages.map((imgUrl, imgIdx) => (
-                        <div key={imgIdx} className="relative aspect-square rounded-xl overflow-hidden bg-black/60 border border-white/10 group">
+                        <div key={imgIdx} className="relative aspect-square rounded-xl overflow-hidden bg-slate-200 border border-slate-300 group">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={imgUrl} alt={`עבודה ${imgIdx + 1}`} className="w-full h-full object-cover" />
                           <button
@@ -1991,7 +2294,7 @@ const defaultBusinessesList: Business[] = [
                               current.splice(imgIdx, 1);
                               setEditingBiz({ ...editingBiz, galleryImages: current });
                             }}
-                            className="absolute inset-0 bg-red-950/90 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs cursor-pointer"
+                            className="absolute inset-0 bg-rose-950/80 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs cursor-pointer"
                             title="מחק תמונה זו"
                           >
                             <span>🗑️</span>
@@ -2001,40 +2304,37 @@ const defaultBusinessesList: Business[] = [
                       ))}
                     </div>
                   ) : (
-                    <div className="p-6 text-center text-zinc-500 bg-[#1C1C1C] rounded-xl border border-dashed border-white/10 text-xs">
+                    <div className={`p-6 text-center rounded-xl border border-dashed text-xs ${
+                      adminTheme === 'light' ? 'bg-white border-slate-300 text-slate-500' : 'bg-[#1C1C1C] border-white/10 text-zinc-500'
+                    }`}>
                       📷 אין כרגע תמונות בגלריה. הדבק קישור (URL) למטה להוספת תמונות ראשונות!
                     </div>
                   )}
 
                   {/* Add Image Input */}
-                  <div className="flex gap-2 pt-2 border-t border-white/10">
+                  <div className={`flex gap-2 pt-2 border-t ${adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'}`}>
                     <input
                       type="url"
                       value={newGalleryImageUrl}
                       onChange={(e) => setNewGalleryImageUrl(e.target.value)}
                       placeholder="הדבק קישור ישיר לתמונת עבודה חדשה (URL)..."
                       dir="ltr"
-                      className="flex-1 bg-[#1C1C1C] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                      className={`flex-1 rounded-xl px-3 py-2 text-xs outline-none border transition-colors ${
+                        adminTheme === 'light'
+                          ? 'bg-white border-slate-200 text-slate-900 focus:border-[#C9A84C]'
+                          : 'bg-[#1C1C1C] border-white/15 text-white focus:border-[#C9A84C]'
+                      }`}
                     />
                     <button
                       type="button"
                       onClick={() => {
                         if (!newGalleryImageUrl.trim()) return;
-                        const current = editingBiz.galleryImages && editingBiz.galleryImages.length > 0
-                          ? [...editingBiz.galleryImages]
-                          : [
-                              'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=600&q=80',
-                              'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80',
-                              'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=600&q=80',
-                              'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=600&q=80',
-                              'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=600&q=80',
-                              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-                            ];
+                        const current = Array.isArray(editingBiz.galleryImages) ? [...editingBiz.galleryImages] : [];
                         current.push(newGalleryImageUrl.trim());
                         setEditingBiz({ ...editingBiz, galleryImages: current });
                         setNewGalleryImageUrl('');
                       }}
-                      className="px-4 py-2 bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs rounded-xl transition-colors shrink-0 cursor-pointer"
+                      className="px-4 py-2 bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs rounded-xl transition-colors shrink-0 cursor-pointer shadow-xs"
                     >
                       + הוסף לגלריה
                     </button>
@@ -2048,7 +2348,9 @@ const defaultBusinessesList: Business[] = [
               <div className="space-y-3.5 text-xs">
                 <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
                   {editingBiz.services?.map((srv, idx) => (
-                    <div key={idx} className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-[#141414] border border-white/10">
+                    <div key={idx} className={`flex items-center justify-between gap-2 p-2.5 rounded-xl border ${
+                      adminTheme === 'light' ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-[#141414] border-white/10 text-white'
+                    }`}>
                       <div className="flex-1">
                         <input
                           type="text"
@@ -2058,7 +2360,9 @@ const defaultBusinessesList: Business[] = [
                             updated[idx].name = e.target.value;
                             setEditingBiz({ ...editingBiz, services: updated });
                           }}
-                          className="w-full bg-transparent text-white font-bold text-xs outline-none"
+                          className={`w-full bg-transparent font-bold text-xs outline-none ${
+                            adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                          }`}
                         />
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -2070,9 +2374,13 @@ const defaultBusinessesList: Business[] = [
                             updated[idx].price = Number(e.target.value);
                             setEditingBiz({ ...editingBiz, services: updated });
                           }}
-                          className="w-16 bg-[#222] border border-white/15 rounded-lg px-2 py-1 text-center font-bold text-[#C9A84C] text-xs outline-none"
+                          className={`w-16 rounded-lg px-2 py-1 text-center font-bold text-xs outline-none border ${
+                            adminTheme === 'light'
+                              ? 'bg-white border-slate-300 text-[#967425]'
+                              : 'bg-[#222] border-white/15 text-[#C9A84C]'
+                          }`}
                         />
-                        <span className="text-zinc-500">₪</span>
+                        <span className={adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}>₪</span>
                         <input
                           type="number"
                           value={srv.duration}
@@ -2081,16 +2389,20 @@ const defaultBusinessesList: Business[] = [
                             updated[idx].duration = Number(e.target.value);
                             setEditingBiz({ ...editingBiz, services: updated });
                           }}
-                          className="w-14 bg-[#222] border border-white/15 rounded-lg px-1.5 py-1 text-center text-xs text-white outline-none"
+                          className={`w-14 rounded-lg px-1.5 py-1 text-center text-xs outline-none border ${
+                            adminTheme === 'light'
+                              ? 'bg-white border-slate-300 text-slate-800'
+                              : 'bg-[#222] border-white/15 text-white'
+                          }`}
                         />
-                        <span className="text-zinc-500 text-[10px]">דק׳</span>
+                        <span className={`text-[10px] ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>דק׳</span>
                         <button
                           type="button"
                           onClick={() => {
                             const updated = editingBiz.services?.filter((_, i) => i !== idx);
                             setEditingBiz({ ...editingBiz, services: updated });
                           }}
-                          className="p-1 text-zinc-500 hover:text-red-400 cursor-pointer"
+                          className="p-1 text-zinc-400 hover:text-rose-500 cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -2100,22 +2412,30 @@ const defaultBusinessesList: Business[] = [
                 </div>
 
                 {/* Add new service row */}
-                <div className="pt-2 border-t border-white/10 flex items-center gap-2">
+                <div className={`pt-2 border-t flex items-center gap-2 ${adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'}`}>
                   <input
                     type="text"
                     value={newServiceName}
                     onChange={(e) => setNewServiceName(e.target.value)}
                     placeholder="שם שירות חדש (למשל: צבע / פן)..."
-                    className="flex-1 bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    className={`flex-1 rounded-xl px-3 py-2 text-xs outline-none border transition-colors ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                    }`}
                   />
                   <input
                     type="number"
                     value={newServicePrice}
                     onChange={(e) => setNewServicePrice(Number(e.target.value))}
                     placeholder="מחיר"
-                    className="w-16 bg-[#141414] border border-white/15 rounded-xl px-2 py-2 text-center text-xs text-white outline-none"
+                    className={`w-16 rounded-xl px-2 py-2 text-center text-xs outline-none border transition-colors ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                    }`}
                   />
-                  <span className="text-zinc-500 text-xs">₪</span>
+                  <span className={`text-xs ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>₪</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -2124,7 +2444,7 @@ const defaultBusinessesList: Business[] = [
                       setEditingBiz({ ...editingBiz, services: updated });
                       setNewServiceName('');
                     }}
-                    className="px-3 py-2 bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-bold rounded-xl text-xs flex items-center gap-1 cursor-pointer"
+                    className="px-3 py-2 bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-bold rounded-xl text-xs flex items-center gap-1 cursor-pointer shadow-xs"
                   >
                     <Plus className="w-3.5 h-3.5" /> הוסף
                   </button>
@@ -2137,7 +2457,9 @@ const defaultBusinessesList: Business[] = [
               <div className="space-y-3.5 text-xs">
                 <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
                   {editingBiz.branches?.map((br, idx) => (
-                    <div key={idx} className="p-3 rounded-xl bg-[#141414] border border-white/10 space-y-2">
+                    <div key={idx} className={`p-3 rounded-xl border space-y-2 ${
+                      adminTheme === 'light' ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-[#141414] border-white/10 text-white'
+                    }`}>
                       <div className="flex items-center justify-between">
                         <input
                           type="text"
@@ -2148,7 +2470,9 @@ const defaultBusinessesList: Business[] = [
                             setEditingBiz({ ...editingBiz, branches: updated });
                           }}
                           placeholder="שם הסניף"
-                          className="bg-transparent text-white font-bold text-xs outline-none flex-1"
+                          className={`bg-transparent font-bold text-xs outline-none flex-1 ${
+                            adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                          }`}
                         />
                         <button
                           type="button"
@@ -2156,7 +2480,7 @@ const defaultBusinessesList: Business[] = [
                             const updated = editingBiz.branches?.filter((_, i) => i !== idx);
                             setEditingBiz({ ...editingBiz, branches: updated });
                           }}
-                          className="p-1 text-zinc-500 hover:text-red-400 cursor-pointer"
+                          className="p-1 text-zinc-400 hover:text-rose-500 cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -2170,7 +2494,11 @@ const defaultBusinessesList: Business[] = [
                           setEditingBiz({ ...editingBiz, branches: updated });
                         }}
                         placeholder="כתובת הסניף"
-                        className="w-full bg-[#202020] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-zinc-300 outline-none"
+                        className={`w-full rounded-lg px-2.5 py-1.5 text-xs outline-none border ${
+                          adminTheme === 'light'
+                            ? 'bg-white border-slate-200 text-slate-800'
+                            : 'bg-[#202020] border-white/10 text-zinc-300'
+                        }`}
                       />
                     </div>
                   ))}
@@ -2263,23 +2591,31 @@ const defaultBusinessesList: Business[] = [
       {/* MODAL: SMART 3-STEP WIZARD TO CREATE NEW BUSINESS SITE        */}
       {/* ============================================================ */}
       {isNewBizModalOpen && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xs overflow-y-auto" dir="rtl">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto" dir="rtl">
           <div className="absolute inset-0" onClick={() => setIsNewBizModalOpen(false)} />
-          <div className="relative max-w-xl w-full bg-[#1C1C1C] border-2 border-[#C9A84C]/50 rounded-3xl p-6 shadow-2xl z-10 my-auto text-right">
+          <div className={`relative max-w-xl w-full border-2 rounded-3xl p-6 shadow-2xl z-10 my-auto text-right transition-colors ${
+            adminTheme === 'light'
+              ? 'bg-white border-[#C9A84C] text-slate-900'
+              : 'bg-[#1C1C1C] border-[#C9A84C]/50 text-white'
+          }`}>
             
             {/* SUCCESS CELEBRATION MODAL */}
             {createdBusinessResult ? (
               <div className="text-center py-6 space-y-4">
-                <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 mx-auto shadow-xl animate-bounce">
+                <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-500 mx-auto shadow-xl animate-bounce">
                   <Sparkles className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-black text-white">האתר של {createdBusinessResult.name} באוויר! 🎉</h3>
-                <p className="text-xs text-zinc-300 max-w-md mx-auto leading-relaxed">
+                <h3 className={`text-xl font-black ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                  האתר של {createdBusinessResult.name} באוויר! 🎉
+                </h3>
+                <p className={`text-xs max-w-md mx-auto leading-relaxed ${adminTheme === 'light' ? 'text-slate-600' : 'text-zinc-300'}`}>
                   הוקם אתר פרימיום מלא ומותאם אישית הכולל מחירון, גלריה, Waze, ביקורות ומערכת זימון תורים חכמה בכתובת:
                 </p>
 
-                <div className="bg-[#141414] border border-[#C9A84C]/40 rounded-2xl p-4 text-center">
-                  <span className="text-sm font-black text-[#DFCA85]" dir="ltr">
+                <div className={`border rounded-2xl p-4 text-center ${
+                  adminTheme === 'light' ? 'bg-slate-50 border-[#C9A84C]/60 text-slate-900' : 'bg-[#141414] border-[#C9A84C]/40'
+                }`}>
+                  <span className={`text-sm font-black ${adminTheme === 'light' ? 'text-[#967425]' : 'text-[#DFCA85]'}`} dir="ltr">
                     thecut.co.il/{createdBusinessResult.slug}
                   </span>
                 </div>
@@ -2288,7 +2624,7 @@ const defaultBusinessesList: Business[] = [
                   <Link
                     href={`/${createdBusinessResult.slug}`}
                     target="_blank"
-                    className="flex-1 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs flex items-center justify-center gap-1.5 shadow-lg"
+                    className="flex-1 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs flex items-center justify-center gap-1.5 shadow-md"
                   >
                     <ExternalLink className="w-4 h-4" /> צפה באתר החדש עכשיו
                   </Link>
@@ -2300,14 +2636,20 @@ const defaultBusinessesList: Business[] = [
                       }
                       router.push('/admin');
                     }}
-                    className="flex-1 py-3 rounded-xl bg-emerald-950/50 hover:bg-emerald-900/70 text-emerald-400 border border-emerald-500/40 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                    className={`flex-1 py-3 rounded-xl border font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
+                      adminTheme === 'light'
+                        ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300'
+                        : 'bg-emerald-950/50 hover:bg-emerald-900/70 text-emerald-400 border-emerald-500/40'
+                    }`}
                   >
                     <Key className="w-4 h-4" /> כניסה לפאנל הניהול
                   </button>
 
                   <button
                     onClick={() => setIsNewBizModalOpen(false)}
-                    className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs cursor-pointer"
+                    className={`px-4 py-3 rounded-xl font-bold text-xs cursor-pointer transition-colors ${
+                      adminTheme === 'light' ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-white/10 hover:bg-white/15 text-zinc-300'
+                    }`}
                   >
                     סגור
                   </button>
@@ -2317,37 +2659,65 @@ const defaultBusinessesList: Business[] = [
               /* WIZARD FORM */
               <form onSubmit={handleCreateBusiness} className="space-y-4">
                 {/* Modal Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className={`flex items-center justify-between pb-3 border-b ${
+                  adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'
+                }`}>
                   <div className="flex items-center gap-2 text-[#C9A84C]">
                     <Sparkles className="w-5 h-5" />
                     <div>
-                      <h3 className="text-base font-black text-white">הקמת אתר מספרה מותאם אישית</h3>
-                      <span className="text-[11px] text-zinc-400">אשף הקמה חכם ב-3 שלבים</span>
+                      <h3 className={`text-base font-black ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                        הקמת אתר מספרה מותאם אישית
+                      </h3>
+                      <span className={`text-[11px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                        אשף הקמה חכם ב-3 שלבים
+                      </span>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => setIsNewBizModalOpen(false)}
-                    className="text-zinc-400 hover:text-white cursor-pointer"
+                    className={`p-1.5 rounded-lg cursor-pointer transition-colors ${
+                      adminTheme === 'light' ? 'text-slate-400 hover:text-slate-700 hover:bg-slate-100' : 'text-zinc-400 hover:text-white hover:bg-white/10'
+                    }`}
                   >
                     ✕
                   </button>
                 </div>
 
                 {/* Wizard Steps Indicator */}
-                <div className="flex items-center justify-between bg-[#141414] p-2.5 rounded-2xl border border-white/10 text-xs font-bold">
-                  <div className={`flex items-center gap-1.5 ${wizardStep === 1 ? 'text-[#C9A84C]' : 'text-zinc-500'}`}>
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${wizardStep === 1 ? 'bg-[#C9A84C] text-black font-black' : 'bg-white/10 text-white'}`}>1</span>
+                <div className={`flex items-center justify-between p-2.5 rounded-2xl border text-xs font-bold ${
+                  adminTheme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-[#141414] border-white/10'
+                }`}>
+                  <div className={`flex items-center gap-1.5 ${wizardStep === 1 ? 'text-[#B89230]' : adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+                      wizardStep === 1
+                        ? 'bg-[#C9A84C] text-black font-black'
+                        : adminTheme === 'light'
+                        ? 'bg-slate-200 text-slate-700'
+                        : 'bg-white/10 text-white'
+                    }`}>1</span>
                     <span>פרטי עסק</span>
                   </div>
-                  <span className="text-zinc-600">←</span>
-                  <div className={`flex items-center gap-1.5 ${wizardStep === 2 ? 'text-[#C9A84C]' : 'text-zinc-500'}`}>
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${wizardStep === 2 ? 'bg-[#C9A84C] text-black font-black' : 'bg-white/10 text-white'}`}>2</span>
+                  <span className={adminTheme === 'light' ? 'text-slate-300' : 'text-zinc-600'}>←</span>
+                  <div className={`flex items-center gap-1.5 ${wizardStep === 2 ? 'text-[#B89230]' : adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+                      wizardStep === 2
+                        ? 'bg-[#C9A84C] text-black font-black'
+                        : adminTheme === 'light'
+                        ? 'bg-slate-200 text-slate-700'
+                        : 'bg-white/10 text-white'
+                    }`}>2</span>
                     <span>סגנון ומיתוג</span>
                   </div>
-                  <span className="text-zinc-600">←</span>
-                  <div className={`flex items-center gap-1.5 ${wizardStep === 3 ? 'text-[#C9A84C]' : 'text-zinc-500'}`}>
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${wizardStep === 3 ? 'bg-[#C9A84C] text-black font-black' : 'bg-white/10 text-white'}`}>3</span>
+                  <span className={adminTheme === 'light' ? 'text-slate-300' : 'text-zinc-600'}>←</span>
+                  <div className={`flex items-center gap-1.5 ${wizardStep === 3 ? 'text-[#B89230]' : adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+                      wizardStep === 3
+                        ? 'bg-[#C9A84C] text-black font-black'
+                        : adminTheme === 'light'
+                        ? 'bg-slate-200 text-slate-700'
+                        : 'bg-white/10 text-white'
+                    }`}>3</span>
                     <span>מחירון וסיום</span>
                   </div>
                 </div>
@@ -2358,7 +2728,9 @@ const defaultBusinessesList: Business[] = [
                 {wizardStep === 1 && (
                   <div className="space-y-3 text-xs">
                     <div>
-                      <label className="block font-bold text-gray-300 mb-1">שם העסק / המספרה *</label>
+                      <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                        שם העסק / המספרה *
+                      </label>
                       <input
                         type="text"
                         value={newBizName}
@@ -2370,70 +2742,104 @@ const defaultBusinessesList: Business[] = [
                         }}
                         placeholder="למשל: אלון קוצץ עיצוב שיער"
                         required
-                        className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"
+                        className={`w-full rounded-xl px-3.5 py-2.5 text-sm outline-none border transition-colors ${
+                          adminTheme === 'light'
+                            ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                            : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block font-bold text-gray-300 mb-1">מזהה קישור ייחודי (Slug) *</label>
-                      <div className="flex items-center bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-sm" dir="ltr">
-                        <span className="text-zinc-500 text-xs mr-1">thecut.co.il/</span>
+                      <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                        מזהה קישור ייחודי (Slug) *
+                      </label>
+                      <div className={`flex items-center rounded-xl px-3 py-2 text-sm border transition-colors ${
+                        adminTheme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-[#141414] border-white/15'
+                      }`} dir="ltr">
+                        <span className={`text-xs mr-1 ${adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}`}>thecut.co.il/</span>
                         <input
                           type="text"
                           value={newBizSlug}
                           onChange={(e) => setNewBizSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
                           placeholder="alon-cut"
                           required
-                          className="flex-1 bg-transparent text-white outline-none text-xs font-bold text-right"
+                          className={`flex-1 bg-transparent outline-none text-xs font-bold text-right ${
+                            adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                          }`}
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label className="block font-bold text-gray-300 mb-1">שם בעל העסק *</label>
+                        <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                          שם בעל העסק *
+                        </label>
                         <input
                           type="text"
                           value={newBizOwner}
                           onChange={(e) => setNewBizOwner(e.target.value)}
                           placeholder="למשל: אלון"
                           required
-                          className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                          className={`w-full rounded-xl px-3.5 py-2.5 text-xs outline-none border transition-colors ${
+                            adminTheme === 'light'
+                              ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                              : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                          }`}
                         />
                       </div>
                       <div>
-                        <label className="block font-bold text-gray-300 mb-1">טלפון ראשי (לוואטסאפ) *</label>
+                        <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                          טלפון ראשי (לוואטסאפ) *
+                        </label>
                         <input
                           type="tel"
                           value={newBizPhone}
                           onChange={(e) => setNewBizPhone(e.target.value)}
                           placeholder="050-1234567"
                           required
-                          className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                          className={`w-full rounded-xl px-3.5 py-2.5 text-xs outline-none border transition-colors ${
+                            adminTheme === 'light'
+                              ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                              : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                          }`}
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label className="block font-bold text-gray-300 mb-1">עיר / כתובת ראשי *</label>
+                        <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                          עיר / כתובת ראשי *
+                        </label>
                         <input
                           type="text"
                           value={newBizCity}
                           onChange={(e) => setNewBizCity(e.target.value)}
                           placeholder="למשל: ראשון לציון"
                           required
-                          className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                          className={`w-full rounded-xl px-3.5 py-2.5 text-xs outline-none border transition-colors ${
+                            adminTheme === 'light'
+                              ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                              : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                          }`}
                         />
                       </div>
                       <div>
-                        <label className="block font-bold text-gray-300 mb-1">אינסטגרם (אופציונלי)</label>
+                        <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                          אינסטגרם (אופציונלי)
+                        </label>
                         <input
                           type="text"
                           value={newBizInstagram}
                           onChange={(e) => setNewBizInstagram(e.target.value)}
                           placeholder="@barber_alon"
-                          className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                          className={`w-full rounded-xl px-3.5 py-2.5 text-xs outline-none border transition-colors ${
+                            adminTheme === 'light'
+                              ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                              : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                          }`}
                         />
                       </div>
                     </div>
@@ -2449,7 +2855,7 @@ const defaultBusinessesList: Business[] = [
                           syncArchetypeDefaults(newBizArchetype);
                           setWizardStep(2);
                         }}
-                        className="px-6 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                        className="px-6 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-md"
                       >
                         <span>המשך לבחירת סגנון ומיתוג</span>
                         <ArrowLeft className="w-3.5 h-3.5" />
@@ -2464,7 +2870,9 @@ const defaultBusinessesList: Business[] = [
                 {wizardStep === 2 && (
                   <div className="space-y-3.5 text-xs">
                     <div>
-                      <label className="block font-bold text-gray-300 mb-1.5">בחר את אופי וסגנון המספרה:</label>
+                      <label className={`block font-bold mb-1.5 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                        בחר את אופי וסגנון המספרה:
+                      </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {Object.values(BUSINESS_ARCHETYPES).map((arch) => (
                           <div
@@ -2475,25 +2883,33 @@ const defaultBusinessesList: Business[] = [
                             }}
                             className={`p-3 rounded-2xl border text-right cursor-pointer transition-all ${
                               newBizArchetype === arch.id
-                                ? 'bg-white/10 border-[#C9A84C] shadow-md ring-1 ring-[#C9A84C]/50'
+                                ? 'bg-amber-500/10 border-[#C9A84C] shadow-xs ring-1 ring-[#C9A84C]'
+                                : adminTheme === 'light'
+                                ? 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
                                 : 'bg-[#141414] border-white/10 hover:border-white/20'
                             }`}
                           >
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-base">{arch.icon}</span>
                               {newBizArchetype === arch.id && (
-                                <span className="text-emerald-400 font-bold text-[10px]">נבחר ✓</span>
+                                <span className="text-emerald-600 font-bold text-[10px]">נבחר ✓</span>
                               )}
                             </div>
-                            <h4 className="font-black text-white text-xs mb-0.5">{arch.name}</h4>
-                            <p className="text-[11px] text-zinc-400 leading-tight">{arch.description}</p>
+                            <h4 className={`font-black text-xs mb-0.5 ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                              {arch.name}
+                            </h4>
+                            <p className={`text-[11px] leading-tight ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                              {arch.description}
+                            </p>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     <div>
-                      <label className="block font-bold text-gray-300 mb-1.5">בחר פלטת צבעי יוקרה לאתר:</label>
+                      <label className={`block font-bold mb-1.5 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                        בחר פלטת צבעי יוקרה לאתר:
+                      </label>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {THEME_PALETTES.map((pal) => (
                           <div
@@ -2501,12 +2917,16 @@ const defaultBusinessesList: Business[] = [
                             onClick={() => setNewBizThemeColor(pal.color)}
                             className={`p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${
                               newBizThemeColor === pal.color
-                                ? 'bg-white/10 border-white'
+                                ? 'bg-amber-500/10 border-[#C9A84C] shadow-xs'
+                                : adminTheme === 'light'
+                                ? 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                                 : 'bg-[#141414] border-white/10 hover:border-white/20'
                             }`}
                           >
-                            <div className="w-5 h-5 rounded-full shadow-md" style={{ backgroundColor: pal.color }} />
-                            <span className="text-[11px] font-bold text-white truncate">{pal.name}</span>
+                            <div className="w-5 h-5 rounded-full shadow-xs" style={{ backgroundColor: pal.color }} />
+                            <span className={`text-[11px] font-bold truncate ${adminTheme === 'light' ? 'text-slate-800' : 'text-white'}`}>
+                              {pal.name}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -2516,7 +2936,9 @@ const defaultBusinessesList: Business[] = [
                       <button
                         type="button"
                         onClick={() => setWizardStep(1)}
-                        className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs cursor-pointer flex items-center gap-1"
+                        className={`px-4 py-2.5 rounded-xl font-bold text-xs cursor-pointer flex items-center gap-1 transition-colors ${
+                          adminTheme === 'light' ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-white/10 hover:bg-white/15 text-zinc-300'
+                        }`}
                       >
                         <ArrowRight className="w-3.5 h-3.5" /> חזרה
                       </button>
@@ -2524,7 +2946,7 @@ const defaultBusinessesList: Business[] = [
                       <button
                         type="button"
                         onClick={() => setWizardStep(3)}
-                        className="px-6 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                        className="px-6 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-md"
                       >
                         <span>המשך לסקירת מחירון וסיום</span>
                         <ArrowLeft className="w-3.5 h-3.5" />
@@ -2539,20 +2961,30 @@ const defaultBusinessesList: Business[] = [
                 {wizardStep === 3 && (
                   <div className="space-y-3.5 text-xs">
                     <div>
-                      <label className="block font-bold text-gray-300 mb-1">סלוגן לעמוד הבית:</label>
+                      <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                        סלוגן לעמוד הבית:
+                      </label>
                       <input
                         type="text"
                         value={newBizSlogan}
                         onChange={(e) => setNewBizSlogan(e.target.value)}
-                        className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                        className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors ${
+                          adminTheme === 'light'
+                            ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
+                            : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block font-bold text-gray-300 mb-1">מחירון שירותים שנוצר אוטומטית (ניתן לעריכה):</label>
+                      <label className={`block font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'}`}>
+                        מחירון שירותים שנוצר אוטומטית (ניתן לעריכה):
+                      </label>
                       <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1">
                         {newBizServices.map((srv, idx) => (
-                          <div key={idx} className="flex items-center justify-between gap-2 p-2 rounded-xl bg-[#141414] border border-white/10">
+                          <div key={idx} className={`flex items-center justify-between gap-2 p-2 rounded-xl border ${
+                            adminTheme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-[#141414] border-white/10'
+                          }`}>
                             <input
                               type="text"
                               value={srv.name}
@@ -2561,7 +2993,9 @@ const defaultBusinessesList: Business[] = [
                                 updated[idx].name = e.target.value;
                                 setNewBizServices(updated);
                               }}
-                              className="flex-1 bg-transparent text-white font-bold text-xs outline-none"
+                              className={`flex-1 bg-transparent font-bold text-xs outline-none ${
+                                adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                              }`}
                             />
                             <div className="flex items-center gap-1">
                               <input
@@ -2572,30 +3006,38 @@ const defaultBusinessesList: Business[] = [
                                   updated[idx].price = Number(e.target.value);
                                   setNewBizServices(updated);
                                 }}
-                                className="w-14 bg-[#222] border border-white/15 rounded-lg px-1.5 py-1 text-center text-[#C9A84C] font-bold text-xs outline-none"
+                                className={`w-14 rounded-lg px-1.5 py-1 text-center font-bold text-xs outline-none border ${
+                                  adminTheme === 'light'
+                                    ? 'bg-white border-slate-300 text-[#967425]'
+                                    : 'bg-[#222] border-white/15 text-[#C9A84C]'
+                                }`}
                               />
-                              <span className="text-zinc-500">₪</span>
+                              <span className={adminTheme === 'light' ? 'text-slate-400' : 'text-zinc-500'}>₪</span>
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-2xl bg-[#141414] border border-white/10 space-y-1">
+                    <div className={`p-3 rounded-2xl border space-y-1 ${
+                      adminTheme === 'light' ? 'bg-slate-50 border-slate-200' : 'bg-[#141414] border-white/10'
+                    }`}>
                       <div className="flex justify-between">
-                        <span className="text-zinc-400">סניף ראשי:</span>
-                        <strong className="text-white">{newBizCity}</strong>
+                        <span className={adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}>סניף ראשי:</span>
+                        <strong className={adminTheme === 'light' ? 'text-slate-900' : 'text-white'}>{newBizCity}</strong>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-400">צבע מיתוג:</span>
+                        <span className={adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}>צבע מיתוג:</span>
                         <div className="flex items-center gap-1">
                           <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: newBizThemeColor }} />
-                          <span className="text-white font-bold">{newBizThemeColor}</span>
+                          <span className={`font-bold ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>{newBizThemeColor}</span>
                         </div>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-400">כתובת אתר חי:</span>
-                        <strong className="text-[#C9A84C]" dir="ltr">thecut.co.il/{newBizSlug}</strong>
+                        <span className={adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}>כתובת אתר חי:</span>
+                        <strong className={adminTheme === 'light' ? 'text-[#967425]' : 'text-[#C9A84C]'} dir="ltr">
+                          thecut.co.il/{newBizSlug}
+                        </strong>
                       </div>
                     </div>
 
@@ -2603,7 +3045,9 @@ const defaultBusinessesList: Business[] = [
                       <button
                         type="button"
                         onClick={() => setWizardStep(2)}
-                        className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs cursor-pointer flex items-center gap-1"
+                        className={`px-4 py-2.5 rounded-xl font-bold text-xs cursor-pointer flex items-center gap-1 transition-colors ${
+                          adminTheme === 'light' ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-white/10 hover:bg-white/15 text-zinc-300'
+                        }`}
                       >
                         <ArrowRight className="w-3.5 h-3.5" /> חזרה
                       </button>
@@ -2611,7 +3055,7 @@ const defaultBusinessesList: Business[] = [
                       <button
                         type="submit"
                         disabled={isCreatingBiz}
-                        className="px-6 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors shadow-lg flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        className="px-6 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
                         {isCreatingBiz ? 'מקים אתר...' : 'הקם אתר מספרה מושלם באוויר 🎉'}
                       </button>
