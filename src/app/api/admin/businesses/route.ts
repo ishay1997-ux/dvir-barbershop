@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
-import { collection, addDoc, getDocs, doc, query, where, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, query, where, updateDoc, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface BusinessItem {
   id: string;
@@ -17,7 +17,7 @@ export interface BusinessItem {
   plan: 'pro' | 'starter' | 'enterprise';
   createdAt: string;
   services?: Array<{ name: string; price: number; duration: number }>;
-  branches?: Array<{ name: string; address: string }>;
+  branches?: Array<{ name: string; address: string; wazeLink?: string }>;
 }
 
 const defaultBusinesses: BusinessItem[] = [
@@ -44,29 +44,6 @@ const defaultBusinesses: BusinessItem[] = [
       { name: 'עיצוב ופיסול זקן', price: 40, duration: 15 },
       { name: 'תספורת + זקן VIP', price: 110, duration: 45 },
       { name: 'טיפול פנים מפנק', price: 60, duration: 25 },
-    ],
-  },
-  {
-    id: 'biz-sharon',
-    name: 'שרון עיצוב שיער',
-    slug: 'sharon',
-    ownerName: 'שרון',
-    phone: '050-765-4321',
-    city: 'תל אביב',
-    slogan: 'מרכז החלקות אורגניות, גוונים ועיצוב שיער מקצועי',
-    announcement: '✨ מבצע מיוחד: 15% הנחה על החלקות אורגניות בימי שלישי!',
-    themeColor: '#00C48C',
-    branchesCount: 1,
-    status: 'active',
-    plan: 'pro',
-    createdAt: '2025-02-01',
-    branches: [
-      { name: 'סניף מרכז תל אביב', address: 'דיזנגוף 120, תל אביב' },
-    ],
-    services: [
-      { name: 'עיצוב שיער והחלקה אורגנית', price: 350, duration: 90 },
-      { name: 'תספורת וגוונים', price: 220, duration: 60 },
-      { name: 'תספורת נשים / גברים', price: 120, duration: 40 },
     ],
   },
 ];
@@ -140,8 +117,8 @@ export async function POST(request: Request) {
       ownerName: ownerName || name,
       phone,
       city: city || 'ישראל',
-      slogan: slogan || 'עיצוב שיער מקצועי וזימון תורים אונליין',
-      announcement: announcement || '',
+      slogan: slogan || 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר',
+      announcement: announcement || '🌟 קביעת תורים מהירה אונליין 24/7',
       themeColor: themeColor || '#C9A84C',
       branchesCount: branches?.length || 1,
       status: 'active',
@@ -149,8 +126,9 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString().split('T')[0],
       branches: branches || [{ name: `סניף ראשי ${city || ''}`, address: city || 'כתובת העסק' }],
       services: services || [
-        { name: 'תספורת קלאסית', price: 80, duration: 30 },
-        { name: 'עיצוב זקן', price: 40, duration: 15 },
+        { name: 'תספורת גברים / פייד', price: 80, duration: 30 },
+        { name: 'עיצוב ופיסול זקן', price: 40, duration: 15 },
+        { name: 'תספורת + זקן VIP', price: 110, duration: 45 },
       ],
     };
 
@@ -222,6 +200,50 @@ export async function PATCH(request: Request) {
       success: true,
       message: 'הגדרות העסק עודכנו בהצלחה',
       business: found || updates,
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// DELETE /api/admin/businesses?id=...&slug=...
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    const slug = searchParams.get('slug')?.toLowerCase().trim();
+
+    if (!id && !slug) {
+      return NextResponse.json({ error: 'Missing id or slug' }, { status: 400 });
+    }
+
+    if (slug === 'dvir') {
+      return NextResponse.json({ error: 'לא ניתן למחוק את עסק הדגל של דביר' }, { status: 400 });
+    }
+
+    if (isFirebaseConfigured && db) {
+      try {
+        if (id) {
+          await deleteDoc(doc(db, 'businesses', id));
+        } else if (slug) {
+          const q = query(collection(db, 'businesses'), where('slug', '==', slug));
+          const snapshot = await getDocs(q);
+          const deletePromises = snapshot.docs.map((d) => deleteDoc(doc(db!, 'businesses', d.id)));
+          await Promise.all(deletePromises);
+        }
+      } catch (fbError) {
+        console.error('Firebase business delete error:', fbError);
+      }
+    }
+
+    const idx = defaultBusinesses.findIndex((b) => (id && b.id === id) || (slug && b.slug === slug));
+    if (idx !== -1) {
+      defaultBusinesses.splice(idx, 1);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'המספרה נמחקה בהצלחה מהמערכת',
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

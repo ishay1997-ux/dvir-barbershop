@@ -386,6 +386,27 @@ export default function SuperAdminPage() {
     }
   };
 
+  // Delete Business Handler
+  const handleDeleteBusiness = async (slug: string, name: string) => {
+    if (slug === 'dvir') {
+      alert('לא ניתן למחוק את עסק הדגל של דביר');
+      return;
+    }
+    if (!confirm(`האם למחוק לצמיתות את המספרה "${name}"?`)) return;
+    try {
+      const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(slug)}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setBusinesses((prev) => prev.filter((b) => b.slug !== slug));
+      } else {
+        alert('שגיאה במחיקת המספרה');
+      }
+    } catch (err) {
+      alert('שגיאת תקשורת במחיקה');
+    }
+  };
+
   // Filtered reports
   const filteredReports = reports.filter((r) => {
     if (statusFilter === 'all') return true;
@@ -683,6 +704,16 @@ export default function SuperAdminPage() {
                     >
                       <Key className="w-3.5 h-3.5" /> כניסה כמנהל
                     </button>
+
+                    {biz.slug !== 'dvir' && (
+                      <button
+                        onClick={() => handleDeleteBusiness(biz.slug, biz.name)}
+                        className="p-2 rounded-xl bg-red-950/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 transition-colors cursor-pointer"
+                        title="מחק מספרה זו"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
