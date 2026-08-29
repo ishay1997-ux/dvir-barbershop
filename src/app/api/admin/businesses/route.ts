@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
-import { collection, addDoc, getDocs, doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, query, where, serverTimestamp } from 'firebase/firestore';
 
 export interface BusinessItem {
   id: string;
@@ -13,6 +13,8 @@ export interface BusinessItem {
   status: 'active' | 'pending' | 'suspended';
   plan: 'pro' | 'starter' | 'enterprise';
   createdAt: string;
+  services?: Array<{ name: string; price: number; duration: number }>;
+  branches?: Array<{ name: string; address: string }>;
 }
 
 const defaultBusinesses: BusinessItem[] = [
@@ -27,12 +29,74 @@ const defaultBusinesses: BusinessItem[] = [
     status: 'active',
     plan: 'pro',
     createdAt: '2025-01-01',
+    branches: [
+      { name: 'סניף אריאל', address: 'מתחם האוניברסיטה, אריאל' },
+      { name: 'סניף רחובות', address: 'רחוב הרצל 45, רחובות' },
+    ],
+    services: [
+      { name: 'תספורת גברים / פייד', price: 80, duration: 30 },
+      { name: 'עיצוב ופיסול זקן', price: 40, duration: 15 },
+      { name: 'תספורת + זקן VIP', price: 110, duration: 45 },
+      { name: 'טיפול פנים מפנק', price: 60, duration: 25 },
+    ],
+  },
+  {
+    id: 'biz-sharon',
+    name: 'שרון עיצוב שיער',
+    slug: 'sharon',
+    ownerName: 'שרון',
+    phone: '050-765-4321',
+    city: 'תל אביב',
+    branchesCount: 1,
+    status: 'active',
+    plan: 'pro',
+    createdAt: '2025-02-01',
+    branches: [
+      { name: 'סניף מרכז תל אביב', address: 'דיזנגוף 120, תל אביב' },
+    ],
+    services: [
+      { name: 'עיצוב שיער והחלקה', price: 350, duration: 90 },
+      { name: 'תספורת וגוונים', price: 220, duration: 60 },
+      { name: 'תספורת נשים / גברים', price: 120, duration: 40 },
+    ],
   },
 ];
 
-// GET /api/admin/businesses
-export async function GET() {
+// GET /api/admin/businesses?slug=...
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get('slug')?.toLowerCase().trim();
+
+    if (slug) {
+      // Find single business by slug
+      if (isFirebaseConfigured && db) {
+        try {
+          const q = query(collection(db, 'businesses'), where('slug', '==', slug));
+          const snapshot = await getDocs(q);
+          if (!snapshot.empty) {
+            const bizData = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+            return NextResponse.json({ business: bizData });
+          }
+        } catch (fbError) {
+          console.error('Firebase business slug fetch error:', fbError);
+        }
+      }
+
+      const match = defaultBusinesses.find((b) => b.slug === slug);
+      if (match) {
+        return NextResponse.json({ business: match });
+      }
+
+      // If slug is dvir or generic
+      if (slug === 'dvir' || slug === 'thecut') {
+        return NextResponse.json({ business: defaultBusinesses[0] });
+      }
+
+      return NextResponse.json({ error: 'Business not found' }, { status: 404 });
+    }
+
+    // Return all businesses
     if (isFirebaseConfigured && db) {
       try {
         const snapshot = await getDocs(collection(db, 'businesses'));
@@ -55,23 +119,30 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, slug, ownerName, phone, city, plan } = body;
+    const { name, slug, ownerName, phone, city, plan, branches, services } = body;
 
     if (!name || !slug || !phone) {
       return NextResponse.json({ error: 'שם העסק, מזהה קישור (slug) וטלפון הם שדות חובה' }, { status: 400 });
     }
 
+    const cleanSlug = slug.toLowerCase().trim().replace(/[^a-z0-9-_]/g, '');
+
     const newBiz: BusinessItem = {
       id: `biz-${Date.now()}`,
       name,
-      slug: slug.toLowerCase().trim().replace(/[^a-z0-9-_]/g, ''),
+      slug: cleanSlug,
       ownerName: ownerName || name,
       phone,
       city: city || 'ישראל',
-      branchesCount: 1,
+      branchesCount: branches?.length || 1,
       status: 'active',
       plan: plan || 'starter',
       createdAt: new Date().toISOString().split('T')[0],
+      branches: branches || [{ name: `סניף ראשי ${city || ''}`, address: city || 'כתובת העסק' }],
+      services: services || [
+        { name: 'תספורת קלאסית', price: 80, duration: 30 },
+        { name: 'עיצוב זקן', price: 40, duration: 15 },
+      ],
     };
 
     if (isFirebaseConfigured && db) {
