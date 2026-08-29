@@ -232,43 +232,100 @@ export function MyAppointmentsModal({
         {/* Search Results */}
         {hasSearched && (
           <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
-            {appointments.length > 0 ? (
-              appointments.map((apt) => (
-                <div key={apt.id} className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold">
-                    <span className="text-[#C9A84C]">{apt.serviceName || 'תספורת גברים'}</span>
-                    <span className="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px]">
-                      {apt.status === 'confirmed' ? 'מאושר ✓' : apt.status}
-                    </span>
+            {appointments.filter((a) => a.status !== 'cancelled').length > 0 ? (
+              appointments
+                .filter((a) => a.status !== 'cancelled')
+                .map((apt) => (
+                  <div
+                    key={apt.id}
+                    className="p-4 rounded-2xl bg-[#1A1A1A] border-2 border-[#C9A84C]/50 space-y-2.5 shadow-md"
+                  >
+                    <div className="flex items-center justify-between text-xs font-bold">
+                      <span className="text-[#C9A84C] font-black text-sm">
+                        {apt.serviceName || apt.service || 'תספורת גברים'}
+                      </span>
+                      <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                        מאושר ופעיל ✓
+                      </span>
+                    </div>
+
+                    <div className="text-xs text-zinc-200 flex items-center justify-between">
+                      <span className="font-semibold">📅 {apt.date}</span>
+                      <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded-md" dir="ltr">
+                        ⏰ {apt.time}
+                      </span>
+                    </div>
+
+                    <div className="text-[11px] text-zinc-400">
+                      📍 {apt.branchName || apt.branch || 'סניף המספרה'}
+                    </div>
+
+                    {/* Action buttons inside modal */}
+                    <div className="pt-2 flex gap-2">
+                      <button
+                        onClick={async () => {
+                          const confirmCancel = window.confirm(
+                            `האם אתה בטוח שברצונך לבטל את התור לתאריך ${apt.date} בשעה ${apt.time}?`
+                          );
+                          if (!confirmCancel) return;
+
+                          try {
+                            await fetch('/api/appointments', {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ id: apt.id, status: 'cancelled' }),
+                            });
+
+                            if (typeof window !== 'undefined') {
+                              const stored = localStorage.getItem('thecut_customer_appointments_v3');
+                              if (stored) {
+                                const parsed = JSON.parse(stored);
+                                const updated = parsed.map((item: any) =>
+                                  item.id === apt.id ? { ...item, status: 'cancelled' } : item
+                                );
+                                localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
+                              }
+                            }
+
+                            setAppointments((prev) =>
+                              prev.map((a) => (a.id === apt.id ? { ...a, status: 'cancelled' } : a))
+                            );
+                          } catch (err) {
+                            alert('אירעה שגיאה בביטול התור.');
+                          }
+                        }}
+                        className="flex-1 py-2 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 text-center text-xs font-bold transition-colors"
+                      >
+                        בטל תור זה ❌
+                      </button>
+
+                      <Link
+                        href={`/booking/manage?phone=${phone}`}
+                        onClick={onClose}
+                        className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-center text-xs font-bold transition-colors"
+                      >
+                        פרטים מלאים
+                      </Link>
+                    </div>
                   </div>
-                  <div className="text-xs text-zinc-300 flex items-center justify-between">
-                    <span>📅 {apt.date}</span>
-                    <span>⏰ {apt.time}</span>
-                  </div>
-                  <div className="text-[11px] text-zinc-400">
-                    📍 {apt.branchName || 'סניף המספרה'}
-                  </div>
-                  <div className="pt-2 flex gap-2">
-                    <Link
-                      href={`/booking/manage?phone=${phone}`}
-                      onClick={onClose}
-                      className="flex-1 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-center text-xs font-bold transition-colors"
-                    >
-                      ניהול / ביטול תור
-                    </Link>
-                  </div>
-                </div>
-              ))
+                ))
             ) : (
               <div className="text-center py-6 bg-white/5 rounded-2xl border border-white/5">
-                <p className="text-sm font-bold text-white mb-1">לא נמצאו תורים עתידיים לטלפון זה</p>
-                <p className="text-xs text-zinc-400 mb-3">מעוניין לקבוע תור חדש?</p>
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-2 text-[#C9A84C]">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <p className="text-sm font-bold text-white mb-1">
+                  {appointments.some((a) => a.status === 'cancelled')
+                    ? 'התור בוטל בהצלחה! אין כרגע תורים פעילים'
+                    : 'לא נמצאו תורים פעילים עתידיים לטלפון זה'}
+                </p>
+                <p className="text-xs text-zinc-400 mb-4">רוצה לשריין מועד חדש?</p>
                 <Link
                   href="/booking"
                   onClick={onClose}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C9A84C] text-[#1C1C1C] text-xs font-black"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#C9A84C] text-[#1C1C1C] text-xs font-black shadow-md hover:bg-[#DFCA85] transition-colors"
                 >
-                  קבע תור חדש ←
+                  <Scissors className="w-3.5 h-3.5" /> קבע תור חדש עכשיו
                 </Link>
               </div>
             )}
@@ -277,7 +334,7 @@ export function MyAppointmentsModal({
 
         <div className="mt-4 text-center">
           <Link
-            href="/booking/manage"
+            href={`/booking/manage${phone ? `?phone=${encodeURIComponent(phone)}` : ''}`}
             onClick={onClose}
             className="text-xs text-[#9E9891] hover:text-[#C9A84C] transition-colors inline-flex items-center gap-1"
           >

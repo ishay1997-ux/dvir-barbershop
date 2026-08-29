@@ -206,96 +206,68 @@ function ManageBookingContent() {
         {/* Search Results List */}
         {hasSearched && (
           <div className="space-y-4">
-            {appointments.length > 0 ? (
-              appointments.map((apt) => {
-                const isItemCancelled = apt.status === 'cancelled' || cancelledSuccessMap[apt.id];
-                const serviceTitle = apt.serviceName || apt.service || 'תספורת גברים';
-                const serviceCost = apt.servicePrice || apt.price || 80;
-                const branchTitle = apt.branchName || apt.branch || 'סניף המספרה';
-                const barberTitle = apt.barberName || apt.barber || 'דביר';
+            {/* 1. ACTIVE APPOINTMENTS */}
+            {appointments.filter((a) => a.status !== 'cancelled' && !cancelledSuccessMap[a.id]).length > 0 ? (
+              appointments
+                .filter((a) => a.status !== 'cancelled' && !cancelledSuccessMap[a.id])
+                .map((apt) => {
+                  const serviceTitle = apt.serviceName || apt.service || 'תספורת גברים';
+                  const serviceCost = apt.servicePrice || apt.price || 80;
+                  const branchTitle = apt.branchName || apt.branch || 'סניף המספרה';
 
-                return (
-                  <div
-                    key={apt.id}
-                    className={`bg-[#1C1C1C] border-2 rounded-3xl p-6 shadow-xl transition-all ${
-                      isItemCancelled
-                        ? 'border-red-500/30 bg-red-950/10'
-                        : 'border-[#C9A84C]/40 bg-[#1C1C1C]'
-                    }`}
-                  >
-                    {/* Status badge */}
-                    <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
-                      <div className="flex items-center gap-2">
-                        {isItemCancelled ? (
-                          <>
-                            <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                            <span className="text-xs font-bold text-red-400">תור מבוטל</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-xs font-bold text-emerald-400">תור מאושר ופעיל</span>
-                          </>
-                        )}
-                      </div>
-                      <span className="text-[11px] text-zinc-500" dir="ltr">#{apt.id.slice(-6)}</span>
-                    </div>
-
-                    {/* Details */}
-                    <div className="space-y-3 text-sm text-[#D5CBB8]">
-                      <div className="flex items-center gap-3">
-                        <Scissors className="w-4 h-4 text-[#C9A84C]" />
-                        <span className="font-bold text-white text-base">{serviceTitle}</span>
-                        <span className="mr-auto text-xs text-[#C9A84C] font-black bg-[#C9A84C]/15 px-2.5 py-1 rounded-full">
-                          ₪{serviceCost}
-                        </span>
+                  return (
+                    <div
+                      key={apt.id}
+                      className="bg-[#1C1C1C] border-2 border-[#C9A84C]/50 rounded-3xl p-6 shadow-xl space-y-4"
+                    >
+                      {/* Status badge */}
+                      <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="text-xs font-bold text-emerald-400">תור מאושר ופעיל</span>
+                        </div>
+                        <span className="text-[11px] text-zinc-500" dir="ltr">#{apt.id.slice(-6)}</span>
                       </div>
 
-                      <div className="flex items-center gap-3">
-                        <Calendar className="w-4 h-4 text-[#C9A84C]" />
-                        <span>תאריך: <strong className="text-white">{apt.date}</strong></span>
+                      {/* Details */}
+                      <div className="space-y-3 text-sm text-[#D5CBB8]">
+                        <div className="flex items-center gap-3">
+                          <Scissors className="w-4 h-4 text-[#C9A84C]" />
+                          <span className="font-bold text-white text-base">{serviceTitle}</span>
+                          <span className="mr-auto text-xs text-[#C9A84C] font-black bg-[#C9A84C]/15 px-2.5 py-1 rounded-full">
+                            ₪{serviceCost}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <Calendar className="w-4 h-4 text-[#C9A84C]" />
+                          <span>תאריך: <strong className="text-white">{apt.date}</strong></span>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <Clock className="w-4 h-4 text-[#C9A84C]" />
+                          <span>שעה: <strong className="text-white" dir="ltr">{apt.time}</strong></span>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <MapPin className="w-4 h-4 text-[#C9A84C]" />
+                          <span>מיקום: <strong>{branchTitle}</strong></span>
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
-                        <Clock className="w-4 h-4 text-[#C9A84C]" />
-                        <span>שעה: <strong className="text-white" dir="ltr">{apt.time}</strong></span>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-[#C9A84C]" />
-                        <span>מיקום: <strong>{branchTitle}</strong></span>
-                      </div>
-                    </div>
-
-                    {/* Cancel Success Notice */}
-                    {isItemCancelled ? (
-                      <div className="mt-5 p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-center">
-                        <p className="text-xs font-bold text-red-300 mb-2">
-                          התור בוטל בהצלחה והמשבצת פונתה במערכת.
-                        </p>
-                        <a
-                          href={`https://wa.me/972521234567?text=${encodeURIComponent(`היי דביר, ביטלתי את התור שלי לתאריך ${apt.date} בשעה ${apt.time}`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:underline font-bold"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5" /> עדכן את דביר בוואטסאפ
-                        </a>
-                      </div>
-                    ) : (
-                      /* Cancel Action Button */
-                      <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-3">
+                      {/* Cancel Action Buttons */}
+                      <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row gap-3">
                         <button
                           onClick={() => handleCancel(apt)}
                           disabled={cancellingId === apt.id}
-                          className="flex-1 py-3 px-4 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
+                          className="flex-1 py-3 px-4 rounded-2xl bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
                         >
                           {cancellingId === apt.id ? (
                             <RefreshCw className="w-4 h-4 animate-spin" />
                           ) : (
                             <XCircle className="w-4 h-4" />
                           )}
-                          <span>בטל תור זה</span>
+                          <span>בטל תור זה ❌</span>
                         </button>
 
                         <Link
@@ -305,22 +277,66 @@ function ManageBookingContent() {
                           קבע תור נוסף
                         </Link>
                       </div>
-                    )}
-                  </div>
-                );
-              })
+                    </div>
+                  );
+                })
             ) : (
-              <div className="bg-[#1C1C1C] border border-white/10 rounded-3xl p-8 text-center">
-                <p className="text-sm font-bold text-white mb-2">לא נמצאו תורים עבור מספר טלפון זה</p>
-                <p className="text-xs text-zinc-400 mb-5">וודא שהזנת את מספר הטלפון המדויק איתו ביצעת את ההזמנה.</p>
-                <Link
-                  href="/booking"
-                  className="inline-flex items-center gap-1.5 px-6 py-3 rounded-2xl bg-[#C9A84C] text-[#1C1C1C] text-xs font-black"
-                >
-                  קבע תור חדש עכשיו ←
-                </Link>
+              <div className="bg-[#1C1C1C] border border-white/10 rounded-3xl p-8 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
+                  <CheckCircle className="w-6 h-6" />
+                </div>
+                <h3 className="text-base font-black text-white">
+                  {appointments.some((a) => a.status === 'cancelled' || cancelledSuccessMap[a.id])
+                    ? 'התור בוטל בהצלחה! אין כרגע תורים פעילים'
+                    : 'לא נמצאו תורים פעילים עבור מספר זה'}
+                </h3>
+                <p className="text-xs text-zinc-400">
+                  {appointments.some((a) => a.status === 'cancelled' || cancelledSuccessMap[a.id])
+                    ? 'המשבצת פונתה במערכת ודביר עודכן. נשמח לראותך במועד אחר!'
+                    : 'וודא שהזנת את מספר הטלפון המדויק איתו ביצעת את ההזמנה.'}
+                </p>
+                <div className="pt-3 flex flex-col sm:flex-row gap-2 justify-center">
+                  <Link
+                    href="/booking"
+                    className="inline-flex items-center justify-center gap-1.5 px-6 py-3 rounded-2xl bg-[#C9A84C] text-[#1C1C1C] text-xs font-black shadow-md hover:bg-[#DFCA85]"
+                  >
+                    קבע תור חדש עכשיו ←
+                  </Link>
+                  {appointments.some((a) => a.status === 'cancelled' || cancelledSuccessMap[a.id]) && (
+                    <a
+                      href={`https://wa.me/972521234567?text=${encodeURIComponent('היי דביר, ביטלתי את התור שקבעתי.')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-emerald-400 text-xs font-bold"
+                    >
+                      <MessageCircle className="w-4 h-4" /> עדכן את דביר בוואטסאפ
+                    </a>
+                  )}
+                </div>
               </div>
             )}
+
+            {/* 2. CANCELLED APPOINTMENTS HISTORY (Subtle) */}
+            {appointments.filter((a) => a.status === 'cancelled' || cancelledSuccessMap[a.id]).length > 0 &&
+              appointments.filter((a) => a.status !== 'cancelled' && !cancelledSuccessMap[a.id]).length > 0 && (
+                <div className="pt-4 border-t border-white/10">
+                  <span className="text-xs font-bold text-zinc-500 block mb-2">תורים שבוטלו:</span>
+                  {appointments
+                    .filter((a) => a.status === 'cancelled' || cancelledSuccessMap[a.id])
+                    .map((apt) => (
+                      <div
+                        key={apt.id}
+                        className="p-3.5 rounded-2xl bg-red-950/20 border border-red-500/20 flex items-center justify-between text-xs text-zinc-400 mb-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-red-500" />
+                          <span>{apt.serviceName || apt.service || 'תספורת'} - {apt.date} ({apt.time})</span>
+                        </div>
+                        <span className="text-red-400 text-[10px] font-bold">מבוטל</span>
+                      </div>
+                    ))}
+                </div>
+              )}
           </div>
         )}
 
