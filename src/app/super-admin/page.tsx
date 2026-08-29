@@ -336,7 +336,19 @@ export default function SuperAdminPage() {
       const res = await authFetch('/api/admin/businesses');
       if (res.ok) {
         const data = await res.json();
-        setBusinesses(data.businesses || []);
+        if (data.businesses && data.businesses.length > 0) {
+          setBusinesses(data.businesses);
+          return;
+        }
+      }
+
+      // Fallback: fetch flagship business
+      const fallbackRes = await fetch('/api/admin/businesses?slug=dvir');
+      if (fallbackRes.ok) {
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData.business) {
+          setBusinesses([fallbackData.business]);
+        }
       }
     } catch (err) {
       console.error('Error fetching businesses:', err);
@@ -770,13 +782,6 @@ export default function SuperAdminPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              target="_blank"
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs text-[#9E9891] hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl transition-colors border border-white/10"
-            >
-              <ExternalLink className="w-3.5 h-3.5" /> צפייה באתר חי
-            </Link>
             <button
               onClick={handleLogout}
               className="text-xs text-red-400 hover:text-red-300 bg-red-950/30 hover:bg-red-950/50 px-3 py-1.5 rounded-xl transition-colors border border-red-500/30 font-bold cursor-pointer"
