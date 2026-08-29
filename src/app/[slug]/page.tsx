@@ -14,6 +14,7 @@ import FaqSection from '@/components/landing/FaqSection';
 import { Scissors, Phone, MessageCircle, Calendar, Sparkles } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { getBusinessBySlug } from '@/lib/business-service';
+import { DVIR_FLAGSHIP_CONFIG } from '@/config/dvir.config';
 
 export default function DynamicBusinessLandingPage({
   params,
@@ -23,8 +24,9 @@ export default function DynamicBusinessLandingPage({
   const resolvedParams = use(params);
   const slug = resolvedParams.slug.toLowerCase().trim();
 
-  const [business, setBusiness] = useState<BusinessConfig | null>(null);
-  const [loading, setLoading] = useState(true);
+  const isDvir = slug === 'dvir' || slug === 'thecut';
+  const [business, setBusiness] = useState<BusinessConfig | null>(isDvir ? DVIR_FLAGSHIP_CONFIG : null);
+  const [loading, setLoading] = useState(!isDvir);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {

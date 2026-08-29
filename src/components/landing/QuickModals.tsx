@@ -406,6 +406,22 @@ export function ShareBarbershopModal({
 
   if (!isOpen) return null;
 
+  const handleNativeShare = async () => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: bizName,
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      } catch (_) {
+        // User cancelled or fallback
+      }
+    }
+    handleCopy();
+  };
+
   const handleCopy = () => {
     navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
     setCopied(true);
@@ -439,14 +455,21 @@ export function ShareBarbershopModal({
         </div>
 
         <h3 className="text-lg font-black text-white mb-1" style={{ color: '#FFFFFF' }}>שתף את {bizName}</h3>
-        <p className="text-xs text-zinc-400 mb-5">שתף קישור מהיר לקביעת תורים עם חברים</p>
+        <p className="text-xs text-zinc-400 mb-5">שתף קישור ישיר להזמנת תורים מהירה בכל הרשתות</p>
 
         <div className="space-y-2.5 mb-4">
           <button
             onClick={handleWhatsAppShare}
-            className="w-full py-3 rounded-2xl bg-[#25D366] text-white font-black text-sm flex items-center justify-center gap-2 hover:opacity-95 transition-opacity cursor-pointer shadow-md"
+            className="w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98"
           >
             <MessageCircle className="w-4 h-4" /> שתף ב-WhatsApp
+          </button>
+
+          <button
+            onClick={handleNativeShare}
+            className="w-full py-3 rounded-2xl bg-white hover:bg-zinc-100 text-black font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98"
+          >
+            <Share2 className="w-4 h-4" /> שיתוף לכל האפליקציות
           </button>
 
           <button

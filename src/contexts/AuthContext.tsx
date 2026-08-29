@@ -40,6 +40,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   /** Re-check the user's role (e.g., after role changes) */
   refreshUser: () => Promise<void>;
+  /** Direct Phone / Barber login */
+  loginWithPhone: (phone: string, pin?: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -53,6 +55,7 @@ const AuthContext = createContext<AuthContextType>({
   authFetch: async () => new Response(),
   logout: async () => {},
   refreshUser: async () => {},
+  loginWithPhone: async () => ({ success: false }),
 });
 
 export function useAuth() {
@@ -99,6 +102,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   }, []);
 
+  // Check for saved phone / offline barber session on load
+  useEffect(() => {
+    try {
+      const savedSession = localStorage.getItem('thecut_phone_session');
+      if (savedSession) {
+        const parsed = JSON.parse(savedSession);
+        if (parsed && parsed.role && parsed.businessSlugs) {
+          setUser(parsed);
+          setLoading(false);
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
+
   // Listen to Firebase Auth state changes
   useEffect(() => {
     if (!auth || !isFirebaseConfigured) {
@@ -111,9 +130,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (fbUser) {
         const appUser = await fetchUserRole(fbUser);
-        setUser(appUser);
+        if (appUser) {
+          setUser(appUser);
+          try {
+            localStorage.removeItem('thecut_phone_session');
+          } catch (_) {}
+        }
       } else {
-        setUser(null);
+        // If not logged in via Firebase, check if there is a phone session
+        try {
+          const savedSession = localStorage.getItem('thecut_phone_session');
+          if (savedSession) {
+            setUser(JSON.parse(savedSession));
+          } else {
+            setUser(null);
+          }
+        } catch {
+          setUser(null);
+        }
       }
 
       setLoading(false);
@@ -121,6 +155,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => unsubscribe();
   }, [fetchUserRole]);
+
+  // Direct Phone login for Barbers (e.g. Dvir: 058-781-5071)
+  const loginWithPhone = useCallback(async (phone: string, pin?: string): Promise<{ success: boolean; error?: string }> => {
+    const cleanPhone = (phone || '').replace(/\D/g, '');
+
+    if (!cleanPhone || cleanPhone.length < 9) {
+      return { success: false, error: 'מספר טלפון לא תקין' };
+    }
+
+    // 1. Dvir's Flagship Barbershop Phone Access
+    if (cleanPhone === '0587815071' || cleanPhone === '587815071') {
+      const barberUser: AuthUser = {
+        uid: `barber-dvir-${cleanPhone}`,
+        email: 'dvir.barber@thecut.co.il',
+        displayName: 'דביר (המספרה של דביר)',
+        photoURL: '',
+        role: 'business_admin',
+        businessSlugs: ['dvir', 'thecut'],
+      };
+
+      setUser(barberUser);
+      try {
+        localStorage.setItem('thecut_phone_session', JSON.stringify(barberUser));
+      } catch (_) {}
+
+      return { success: true };
+    }
+
+    // 2. Check registered users in local/server registry
+    try {
+      const res = await fetch(`/api/admin/businesses`);
+      if (res.ok) {
+        const data = await res.json();
+        const foundBiz = data.businesses?.find((b: any) => (b.phone || '').replace(/\D/g, '') === cleanPhone);
+        if (foundBiz) {
+          const tenantUser: AuthUser = {
+            uid: `barber-${foundBiz.slug}-${cleanPhone}`,
+            email: `${foundBiz.slug}@thecut.co.il`,
+            displayName: `${foundBiz.ownerName || foundBiz.name}`,
+            photoURL: '',
+            role: 'business_admin',
+            businessSlugs: [foundBiz.slug],
+          };
+          setUser(tenantUser);
+          try {
+            localStorage.setItem('thecut_phone_session', JSON.stringify(tenantUser));
+          } catch (_) {}
+          return { success: true };
+        }
+      }
+    } catch (err) {
+      console.warn('Phone check fallback:', err);
+    }
+
+    return {
+      success: false,
+      error: 'מספר הטלפון אינו רשום כמנהל עסק. אנא פנה למנהל המערכת להרשאה.',
+    };
+  }, []);
 
   // Get auth headers for API calls
   const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
@@ -154,6 +247,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('[AuthContext] Logout error:', error);
     }
+    try {
+      localStorage.removeItem('thecut_phone_session');
+    } catch (_) {}
     setUser(null);
     setFirebaseUser(null);
   }, []);
@@ -177,6 +273,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     authFetch,
     logout,
     refreshUser,
+    loginWithPhone,
   };
 
   return (
