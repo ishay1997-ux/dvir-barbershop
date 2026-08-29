@@ -608,6 +608,10 @@ input[type="tel"] {
   border-color: rgba(226, 232, 240, 0.9) !important;
 }
 
+.theme-luxury-light .keep-white-text {
+  color: #FFFFFF !important;
+}
+
 .theme-luxury-light .shadow-md,
 .theme-luxury-light .shadow-lg,
 .theme-luxury-light .shadow-xl,

@@ -241,17 +241,30 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
               </div>
 
               {/* ============================================================ */}
-              {/* 3. BOTTOM FOOTER (Dark #2E2E2E + Logo + Orange Version)       */}
+              {/* 3. BOTTOM FOOTER (Logo + Version Badge)                     */}
               {/* ============================================================ */}
-              <div className="bg-[#2E2E2E] py-3 px-4 flex flex-col items-center justify-center text-center border-t border-gray-700">
-                <div className="flex items-center gap-1.5 text-white font-black text-lg tracking-wider" dir="ltr">
-                  <span>the</span>
-                  <div className="w-5 h-5 rounded-full bg-[#E5832E] flex items-center justify-center text-[#2E2E2E] font-bold text-xs">
+              <div
+                className="py-3 px-4 flex flex-col items-center justify-center text-center border-t border-zinc-800 shadow-inner"
+                style={{ backgroundColor: '#181818' }}
+              >
+                <div className="flex items-center gap-1.5 font-black text-lg tracking-wider" dir="ltr">
+                  <span className="keep-white-text" style={{ color: '#FFFFFF', fontWeight: 900 }}>the</span>
+                  <div
+                    className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-sm"
+                    style={{ backgroundColor: '#E5832E', color: '#181818' }}
+                  >
                     ✂️
                   </div>
-                  <span>cut</span>
+                  <span className="keep-white-text" style={{ color: '#FFFFFF', fontWeight: 900 }}>cut</span>
                 </div>
-                <div className="text-[11px] font-bold text-[#E5832E] mt-0.5 tracking-wider">
+                <div
+                  className="mt-1 px-3 py-0.5 rounded-full text-[11px] font-bold tracking-wider border shadow-xs"
+                  style={{
+                    backgroundColor: 'rgba(229, 131, 46, 0.15)',
+                    color: '#FBA74E',
+                    borderColor: 'rgba(229, 131, 46, 0.35)',
+                  }}
+                >
                   {SHORT_VERSION_LABEL}
                 </div>
               </div>
