@@ -9,12 +9,7 @@ import { generateTailoredBusinessConfig } from '@/lib/archetypes';
 export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
   const cleanSlug = (slug || 'dvir').trim().toLowerCase();
 
-  // 1. Flagship Dvir
-  if (cleanSlug === 'dvir' || cleanSlug === '') {
-    return DVIR_FLAGSHIP_CONFIG;
-  }
-
-  // 2. Fetch from backend /api/admin/businesses
+  // 1. Fetch from backend /api/admin/businesses (includes custom saved colors, pricing, branches)
   try {
     const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(cleanSlug)}`, {
       cache: 'no-store',
@@ -22,14 +17,18 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
     if (res.ok) {
       const data = await res.json();
       if (data.business) {
-        return mergeWithDefaults(data.business);
+        return mergeWithDefaults(data.business, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
       }
     }
   } catch (err) {
     console.error('Failed to fetch business by slug:', err);
   }
 
-  // Fallback if not found yet (e.g. freshly created)
+  // 2. Default fallbacks if network fails
+  if (cleanSlug === 'dvir' || cleanSlug === 'thecut') {
+    return DVIR_FLAGSHIP_CONFIG;
+  }
+
   return generateTailoredBusinessConfig({
     name: cleanSlug.charAt(0).toUpperCase() + cleanSlug.slice(1),
     slug: cleanSlug,
@@ -39,8 +38,8 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
   });
 }
 
-function mergeWithDefaults(raw: Partial<BusinessConfig>): BusinessConfig {
-  const base = generateTailoredBusinessConfig({
+function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: BusinessConfig): BusinessConfig {
+  const base = fallbackBase || generateTailoredBusinessConfig({
     name: raw.name || 'המספרה',
     slug: raw.slug || 'tenant',
     ownerName: raw.ownerName || 'מאסטר ברבר',

@@ -29,12 +29,6 @@ export default function DynamicBusinessLandingPage({
 
   useEffect(() => {
     async function loadBusiness() {
-      // Dvir flagship bypass
-      if (slug === 'dvir' || slug === 'thecut') {
-        setLoading(false);
-        return;
-      }
-
       try {
         const data = await getBusinessBySlug(slug);
         if (data) {

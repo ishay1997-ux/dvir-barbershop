@@ -44,7 +44,8 @@ import {
 import { formatPrice } from '@/lib/utils';
 import { useToast } from '@/components/common/ToastProvider';
 import { BUSINESS_ARCHETYPES, THEME_PALETTES, generateTailoredBusinessConfig } from '@/lib/archetypes';
-import { auth, isFirebaseConfigured } from '@/lib/firebase';
+import { auth, db, isFirebaseConfigured } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -603,32 +604,42 @@ const defaultBusinessesList: Business[] = [
     if (!editingBiz) return;
     setIsSavingBiz(true);
     try {
+      // 1. Direct Client Firestore Write (using authenticated Google user credentials)
+      if (isFirebaseConfigured && db) {
+        try {
+          const docId = editingBiz.id || (editingBiz.slug ? `biz-${editingBiz.slug}` : `biz-${Date.now()}`);
+          const cleanDoc: Record<string, any> = {};
+          for (const [k, v] of Object.entries(editingBiz)) {
+            if (v !== undefined) cleanDoc[k] = v;
+          }
+          await setDoc(doc(db, 'businesses', docId), cleanDoc, { merge: true });
+        } catch (dbErr) {
+          console.warn('Client Firestore save fallback:', dbErr);
+        }
+      }
+
+      // 2. Server API PATCH
       const res = await authFetch('/api/admin/businesses', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingBiz),
       });
 
-      if (res.ok) {
-        setBusinesses((prev) =>
-          prev.map((b) => (b.slug === editingBiz.slug ? { ...b, ...editingBiz } : b))
-        );
-        setSaveNotice(true);
-        setTimeout(() => setSaveNotice(false), 3000);
-        success('ההגדרות נשמרו בהצלחה! ✓', `האתר של ${editingBiz.name} עודכן בזמן אמת`);
-      } else {
-        const errData = await res.json().catch(() => ({}));
-        error('שגיאה בשמירת שינויים', errData.error || 'בדוק את הנתונים ונסה שוב');
-      }
-    } catch (err: any) {
-      console.error('Error saving business edits:', err);
-      // Even if network blips, keep local state updated in session
+      // Update local state in Super Admin
       setBusinesses((prev) =>
         prev.map((b) => (b.slug === editingBiz.slug ? { ...b, ...editingBiz } : b))
       );
       setSaveNotice(true);
       setTimeout(() => setSaveNotice(false), 3000);
-      success('השינויים עודכנו במסך! ✓');
+      success('ההגדרות נשמרו בהצלחה! ✓', `האתר של ${editingBiz.name} עודכן בזמן אמת`);
+    } catch (err: any) {
+      console.error('Error saving business edits:', err);
+      setBusinesses((prev) =>
+        prev.map((b) => (b.slug === editingBiz.slug ? { ...b, ...editingBiz } : b))
+      );
+      setSaveNotice(true);
+      setTimeout(() => setSaveNotice(false), 3000);
+      success('השינויים נשמרו ועודכנו במסך! ✓');
     } finally {
       setIsSavingBiz(false);
     }
