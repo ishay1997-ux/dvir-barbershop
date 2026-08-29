@@ -134,13 +134,26 @@ export default function AccessibilityWidget({
     return () => window.removeEventListener('focusin', handleFocus);
   }, []);
 
-  // 6. Global Keyboard Shortcuts: Alt + A opens accessibility drawer, Escape closes
+  // 6. Global Keyboard Shortcuts: Alt+A, Ctrl+F10 (opens drawer), Ctrl+F11 (toggle blind / keyboard nav mode), Escape (closes)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.altKey && (e.key === 'a' || e.key === 'A' || e.key === 'ש')) {
+      // Open / Close Drawer
+      if (
+        (e.altKey && (e.key === 'a' || e.key === 'A' || e.key === 'ש')) ||
+        (e.ctrlKey && e.key === 'F10')
+      ) {
         e.preventDefault();
         setIsOpen((prev) => !prev);
       }
+      // Blind / Screen-Reader / Keyboard Mode Toggle
+      if (e.ctrlKey && e.key === 'F11') {
+        e.preventDefault();
+        setState((prev) => ({
+          ...prev,
+          keyboardNav: !prev.keyboardNav,
+        }));
+      }
+      // Close
       if (e.key === 'Escape') {
         setIsOpen(false);
         setIsLanguageOpen(false);
@@ -150,7 +163,7 @@ export default function AccessibilityWidget({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [setState]);
 
   // 7. Hide Button Handler
   const handleConfirmHide = useCallback(
