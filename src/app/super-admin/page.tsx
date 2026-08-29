@@ -47,7 +47,7 @@ import { formatPrice } from '@/lib/utils';
 import { useToast } from '@/components/common/ToastProvider';
 import { BUSINESS_ARCHETYPES, THEME_PALETTES, generateTailoredBusinessConfig } from '@/lib/archetypes';
 import { auth, db, isFirebaseConfigured } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { BusinessLayoutConfig } from '@/types/business';
@@ -395,6 +395,21 @@ const defaultBusinessesList: Business[] = [
   const fetchBusinesses = async () => {
     setBusinessesLoading(true);
     try {
+      // 1. Direct Firestore client read (zero-cache, reflects deletes instantly)
+      if (typeof window !== 'undefined' && isFirebaseConfigured && db) {
+        try {
+          const snapshot = await getDocs(collection(db, 'businesses'));
+          if (!snapshot.empty) {
+            const list = snapshot.docs.map((d) => d.data() as Business);
+            setBusinesses(list);
+            return;
+          }
+        } catch (dbErr) {
+          console.warn('Direct Firestore fetch businesses fallback:', dbErr);
+        }
+      }
+
+      // 2. Fetch from /api/admin/businesses
       const res = await authFetch('/api/admin/businesses');
       if (res.ok) {
         const data = await res.json();
@@ -404,7 +419,7 @@ const defaultBusinessesList: Business[] = [
         }
       }
 
-      // Fallback: fetch flagship business
+      // 3. Fallback: fetch flagship business
       const fallbackRes = await fetch('/api/admin/businesses?slug=dvir');
       if (fallbackRes.ok) {
         const fallbackData = await fallbackRes.json();
@@ -1958,50 +1973,38 @@ const defaultBusinessesList: Business[] = [
                       <p className="text-[11px] text-[#9E9891]">מופיעה לצד המחירון בעמוד הראשי (לחץ על 🗑️ למחיקה)</p>
                     </div>
                     <span className="text-[10px] text-[#C9A84C] font-bold">
-                      {editingBiz.galleryImages?.length || 6} תמונות בגלריה
+                      {Array.isArray(editingBiz.galleryImages) ? editingBiz.galleryImages.length : 0} תמונות בגלריה
                     </span>
                   </div>
 
                   {/* Current Photos Grid */}
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {(editingBiz.galleryImages && editingBiz.galleryImages.length > 0
-                      ? editingBiz.galleryImages
-                      : [
-                          'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=600&q=80',
-                          'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80',
-                          'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=600&q=80',
-                          'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=600&q=80',
-                          'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=600&q=80',
-                          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-                        ]
-                    ).map((imgUrl, imgIdx) => (
-                      <div key={imgIdx} className="relative aspect-square rounded-xl overflow-hidden bg-black/60 border border-white/10 group">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={imgUrl} alt={`עבודה ${imgIdx + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const current = editingBiz.galleryImages && editingBiz.galleryImages.length > 0
-                              ? [...editingBiz.galleryImages]
-                              : [
-                                  'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=600&q=80',
-                                  'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80',
-                                  'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=600&q=80',
-                                  'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=600&q=80',
-                                  'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=600&q=80',
-                                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-                                ];
-                            current.splice(imgIdx, 1);
-                            setEditingBiz({ ...editingBiz, galleryImages: current });
-                          }}
-                          className="absolute inset-0 bg-red-950/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs"
-                          title="מחק תמונה זו"
-                        >
-                          🗑️ מחק
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  {Array.isArray(editingBiz.galleryImages) && editingBiz.galleryImages.length > 0 ? (
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                      {editingBiz.galleryImages.map((imgUrl, imgIdx) => (
+                        <div key={imgIdx} className="relative aspect-square rounded-xl overflow-hidden bg-black/60 border border-white/10 group">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={imgUrl} alt={`עבודה ${imgIdx + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const current = [...(editingBiz.galleryImages || [])];
+                              current.splice(imgIdx, 1);
+                              setEditingBiz({ ...editingBiz, galleryImages: current });
+                            }}
+                            className="absolute inset-0 bg-red-950/90 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs cursor-pointer"
+                            title="מחק תמונה זו"
+                          >
+                            <span>🗑️</span>
+                            <span className="text-[10px] mt-0.5">מחק</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-zinc-500 bg-[#1C1C1C] rounded-xl border border-dashed border-white/10 text-xs">
+                      📷 אין כרגע תמונות בגלריה. הדבק קישור (URL) למטה להוספת תמונות ראשונות!
+                    </div>
+                  )}
 
                   {/* Add Image Input */}
                   <div className="flex gap-2 pt-2 border-t border-white/10">
