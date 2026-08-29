@@ -112,15 +112,18 @@ export default function AdminLoginPage() {
       const code = err?.code || '';
 
       if (code === 'auth/popup-closed-by-user') {
-        // User voluntarily closed popup
+        // User closed the popup
+      } else if (code === 'auth/unauthorized-domain') {
+        const currentDomain = typeof window !== 'undefined' ? window.location.hostname : '';
+        setError(`הדומיין (${currentDomain}) אינו מורשה ב-Firebase. יש להוסיף אותו ב-Firebase Console תחת Authentication -> Settings -> Authorized domains.`);
       } else if (code === 'auth/popup-blocked') {
-        setError('חלון ההתחברות של Google נחסם על ידי הדפדפן. אנא אפשר חלונות קופצים ונסה שוב.');
+        setError('חלון ההתחברות של Google נחסם על ידי הדפדפן. אנא אפשר חלונות קופצים בדפדפן ונסה שוב.');
       } else if (code === 'auth/account-exists-with-different-credential') {
         setError('קיים כבר חשבון עם כתובת אימייל זו בשיטת התחברות אחרת.');
       } else if (code === 'auth/operation-not-allowed') {
-        setError('התחברות באמצעות Google עדיין לא הופעלה ב-Firebase Console.');
+        setError('התחברות באמצעות Google עדיין לא הופעלה ב-Firebase Console תחת Authentication -> Sign-in method.');
       } else {
-        setError('אירעה שגיאה בעת ההתחברות עם Google. אנא נסה שוב.');
+        setError(err?.message || 'אירעה שגיאה בעת ההתחברות עם Google. אנא נסה שוב.');
       }
       setGoogleLoading(false);
     }
