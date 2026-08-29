@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { ShareBarbershopModal } from '@/components/landing/QuickModals';
 import BugReportModal from '@/components/common/BugReportModal';
+import { SHORT_VERSION_LABEL } from '@/config/version';
 
 interface SidebarDrawerProps {
   isOpen: boolean;
@@ -243,7 +244,7 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
               {/* 3. BOTTOM FOOTER (Dark #2E2E2E + Logo + Orange Version)       */}
               {/* ============================================================ */}
               <div className="bg-[#2E2E2E] py-3 px-4 flex flex-col items-center justify-center text-center border-t border-gray-700">
-                <div className="flex items-center gap-1.5 text-white font-black text-lg tracking-wider">
+                <div className="flex items-center gap-1.5 text-white font-black text-lg tracking-wider" dir="ltr">
                   <span>the</span>
                   <div className="w-5 h-5 rounded-full bg-[#E5832E] flex items-center justify-center text-[#2E2E2E] font-bold text-xs">
                     ✂️
@@ -251,7 +252,7 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
                   <span>cut</span>
                 </div>
                 <div className="text-[11px] font-bold text-[#E5832E] mt-0.5 tracking-wider">
-                  גרסה W1.0.21:40
+                  {SHORT_VERSION_LABEL}
                 </div>
               </div>
             </motion.div>

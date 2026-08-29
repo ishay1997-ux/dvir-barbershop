@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Scissors, Phone, MapPin, Clock, Lock } from 'lucide-react';
 import { SHOP_INFO } from '@/lib/utils';
 import { BusinessConfig } from '@/types/business';
+import { SHORT_VERSION_LABEL } from '@/config/version';
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -139,8 +140,9 @@ export default function Footer({
 
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-[#3D3D3D] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9E9891]">
-          <div>
-            © {currentYear} {bizName} · כל הזכויות שמורות
+          <div className="flex items-center gap-2">
+            <span>© {currentYear} {bizName} · כל הזכויות שמורות</span>
+            <span className="text-[11px] opacity-70">({SHORT_VERSION_LABEL})</span>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/terms" className="hover:text-white transition-colors">
