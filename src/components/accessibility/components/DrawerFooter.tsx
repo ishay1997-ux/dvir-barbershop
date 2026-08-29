@@ -8,12 +8,14 @@ import { A11Y_I18N } from '../i18n';
 interface DrawerFooterProps {
   onResetAll: () => void;
   onClose: () => void;
+  statementUrl?: string;
   t: typeof A11Y_I18N.he;
 }
 
 export const DrawerFooter: React.FC<DrawerFooterProps> = ({
   onResetAll,
   onClose,
+  statementUrl = '/accessibility',
   t,
 }) => {
   return (
@@ -28,7 +30,7 @@ export const DrawerFooter: React.FC<DrawerFooterProps> = ({
 
       <div className="flex items-center justify-between text-[11px] text-white/80 pt-1">
         <Link
-          href="/accessibility"
+          href={statementUrl}
           onClick={onClose}
           className="hover:underline font-bold text-white"
         >

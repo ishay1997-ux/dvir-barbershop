@@ -3,33 +3,42 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { A11yState, defaultState, STORAGE_KEY } from './types';
 
-export function useAccessibility() {
+interface UseAccessibilityOptions {
+  storageKey?: string;
+  defaultLanguage?: A11yState['language'];
+}
+
+export function useAccessibility(options?: UseAccessibilityOptions) {
+  const activeStorageKey = options?.storageKey || STORAGE_KEY;
   const [isClient, setIsClient] = useState(false);
-  const [state, setState] = useState<A11yState>(defaultState);
+  const [state, setState] = useState<A11yState>(() => ({
+    ...defaultState,
+    language: options?.defaultLanguage || defaultState.language,
+  }));
   const colorSliderRef = useRef<HTMLDivElement | null>(null);
 
   // Initialize client state from localStorage
   useEffect(() => {
     setIsClient(true);
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(activeStorageKey);
       if (saved) {
         setState((prev) => ({ ...prev, ...JSON.parse(saved) }));
       }
     } catch {
       // Ignore
     }
-  }, []);
+  }, [activeStorageKey]);
 
   // Save to local storage
   const saveState = useCallback((newState: A11yState) => {
     setState(newState);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      localStorage.setItem(activeStorageKey, JSON.stringify(newState));
     } catch {
       // Ignore
     }
-  }, []);
+  }, [activeStorageKey]);
 
   // Apply Accessibility Classes & Styles to <html> and <body>
   useEffect(() => {

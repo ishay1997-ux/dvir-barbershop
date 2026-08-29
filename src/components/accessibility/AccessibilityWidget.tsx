@@ -38,19 +38,39 @@ import {
   HideWidgetModal,
   HideDuration,
 } from './components';
+import './accessibility.css';
 
-const HIDE_STORAGE_KEY = 'thecut_a11y_hidden_until';
-const HIDE_SESSION_KEY = 'thecut_a11y_hidden_session';
+export interface AccessibilityWidgetProps {
+  /** Custom business or site name for reader view and statements */
+  siteName?: string;
+  /** Custom accessibility statement page URL (default: '/accessibility') */
+  statementUrl?: string;
+  /** Initial dock side ('left' | 'right', default: 'left') */
+  defaultDockSide?: 'left' | 'right';
+  /** Custom localStorage key prefix (default: 'thecut_a11y_v3_state') */
+  storageKey?: string;
+  /** Initial language (default: 'he') */
+  defaultLanguage?: A11yState['language'];
+}
 
-export default function AccessibilityWidget() {
+export default function AccessibilityWidget({
+  siteName,
+  statementUrl = '/accessibility',
+  defaultDockSide = 'left',
+  storageKey,
+  defaultLanguage,
+}: AccessibilityWidgetProps = {}) {
   const [isOpen, setIsOpen] = useState(false);
-  const [dockSide, setDockSide] = useState<'left' | 'right'>('left');
+  const [dockSide, setDockSide] = useState<'left' | 'right'>(defaultDockSide);
   const [isHiddenTemporarily, setIsHiddenTemporarily] = useState(false);
   const [isHideModalOpen, setIsHideModalOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [showReaderModal, setShowReaderModal] = useState(false);
   const [hoveredTile, setHoveredTile] = useState<TileItem | null>(null);
   const [activeInput, setActiveInput] = useState<HTMLInputElement | HTMLTextAreaElement | null>(null);
+
+  const activeHideStorageKey = storageKey ? `${storageKey}_hidden_until` : 'thecut_a11y_hidden_until';
+  const activeHideSessionKey = storageKey ? `${storageKey}_hidden_session` : 'thecut_a11y_hidden_session';
 
   // 1. Accessibility State & Side-Effects Hook
   const {
@@ -68,7 +88,7 @@ export default function AccessibilityWidget() {
     handleStepperIncrease,
     handleStepperDecrease,
     resetAllState,
-  } = useAccessibility();
+  } = useAccessibility({ storageKey, defaultLanguage });
 
   // 2. Web Speech API Synthesis Hook
   const speech = useSpeechSynthesis({ language: state.language });
@@ -81,21 +101,21 @@ export default function AccessibilityWidget() {
   // 4. Check whether accessibility button was hidden by user preference
   useEffect(() => {
     try {
-      const sessionHidden = sessionStorage.getItem(HIDE_SESSION_KEY);
+      const sessionHidden = sessionStorage.getItem(activeHideSessionKey);
       if (sessionHidden === 'true') {
         setIsHiddenTemporarily(true);
         return;
       }
-      const hiddenUntil = localStorage.getItem(HIDE_STORAGE_KEY);
+      const hiddenUntil = localStorage.getItem(activeHideStorageKey);
       if (hiddenUntil && Date.now() < Number(hiddenUntil)) {
         setIsHiddenTemporarily(true);
       } else if (hiddenUntil) {
-        localStorage.removeItem(HIDE_STORAGE_KEY);
+        localStorage.removeItem(activeHideStorageKey);
       }
     } catch {
       // Ignore
     }
-  }, []);
+  }, [activeHideSessionKey, activeHideStorageKey]);
 
   // 5. Listen to focus events to support virtual keyboard typing into any active input
   useEffect(() => {
@@ -133,26 +153,29 @@ export default function AccessibilityWidget() {
   }, []);
 
   // 7. Hide Button Handler
-  const handleConfirmHide = useCallback((duration: HideDuration) => {
-    try {
-      if (duration === 'session') {
-        sessionStorage.setItem(HIDE_SESSION_KEY, 'true');
-      } else {
-        const msMap: Record<'24h' | '1w' | '1m', number> = {
-          '24h': 24 * 60 * 60 * 1000,
-          '1w': 7 * 24 * 60 * 60 * 1000,
-          '1m': 30 * 24 * 60 * 60 * 1000,
-        };
-        const until = Date.now() + msMap[duration];
-        localStorage.setItem(HIDE_STORAGE_KEY, until.toString());
+  const handleConfirmHide = useCallback(
+    (duration: HideDuration) => {
+      try {
+        if (duration === 'session') {
+          sessionStorage.setItem(activeHideSessionKey, 'true');
+        } else {
+          const msMap: Record<'24h' | '1w' | '1m', number> = {
+            '24h': 24 * 60 * 60 * 1000,
+            '1w': 7 * 24 * 60 * 60 * 1000,
+            '1m': 30 * 24 * 60 * 60 * 1000,
+          };
+          const until = Date.now() + msMap[duration];
+          localStorage.setItem(activeHideStorageKey, until.toString());
+        }
+      } catch {
+        // Ignore
       }
-    } catch {
-      // Ignore
-    }
-    setIsHiddenTemporarily(true);
-    setIsHideModalOpen(false);
-    setIsOpen(false);
-  }, []);
+      setIsHiddenTemporarily(true);
+      setIsHideModalOpen(false);
+      setIsOpen(false);
+    },
+    [activeHideSessionKey, activeHideStorageKey]
+  );
 
   // 6. Virtual Keyboard Actions
   const handleVirtualKeyPress = useCallback(
@@ -467,6 +490,7 @@ export default function AccessibilityWidget() {
               <DrawerFooter
                 onResetAll={handleResetAll}
                 onClose={() => setIsOpen(false)}
+                statementUrl={statementUrl}
                 t={t}
               />
             </motion.div>
@@ -489,6 +513,7 @@ export default function AccessibilityWidget() {
       <ReaderModal
         isOpen={showReaderModal}
         onClose={() => setShowReaderModal(false)}
+        siteName={siteName}
         t={t}
         currentDirection={currentDirection}
       />

@@ -93,7 +93,7 @@ export default function RootLayout({
           <ToastProvider>
             <SkipToContent />
             {children}
-            <AccessibilityWidget />
+            <AccessibilityWidget siteName="המספרה של דביר" statementUrl="/accessibility" />
           </ToastProvider>
         </AuthProvider>
       </body>
