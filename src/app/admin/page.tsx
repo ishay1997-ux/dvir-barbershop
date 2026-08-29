@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format, startOfToday } from 'date-fns';
 import { he } from 'date-fns/locale';
 import {
@@ -16,35 +16,73 @@ import {
   Plus,
   ArrowUpRight,
   Coffee,
+  Sparkles,
 } from 'lucide-react';
 import { useShopStore } from '@/lib/store';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 
+interface TodayAppointment {
+  id: string;
+  time: string;
+  customerName: string;
+  customerPhone: string;
+  service: string;
+  status: string;
+  price: number;
+  date?: string;
+}
+
 const today = startOfToday();
 const currentDayIndex = today.getDay();
 
-const INITIAL_TODAY_APPOINTMENTS = [
-  { id: '1', time: '09:30', customerName: 'יונתן שפירא', customerPhone: '050-111-2233', service: 'תספורת גברים פרימיום', status: 'confirmed', price: 80 },
-  { id: '2', time: '10:30', customerName: 'עומר אלוני', customerPhone: '052-333-4455', service: 'תספורת + פיסול זקן', status: 'confirmed', price: 120 },
-  { id: '3', time: '11:30', customerName: 'איתי ברקוביץ', customerPhone: '054-555-6677', service: 'דירוג סקין פייד', status: 'confirmed', price: 80 },
-  { id: '4', time: '13:00', customerName: 'מתן כהן', customerPhone: '053-777-8899', service: 'תספורת גברים', status: 'confirmed', price: 80 },
-  { id: '5', time: '15:00', customerName: 'דניאל לוי', customerPhone: '052-999-8877', service: 'תספורת + זקן', status: 'pending', price: 120 },
-  { id: '6', time: '16:30', customerName: 'רועי קדוש', customerPhone: '054-222-3344', service: 'טיפוח ופילינג', status: 'confirmed', price: 100 },
-];
-
 export default function AdminDashboard() {
-  const { settings, branches } = useShopStore();
-  const [appointments, setAppointments] = useState(INITIAL_TODAY_APPOINTMENTS);
+  const { settings, branches, customers } = useShopStore();
+  const [appointments, setAppointments] = useState<TodayAppointment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  const todayStr = format(today, 'yyyy-MM-dd');
   const todayLocationKey = settings.branchSchedule?.[currentDayIndex] || (currentDayIndex < 3 ? 'ariel' : currentDayIndex < 6 ? 'rehovot' : 'closed');
   const todayBranch = branches.find((b) => b.id === todayLocationKey);
+
+  useEffect(() => {
+    async function loadAppointments() {
+      try {
+        const res = await fetch('/api/appointments');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.appointments && Array.isArray(data.appointments)) {
+            const todayApps = data.appointments
+              .filter((a: any) => a.date === todayStr || !a.date)
+              .map((a: any) => ({
+                id: a.id,
+                time: a.time || '09:00',
+                customerName: a.customerName || 'לקוח',
+                customerPhone: a.customerPhone || '',
+                service: a.serviceName || a.service || 'תספורת',
+                status: a.status || 'confirmed',
+                price: Number(a.servicePrice || a.price) || 80,
+                date: a.date,
+              }));
+            setAppointments(todayApps);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching today appointments:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadAppointments();
+  }, [todayStr]);
 
   const totalRevenue = appointments
     .filter((a) => a.status === 'confirmed')
     .reduce((sum, a) => sum + a.price, 0);
 
   const confirmedCount = appointments.filter((a) => a.status === 'confirmed').length;
+  const atRiskCustomersCount = customers.filter((c) => c.status === 'at_risk').length;
 
   return (
     <div className="p-4 sm:p-8 max-w-6xl mx-auto" dir="rtl">
@@ -122,9 +160,9 @@ export default function AdminDashboard() {
             <span className="text-xs text-[#6B6560] font-bold">לקוחות לשימור (מעל 30 יום)</span>
             <Users className="w-4 h-4 text-red-500" />
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-red-600">3</div>
+          <div className="text-2xl sm:text-3xl font-black text-[#1C1C1C]">{atRiskCustomersCount}</div>
           <Link href="/admin/customers" className="text-xs text-gold font-bold hover:underline mt-1 block">
-            שלח תזכורת WhatsApp ←
+            ספר הלקוחות ←
           </Link>
         </div>
       </div>
@@ -141,53 +179,72 @@ export default function AdminDashboard() {
           </Link>
         </div>
 
-        <div className="divide-y divide-[#F0EBE1]">
-          {appointments.map((app) => (
-            <div key={app.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#FAF7F2]/60 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#1C1C1C] text-gold flex flex-col items-center justify-center font-black flex-shrink-0 shadow-sm">
-                  <span className="text-sm leading-none" dir="ltr">{app.time}</span>
-                  <span className="text-[10px] text-[#9E9891] font-normal mt-0.5">היום</span>
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-black text-base text-[#1C1C1C]">{app.customerName}</h3>
-                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      {app.service}
-                    </span>
-                  </div>
-                  <div className="text-xs text-[#6B6560] mt-1 flex items-center gap-3">
-                    <span dir="ltr">{app.customerPhone}</span>
-                    <span>•</span>
-                    <span className="font-bold text-[#1C1C1C]">{formatPrice(app.price)}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick WhatsApp Reminder */}
-              <div className="flex items-center gap-2 mr-auto sm:mr-0">
-                <a
-                  href={`https://wa.me/972${app.customerPhone.replace(/\D/g, '').slice(1)}?text=${encodeURIComponent(`היי ${app.customerName}, מזכיר לך את התור שלך היום ב-${app.time} במספרה של דביר ✂️ נתראה!`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold py-2 px-3.5 rounded-xl transition-colors active:scale-95"
-                >
-                  <Phone className="w-3.5 h-3.5" />
-                  תזכורת WhatsApp
-                </a>
-
-                <button
-                  onClick={() => setAppointments(appointments.filter((a) => a.id !== app.id))}
-                  className="text-xs font-bold text-red-500 hover:bg-red-50 p-2 rounded-xl"
-                  title="בטל תור"
-                >
-                  <XCircle className="w-4 h-4" />
-                </button>
-              </div>
+        {appointments.length === 0 ? (
+          <div className="py-16 px-4 text-center">
+            <div className="w-16 h-16 rounded-3xl bg-gold/10 border border-gold/30 flex items-center justify-center text-gold mx-auto mb-4">
+              <Calendar className="w-8 h-8" />
             </div>
-          ))}
-        </div>
+            <h3 className="text-lg font-black text-[#1C1C1C] mb-1">אין תורים מתוזמנים להיום עדיין</h3>
+            <p className="text-xs text-[#6B6560] max-w-sm mx-auto mb-6 leading-relaxed">
+              היומן פנוי לקבלת לקוחות. תורים שיוזמנו דרך האתר או שתוסיף ידנית יופיעו כאן בזמן אמת.
+            </p>
+            <Link
+              href="/booking"
+              className="inline-flex items-center gap-2 btn-gold text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              קבע תור חדש להיום
+            </Link>
+          </div>
+        ) : (
+          <div className="divide-y divide-[#F0EBE1]">
+            {appointments.map((app) => (
+              <div key={app.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#FAF7F2]/60 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-[#1C1C1C] text-gold flex flex-col items-center justify-center font-black flex-shrink-0 shadow-sm">
+                    <span className="text-sm leading-none" dir="ltr">{app.time}</span>
+                    <span className="text-[10px] text-[#9E9891] font-normal mt-0.5">היום</span>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-black text-base text-[#1C1C1C]">{app.customerName}</h3>
+                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        {app.service}
+                      </span>
+                    </div>
+                    <div className="text-xs text-[#6B6560] mt-1 flex items-center gap-3">
+                      <span dir="ltr">{app.customerPhone}</span>
+                      <span>•</span>
+                      <span className="font-bold text-[#1C1C1C]">{formatPrice(app.price)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick WhatsApp Reminder */}
+                <div className="flex items-center gap-2 mr-auto sm:mr-0">
+                  <a
+                    href={`https://wa.me/972${app.customerPhone.replace(/\D/g, '').slice(1)}?text=${encodeURIComponent(`היי ${app.customerName}, מזכיר לך את התור שלך היום ב-${app.time} במספרה של דביר ✂️ נתראה!`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold py-2 px-3.5 rounded-xl transition-colors active:scale-95"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    תזכורת WhatsApp
+                  </a>
+
+                  <button
+                    onClick={() => setAppointments(appointments.filter((a) => a.id !== app.id))}
+                    className="text-xs font-bold text-red-500 hover:bg-red-50 p-2 rounded-xl"
+                    title="בטל תור"
+                  >
+                    <XCircle className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

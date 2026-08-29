@@ -122,71 +122,7 @@ export const INITIAL_BARBERS: Barber[] = [
   },
 ];
 
-export const INITIAL_CUSTOMERS: Customer[] = [
-  {
-    id: 'c1',
-    name: 'יונתן שפירא',
-    phone: '050-111-2233',
-    lastVisit: new Date(Date.now() - 42 * 86400000).toISOString(), // 42 days ago -> at risk!
-    totalVisits: 8,
-    totalSpent: 640,
-    status: 'at_risk',
-    favoriteBarberId: 'dvir',
-    favoriteBranchId: 'ariel',
-    preferences: {
-      machineNumber: 'דירוג 0.5 בצדדים, 3 למעלה',
-      fadeType: 'Low Skin Fade',
-      notes: 'רגיש בעורף, אוהב מריחת חימר מט בסיום',
-    },
-  },
-  {
-    id: 'c2',
-    name: 'עומר אלוני',
-    phone: '052-333-4455',
-    lastVisit: new Date(Date.now() - 35 * 86400000).toISOString(), // 35 days ago -> at risk!
-    totalVisits: 5,
-    totalSpent: 420,
-    status: 'at_risk',
-    favoriteBarberId: 'dvir',
-    favoriteBranchId: 'rehovot',
-    preferences: {
-      machineNumber: '1 בצדדים, מספריים למעלה',
-      fadeType: 'Mid Fade',
-      notes: 'זקן קצר עם קווים חדים',
-    },
-  },
-  {
-    id: 'c3',
-    name: 'איתי ברקוביץ',
-    phone: '054-555-6677',
-    lastVisit: new Date(Date.now() - 8 * 86400000).toISOString(), // 8 days ago -> VIP!
-    totalVisits: 14,
-    totalSpent: 1680,
-    status: 'vip',
-    favoriteBarberId: 'dvir',
-    favoriteBranchId: 'ariel',
-    preferences: {
-      machineNumber: '0 בצדדים, פרנץ קרופ',
-      fadeType: 'High Fade',
-      notes: 'מגיע קבוע כל שבועיים בימי ראשון',
-    },
-  },
-  {
-    id: 'c4',
-    name: 'מתן כהן',
-    phone: '053-777-8899',
-    lastVisit: new Date(Date.now() - 14 * 86400000).toISOString(),
-    totalVisits: 4,
-    totalSpent: 320,
-    status: 'active',
-    favoriteBarberId: 'dvir',
-    favoriteBranchId: 'rehovot',
-    preferences: {
-      machineNumber: '2 בצדדים',
-      notes: 'תספורת מהירה ונקייה',
-    },
-  },
-];
+export const INITIAL_CUSTOMERS: Customer[] = [];
 
 export const INITIAL_SETTINGS: ShopSettings = {
   shopName: 'המספרה של דביר',
@@ -295,6 +231,14 @@ export function useShopStore() {
   // Load from localStorage on client mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const CURRENT_STORE_VERSION = 'v2_clean';
+      const storedVersion = localStorage.getItem('thecut_version');
+      if (storedVersion !== CURRENT_STORE_VERSION) {
+        localStorage.removeItem('thecut_customers');
+        localStorage.removeItem('thecut_appointments');
+        localStorage.setItem('thecut_version', CURRENT_STORE_VERSION);
+      }
+
       const storedBranches = localStorage.getItem('thecut_branches');
       const storedServices = localStorage.getItem('thecut_services');
       const storedBarbers = localStorage.getItem('thecut_barbers');

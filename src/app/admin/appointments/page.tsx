@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   format,
   addDays,
@@ -50,27 +50,53 @@ interface AdminAppointment {
   price: number;
 }
 
-const INITIAL_APPOINTMENTS: AdminAppointment[] = [
-  { id: '1', date: today, time: '09:30', customerName: 'יונתן שפירא', phone: '050-111-2233', service: 'תספורת גברים פרימיום', branchId: 'ariel', branchName: 'סניף אריאל', status: 'confirmed', price: 80 },
-  { id: '2', date: today, time: '10:30', customerName: 'עומר אלוני', phone: '052-333-4455', service: 'תספורת + פיסול זקן', branchId: 'ariel', branchName: 'סניף אריאל', status: 'confirmed', price: 120 },
-  { id: '3', date: today, time: '11:30', customerName: 'איתי ברקוביץ', phone: '054-555-6677', service: 'דירוג סקין פייד', branchId: 'ariel', branchName: 'סניף אריאל', status: 'confirmed', price: 80 },
-  { id: '4', date: today, time: '15:00', customerName: 'דניאל לוי', phone: '052-999-8877', service: 'תספורת + זקן', branchId: 'ariel', branchName: 'סניף אריאל', status: 'pending', price: 120 },
-  { id: '5', date: addDays(today, 1), time: '10:00', customerName: 'מתן כהן', phone: '053-777-8899', service: 'תספורת גברים', branchId: 'ariel', branchName: 'סניף אריאל', status: 'confirmed', price: 80 },
-  { id: '6', date: addDays(today, 1), time: '11:30', customerName: 'רועי קדוש', phone: '054-222-3344', service: 'טיפוח ופילינג', branchId: 'ariel', branchName: 'סניף אריאל', status: 'confirmed', price: 100 },
-  { id: '7', date: addDays(today, 3), time: '14:00', customerName: 'אורי גולדשטיין', phone: '052-111-9988', service: 'תספורת גברים', branchId: 'rehovot', branchName: 'סניף רחובות', status: 'confirmed', price: 80 },
-  { id: '8', date: addDays(today, 3), time: '16:00', customerName: 'נועם שמיר', phone: '050-888-7766', service: 'תספורת + זקן', branchId: 'rehovot', branchName: 'סניף רחובות', status: 'confirmed', price: 120 },
-  { id: '9', date: addDays(today, 4), time: '10:30', customerName: 'גיא אביב', phone: '054-444-1122', service: 'סקין פייד', branchId: 'rehovot', branchName: 'סניף רחובות', status: 'confirmed', price: 80 },
-];
+const INITIAL_APPOINTMENTS: AdminAppointment[] = [];
 
 export default function AppointmentsPage() {
   const { settings, branches } = useShopStore();
   const [appointments, setAppointments] = useState<AdminAppointment[]>(INITIAL_APPOINTMENTS);
+  const [isLoading, setIsLoading] = useState(true);
 
   // View Controls
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('week');
   const [currentDate, setCurrentDate] = useState<Date>(today);
   const [selectedBranchFilter, setSelectedBranchFilter] = useState<'all' | 'ariel' | 'rehovot'>('all');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('all');
+
+  useEffect(() => {
+    async function loadAppointments() {
+      try {
+        const res = await fetch('/api/appointments');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.appointments && Array.isArray(data.appointments)) {
+            const mapped = data.appointments.map((a: any) => {
+              const appDate = a.date ? new Date(a.date) : today;
+              return {
+                id: a.id,
+                date: appDate,
+                time: a.time || '09:00',
+                customerName: a.customerName || 'לקוח',
+                phone: a.customerPhone || a.phone || '',
+                service: a.serviceName || a.service || 'תספורת',
+                branchId: (a.branchId as 'ariel' | 'rehovot') || 'ariel',
+                branchName: a.branchName || (a.branchId === 'rehovot' ? 'סניף רחובות' : 'סניף אריאל'),
+                status: (a.status as any) || 'confirmed',
+                price: Number(a.servicePrice || a.price) || 80,
+              };
+            });
+            setAppointments(mapped);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading appointments:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadAppointments();
+  }, []);
 
   // Time navigation
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });

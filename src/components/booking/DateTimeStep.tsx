@@ -10,11 +10,8 @@ import { Clock, Sun, Sunset, Moon, Bell, Phone, Sparkles, CheckCircle2, MapPin }
 import type { Service, Barber, Branch } from '@/lib/types';
 import 'react-day-picker/dist/style.css';
 
-// Simulated booked slots (in production, synced with Firestore database)
-const MOCK_BOOKED: Record<string, string[]> = {
-  [format(addDays(new Date(), 1), 'yyyy-MM-dd')]: ['10:00', '11:00', '14:30', '17:00'],
-  [format(addDays(new Date(), 2), 'yyyy-MM-dd')]: ['09:00', '10:00', '11:00', '12:00', '13:00', '15:00', '16:00', '17:00', '18:00', '19:00'],
-};
+// Booked slots record
+const MOCK_BOOKED: Record<string, string[]> = {};
 
 export default function DateTimeStep({
   branch,

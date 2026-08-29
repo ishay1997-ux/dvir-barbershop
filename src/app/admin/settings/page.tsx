@@ -100,10 +100,7 @@ export default function SettingsPage() {
     is_active: true,
   });
 
-  const [blockedDates, setBlockedDates] = useState([
-    { id: '1', date: '2025-03-10', reason: 'מילואים – דביר' },
-    { id: '2', date: '2025-04-15', reason: 'חג פסח' },
-  ]);
+  const [blockedDates, setBlockedDates] = useState<{ id: string; date: string; reason: string }[]>([]);
   const [newBlock, setNewBlock] = useState({ date: '', reason: '' });
 
   const notifySave = () => {

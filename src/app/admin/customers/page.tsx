@@ -26,36 +26,21 @@ import type { Customer } from '@/lib/types';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 
-// Mock appointment history generator for customer
-const getCustomerHistory = (customer: Customer) => [
-  {
-    id: 'h1',
-    date: '15/02/2025',
-    time: '11:00',
-    service: 'תספורת גברים פרימיום',
-    branch: 'סניף אריאל (אוניברסיטה)',
-    price: 80,
-    status: 'בוצע',
-  },
-  {
-    id: 'h2',
-    date: '18/01/2025',
-    time: '14:30',
-    service: 'תספורת + פיסול זקן בתער',
-    branch: 'סניף רחובות (בית ההורים)',
-    price: 120,
-    status: 'בוצע',
-  },
-  {
-    id: 'h3',
-    date: '20/12/2024',
-    time: '10:00',
-    service: 'תספורת גברים פרימיום',
-    branch: 'סניף אריאל (אוניברסיטה)',
-    price: 80,
-    status: 'בוצע',
-  },
-];
+const getCustomerHistory = (customer: Customer) => {
+  if (!customer.lastVisit) return [];
+  const d = new Date(customer.lastVisit);
+  return [
+    {
+      id: 'h1',
+      date: isNaN(d.getTime()) ? customer.lastVisit : d.toLocaleDateString('he-IL'),
+      time: isNaN(d.getTime()) ? '' : d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }),
+      service: 'תספורת גברים',
+      branch: customer.favoriteBranchId === 'rehovot' ? 'סניף רחובות' : 'סניף אריאל',
+      price: 80,
+      status: 'הושלם',
+    },
+  ];
+};
 
 type ProcessedCustomer = Customer & {
   daysSinceVisit: number;
@@ -474,25 +459,31 @@ export default function CustomersPage() {
               </div>
 
               <div className="bg-white rounded-2xl border border-[#E5DDD0] overflow-hidden divide-y divide-[#F0EBE1]">
-                {getCustomerHistory(selectedCustomer).map((history) => (
-                  <div key={history.id} className="p-3.5 flex items-center justify-between text-xs">
-                    <div>
-                      <div className="font-bold text-[#1C1C1C]">{history.service}</div>
-                      <div className="text-[11px] text-[#9E9891] mt-0.5 flex items-center gap-2">
-                        <span>{history.date} בשעה {history.time}</span>
-                        <span>•</span>
-                        <span>{history.branch}</span>
+                {getCustomerHistory(selectedCustomer).length === 0 ? (
+                  <div className="p-6 text-center text-xs text-[#9E9891]">
+                    אין היסטוריית תורים קודמת שנשמרה ללקוח זה עדיין
+                  </div>
+                ) : (
+                  getCustomerHistory(selectedCustomer).map((history) => (
+                    <div key={history.id} className="p-3.5 flex items-center justify-between text-xs">
+                      <div>
+                        <div className="font-bold text-[#1C1C1C]">{history.service}</div>
+                        <div className="text-[11px] text-[#9E9891] mt-0.5 flex items-center gap-2">
+                          <span>{history.date} {history.time ? `בשעה ${history.time}` : ''}</span>
+                          <span>•</span>
+                          <span>{history.branch}</span>
+                        </div>
+                      </div>
+
+                      <div className="text-left">
+                        <div className="font-bold text-[#1C1C1C]">{formatPrice(history.price)}</div>
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                          {history.status}
+                        </span>
                       </div>
                     </div>
-
-                    <div className="text-left">
-                      <div className="font-bold text-[#1C1C1C]">{formatPrice(history.price)}</div>
-                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                        {history.status}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 
