@@ -319,33 +319,70 @@ export async function DELETE(request: Request) {
     }
 
     if (phone) {
-      const cleanPhone = phone.replace(/\D/g, '');
+      const rawDigits = phone.replace(/\D/g, '');
+      const last9Digits = rawDigits.slice(-9); // e.g. 587815070
+      const variations = Array.from(
+        new Set([
+          rawDigits,
+          phone.trim(),
+          last9Digits,
+          `0${last9Digits}`,
+          `972${last9Digits}`,
+          `+972${last9Digits}`,
+        ].filter(Boolean))
+      );
+
       if (isFirebaseConfigured && db) {
         try {
-          const q = query(
-            collection(db, 'appointments'),
-            where('cleanPhone', '==', cleanPhone)
-          );
-          const snapshot = await getDocs(q);
           const currentDb = db;
-          const deletePromises = snapshot.docs.map((docSnap) =>
-            deleteDoc(doc(currentDb, 'appointments', docSnap.id))
+          const allDocsSnapshot = await getDocs(collection(currentDb, 'appointments'));
+          const toDeleteIds: string[] = [];
+
+          allDocsSnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const p = String(data.customerPhone || data.phone || data.cleanPhone || '').replace(/\D/g, '');
+            if (
+              variations.includes(data.cleanPhone) ||
+              variations.includes(data.customerPhone) ||
+              variations.includes(data.phone) ||
+              (p && last9Digits && p.endsWith(last9Digits))
+            ) {
+              toDeleteIds.push(docSnap.id);
+            }
+          });
+
+          const deletePromises = toDeleteIds.map((id) =>
+            deleteDoc(doc(currentDb, 'appointments', id))
           );
+
+          // Also delete customer document from 'customers' collection
+          for (const v of variations) {
+            deletePromises.push(
+              deleteDoc(doc(currentDb, 'customers', v)).catch(() => {})
+            );
+          }
+
           await Promise.all(deletePromises);
         } catch (fbError) {
           console.error('Firebase bulk delete error:', fbError);
         }
       }
 
+      // Memory cleanup with full variation matching
       for (let i = memoryAppointments.length - 1; i >= 0; i--) {
-        if (memoryAppointments[i].customerPhone.replace(/\D/g, '') === cleanPhone) {
+        const memPhone = memoryAppointments[i].customerPhone.replace(/\D/g, '');
+        if (
+          variations.includes(memoryAppointments[i].customerPhone) ||
+          variations.includes(memPhone) ||
+          (memPhone && last9Digits && memPhone.endsWith(last9Digits))
+        ) {
           memoryAppointments.splice(i, 1);
         }
       }
 
       return NextResponse.json({
         success: true,
-        message: `כל התורים עבור מספר ${phone} נמחקו בהצלחה`,
+        message: `כל התורים והלקוח עבור מספר ${phone} נמחקו בהצלחה`,
       });
     }
 

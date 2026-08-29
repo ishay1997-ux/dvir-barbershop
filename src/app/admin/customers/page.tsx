@@ -60,31 +60,67 @@ export default function CustomersPage() {
   useEffect(() => {
     async function loadLiveCustomers() {
       try {
+        let deletedPhones: string[] = [];
+        if (typeof window !== 'undefined') {
+          const storedDeleted = localStorage.getItem('thecut_deleted_customers');
+          if (storedDeleted) {
+            try {
+              deletedPhones = JSON.parse(storedDeleted);
+            } catch {}
+          }
+        }
+
+        const isDeleted = (p: string) => {
+          const digits = String(p || '').replace(/\D/g, '');
+          const last9 = digits.slice(-9);
+          return (
+            deletedPhones.includes(digits) ||
+            deletedPhones.includes(last9) ||
+            (last9 && deletedPhones.some((dp) => dp.endsWith(last9) || last9.endsWith(dp)))
+          );
+        };
+
         const res = await fetch('/api/appointments');
         if (res.ok) {
           const data = await res.json();
           if (data.appointments && Array.isArray(data.appointments)) {
             const map = new Map<string, Customer>();
-            // Add existing local customers first
-            localCustomers.forEach((c) => map.set(c.phone.replace(/\D/g, ''), c));
-            // Merge newly booked appointments
-            data.appointments.forEach((apt: any) => {
-              const cleanP = String(apt.customerPhone || apt.phone || '').replace(/\D/g, '');
-              if (cleanP && !map.has(cleanP)) {
-                map.set(cleanP, {
-                  id: `c-live-${cleanP}`,
-                  name: apt.customerName || 'לקוח חדש',
-                  phone: apt.customerPhone || apt.phone || cleanP,
-                  lastVisit: apt.date || new Date().toISOString(),
-                  totalVisits: 1,
-                  totalSpent: Number(apt.servicePrice || apt.price || 80),
-                  favoriteBranchId: (apt.branchId as any) || 'ariel',
-                  status: 'active',
-                  preferences: { notes: `הוזמן תור ב-${apt.date} ${apt.time}` },
-                });
+
+            // Add existing local customers first (excluding deleted)
+            localCustomers.forEach((c) => {
+              const cleanP = c.phone.replace(/\D/g, '');
+              const last9 = cleanP.slice(-9);
+              if (!isDeleted(c.phone)) {
+                map.set(last9 || cleanP, c);
               }
             });
-            setLocalCustomers(Array.from(map.values()));
+
+            // Merge newly booked appointments (excluding deleted)
+            data.appointments.forEach((apt: any) => {
+              const phoneRaw = apt.customerPhone || apt.phone || apt.cleanPhone || '';
+              const cleanP = String(phoneRaw).replace(/\D/g, '');
+              const last9 = cleanP.slice(-9);
+
+              if (cleanP && !isDeleted(phoneRaw)) {
+                const key = last9 || cleanP;
+                if (!map.has(key)) {
+                  map.set(key, {
+                    id: `c-live-${key}`,
+                    name: apt.customerName || 'לקוח חדש',
+                    phone: apt.customerPhone || apt.phone || cleanP,
+                    lastVisit: apt.date || new Date().toISOString(),
+                    totalVisits: 1,
+                    totalSpent: Number(apt.servicePrice || apt.price || 80),
+                    favoriteBranchId: (apt.branchId as any) || 'ariel',
+                    status: 'active',
+                    preferences: { notes: `הוזמן תור ב-${apt.date} ${apt.time}` },
+                  });
+                }
+              }
+            });
+
+            const finalList = Array.from(map.values()).filter((c) => !isDeleted(c.phone));
+            setLocalCustomers(finalList);
           }
         }
       } catch (e) {
@@ -182,16 +218,46 @@ export default function CustomersPage() {
       type: 'danger',
       onConfirm: async () => {
         try {
-          // 1. Delete all appointments for this customer from Firestore
+          const rawDigits = customer.phone.replace(/\D/g, '');
+          const last9Digits = rawDigits.slice(-9);
+
+          // 1. Add to permanent deleted list in localStorage
+          if (typeof window !== 'undefined') {
+            let deletedList: string[] = [];
+            const stored = localStorage.getItem('thecut_deleted_customers');
+            if (stored) {
+              try {
+                deletedList = JSON.parse(stored);
+              } catch {}
+            }
+            if (rawDigits && !deletedList.includes(rawDigits)) deletedList.push(rawDigits);
+            if (last9Digits && !deletedList.includes(last9Digits)) deletedList.push(last9Digits);
+            localStorage.setItem('thecut_deleted_customers', JSON.stringify(deletedList));
+
+            // Clean localStorage appointment caches
+            const aptStored = localStorage.getItem('thecut_customer_appointments_v3');
+            if (aptStored) {
+              try {
+                const parsed = JSON.parse(aptStored);
+                const filteredApts = parsed.filter((a: any) => {
+                  const p = String(a.customerPhone || a.phone || '').replace(/\D/g, '');
+                  return !p.endsWith(last9Digits);
+                });
+                localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(filteredApts));
+              } catch {}
+            }
+          }
+
+          // 2. Delete all appointments and customer from Firestore API
           await fetch(`/api/appointments?phone=${encodeURIComponent(customer.phone)}`, {
             method: 'DELETE',
           });
 
-          // 2. Remove from local store / zustand
-          const cleanTargetPhone = customer.phone.replace(/\D/g, '');
-          const updated = localCustomers.filter(
-            (c) => c.phone.replace(/\D/g, '') !== cleanTargetPhone
-          );
+          // 3. Remove from local state
+          const updated = localCustomers.filter((c) => {
+            const p = c.phone.replace(/\D/g, '');
+            return !p.endsWith(last9Digits) && p !== rawDigits;
+          });
           setLocalCustomers(updated);
           saveCustomers(updated);
           setSelectedCustomer(null);
