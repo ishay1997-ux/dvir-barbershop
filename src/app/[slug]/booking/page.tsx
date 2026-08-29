@@ -16,6 +16,7 @@ import {
 import { formatPrice } from '@/lib/utils';
 import { format, addDays, startOfToday } from 'date-fns';
 import { he } from 'date-fns/locale';
+import { useToast } from '@/components/common/ToastProvider';
 
 interface BusinessProfile {
   id: string;
@@ -41,6 +42,7 @@ export default function DynamicBusinessBookingPage({
 }) {
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
+  const { success, error } = useToast();
 
   const [business, setBusiness] = useState<BusinessProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -88,7 +90,7 @@ export default function DynamicBusinessBookingPage({
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName.trim() || !customerPhone.trim()) {
-      alert('נא למלא שם וטלפון');
+      error('נא למלא שם ומספר טלפון');
       return;
     }
 
@@ -116,11 +118,12 @@ export default function DynamicBusinessBookingPage({
       if (res.ok) {
         setBookedAppointment(apptData);
         setIsConfirmed(true);
+        success('התור נקבע בהצלחה! 🎉', `נקבע ל-${bookedAppointment?.service || 'תספורת'} בשעה ${selectedTime}`);
       } else {
-        alert('שגיאה בשמירת התור');
+        error('שגיאה בשמירת התור', 'נסה שוב בעוד מספר רגעים');
       }
     } catch (err) {
-      alert('שגיאת תקשורת');
+      error('שגיאת תקשורת', 'בדוק את החיבור לרשת');
     } finally {
       setIsSubmitting(false);
     }

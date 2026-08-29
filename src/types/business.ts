@@ -1,0 +1,56 @@
+export interface ServiceItem {
+  id?: string;
+  name: string;
+  price: number;
+  duration: number; // in minutes
+  description?: string;
+  popular?: boolean;
+}
+
+export interface BranchItem {
+  id?: string;
+  name: string;
+  address: string;
+  phone?: string;
+  wazeLink?: string;
+  googleMapsLink?: string;
+  hours?: string;
+}
+
+export interface TestimonialItem {
+  id?: string;
+  name: string;
+  comment: string;
+  rating: number; // e.g. 5
+  timeAgo?: string;
+  serviceUsed?: string;
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface BusinessConfig {
+  id: string;
+  name: string;
+  slug: string;
+  ownerName: string;
+  phone: string;
+  city: string;
+  slogan: string;
+  announcement?: string;
+  themeColor?: string;
+  branchesCount: number;
+  status: 'active' | 'pending' | 'suspended';
+  plan: 'pro' | 'starter' | 'enterprise';
+  createdAt?: string;
+  heroImages?: string[];
+  galleryImages?: string[];
+  services: ServiceItem[];
+  branches: BranchItem[];
+  testimonials?: TestimonialItem[];
+  faqs?: FaqItem[];
+  instagramHandle?: string;
+  experienceYears?: number;
+}
