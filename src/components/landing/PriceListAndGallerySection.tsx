@@ -73,7 +73,7 @@ export default function PriceListAndGallerySection({
     ? (business.instagramHandle.startsWith('http') ? business.instagramHandle : `https://instagram.com/${business.instagramHandle.replace('@', '')}`)
     : 'https://instagram.com/dvir_barber';
 
-  const galleryPhotos = business?.galleryImages && business.galleryImages.length > 0
+  const galleryPhotos = Array.isArray(business?.galleryImages)
     ? business.galleryImages.map((imgUrl, i) => ({
         id: i + 1,
         title: `תספורת ועבודה #${i + 1} - ${bizName}`,

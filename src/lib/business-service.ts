@@ -1,6 +1,8 @@
 import { BusinessConfig } from '@/types/business';
 import { DVIR_FLAGSHIP_CONFIG } from '@/config/dvir.config';
 import { generateTailoredBusinessConfig } from '@/lib/archetypes';
+import { db, isFirebaseConfigured } from '@/lib/firebase';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 /**
  * Resolves a full, rich business configuration for any slug.
@@ -9,7 +11,28 @@ import { generateTailoredBusinessConfig } from '@/lib/archetypes';
 export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
   const cleanSlug = (slug || 'dvir').trim().toLowerCase();
 
-  // 1. Fetch from backend /api/admin/businesses (includes custom saved colors, pricing, branches)
+  // 1. Direct Firestore fetch on Client (Zero-delay, bypasses serverless cache/network blips)
+  if (typeof window !== 'undefined' && isFirebaseConfigured && db) {
+    try {
+      // Check direct document ID (biz-dvir or biz-[slug])
+      const directDocRef = doc(db, 'businesses', `biz-${cleanSlug}`);
+      const directSnap = await getDoc(directDocRef);
+      if (directSnap.exists()) {
+        return mergeWithDefaults(directSnap.data() as Partial<BusinessConfig>, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
+      }
+
+      // Query by slug field
+      const q = query(collection(db, 'businesses'), where('slug', '==', cleanSlug));
+      const qSnap = await getDocs(q);
+      if (!qSnap.empty) {
+        return mergeWithDefaults(qSnap.docs[0].data() as Partial<BusinessConfig>, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
+      }
+    } catch (dbErr) {
+      console.warn('Direct Firestore client read fallback:', dbErr);
+    }
+  }
+
+  // 2. Fetch from backend /api/admin/businesses
   try {
     const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(cleanSlug)}`, {
       cache: 'no-store',
@@ -21,10 +44,10 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
       }
     }
   } catch (err) {
-    console.error('Failed to fetch business by slug:', err);
+    console.error('Failed to fetch business by slug via API:', err);
   }
 
-  // 2. Default fallbacks if network fails
+  // 3. Default fallbacks if network fails
   if (cleanSlug === 'dvir' || cleanSlug === 'thecut') {
     return DVIR_FLAGSHIP_CONFIG;
   }
@@ -60,7 +83,7 @@ function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: Business
     phone: raw.phone || base.phone,
     city: raw.city || base.city,
     slogan: raw.slogan || base.slogan,
-    announcement: raw.announcement || base.announcement,
+    announcement: raw.announcement !== undefined ? raw.announcement : base.announcement,
     themeColor: raw.themeColor || base.themeColor,
     branchesCount: raw.branches?.length || raw.branchesCount || base.branchesCount,
     status: (raw.status as any) || 'active',
@@ -73,9 +96,9 @@ function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: Business
     wazeUrl: raw.wazeUrl || base.wazeUrl,
     whatsappNumber: raw.whatsappNumber || base.whatsappNumber,
     websiteUrl: raw.websiteUrl || base.websiteUrl,
-    avatarUrl: raw.avatarUrl || base.avatarUrl,
-    galleryImages: raw.galleryImages && raw.galleryImages.length > 0 ? raw.galleryImages : base.galleryImages,
-    heroImages: raw.heroImages && raw.heroImages.length > 0 ? raw.heroImages : base.heroImages,
+    avatarUrl: raw.avatarUrl !== undefined ? raw.avatarUrl : base.avatarUrl,
+    galleryImages: Array.isArray(raw.galleryImages) ? raw.galleryImages : base.galleryImages,
+    heroImages: Array.isArray(raw.heroImages) ? raw.heroImages : base.heroImages,
     services: raw.services && raw.services.length > 0 ? raw.services : base.services,
     branches: raw.branches && raw.branches.length > 0 ? raw.branches : base.branches,
     testimonials: raw.testimonials && raw.testimonials.length > 0 ? raw.testimonials : base.testimonials,
