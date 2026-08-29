@@ -28,6 +28,7 @@ import {
   BookOpen,
   Move,
   Delete,
+  ArrowLeftRight,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -456,6 +457,7 @@ const KEYBOARD_LAYOUTS = {
 
 export default function AccessibilityWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [dockSide, setDockSide] = useState<'left' | 'right'>('left');
   const [state, setState] = useState<A11yState>(defaultState);
   const [isClient, setIsClient] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -797,7 +799,7 @@ export default function AccessibilityWidget() {
       id: 'keyboardNav',
       title: t.keyboardNavTitle,
       desc: t.keyboardNavDesc,
-      icon: <Keyboard className="w-7 h-7 text-[#085B7A]" />,
+      icon: <Keyboard className="w-6 h-6 text-[#373C44]" />,
       active: state.keyboardNav,
       onClick: () => setState((prev) => ({ ...prev, keyboardNav: !prev.keyboardNav })),
     },
@@ -805,7 +807,7 @@ export default function AccessibilityWidget() {
       id: 'speech',
       title: isSpeaking ? t.speechStopTitle : t.speechTitle,
       desc: t.speechDesc,
-      icon: isSpeaking ? <VolumeX className="w-7 h-7 text-red-500 animate-pulse" /> : <Volume2 className="w-7 h-7 text-[#085B7A]" />,
+      icon: isSpeaking ? <VolumeX className="w-6 h-6 text-red-500 animate-pulse" /> : <Volume2 className="w-6 h-6 text-[#373C44]" />,
       active: isSpeaking,
       onClick: handleToggleSpeech,
     },
@@ -813,7 +815,7 @@ export default function AccessibilityWidget() {
       id: 'contrastDark',
       title: t.contrastDarkTitle,
       desc: t.contrastDarkDesc,
-      icon: <Moon className="w-7 h-7 text-[#085B7A]" />,
+      icon: <Moon className="w-6 h-6 text-[#373C44]" />,
       active: state.contrastMode === 'dark',
       onClick: () => setState((prev) => ({ ...prev, contrastMode: prev.contrastMode === 'dark' ? 'normal' : 'dark' })),
     },
@@ -821,7 +823,7 @@ export default function AccessibilityWidget() {
       id: 'contrastLight',
       title: t.contrastLightTitle,
       desc: t.contrastLightDesc,
-      icon: <Sun className="w-7 h-7 text-[#085B7A]" />,
+      icon: <Sun className="w-6 h-6 text-[#373C44]" />,
       active: state.contrastMode === 'light',
       onClick: () => setState((prev) => ({ ...prev, contrastMode: prev.contrastMode === 'light' ? 'normal' : 'light' })),
     },
@@ -829,7 +831,7 @@ export default function AccessibilityWidget() {
       id: 'contrastInvert',
       title: t.contrastInvertTitle,
       desc: t.contrastInvertDesc,
-      icon: <Contrast className="w-7 h-7 text-[#085B7A]" />,
+      icon: <Contrast className="w-6 h-6 text-[#373C44]" />,
       active: state.contrastMode === 'invert',
       onClick: () => setState((prev) => ({ ...prev, contrastMode: prev.contrastMode === 'invert' ? 'normal' : 'invert' })),
     },
@@ -837,7 +839,7 @@ export default function AccessibilityWidget() {
       id: 'grayscale',
       title: t.grayscaleTitle,
       desc: t.grayscaleDesc,
-      icon: <Eye className="w-7 h-7 text-[#085B7A]" />,
+      icon: <Eye className="w-6 h-6 text-[#373C44]" />,
       active: state.contrastMode === 'grayscale',
       onClick: () => setState((prev) => ({ ...prev, contrastMode: prev.contrastMode === 'grayscale' ? 'normal' : 'grayscale' })),
     },
@@ -845,7 +847,7 @@ export default function AccessibilityWidget() {
       id: 'screenZoom',
       title: t.screenZoomTitle,
       desc: t.screenZoomDesc,
-      icon: <ZoomIn className="w-7 h-7 text-[#085B7A]" />,
+      icon: <ZoomIn className="w-6 h-6 text-[#373C44]" />,
       active: state.screenZoom,
       onClick: () => setState((prev) => ({ ...prev, screenZoom: !prev.screenZoom })),
     },
@@ -853,7 +855,7 @@ export default function AccessibilityWidget() {
       id: 'readableFont',
       title: t.readableFontTitle,
       desc: t.readableFontDesc,
-      icon: <Type className="w-7 h-7 text-[#085B7A]" />,
+      icon: <Type className="w-6 h-6 text-[#373C44]" />,
       active: state.readableFont,
       onClick: () => setState((prev) => ({ ...prev, readableFont: !prev.readableFont })),
     },
@@ -861,7 +863,7 @@ export default function AccessibilityWidget() {
       id: 'imageAlt',
       title: t.imageAltTitle,
       desc: t.imageAltDesc,
-      icon: <ImageIcon className="w-7 h-7 text-[#085B7A]" />,
+      icon: <ImageIcon className="w-6 h-6 text-[#373C44]" />,
       active: state.imageAltTooltips,
       onClick: () => setState((prev) => ({ ...prev, imageAltTooltips: !prev.imageAltTooltips })),
     },
@@ -869,7 +871,7 @@ export default function AccessibilityWidget() {
       id: 'highlightLinks',
       title: t.highlightLinksTitle,
       desc: t.highlightLinksDesc,
-      icon: <LinkIcon className="w-7 h-7 text-[#085B7A]" />,
+      icon: <LinkIcon className="w-6 h-6 text-[#373C44]" />,
       active: state.highlightLinks,
       onClick: () => setState((prev) => ({ ...prev, highlightLinks: !prev.highlightLinks })),
     },
@@ -877,7 +879,7 @@ export default function AccessibilityWidget() {
       id: 'highlightHeadings',
       title: t.highlightHeadingsTitle,
       desc: t.highlightHeadingsDesc,
-      icon: <Heading className="w-7 h-7 text-[#085B7A]" />,
+      icon: <Heading className="w-6 h-6 text-[#373C44]" />,
       active: state.highlightHeadings,
       onClick: () => setState((prev) => ({ ...prev, highlightHeadings: !prev.highlightHeadings })),
     },
@@ -885,7 +887,7 @@ export default function AccessibilityWidget() {
       id: 'readingMode',
       title: t.readingModeTitle,
       desc: t.readingModeDesc,
-      icon: <BookOpen className="w-7 h-7 text-[#085B7A]" />,
+      icon: <BookOpen className="w-6 h-6 text-[#373C44]" />,
       active: showReaderModal,
       onClick: () => setShowReaderModal(true),
     },
@@ -893,7 +895,7 @@ export default function AccessibilityWidget() {
       id: 'contentScale',
       title: t.contentScaleTitle,
       desc: t.contentScaleDesc,
-      icon: <Search className="w-7 h-7 text-[#085B7A]" />,
+      icon: <Search className="w-6 h-6 text-[#373C44]" />,
       active: state.fontScaleLevel > 0,
       onClick: () => setState((prev) => ({
         ...prev,
@@ -906,13 +908,13 @@ export default function AccessibilityWidget() {
       title: t.virtualKeyboardTitle,
       desc: t.virtualKeyboardDesc,
       icon: (
-        <div className="w-7 h-7 border-2 border-[#085B7A] rounded-md flex flex-wrap gap-0.5 p-0.5 items-center justify-center">
-          <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-          <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-          <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-          <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-          <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-          <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
+        <div className="w-6 h-6 border-2 border-[#373C44] rounded-md flex flex-wrap gap-0.5 p-0.5 items-center justify-center">
+          <span className="w-1 h-1 bg-[#373C44] rounded-[1px]" />
+          <span className="w-1 h-1 bg-[#373C44] rounded-[1px]" />
+          <span className="w-1 h-1 bg-[#373C44] rounded-[1px]" />
+          <span className="w-1 h-1 bg-[#373C44] rounded-[1px]" />
+          <span className="w-1 h-1 bg-[#373C44] rounded-[1px]" />
+          <span className="w-1 h-1 bg-[#373C44] rounded-[1px]" />
         </div>
       ),
       active: state.virtualKeyboard,
@@ -928,7 +930,9 @@ export default function AccessibilityWidget() {
       {!isHiddenTemporarily && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 left-6 z-[9999] h-12 w-12 hover:w-auto bg-[#085B7A] text-white hover:bg-[#064961] shadow-2xl border-2 border-white/40 rounded-full hover:rounded-2xl flex items-center justify-center hover:justify-start gap-2.5 p-2 hover:px-3.5 transition-all duration-300 transform hover:scale-105 active:scale-95 a11y-ignore group cursor-pointer overflow-hidden"
+          className={`fixed bottom-6 ${
+            dockSide === 'right' ? 'right-6' : 'left-6'
+          } z-[9999] h-12 w-12 hover:w-auto bg-[#373C44] text-white hover:bg-[#2C3038] shadow-2xl border-2 border-white/40 rounded-full hover:rounded-2xl flex items-center justify-center hover:justify-start gap-2.5 p-2 hover:px-3.5 transition-all duration-300 transform hover:scale-105 active:scale-95 a11y-ignore group cursor-pointer overflow-hidden`}
           aria-label={`${t.title} (Alt + A)`}
           aria-expanded={isOpen}
           id="a11y-trigger-btn"
@@ -968,24 +972,32 @@ export default function AccessibilityWidget() {
       {/* 2. Main Accessibility Drawer Menu */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-start p-0 sm:p-4 bg-black/60 backdrop-blur-xs a11y-ignore">
+          <div
+            className={`fixed inset-0 z-[99999] flex items-stretch ${
+              dockSide === 'right' ? 'justify-end' : 'justify-start'
+            } p-0 sm:p-4 bg-black/60 backdrop-blur-xs a11y-ignore`}
+            dir="ltr"
+          >
             {/* Click outside backdrop to close */}
             <div className="absolute inset-0" onClick={() => setIsOpen(false)} aria-hidden="true" />
 
             <motion.div
-              initial={{ opacity: 0, y: 50, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.96 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="relative w-full sm:w-[480px] max-h-[94vh] overflow-y-auto bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#D5E2E8] text-[#1C1C1C] flex flex-col z-10 font-sans"
+              initial={{ opacity: 0, x: dockSide === 'right' ? 80 : -80, scale: 0.98 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: dockSide === 'right' ? 80 : -80, scale: 0.98 }}
+              transition={{ duration: 0.24, ease: 'easeOut' }}
+              className="relative w-full sm:w-[440px] h-full sm:h-auto max-h-full sm:max-h-[96vh] overflow-y-auto bg-white rounded-none sm:rounded-3xl shadow-2xl border border-slate-300 text-[#1C1C1C] flex flex-col z-10 font-sans"
               role="dialog"
               aria-modal="true"
               aria-labelledby="a11y-main-title"
               dir={currentDirection}
             >
-              {/* Top Header Frame */}
-              <div className="bg-[#085B7A] text-white p-4 pt-4 rounded-t-3xl sm:rounded-t-3xl relative">
-                <div className="flex items-center justify-between gap-3">
+              {/* ============================================================ */}
+              {/* 1. TOP HEADER FRAME (Charcoal Slate Matching Reference)      */}
+              {/* ============================================================ */}
+              <div className="bg-[#373C44] text-white p-4 pt-3.5 rounded-none sm:rounded-t-3xl relative shadow-md">
+                {/* Top Controls Row (Close X, Language Dropdown, Actions) */}
+                <div className="flex items-center justify-between gap-2.5">
                   {/* Close button X */}
                   <button
                     onClick={() => setIsOpen(false)}
@@ -996,22 +1008,22 @@ export default function AccessibilityWidget() {
                   </button>
 
                   {/* Language Selector Dropdown */}
-                  <div className="relative flex-1 max-w-[200px]">
+                  <div className="relative flex-1 max-w-[190px]">
                     <button
                       onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-                      className="w-full flex items-center justify-between bg-white/15 hover:bg-white/25 border border-white/30 rounded-xl px-3 py-1.5 text-xs font-bold text-white transition-colors cursor-pointer"
+                      className="w-full flex items-center justify-between bg-white/15 hover:bg-white/25 border border-white/25 rounded-xl px-3 py-1.5 text-xs font-bold text-white transition-colors cursor-pointer"
                       aria-expanded={isLanguageOpen}
                       aria-label={t.selectLanguage}
                     >
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-center gap-1.5 truncate">
                         <span>{LANGUAGES.find((l) => l.code === state.language)?.flag}</span>
                         <span>{LANGUAGES.find((l) => l.code === state.language)?.name}</span>
                       </span>
-                      <ChevronDown className="w-3.5 h-3.5" />
+                      <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" />
                     </button>
 
                     {isLanguageOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white text-[#1C1C1C] rounded-xl shadow-xl border border-[#D5E2E8] overflow-hidden z-30 py-1">
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white text-[#1C1C1C] rounded-xl shadow-xl border border-slate-200 overflow-hidden z-30 py-1">
                         {LANGUAGES.map((lang) => (
                           <button
                             key={lang.code}
@@ -1019,45 +1031,58 @@ export default function AccessibilityWidget() {
                               setState((prev) => ({ ...prev, language: lang.code as A11yState['language'] }));
                               setIsLanguageOpen(false);
                             }}
-                            className={`w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold hover:bg-[#F0F6F8] transition-colors cursor-pointer ${
-                              state.language === lang.code ? 'text-[#085B7A] bg-[#E5EFF2]' : 'text-[#3D3D3D]'
+                            className={`w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold hover:bg-slate-100 transition-colors cursor-pointer ${
+                              state.language === lang.code ? 'text-[#373C44] bg-slate-100 font-black' : 'text-[#3D3D3D]'
                             }`}
                           >
                             <span>{lang.flag}</span>
                             <span>{lang.name}</span>
-                            {state.language === lang.code && <Check className={`w-3.5 h-3.5 ${isRtl ? 'mr-auto' : 'ml-auto'} text-[#085B7A]`} />}
+                            {state.language === lang.code && <Check className={`w-3.5 h-3.5 ${isRtl ? 'mr-auto' : 'ml-auto'} text-[#373C44]`} />}
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
 
-                  {/* Hide widget button */}
-                  <button
-                    onClick={() => {
-                      setIsHiddenTemporarily(true);
-                      setIsOpen(false);
-                    }}
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white cursor-pointer"
-                    title={t.hideWidget}
-                    aria-label={t.hideWidget}
-                  >
-                    <EyeOff className="w-4 h-4" />
-                  </button>
+                  {/* Right Actions: Hide Widget & Toggle Left/Right Side */}
+                  <div className="flex items-center gap-1.5">
+                    {/* Hide button */}
+                    <button
+                      onClick={() => {
+                        setIsHiddenTemporarily(true);
+                        setIsOpen(false);
+                      }}
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white cursor-pointer"
+                      title={t.hideWidget}
+                      aria-label={t.hideWidget}
+                    >
+                      <EyeOff className="w-4 h-4" />
+                    </button>
+
+                    {/* Switch Left / Right Dock Side */}
+                    <button
+                      onClick={() => setDockSide((prev) => (prev === 'left' ? 'right' : 'left'))}
+                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white cursor-pointer"
+                      title="החלף צד תפריט (שמאל / ימין)"
+                      aria-label="החלף צד תפריט"
+                    >
+                      <ArrowLeftRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Banner title */}
-                <div className="text-center mt-3 pb-1">
-                  <h2 id="a11y-main-title" className="text-xl font-black tracking-wide text-white">
+                {/* Centered Outline Pill: "נגישות" */}
+                <div className="flex justify-center mt-3 pb-1">
+                  <div className="px-8 py-1 rounded-full border border-white/70 text-white font-black text-xs tracking-wider shadow-xs">
                     {t.title}
-                  </h2>
+                  </div>
                 </div>
               </div>
 
               {/* Scrollable Content Body */}
-              <div className="p-4 space-y-4 overflow-y-auto relative">
+              <div className="p-3.5 sm:p-4 space-y-4 overflow-y-auto relative">
                 {/* Interactive Hover Tooltip Box */}
-                <div className="min-h-[54px] flex items-center justify-center">
+                <div className="min-h-[50px] flex items-center justify-center">
                   <AnimatePresence mode="wait">
                     {hoveredTile ? (
                       <motion.div
@@ -1066,7 +1091,7 @@ export default function AccessibilityWidget() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}
                         transition={{ duration: 0.15 }}
-                        className="w-full bg-[#475569] text-white p-2.5 px-3.5 rounded-xl shadow-lg text-center text-xs font-semibold leading-relaxed border border-slate-500/40"
+                        className="w-full bg-[#373C44] text-white p-2.5 px-3.5 rounded-xl shadow-lg text-center text-xs font-semibold leading-relaxed border border-white/20"
                       >
                         <strong className="text-amber-300 ml-1">{hoveredTile.title}:</strong>
                         <span>{hoveredTile.desc}</span>
@@ -1080,9 +1105,9 @@ export default function AccessibilityWidget() {
                 </div>
 
                 {/* ============================================================ */}
-                {/* 1. 14 CORE FEATURES GRID                                     */}
+                {/* 2. 14 CORE FEATURES GRID (Square Tiles with Corner Check)     */}
                 {/* ============================================================ */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                   {A11Y_TILES.map((tile) => (
                     <button
                       key={tile.id}
@@ -1091,47 +1116,55 @@ export default function AccessibilityWidget() {
                       onMouseLeave={() => setHoveredTile(null)}
                       onFocus={() => setHoveredTile(tile)}
                       onBlur={() => setHoveredTile(null)}
-                      className={`p-3 rounded-2xl border-2 flex flex-col items-center justify-center text-center gap-1.5 transition-all active:scale-95 cursor-pointer relative group ${
+                      className={`aspect-square p-2 rounded-xl border flex flex-col items-center justify-center text-center gap-1 transition-all active:scale-95 cursor-pointer relative group ${
                         tile.active
-                          ? 'border-[#085B7A] bg-[#E5EFF2] text-[#085B7A] ring-2 ring-[#085B7A]/20 shadow-xs'
-                          : 'border-[#D5E2E8] bg-white hover:border-[#085B7A]/60 hover:bg-[#F8FBFC] text-[#085B7A]'
+                          ? 'border-2 border-[#373C44] bg-slate-100/80 text-[#373C44] shadow-xs'
+                          : 'border-slate-200 bg-white hover:border-[#373C44]/50 hover:bg-slate-50 text-[#373C44]'
                       }`}
                       aria-pressed={tile.active}
                       title={tile.title}
                     >
-                      <div className="flex items-center justify-center h-8">
+                      {/* Top-Right Checkmark when active */}
+                      {tile.active && (
+                        <div
+                          className={`absolute top-1.5 ${
+                            isRtl ? 'right-1.5' : 'left-1.5'
+                          } text-xs font-black text-[#373C44] leading-none`}
+                        >
+                          ✓
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-center h-7 text-[#373C44]">
                         {tile.icon}
                       </div>
-                      <span className="font-bold text-[11px] sm:text-xs leading-tight text-[#085B7A]">
+                      <span className="font-bold text-[10.5px] sm:text-xs leading-tight text-[#2C2C2C] line-clamp-2">
                         {tile.title}
                       </span>
-                      {tile.active && (
-                        <div className={`absolute top-1.5 ${isRtl ? 'right-1.5' : 'left-1.5'} w-2 h-2 rounded-full bg-emerald-500`} />
-                      )}
                     </button>
                   ))}
                 </div>
 
                 {/* ============================================================ */}
-                {/* 2. SECTION: COLOR ADJUSTMENTS (התאמת צבעים)                 */}
+                {/* 3. SECTION: COLOR ADJUSTMENTS (התאמת צבעים)                 */}
                 {/* ============================================================ */}
-                <div className="bg-white rounded-2xl border-2 border-[#D5E2E8] p-4">
+                <div className="bg-white rounded-2xl border border-slate-200 p-3.5">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <h3 className="font-black text-sm text-[#085B7A]">{t.colorSectionTitle}</h3>
-                      <p className="text-[11px] text-[#6B6560]">{t.colorSectionDesc}</p>
+                      <h3 className="font-black text-xs sm:text-sm text-[#373C44]">{t.colorSectionTitle}</h3>
+                      <p className="text-[10.5px] text-[#6B6560]">{t.colorSectionDesc}</p>
                     </div>
-                    <Sliders className="w-4 h-4 text-[#085B7A]" />
+                    <Sliders className="w-4 h-4 text-[#373C44]" />
                   </div>
 
                   {/* Target Buttons */}
-                  <div className="grid grid-cols-3 gap-2 mb-3">
+                  <div className="grid grid-cols-3 gap-1.5 mb-2.5">
                     <button
                       onClick={() => setState((prev) => ({ ...prev, colorTarget: 'background' }))}
                       className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         state.colorTarget === 'background'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-[#D5E2E8] hover:border-[#085B7A]'
+                          ? 'bg-[#373C44] text-white border-[#373C44] shadow-xs'
+                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#373C44]'
                       }`}
                     >
                       {t.targetBackground}
@@ -1140,8 +1173,8 @@ export default function AccessibilityWidget() {
                       onClick={() => setState((prev) => ({ ...prev, colorTarget: 'headings' }))}
                       className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         state.colorTarget === 'headings'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-[#D5E2E8] hover:border-[#085B7A]'
+                          ? 'bg-[#373C44] text-white border-[#373C44] shadow-xs'
+                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#373C44]'
                       }`}
                     >
                       {t.targetHeadings}
@@ -1150,8 +1183,8 @@ export default function AccessibilityWidget() {
                       onClick={() => setState((prev) => ({ ...prev, colorTarget: 'text' }))}
                       className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         state.colorTarget === 'text'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-[#D5E2E8] hover:border-[#085B7A]'
+                          ? 'bg-[#373C44] text-white border-[#373C44] shadow-xs'
+                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#373C44]'
                       }`}
                     >
                       {t.targetText}
@@ -1162,7 +1195,7 @@ export default function AccessibilityWidget() {
                   <div
                     ref={colorSliderRef}
                     onClick={handleColorSpectrumClick}
-                    className="relative h-6 rounded-full cursor-pointer shadow-inner mb-3 border border-black/10"
+                    className="relative h-5 rounded-full cursor-pointer shadow-inner mb-2.5 border border-black/10"
                     style={{
                       background:
                         'linear-gradient(to right, #000 0%, #fff 15%, #ff0000 25%, #ffff00 40%, #00ff00 55%, #00ffff 70%, #0000ff 85%, #ff00ff 100%)',
@@ -1171,7 +1204,7 @@ export default function AccessibilityWidget() {
                   >
                     {currentTargetHue !== null && (
                       <div
-                        className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border-2 border-[#085B7A] shadow-md -ml-3 pointer-events-none"
+                        className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white border-2 border-[#373C44] shadow-md -ml-2.5 pointer-events-none"
                         style={{ left: `${(currentTargetHue / 360) * 100}%` }}
                       />
                     )}
@@ -1181,14 +1214,14 @@ export default function AccessibilityWidget() {
                   <div className="flex items-center justify-between pt-1">
                     <button
                       onClick={handleResetColors}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#085B7A] hover:underline cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#373C44] hover:underline cursor-pointer"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       {t.resetColors}
                     </button>
 
                     {currentTargetHue !== null && (
-                      <span className="text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">
                         {t.activeCustomColor}
                       </span>
                     )}
@@ -1196,25 +1229,25 @@ export default function AccessibilityWidget() {
                 </div>
 
                 {/* ============================================================ */}
-                {/* 3. SECTION: FONT ADJUSTMENTS (התאמות גופן וריווח)           */}
+                {/* 4. SECTION: FONT ADJUSTMENTS (התאמות גופן וריווח)           */}
                 {/* ============================================================ */}
-                <div className="bg-white rounded-2xl border-2 border-[#D5E2E8] p-4">
+                <div className="bg-white rounded-2xl border border-slate-200 p-3.5">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <h3 className="font-black text-sm text-[#085B7A]">{t.fontSectionTitle}</h3>
-                      <p className="text-[11px] text-[#6B6560]">{t.fontSectionDesc}</p>
+                      <h3 className="font-black text-xs sm:text-sm text-[#373C44]">{t.fontSectionTitle}</h3>
+                      <p className="text-[10.5px] text-[#6B6560]">{t.fontSectionDesc}</p>
                     </div>
-                    <Type className="w-4 h-4 text-[#085B7A]" />
+                    <Type className="w-4 h-4 text-[#373C44]" />
                   </div>
 
                   {/* Mode Buttons */}
-                  <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="grid grid-cols-2 gap-1.5 mb-2.5">
                     <button
                       onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'size' }))}
                       className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         state.fontAdjustmentMode === 'size'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-[#D5E2E8] hover:border-[#085B7A]'
+                          ? 'bg-[#373C44] text-white border-[#373C44] shadow-xs'
+                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#373C44]'
                       }`}
                     >
                       {t.fontSize} {state.fontScaleLevel > 0 && `(+${state.fontScaleLevel * 10}%)`}
@@ -1223,8 +1256,8 @@ export default function AccessibilityWidget() {
                       onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'word' }))}
                       className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         state.fontAdjustmentMode === 'word'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-[#D5E2E8] hover:border-[#085B7A]'
+                          ? 'bg-[#373C44] text-white border-[#373C44] shadow-xs'
+                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#373C44]'
                       }`}
                     >
                       {t.wordSpacing}
@@ -1233,8 +1266,8 @@ export default function AccessibilityWidget() {
                       onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'line' }))}
                       className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         state.fontAdjustmentMode === 'line'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-[#D5E2E8] hover:border-[#085B7A]'
+                          ? 'bg-[#373C44] text-white border-[#373C44] shadow-xs'
+                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#373C44]'
                       }`}
                     >
                       {t.lineHeight}
@@ -1243,8 +1276,8 @@ export default function AccessibilityWidget() {
                       onClick={() => setState((prev) => ({ ...prev, fontAdjustmentMode: 'letter' }))}
                       className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                         state.fontAdjustmentMode === 'letter'
-                          ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-                          : 'bg-white text-[#3D3D3D] border-[#D5E2E8] hover:border-[#085B7A]'
+                          ? 'bg-[#373C44] text-white border-[#373C44] shadow-xs'
+                          : 'bg-white text-[#3D3D3D] border-slate-200 hover:border-[#373C44]'
                       }`}
                     >
                       {t.letterSpacing}
@@ -1252,11 +1285,11 @@ export default function AccessibilityWidget() {
                   </div>
 
                   {/* Stepper Control: [-] === [+] */}
-                  <div className="flex items-center gap-3 bg-[#F0F6F8] rounded-2xl p-2 border border-[#D5E2E8]">
+                  <div className="flex items-center gap-3 bg-slate-50 rounded-2xl p-2 border border-slate-200">
                     <button
                       onClick={handleStepperDecrease}
                       disabled={currentLevel <= 0}
-                      className="w-10 h-10 rounded-xl bg-[#085B7A] text-white flex items-center justify-center font-black text-lg disabled:opacity-40 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer"
+                      className="w-9 h-9 rounded-xl bg-[#373C44] text-white flex items-center justify-center font-black text-base disabled:opacity-40 hover:bg-[#2C3437] active:scale-95 transition-all cursor-pointer"
                       aria-label="Decrease"
                     >
                       -
@@ -1264,13 +1297,13 @@ export default function AccessibilityWidget() {
 
                     {/* Level Track Bar */}
                     <div className="flex-1 px-2">
-                      <div className="w-full bg-[#D5E2E8] h-2.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                         <div
-                          className="bg-[#085B7A] h-full transition-all duration-200"
+                          className="bg-[#373C44] h-full transition-all duration-200"
                           style={{ width: `${(currentLevel / maxLevel) * 100}%` }}
                         />
                       </div>
-                      <div className="text-center text-[10px] font-bold text-[#085B7A] mt-1">
+                      <div className="text-center text-[10px] font-bold text-[#373C44] mt-1">
                         {t.levelOf(currentLevel, maxLevel)}
                       </div>
                     </div>
@@ -1278,7 +1311,7 @@ export default function AccessibilityWidget() {
                     <button
                       onClick={handleStepperIncrease}
                       disabled={currentLevel >= maxLevel}
-                      className="w-10 h-10 rounded-xl bg-[#085B7A] text-white flex items-center justify-center font-black text-lg disabled:opacity-40 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer"
+                      className="w-9 h-9 rounded-xl bg-[#373C44] text-white flex items-center justify-center font-black text-base disabled:opacity-40 hover:bg-[#2C3437] active:scale-95 transition-all cursor-pointer"
                       aria-label="Increase"
                     >
                       +
@@ -1287,15 +1320,15 @@ export default function AccessibilityWidget() {
                 </div>
 
                 {/* ============================================================ */}
-                {/* 4. EXTRA UTILITIES (Big cursor & Stop animations)           */}
+                {/* 5. EXTRA UTILITIES (Big cursor & Stop animations)           */}
                 {/* ============================================================ */}
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setState((prev) => ({ ...prev, bigCursor: !prev.bigCursor }))}
-                    className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    className={`p-2 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       state.bigCursor
-                        ? 'border-[#085B7A] bg-[#E5EFF2] text-[#085B7A]'
-                        : 'border-[#D5E2E8] bg-white text-[#3D3D3D] hover:border-[#085B7A]'
+                        ? 'border-[#373C44] bg-slate-100 text-[#373C44] font-black'
+                        : 'border-slate-200 bg-white text-[#3D3D3D] hover:border-[#373C44]'
                     }`}
                     aria-pressed={state.bigCursor}
                   >
@@ -1305,10 +1338,10 @@ export default function AccessibilityWidget() {
 
                   <button
                     onClick={() => setState((prev) => ({ ...prev, stopAnimations: !prev.stopAnimations }))}
-                    className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    className={`p-2 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       state.stopAnimations
-                        ? 'border-[#085B7A] bg-[#E5EFF2] text-[#085B7A]'
-                        : 'border-[#D5E2E8] bg-white text-[#3D3D3D] hover:border-[#085B7A]'
+                        ? 'border-[#373C44] bg-slate-100 text-[#373C44] font-black'
+                        : 'border-slate-200 bg-white text-[#3D3D3D] hover:border-[#373C44]'
                     }`}
                     aria-pressed={state.stopAnimations}
                   >
@@ -1318,12 +1351,15 @@ export default function AccessibilityWidget() {
                 </div>
               </div>
 
-              {/* Bottom Footer Actions */}
-              <div className="bg-[#085B7A] text-white p-4 space-y-2 mt-auto">
+              {/* ============================================================ */}
+              {/* 6. BOTTOM FOOTER (Dark Slate Matching Reference Design)     */}
+              {/* ============================================================ */}
+              <div className="bg-[#373C44] text-white p-3.5 space-y-2 mt-auto rounded-none sm:rounded-b-3xl">
                 <button
                   onClick={handleResetAll}
-                  className="w-full py-2.5 rounded-xl bg-white text-[#085B7A] hover:bg-white/90 text-xs font-black transition-colors shadow-xs cursor-pointer"
+                  className="w-full py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/30 text-white text-xs font-black transition-colors shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
                 >
+                  <RotateCcw className="w-3.5 h-3.5" />
                   {t.resetAll}
                 </button>
 
@@ -1336,7 +1372,7 @@ export default function AccessibilityWidget() {
                     {t.statementLink}
                   </Link>
 
-                  <span className="opacity-70">{t.standardBadge}</span>
+                  <span className="opacity-70 text-[10px]">{t.standardBadge}</span>
                 </div>
               </div>
             </motion.div>
