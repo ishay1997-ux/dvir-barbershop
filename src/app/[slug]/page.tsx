@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Star,
   ExternalLink,
+  Megaphone,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
@@ -25,6 +26,9 @@ interface BusinessProfile {
   ownerName: string;
   phone: string;
   city: string;
+  slogan?: string;
+  announcement?: string;
+  themeColor?: string;
   branchesCount: number;
   status: string;
   branches?: Array<{ name: string; address: string }>;
@@ -112,6 +116,14 @@ export default function DynamicBusinessLandingPage({
 
   return (
     <div className="min-h-screen bg-[#141414] text-white font-sans selection:bg-[#C9A84C] selection:text-black" dir="rtl">
+      {/* Announcement Banner if present */}
+      {business.announcement && (
+        <div className="bg-gradient-to-r from-[#C9A84C] via-[#DFCA85] to-[#C9A84C] text-[#1C1C1C] py-2 px-4 text-center font-black text-xs flex items-center justify-center gap-2 shadow-md">
+          <Megaphone className="w-3.5 h-3.5" />
+          <span>{business.announcement}</span>
+        </div>
+      )}
+
       {/* Top Header Bar */}
       <header className="sticky top-0 z-40 bg-[#1A1A1A]/95 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -162,7 +174,7 @@ export default function DynamicBusinessLandingPage({
             ברוכים הבאים ל<span className="text-[#C9A84C]">{business.name}</span>
           </h2>
           <p className="text-xs sm:text-sm text-[#9E9891] mb-6 max-w-lg mx-auto leading-relaxed">
-            עיצוב שיער מקצועי, דיוק בלתי מתפשר, חוויית שירות יוקרתית וזימון תורים אולטרה-מהיר.
+            {business.slogan || 'עיצוב שיער מקצועי, דיוק בלתי מתפשר, חוויית שירות יוקרתית וזימון תורים אולטרה-מהיר.'}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">

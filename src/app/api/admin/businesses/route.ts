@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
-import { collection, addDoc, getDocs, doc, query, where, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, query, where, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface BusinessItem {
   id: string;
@@ -9,6 +9,9 @@ export interface BusinessItem {
   ownerName: string;
   phone: string;
   city: string;
+  slogan?: string;
+  announcement?: string;
+  themeColor?: string;
   branchesCount: number;
   status: 'active' | 'pending' | 'suspended';
   plan: 'pro' | 'starter' | 'enterprise';
@@ -25,6 +28,9 @@ const defaultBusinesses: BusinessItem[] = [
     ownerName: 'דביר',
     phone: '052-123-4567',
     city: 'אריאל & רחובות',
+    slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
+    announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7',
+    themeColor: '#C9A84C',
     branchesCount: 2,
     status: 'active',
     plan: 'pro',
@@ -47,6 +53,9 @@ const defaultBusinesses: BusinessItem[] = [
     ownerName: 'שרון',
     phone: '050-765-4321',
     city: 'תל אביב',
+    slogan: 'מרכז החלקות אורגניות, גוונים ועיצוב שיער מקצועי',
+    announcement: '✨ מבצע מיוחד: 15% הנחה על החלקות אורגניות בימי שלישי!',
+    themeColor: '#00C48C',
     branchesCount: 1,
     status: 'active',
     plan: 'pro',
@@ -55,7 +64,7 @@ const defaultBusinesses: BusinessItem[] = [
       { name: 'סניף מרכז תל אביב', address: 'דיזנגוף 120, תל אביב' },
     ],
     services: [
-      { name: 'עיצוב שיער והחלקה', price: 350, duration: 90 },
+      { name: 'עיצוב שיער והחלקה אורגנית', price: 350, duration: 90 },
       { name: 'תספורת וגוונים', price: 220, duration: 60 },
       { name: 'תספורת נשים / גברים', price: 120, duration: 40 },
     ],
@@ -69,7 +78,6 @@ export async function GET(request: Request) {
     const slug = searchParams.get('slug')?.toLowerCase().trim();
 
     if (slug) {
-      // Find single business by slug
       if (isFirebaseConfigured && db) {
         try {
           const q = query(collection(db, 'businesses'), where('slug', '==', slug));
@@ -88,7 +96,6 @@ export async function GET(request: Request) {
         return NextResponse.json({ business: match });
       }
 
-      // If slug is dvir or generic
       if (slug === 'dvir' || slug === 'thecut') {
         return NextResponse.json({ business: defaultBusinesses[0] });
       }
@@ -96,7 +103,6 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Business not found' }, { status: 404 });
     }
 
-    // Return all businesses
     if (isFirebaseConfigured && db) {
       try {
         const snapshot = await getDocs(collection(db, 'businesses'));
@@ -119,7 +125,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, slug, ownerName, phone, city, plan, branches, services } = body;
+    const { name, slug, ownerName, phone, city, plan, slogan, announcement, themeColor, branches, services } = body;
 
     if (!name || !slug || !phone) {
       return NextResponse.json({ error: 'שם העסק, מזהה קישור (slug) וטלפון הם שדות חובה' }, { status: 400 });
@@ -134,6 +140,9 @@ export async function POST(request: Request) {
       ownerName: ownerName || name,
       phone,
       city: city || 'ישראל',
+      slogan: slogan || 'עיצוב שיער מקצועי וזימון תורים אונליין',
+      announcement: announcement || '',
+      themeColor: themeColor || '#C9A84C',
       branchesCount: branches?.length || 1,
       status: 'active',
       plan: plan || 'starter',
@@ -162,6 +171,57 @@ export async function POST(request: Request) {
       success: true,
       message: 'העסק החדש הוקם בהצלחה במערכת',
       business: newBiz,
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// PATCH /api/admin/businesses (Update Business Customization & Settings)
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { slug, id, ...updates } = body;
+
+    if (!slug && !id) {
+      return NextResponse.json({ error: 'Missing business slug or id' }, { status: 400 });
+    }
+
+    if (isFirebaseConfigured && db) {
+      try {
+        if (id) {
+          await updateDoc(doc(db, 'businesses', id), {
+            ...updates,
+            updatedAt: serverTimestamp(),
+          });
+        } else if (slug) {
+          const q = query(collection(db, 'businesses'), where('slug', '==', slug));
+          const snapshot = await getDocs(q);
+          if (!snapshot.empty) {
+            await updateDoc(doc(db, 'businesses', snapshot.docs[0].id), {
+              ...updates,
+              updatedAt: serverTimestamp(),
+            });
+          }
+        }
+      } catch (fbError) {
+        console.error('Firebase business update error:', fbError);
+      }
+    }
+
+    // Update memory store
+    const found = defaultBusinesses.find((b) => (slug && b.slug === slug) || (id && b.id === id));
+    if (found) {
+      Object.assign(found, updates);
+      if (updates.branches) {
+        found.branchesCount = updates.branches.length;
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'הגדרות העסק עודכנו בהצלחה',
+      business: found || updates,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

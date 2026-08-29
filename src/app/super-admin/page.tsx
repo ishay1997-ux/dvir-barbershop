@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   ShieldCheck,
   Building2,
@@ -24,6 +25,13 @@ import {
   Eye,
   EyeOff,
   Sparkles,
+  Settings2,
+  Edit,
+  Megaphone,
+  MapPin,
+  Palette,
+  Layers,
+  Key,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
@@ -39,6 +47,17 @@ interface BugReport {
   createdAt: string;
 }
 
+interface ServiceItem {
+  name: string;
+  price: number;
+  duration: number;
+}
+
+interface BranchItem {
+  name: string;
+  address: string;
+}
+
 interface Business {
   id: string;
   name: string;
@@ -46,10 +65,15 @@ interface Business {
   ownerName: string;
   phone: string;
   city: string;
+  slogan?: string;
+  announcement?: string;
+  themeColor?: string;
   branchesCount: number;
   status: 'active' | 'pending' | 'suspended';
   plan: 'pro' | 'starter' | 'enterprise';
   createdAt: string;
+  services?: ServiceItem[];
+  branches?: BranchItem[];
 }
 
 // Intelligent Appointment Auto-Finder for Support Tickets
@@ -149,6 +173,7 @@ function ReportAppointmentHelper({
 }
 
 export default function SuperAdminPage() {
+  const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -164,7 +189,7 @@ export default function SuperAdminPage() {
     }
   }, []);
 
-  const [activeTab, setActiveTab] = useState<'reports' | 'businesses'>('reports');
+  const [activeTab, setActiveTab] = useState<'reports' | 'businesses'>('businesses');
 
   // Reports state
   const [reports, setReports] = useState<BugReport[]>([]);
@@ -176,6 +201,21 @@ export default function SuperAdminPage() {
   const [businessesLoading, setBusinessesLoading] = useState(false);
   const [isNewBizModalOpen, setIsNewBizModalOpen] = useState(false);
 
+  // Edit Business Customization State
+  const [editingBiz, setEditingBiz] = useState<Business | null>(null);
+  const [editTab, setEditTab] = useState<'branding' | 'services' | 'branches' | 'banner'>('branding');
+  const [isSavingBiz, setIsSavingBiz] = useState(false);
+  const [saveNotice, setSaveNotice] = useState(false);
+
+  // New service inside edit modal
+  const [newServiceName, setNewServiceName] = useState('');
+  const [newServicePrice, setNewServicePrice] = useState<number>(80);
+  const [newServiceDuration, setNewServiceDuration] = useState<number>(30);
+
+  // New branch inside edit modal
+  const [newBranchName, setNewBranchName] = useState('');
+  const [newBranchAddress, setNewBranchAddress] = useState('');
+
   // New business form state
   const [newBizName, setNewBizName] = useState('');
   const [newBizSlug, setNewBizSlug] = useState('');
@@ -185,7 +225,7 @@ export default function SuperAdminPage() {
   const [newBizPlan, setNewBizPlan] = useState<'pro' | 'starter'>('pro');
   const [isCreatingBiz, setIsCreatingBiz] = useState(false);
 
-  // Master Login Handler (Passcode: 1997, ishay, admin, 1234, ishay2025, etc.)
+  // Master Login Handler
   const executeLogin = () => {
     setIsAuthenticated(true);
     setAuthError(false);
@@ -319,6 +359,33 @@ export default function SuperAdminPage() {
     }
   };
 
+  // Save Edited Business (PATCH)
+  const handleSaveEditedBusiness = async () => {
+    if (!editingBiz) return;
+    setIsSavingBiz(true);
+    try {
+      const res = await fetch('/api/admin/businesses', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingBiz),
+      });
+
+      if (res.ok) {
+        setBusinesses((prev) =>
+          prev.map((b) => (b.slug === editingBiz.slug ? { ...b, ...editingBiz } : b))
+        );
+        setSaveNotice(true);
+        setTimeout(() => setSaveNotice(false), 3000);
+      } else {
+        alert('שגיאה בשמירת שינויים');
+      }
+    } catch (err) {
+      alert('שגיאת תקשורת בשמירה');
+    } finally {
+      setIsSavingBiz(false);
+    }
+  };
+
   // Filtered reports
   const filteredReports = reports.filter((r) => {
     if (statusFilter === 'all') return true;
@@ -355,7 +422,7 @@ export default function SuperAdminPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="w-6 h-6 text-zinc-400 hover:text-white absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center"
+                  className="w-6 h-6 text-zinc-400 hover:text-white absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -370,7 +437,7 @@ export default function SuperAdminPage() {
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-2xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-sm transition-colors shadow-lg"
+              className="w-full py-3.5 rounded-2xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-sm transition-colors shadow-lg cursor-pointer"
             >
               כניסה למערכת השליטה ←
             </button>
@@ -380,7 +447,7 @@ export default function SuperAdminPage() {
               <button
                 type="button"
                 onClick={executeLogin}
-                className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-bold text-[#C9A84C] flex items-center justify-center gap-1.5 transition-colors"
+                className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-bold text-[#C9A84C] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Zap className="w-3.5 h-3.5" /> כניסה מהירה לישי (מנהל ראשי)
               </button>
@@ -416,7 +483,7 @@ export default function SuperAdminPage() {
                   מחובר ✓
                 </span>
               </div>
-              <p className="text-[11px] text-[#9E9891]">ניהול מרובה מספרות, תקלות ותמיכה טכנית</p>
+              <p className="text-[11px] text-[#9E9891]">ניהול מרובה מספרות, התאמה אישית ותמיכה טכנית</p>
             </div>
           </div>
 
@@ -430,7 +497,7 @@ export default function SuperAdminPage() {
             </Link>
             <button
               onClick={handleLogout}
-              className="text-xs text-red-400 hover:text-red-300 bg-red-950/30 hover:bg-red-950/50 px-3 py-1.5 rounded-xl transition-colors border border-red-500/30 font-bold"
+              className="text-xs text-red-400 hover:text-red-300 bg-red-950/30 hover:bg-red-950/50 px-3 py-1.5 rounded-xl transition-colors border border-red-500/30 font-bold cursor-pointer"
             >
               התנתק
             </button>
@@ -447,7 +514,7 @@ export default function SuperAdminPage() {
               <Building2 className="w-4 h-4 text-[#C9A84C]" />
             </div>
             <div className="text-2xl font-black text-white">{businesses.length}</div>
-            <span className="text-[10px] text-emerald-400">כולל דביר (פעיל)</span>
+            <span className="text-[10px] text-emerald-400">כולל דביר ושרון (פעיל)</span>
           </div>
 
           <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg">
@@ -467,36 +534,24 @@ export default function SuperAdminPage() {
               <Calendar className="w-4 h-4 text-[#DFCA85]" />
             </div>
             <div className="text-2xl font-black text-white">פעיל</div>
-            <span className="text-[10px] text-emerald-400">ענן Firestore מסונכרן</span>
+            <span className="text-[10px] text-emerald-400">סנכרון ענן בזמן אמת</span>
           </div>
 
           <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-[#9E9891] font-bold">סטטוס פלטפורמה</span>
-              <Zap className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs text-[#9E9891] font-bold">גמישות והתאמה</span>
+              <Settings2 className="w-4 h-4 text-emerald-400" />
             </div>
             <div className="text-2xl font-black text-emerald-400">100%</div>
-            <span className="text-[10px] text-emerald-400">Vercel Production</span>
+            <span className="text-[10px] text-emerald-400">עריכת מחירון ומיתוג</span>
           </div>
         </div>
 
         {/* Tab Navigation */}
         <div className="flex border-b border-white/10 mb-6 gap-3">
           <button
-            onClick={() => setActiveTab('reports')}
-            className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 ${
-              activeTab === 'reports'
-                ? 'border-[#C9A84C] text-[#C9A84C]'
-                : 'border-transparent text-zinc-400 hover:text-white'
-            }`}
-          >
-            <Bug className="w-4 h-4" />
-            <span>מרכז תקלות ופידבקים ({reports.length})</span>
-          </button>
-
-          <button
             onClick={() => setActiveTab('businesses')}
-            className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 ${
+            className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
               activeTab === 'businesses'
                 ? 'border-[#C9A84C] text-[#C9A84C]'
                 : 'border-transparent text-zinc-400 hover:text-white'
@@ -505,10 +560,138 @@ export default function SuperAdminPage() {
             <Building2 className="w-4 h-4" />
             <span>ניהול מספרות ועסקים ({businesses.length})</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('reports')}
+            className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+              activeTab === 'reports'
+                ? 'border-[#C9A84C] text-[#C9A84C]'
+                : 'border-transparent text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Bug className="w-4 h-4" />
+            <span>מרכז תקלות ופידבקים ({reports.length})</span>
+          </button>
         </div>
 
         {/* ============================================================ */}
-        {/* TAB 1: BUG REPORTS & SUPPORT CENTER                           */}
+        {/* TAB 1: BUSINESSES & TENANTS MANAGEMENT                        */}
+        {/* ============================================================ */}
+        {activeTab === 'businesses' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-black text-white">רשימת מספרות ועסקים פעילים</h2>
+                <p className="text-xs text-[#9E9891]">לחץ "ערוך והתאם אישית" כדי לשנות מחירון, סלוגן, באנר וסניפים עבור כל ספר</p>
+              </div>
+
+              <button
+                onClick={() => setIsNewBizModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-colors shadow-md cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>הקמת עסק / מספרה חדשה</span>
+              </button>
+            </div>
+
+            {/* Businesses Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {businesses.map((biz) => (
+                <div
+                  key={biz.id}
+                  className="bg-[#1C1C1C] border border-[#C9A84C]/30 rounded-2xl p-5 shadow-lg space-y-4 relative group"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-[#C9A84C]/15 border border-[#C9A84C]/40 flex items-center justify-center text-[#C9A84C]">
+                        <Scissors className="w-6 h-6 -rotate-45" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-black text-white">{biz.name}</h3>
+                        <span className="text-xs text-[#C9A84C] font-bold" dir="ltr">
+                          thecut.co.il/{biz.slug}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                      {biz.status === 'active' ? 'פעיל באוויר ✓' : biz.status}
+                    </span>
+                  </div>
+
+                  {biz.slogan && (
+                    <p className="text-xs text-zinc-300 italic bg-[#141414] p-2.5 rounded-xl border border-white/5 font-sans">
+                      "{biz.slogan}"
+                    </p>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2 text-xs text-zinc-300 bg-[#141414] p-3 rounded-xl border border-white/5">
+                    <div>
+                      <span className="text-zinc-500 block text-[10px]">מנהל עסק:</span>
+                      <strong className="text-white">{biz.ownerName}</strong>
+                    </div>
+                    <div>
+                      <span className="text-zinc-500 block text-[10px]">טלפון:</span>
+                      <strong className="text-white" dir="ltr">{biz.phone}</strong>
+                    </div>
+                    <div>
+                      <span className="text-zinc-500 block text-[10px]">סניפים ושירותים:</span>
+                      <strong className="text-white">{biz.branches?.length || biz.branchesCount || 1} סניפים · {biz.services?.length || 3} שירותים</strong>
+                    </div>
+                    <div>
+                      <span className="text-zinc-500 block text-[10px]">חבילה:</span>
+                      <strong className="text-[#C9A84C] uppercase">{biz.plan} Plan</strong>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="pt-2 flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingBiz({
+                          ...biz,
+                          services: biz.services || [
+                            { name: 'תספורת גברים / פייד', price: 80, duration: 30 },
+                            { name: 'עיצוב זקן', price: 40, duration: 15 },
+                          ],
+                          branches: biz.branches || [{ name: `סניף ${biz.city}`, address: biz.city }],
+                        });
+                        setEditTab('branding');
+                      }}
+                      className="flex-1 py-2 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black text-center text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                    >
+                      <Edit className="w-3.5 h-3.5" /> ערוך והתאם אישית
+                    </button>
+
+                    <Link
+                      href={`/${biz.slug}`}
+                      target="_blank"
+                      className="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-center text-xs font-bold text-white transition-colors flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" /> צפה באתר
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        if (typeof window !== 'undefined') {
+                          localStorage.setItem('thecut_admin_authenticated', 'true');
+                        }
+                        router.push('/admin');
+                      }}
+                      className="py-2 px-3 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-500/30 text-center text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                      title="התחבר כבעל מספרה זו"
+                    >
+                      <Key className="w-3.5 h-3.5" /> כניסה כמנהל
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* TAB 2: BUG REPORTS & SUPPORT CENTER                           */}
         {/* ============================================================ */}
         {activeTab === 'reports' && (
           <div className="space-y-4">
@@ -521,7 +704,7 @@ export default function SuperAdminPage() {
                     <button
                       key={st}
                       onClick={() => setStatusFilter(st)}
-                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-colors ${
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                         statusFilter === st
                           ? 'bg-[#C9A84C] text-[#1C1C1C]'
                           : 'bg-white/5 text-zinc-400 hover:text-white'
@@ -539,7 +722,7 @@ export default function SuperAdminPage() {
               <button
                 onClick={fetchReports}
                 disabled={reportsLoading}
-                className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10"
+                className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${reportsLoading ? 'animate-spin' : ''}`} />
                 <span>רענן פניות</span>
@@ -584,7 +767,7 @@ export default function SuperAdminPage() {
                         {/* Delete button */}
                         <button
                           onClick={() => handleDeleteReport(r.id)}
-                          className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-950/30 transition-colors"
+                          className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-950/30 transition-colors cursor-pointer"
                           title="מחק דיווח"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -646,91 +829,365 @@ export default function SuperAdminPage() {
             )}
           </div>
         )}
+      </main>
 
-        {/* ============================================================ */}
-        {/* TAB 2: BUSINESSES & TENANTS MANAGEMENT                        */}
-        {/* ============================================================ */}
-        {activeTab === 'businesses' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-base font-black text-white">רשימת מספרות ועסקים פעילים</h2>
-                <p className="text-xs text-[#9E9891]">ניהול מותגים, סאב-דומיינים והגדרות עסק</p>
+      {/* ============================================================ */}
+      {/* MODAL: EDIT BUSINESS & CUSTOMIZATION SUITE                   */}
+      {/* ============================================================ */}
+      {editingBiz && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xs overflow-y-auto" dir="rtl">
+          <div className="absolute inset-0" onClick={() => setEditingBiz(null)} />
+          <div className="relative max-w-2xl w-full bg-[#1C1C1C] border-2 border-[#C9A84C]/50 rounded-3xl p-6 shadow-2xl z-10 my-auto text-right">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+              <div className="flex items-center gap-2 text-[#C9A84C]">
+                <Settings2 className="w-6 h-6" />
+                <div>
+                  <h3 className="text-base font-black text-white">התאמה אישית ועריכת אתר: {editingBiz.name}</h3>
+                  <span className="text-[11px] text-[#9E9891]" dir="ltr">thecut.co.il/{editingBiz.slug}</span>
+                </div>
               </div>
-
               <button
-                onClick={() => setIsNewBizModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-colors shadow-md"
+                onClick={() => setEditingBiz(null)}
+                className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 cursor-pointer"
               >
-                <Plus className="w-4 h-4" />
-                <span>הקמת עסק / מספרה חדשה</span>
+                ✕
               </button>
             </div>
 
-            {/* Businesses Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {businesses.map((biz) => (
-                <div
-                  key={biz.id}
-                  className="bg-[#1C1C1C] border border-[#C9A84C]/30 rounded-2xl p-5 shadow-lg space-y-4 relative group"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-[#C9A84C]/15 border border-[#C9A84C]/40 flex items-center justify-center text-[#C9A84C]">
-                        <Scissors className="w-6 h-6 -rotate-45" />
-                      </div>
-                      <div>
-                        <h3 className="text-base font-black text-white">{biz.name}</h3>
-                        <span className="text-xs text-[#C9A84C] font-bold" dir="ltr">
-                          thecut.co.il/{biz.slug}
-                        </span>
-                      </div>
-                    </div>
+            {saveNotice && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-400 text-xs font-bold text-center flex items-center justify-center gap-1.5">
+                <CheckCircle className="w-4 h-4" /> השינויים נשמרו בהצלחה והאתר עודכן באוויר!
+              </div>
+            )}
 
-                    <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                      {biz.status === 'active' ? 'פעיל באוויר' : biz.status}
-                    </span>
+            {/* Inner Sub-Tabs */}
+            <div className="flex border-b border-white/10 mb-4 gap-2 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setEditTab('branding')}
+                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
+                  editTab === 'branding' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                🏷️ מיתוג ופרטים
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditTab('services')}
+                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
+                  editTab === 'services' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                ✂️ מחירון ושירותים ({editingBiz.services?.length || 0})
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditTab('branches')}
+                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
+                  editTab === 'branches' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                📍 סניפים ומיקומים ({editingBiz.branches?.length || 0})
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditTab('banner')}
+                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
+                  editTab === 'banner' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                📢 באנר הודעות
+              </button>
+            </div>
+
+            {/* TAB 1: BRANDING & GENERAL */}
+            {editTab === 'branding' && (
+              <div className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block text-zinc-300 font-bold mb-1">שם המספרה / העסק:</label>
+                  <input
+                    type="text"
+                    value={editingBiz.name}
+                    onChange={(e) => setEditingBiz({ ...editingBiz, name: e.target.value })}
+                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-zinc-300 font-bold mb-1">סלוגן / תיאור קצר לעמוד הבית:</label>
+                  <input
+                    type="text"
+                    value={editingBiz.slogan || ''}
+                    onChange={(e) => setEditingBiz({ ...editingBiz, slogan: e.target.value })}
+                    placeholder="למשל: מרכז החלקות אורגניות, בלונד ועיצוב שיער מקצועי"
+                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1">טלפון ראשי (לוואטסאפ של הלקוחות):</label>
+                    <input
+                      type="tel"
+                      value={editingBiz.phone}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, phone: e.target.value })}
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
                   </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-xs text-zinc-300 bg-[#141414] p-3 rounded-xl border border-white/5">
-                    <div>
-                      <span className="text-zinc-500 block text-[10px]">מנהל עסק:</span>
-                      <strong className="text-white">{biz.ownerName}</strong>
-                    </div>
-                    <div>
-                      <span className="text-zinc-500 block text-[10px]">טלפון:</span>
-                      <strong className="text-white" dir="ltr">{biz.phone}</strong>
-                    </div>
-                    <div>
-                      <span className="text-zinc-500 block text-[10px]">מיקום / סניפים:</span>
-                      <strong className="text-white">{biz.city}</strong>
-                    </div>
-                    <div>
-                      <span className="text-zinc-500 block text-[10px]">חבילה:</span>
-                      <strong className="text-[#C9A84C] uppercase">{biz.plan} Plan</strong>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex items-center gap-2">
-                    <Link
-                      href="/"
-                      className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-center text-xs font-bold text-white transition-colors"
-                    >
-                      צפייה באתר העסק
-                    </Link>
-                    <Link
-                      href="/admin"
-                      className="flex-1 py-2 rounded-xl bg-[#C9A84C]/15 hover:bg-[#C9A84C]/25 text-[#C9A84C] border border-[#C9A84C]/30 text-center text-xs font-bold transition-colors"
-                    >
-                      פאנל ניהול המספרה
-                    </Link>
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1">שם בעל המספרה:</label>
+                    <input
+                      type="text"
+                      value={editingBiz.ownerName}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, ownerName: e.target.value })}
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
                   </div>
                 </div>
-              ))}
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1">עיר / אזור פעילות:</label>
+                    <input
+                      type="text"
+                      value={editingBiz.city}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, city: e.target.value })}
+                      className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-zinc-300 font-bold mb-1">סטטוס פעילות:</label>
+                    <select
+                      value={editingBiz.status}
+                      onChange={(e) => setEditingBiz({ ...editingBiz, status: e.target.value as any })}
+                      className="w-full bg-[#141414] border border-white/15 rounded-xl px-3.5 py-2.5 text-white outline-none cursor-pointer"
+                    >
+                      <option value="active">פעיל באוויר 🟢</option>
+                      <option value="pending">בהקמה / טיוטה 🟡</option>
+                      <option value="suspended">מושהה זמנית 🔴</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: SERVICES & PRICING */}
+            {editTab === 'services' && (
+              <div className="space-y-3.5 text-xs">
+                <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
+                  {editingBiz.services?.map((srv, idx) => (
+                    <div key={idx} className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-[#141414] border border-white/10">
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={srv.name}
+                          onChange={(e) => {
+                            const updated = [...(editingBiz.services || [])];
+                            updated[idx].name = e.target.value;
+                            setEditingBiz({ ...editingBiz, services: updated });
+                          }}
+                          className="w-full bg-transparent text-white font-bold text-xs outline-none"
+                        />
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          value={srv.price}
+                          onChange={(e) => {
+                            const updated = [...(editingBiz.services || [])];
+                            updated[idx].price = Number(e.target.value);
+                            setEditingBiz({ ...editingBiz, services: updated });
+                          }}
+                          className="w-16 bg-[#222] border border-white/15 rounded-lg px-2 py-1 text-center font-bold text-[#C9A84C] text-xs outline-none"
+                        />
+                        <span className="text-zinc-500">₪</span>
+                        <input
+                          type="number"
+                          value={srv.duration}
+                          onChange={(e) => {
+                            const updated = [...(editingBiz.services || [])];
+                            updated[idx].duration = Number(e.target.value);
+                            setEditingBiz({ ...editingBiz, services: updated });
+                          }}
+                          className="w-14 bg-[#222] border border-white/15 rounded-lg px-1.5 py-1 text-center text-xs text-white outline-none"
+                        />
+                        <span className="text-zinc-500 text-[10px]">דק׳</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = editingBiz.services?.filter((_, i) => i !== idx);
+                            setEditingBiz({ ...editingBiz, services: updated });
+                          }}
+                          className="p-1 text-zinc-500 hover:text-red-400 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add new service row */}
+                <div className="pt-2 border-t border-white/10 flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={newServiceName}
+                    onChange={(e) => setNewServiceName(e.target.value)}
+                    placeholder="שם שירות חדש (למשל: צבע / פן)..."
+                    className="flex-1 bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                  <input
+                    type="number"
+                    value={newServicePrice}
+                    onChange={(e) => setNewServicePrice(Number(e.target.value))}
+                    placeholder="מחיר"
+                    className="w-16 bg-[#141414] border border-white/15 rounded-xl px-2 py-2 text-center text-xs text-white outline-none"
+                  />
+                  <span className="text-zinc-500 text-xs">₪</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newServiceName) return;
+                      const updated = [...(editingBiz.services || []), { name: newServiceName, price: newServicePrice, duration: newServiceDuration }];
+                      setEditingBiz({ ...editingBiz, services: updated });
+                      setNewServiceName('');
+                    }}
+                    className="px-3 py-2 bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-bold rounded-xl text-xs flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> הוסף
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: BRANCHES & LOCATIONS */}
+            {editTab === 'branches' && (
+              <div className="space-y-3.5 text-xs">
+                <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
+                  {editingBiz.branches?.map((br, idx) => (
+                    <div key={idx} className="p-3 rounded-xl bg-[#141414] border border-white/10 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <input
+                          type="text"
+                          value={br.name}
+                          onChange={(e) => {
+                            const updated = [...(editingBiz.branches || [])];
+                            updated[idx].name = e.target.value;
+                            setEditingBiz({ ...editingBiz, branches: updated });
+                          }}
+                          placeholder="שם הסניף"
+                          className="bg-transparent text-white font-bold text-xs outline-none flex-1"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = editingBiz.branches?.filter((_, i) => i !== idx);
+                            setEditingBiz({ ...editingBiz, branches: updated });
+                          }}
+                          className="p-1 text-zinc-500 hover:text-red-400 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={br.address}
+                        onChange={(e) => {
+                          const updated = [...(editingBiz.branches || [])];
+                          updated[idx].address = e.target.value;
+                          setEditingBiz({ ...editingBiz, branches: updated });
+                        }}
+                        placeholder="כתובת הסניף"
+                        className="w-full bg-[#202020] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-zinc-300 outline-none"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add new branch */}
+                <div className="pt-2 border-t border-white/10 space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newBranchName}
+                      onChange={(e) => setNewBranchName(e.target.value)}
+                      placeholder="שם סניף חדש (למשל: סניף מרכז)..."
+                      className="flex-1 bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    />
+                    <input
+                      type="text"
+                      value={newBranchAddress}
+                      onChange={(e) => setNewBranchAddress(e.target.value)}
+                      placeholder="כתובת הסניף..."
+                      className="flex-1 bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!newBranchName) return;
+                        const updated = [...(editingBiz.branches || []), { name: newBranchName, address: newBranchAddress || 'כתובת העסק' }];
+                        setEditingBiz({ ...editingBiz, branches: updated });
+                        setNewBranchName('');
+                        setNewBranchAddress('');
+                      }}
+                      className="px-3 py-2 bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-bold rounded-xl text-xs flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> הוסף
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: ANNOUNCEMENT BANNER */}
+            {editTab === 'banner' && (
+              <div className="space-y-3 text-xs">
+                <p className="text-zinc-400 text-xs">
+                  באנר הודעה מיוחד שיוצג בראש דף הנחיתה של {editingBiz.name} (למשל הנחות, חגים, הודעות חשובות):
+                </p>
+                <textarea
+                  value={editingBiz.announcement || ''}
+                  onChange={(e) => setEditingBiz({ ...editingBiz, announcement: e.target.value })}
+                  placeholder="למשל: ✨ מבצע מיוחד לשבוע הקרוב: 15% הנחה על כל הטיפולים!"
+                  rows={3}
+                  className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl p-3 text-xs text-white outline-none"
+                />
+              </div>
+            )}
+
+            {/* Modal Bottom Actions */}
+            <div className="pt-5 mt-4 border-t border-white/10 flex items-center justify-between">
+              <Link
+                href={`/${editingBiz.slug}`}
+                target="_blank"
+                className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 underline"
+              >
+                <ExternalLink className="w-3.5 h-3.5" /> תצוגה מקדימה לאתר החי
+              </Link>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingBiz(null)}
+                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs cursor-pointer"
+                >
+                  סגור
+                </button>
+                <button
+                  type="button"
+                  disabled={isSavingBiz}
+                  onClick={handleSaveEditedBusiness}
+                  className="px-5 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors shadow-lg flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {isSavingBiz ? 'שומר שינויים...' : 'שמור שינויים בשרת ✓'}
+                </button>
+              </div>
             </div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
 
       {/* ============================================================ */}
       {/* MODAL: CREATE NEW BUSINESS                                    */}
@@ -738,7 +1195,7 @@ export default function SuperAdminPage() {
       {isNewBizModalOpen && (
         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" dir="rtl">
           <div className="absolute inset-0" onClick={() => setIsNewBizModalOpen(false)} />
-          <div className="relative max-w-md w-full bg-[#1C1C1C] border border-[#C9A84C]/40 rounded-3xl p-6 shadow-2xl z-10">
+          <div className="relative max-w-md w-full bg-[#1C1C1C] border border-[#C9A84C]/40 rounded-3xl p-6 shadow-2xl z-10 text-right">
             <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
               <div className="flex items-center gap-2 text-[#C9A84C]">
                 <Building2 className="w-5 h-5" />
@@ -746,7 +1203,7 @@ export default function SuperAdminPage() {
               </div>
               <button
                 onClick={() => setIsNewBizModalOpen(false)}
-                className="text-zinc-400 hover:text-white"
+                className="text-zinc-400 hover:text-white cursor-pointer"
               >
                 ✕
               </button>
@@ -825,7 +1282,7 @@ export default function SuperAdminPage() {
                 <select
                   value={newBizPlan}
                   onChange={(e) => setNewBizPlan(e.target.value as any)}
-                  className="w-full bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  className="w-full bg-[#141414] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none cursor-pointer"
                 >
                   <option value="starter">Starter (מספרה בודדת)</option>
                   <option value="pro">Pro (מספרה מרובת סניפים + וואטסאפ)</option>
@@ -836,14 +1293,14 @@ export default function SuperAdminPage() {
                 <button
                   type="submit"
                   disabled={isCreatingBiz}
-                  className="flex-1 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-colors disabled:opacity-50"
+                  className="flex-1 py-3 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {isCreatingBiz ? 'מקים עסק...' : 'הקם עסק עכשיו ✓'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsNewBizModalOpen(false)}
-                  className="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs transition-colors"
+                  className="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 font-bold text-xs transition-colors cursor-pointer"
                 >
                   ביטול
                 </button>
