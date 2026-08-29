@@ -232,10 +232,10 @@ export default function ConfirmationStep({ booking }: { booking: BookingState })
         {/* Manage / Cancel link */}
         <div className="mb-6 text-center">
           <Link
-            href="/booking/manage?id=dvir-demo"
+            href={`/booking/manage?phone=${encodeURIComponent(customerPhone)}`}
             className="text-xs text-[#9E9891] hover:text-gold underline transition-colors"
           >
-            צריך לבטל או לשנות מועד? לחץ כאן לניהול התור
+            צריך לבטל או לשנות מועד? לחץ כאן לניהול וביטול התור
           </Link>
         </div>
 

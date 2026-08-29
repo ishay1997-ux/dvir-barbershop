@@ -131,18 +131,46 @@ export function MyAppointmentsModal({
     if (!phone || phone.length < 9) return;
 
     setIsLoading(true);
+    const results: any[] = [];
+    const cleanPhone = phone.replace(/\D/g, '');
+
+    // 1. Local storage check
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('thecut_customer_appointments_v3');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+            parsed.forEach((item) => {
+              const itemClean = (item.customerPhone || '').replace(/\D/g, '');
+              if (itemClean.includes(cleanPhone) || cleanPhone.includes(itemClean)) {
+                results.push(item);
+              }
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Storage error:', e);
+      }
+    }
+
+    // 2. Server API check
     try {
-      const cleanPhone = phone.replace(/\D/g, '');
       const res = await fetch(`/api/appointments?phone=${cleanPhone}`);
       if (res.ok) {
         const data = await res.json();
-        setAppointments(data.appointments || []);
-      } else {
-        setAppointments([]);
+        if (Array.isArray(data.appointments)) {
+          data.appointments.forEach((apt: any) => {
+            if (!results.some((r) => r.id === apt.id)) {
+              results.push(apt);
+            }
+          });
+        }
       }
     } catch {
-      setAppointments([]);
+      // Ignore network errors
     } finally {
+      setAppointments(results);
       setIsLoading(false);
       setHasSearched(true);
     }

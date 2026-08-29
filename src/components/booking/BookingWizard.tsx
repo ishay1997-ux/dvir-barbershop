@@ -101,24 +101,63 @@ export default function BookingWizard({ initialBarber }: { initialBarber?: strin
 
   const handleSubmit = useCallback(async () => {
     setIsSubmitting(true);
+    const dateStr = state.selectedDate ? state.selectedDate.toISOString().split('T')[0] : '';
+    const tempId = `apt-${Date.now()}`;
+
+    const newAppointmentPayload = {
+      id: tempId,
+      branchId: state.selectedBranch?.id,
+      branchName: state.selectedBranch?.name,
+      branch: state.selectedBranch?.name,
+      serviceId: state.selectedService?.id,
+      serviceName: state.selectedService?.name,
+      service: state.selectedService?.name,
+      servicePrice: state.selectedService?.price,
+      price: state.selectedService?.price,
+      barberId: state.selectedBarber?.id || 'dvir',
+      barberName: state.selectedBarber?.name || 'דביר',
+      barber: state.selectedBarber?.name || 'דביר',
+      date: dateStr,
+      time: state.selectedTime,
+      customerName: state.customerName,
+      customerPhone: state.customerPhone,
+      status: 'confirmed',
+      createdAt: new Date().toISOString(),
+    };
+
+    // 1. Save immediately to localStorage for instant lookup & manage
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('thecut_customer_appointments_v3');
+        const list = stored ? JSON.parse(stored) : [];
+        list.unshift(newAppointmentPayload);
+        localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(list));
+      } catch (e) {
+        console.error('Storage error', e);
+      }
+    }
+
     try {
-      await fetch('/api/appointments', {
+      const res = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          branchId: state.selectedBranch?.id,
-          branchName: state.selectedBranch?.name,
-          serviceId: state.selectedService?.id,
-          serviceName: state.selectedService?.name,
-          servicePrice: state.selectedService?.price,
-          barberId: state.selectedBarber?.id || 'dvir',
-          barberName: state.selectedBarber?.name || 'דביר',
-          date: state.selectedDate ? state.selectedDate.toISOString().split('T')[0] : '',
-          time: state.selectedTime,
-          customerName: state.customerName,
-          customerPhone: state.customerPhone,
-        }),
+        body: JSON.stringify(newAppointmentPayload),
       });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.appointmentId && typeof window !== 'undefined') {
+          // Update id in localStorage if backend returned specific id
+          const stored = localStorage.getItem('thecut_customer_appointments_v3');
+          if (stored) {
+            const list = JSON.parse(stored);
+            if (list[0]) {
+              list[0].id = data.appointmentId;
+              localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(list));
+            }
+          }
+        }
+      }
     } catch (err) {
       console.error('Booking submission error:', err);
     } finally {
