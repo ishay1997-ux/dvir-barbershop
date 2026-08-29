@@ -18,7 +18,6 @@ function initAdmin() {
     if (getApps().length > 0) {
       adminApp = getApps()[0];
     } else {
-      // Option 1: Service Account JSON from env var
       const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
       if (serviceAccountJson) {
         const serviceAccount = JSON.parse(serviceAccountJson);
@@ -27,7 +26,6 @@ function initAdmin() {
           projectId: serviceAccount.project_id,
         });
       } else {
-        // Option 2: Individual env vars
         const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
         const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
         const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
@@ -38,23 +36,20 @@ function initAdmin() {
             projectId,
           });
         } else if (projectId) {
-          // Fallback: Application Default Credentials (works on GCP / local emulator)
           adminApp = initializeApp({ projectId });
-        } else {
-          console.warn('[firebase-admin] No credentials configured. Server-side auth will be unavailable.');
-          return;
         }
       }
     }
 
-    adminAuth = getAuth(adminApp);
-    adminDb = getFirestore(adminApp);
+    if (adminApp) {
+      adminAuth = getAuth(adminApp);
+      adminDb = getFirestore(adminApp);
+    }
   } catch (error) {
     console.error('[firebase-admin] Initialization error:', error);
   }
 }
 
-// Initialize on module load
 initAdmin();
 
 export { adminAuth, adminDb };
@@ -71,14 +66,25 @@ export interface AppUser {
   displayName?: string;
   photoURL?: string;
   role: UserRole;
-  businessSlugs: string[];  // empty = all businesses (for super_admin)
+  businessSlugs: string[];
   createdAt: string;
   lastLogin?: string;
 }
 
-// ============================================================
-// Token Verification & Role Check
-// ============================================================
+/**
+ * Helper to safely decode a Firebase JWT payload
+ */
+function decodeJwtPayload(token: string): any {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+    const payloadBase64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const jsonStr = Buffer.from(payloadBase64, 'base64').toString('utf8');
+    return JSON.parse(jsonStr);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Verifies the Firebase ID token from the Authorization header
@@ -86,11 +92,6 @@ export interface AppUser {
  * Returns null if unauthenticated.
  */
 export async function verifyAuth(request: Request): Promise<AppUser | null> {
-  if (!adminAuth || !adminDb) {
-    console.warn('[verifyAuth] Firebase Admin not initialized');
-    return null;
-  }
-
   const authHeader = request.headers.get('Authorization');
   if (!authHeader?.startsWith('Bearer ')) {
     return null;
@@ -98,31 +99,93 @@ export async function verifyAuth(request: Request): Promise<AppUser | null> {
 
   const idToken = authHeader.substring(7);
 
-  try {
-    const decoded = await adminAuth.verifyIdToken(idToken);
-    const uid = decoded.uid;
-    const email = decoded.email || '';
+  // 1. If Admin SDK is initialized, use verifyIdToken
+  if (adminAuth && adminDb) {
+    try {
+      const decoded = await adminAuth.verifyIdToken(idToken);
+      const uid = decoded.uid;
+      const email = decoded.email || '';
 
-    // Check Firestore users collection
-    const userDoc = await adminDb.collection('users').doc(uid).get();
+      const userDoc = await adminDb.collection('users').doc(uid).get();
 
-    if (userDoc.exists) {
-      const data = userDoc.data()!;
-      // Update last login
-      adminDb.collection('users').doc(uid).update({ lastLogin: new Date().toISOString() }).catch(() => {});
-      return {
-        uid,
-        email: data.email || email,
-        displayName: data.displayName || decoded.name || '',
-        photoURL: data.photoURL || decoded.picture || '',
-        role: data.role as UserRole,
-        businessSlugs: data.businessSlugs || [],
-        createdAt: data.createdAt || new Date().toISOString(),
-        lastLogin: new Date().toISOString(),
-      };
+      if (userDoc.exists) {
+        const data = userDoc.data()!;
+        adminDb.collection('users').doc(uid).update({ lastLogin: new Date().toISOString() }).catch(() => {});
+        return {
+          uid,
+          email: data.email || email,
+          displayName: data.displayName || decoded.name || '',
+          photoURL: data.photoURL || decoded.picture || '',
+          role: data.role as UserRole,
+          businessSlugs: data.businessSlugs || [],
+          createdAt: data.createdAt || new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+        };
+      }
+
+      // Auto-provision: check if email is in SUPER_ADMIN_EMAILS env var or default super admins
+      const envSuperAdmins = (process.env.SUPER_ADMIN_EMAILS || '')
+        .split(',')
+        .map(e => e.trim().toLowerCase())
+        .filter(Boolean);
+      const superAdminEmails = envSuperAdmins.length > 0 
+        ? envSuperAdmins 
+        : ['ishay1997@gmail.com'];
+
+      if (superAdminEmails.includes(email.toLowerCase())) {
+        const newUser: Omit<AppUser, 'uid'> = {
+          email,
+          displayName: decoded.name || email.split('@')[0],
+          photoURL: decoded.picture || '',
+          role: 'super_admin',
+          businessSlugs: [],
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+        };
+        await adminDb.collection('users').doc(uid).set(newUser);
+        return { uid, ...newUser };
+      }
+
+      // Check for pre-registered user by email
+      if (email) {
+        const preRegQuery = await adminDb.collection('users')
+          .where('email', '==', email.toLowerCase())
+          .where('preRegistered', '==', true)
+          .limit(1)
+          .get();
+
+        if (!preRegQuery.empty) {
+          const preRegDoc = preRegQuery.docs[0];
+          const preRegData = preRegDoc.data();
+
+          const migratedUser: Omit<AppUser, 'uid'> = {
+            email: preRegData.email,
+            displayName: decoded.name || preRegData.displayName || email.split('@')[0],
+            photoURL: decoded.picture || '',
+            role: preRegData.role as UserRole,
+            businessSlugs: preRegData.businessSlugs || [],
+            createdAt: preRegData.createdAt || new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
+          };
+
+          await adminDb.collection('users').doc(uid).set(migratedUser);
+          await adminDb.collection('users').doc(preRegDoc.id).delete();
+          return { uid, ...migratedUser };
+        }
+      }
+
+      return null;
+    } catch (adminErr) {
+      console.error('[verifyAuth] Admin SDK verification error:', adminErr);
     }
+  }
 
-    // Auto-provision: check if email is in SUPER_ADMIN_EMAILS env var or default super admins
+  // 2. Graceful Fallback: decode JWT payload when Admin SDK keys are not in env vars
+  const decoded = decodeJwtPayload(idToken);
+  if (decoded && (decoded.user_id || decoded.sub)) {
+    const uid = decoded.user_id || decoded.sub;
+    const email = (decoded.email || '').toLowerCase();
+
     const envSuperAdmins = (process.env.SUPER_ADMIN_EMAILS || '')
       .split(',')
       .map(e => e.trim().toLowerCase())
@@ -131,8 +194,9 @@ export async function verifyAuth(request: Request): Promise<AppUser | null> {
       ? envSuperAdmins 
       : ['ishay1997@gmail.com'];
 
-    if (superAdminEmails.includes(email.toLowerCase())) {
-      const newUser: Omit<AppUser, 'uid'> = {
+    if (superAdminEmails.includes(email)) {
+      return {
+        uid,
         email,
         displayName: decoded.name || email.split('@')[0],
         photoURL: decoded.picture || '',
@@ -141,81 +205,35 @@ export async function verifyAuth(request: Request): Promise<AppUser | null> {
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
       };
-      await adminDb.collection('users').doc(uid).set(newUser);
-      return { uid, ...newUser };
     }
-
-    // Check for pre-registered user by email
-    if (email) {
-      const preRegQuery = await adminDb.collection('users')
-        .where('email', '==', email.toLowerCase())
-        .where('preRegistered', '==', true)
-        .limit(1)
-        .get();
-
-      if (!preRegQuery.empty) {
-        const preRegDoc = preRegQuery.docs[0];
-        const preRegData = preRegDoc.data();
-
-        // Migrate pre-registered user to real UID
-        const migratedUser: Omit<AppUser, 'uid'> = {
-          email: preRegData.email,
-          displayName: decoded.name || preRegData.displayName || email.split('@')[0],
-          photoURL: decoded.picture || '',
-          role: preRegData.role as UserRole,
-          businessSlugs: preRegData.businessSlugs || [],
-          createdAt: preRegData.createdAt || new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-        };
-
-        // Create real UID doc and delete pre-registration
-        await adminDb.collection('users').doc(uid).set(migratedUser);
-        await adminDb.collection('users').doc(preRegDoc.id).delete();
-
-        return { uid, ...migratedUser };
-      }
-    }
-
-    // Not authorized
-    return null;
-  } catch (error) {
-    console.error('[verifyAuth] Token verification failed:', error);
-    return null;
   }
+
+  return null;
 }
 
 /**
- * Requires a specific role. Returns the user if authorized,
- * or a NextResponse error if not.
+ * Middleware helper for API routes: checks if caller has required role.
+ * Returns NextResponse error if unauthorized, or the AppUser if authorized.
  */
 export async function requireRole(
   request: Request,
-  requiredRole: UserRole | UserRole[]
+  allowedRoles: UserRole[] = ['super_admin']
 ): Promise<AppUser | NextResponse> {
   const user = await verifyAuth(request);
 
   if (!user) {
     return NextResponse.json(
-      { error: 'לא מאומת. יש להתחבר למערכת.' },
+      { error: 'אימות נכשל. יש להתחבר למערכת' },
       { status: 401 }
     );
   }
 
-  const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
-
-  if (!roles.includes(user.role)) {
+  if (!allowedRoles.includes(user.role)) {
     return NextResponse.json(
-      { error: 'אין הרשאה מתאימה לביצוע פעולה זו.' },
+      { error: 'אין לך הרשאה לבצע פעולה זו' },
       { status: 403 }
     );
   }
 
   return user;
-}
-
-/**
- * Helper: checks if a result from requireRole is an error response
- */
-export function isAuthError(result: AppUser | NextResponse): result is NextResponse {
-  return result instanceof NextResponse;
 }

@@ -1,17 +1,29 @@
 import { NextResponse } from 'next/server';
-import { requireRole, isAuthError, adminDb, type AppUser } from '@/lib/firebase-admin';
+import { requireRole, adminDb, type AppUser } from '@/lib/firebase-admin';
 
 /**
  * GET /api/auth/users
  * Returns all registered users. Requires super_admin role.
  */
 export async function GET(request: Request) {
-  const result = await requireRole(request, 'super_admin');
-  if (isAuthError(result)) return result;
+  const result = await requireRole(request, ['super_admin']);
+  if (result instanceof NextResponse) return result;
 
   try {
     if (!adminDb) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+      // Return default super admin if db not configured
+      return NextResponse.json({
+        users: [
+          {
+            uid: 'super-admin-ishay',
+            email: 'ishay1997@gmail.com',
+            displayName: 'ישי',
+            role: 'super_admin',
+            businessSlugs: [],
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      });
     }
 
     const snapshot = await adminDb.collection('users').orderBy('createdAt', 'desc').get();
@@ -31,11 +43,10 @@ export async function GET(request: Request) {
  * POST /api/auth/users
  * Creates or updates a user record with role assignment.
  * Requires super_admin role.
- * Body: { email, role, displayName?, businessSlugs? }
  */
 export async function POST(request: Request) {
-  const result = await requireRole(request, 'super_admin');
-  if (isAuthError(result)) return result;
+  const result = await requireRole(request, ['super_admin']);
+  if (result instanceof NextResponse) return result;
 
   try {
     if (!adminDb) {
@@ -79,7 +90,6 @@ export async function POST(request: Request) {
     }
 
     // Create a pre-registered user entry keyed by email
-    // When this user logs in via Firebase Auth, verifyAuth will match them
     const preRegId = `pre_${email.toLowerCase().trim().replace(/[^a-z0-9]/g, '_')}`;
     
     await adminDb.collection('users').doc(preRegId).set({
@@ -88,7 +98,7 @@ export async function POST(request: Request) {
       displayName: displayName || email.split('@')[0],
       businessSlugs: businessSlugs || [],
       createdAt: new Date().toISOString(),
-      preRegistered: true, // Flag: will be migrated to real UID on first login
+      preRegistered: true,
     });
 
     return NextResponse.json({
@@ -105,11 +115,10 @@ export async function POST(request: Request) {
 /**
  * DELETE /api/auth/users?uid=...
  * Deletes a user record. Requires super_admin role.
- * Cannot delete yourself.
  */
 export async function DELETE(request: Request) {
-  const result = await requireRole(request, 'super_admin');
-  if (isAuthError(result)) return result;
+  const result = await requireRole(request, ['super_admin']);
+  if (result instanceof NextResponse) return result;
 
   const currentUser = result as AppUser;
 

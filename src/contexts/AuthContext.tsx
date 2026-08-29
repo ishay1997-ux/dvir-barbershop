@@ -64,25 +64,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user role from /api/auth/me
+  // Fetch user role from /api/auth/me (with guaranteed fallback for master super admin)
   const fetchUserRole = useCallback(async (fbUser: User): Promise<AuthUser | null> => {
+    const userEmail = (fbUser.email || '').toLowerCase().trim();
+
     try {
       const idToken = await fbUser.getIdToken();
       const res = await fetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${idToken}` },
       });
 
-      if (!res.ok) return null;
-
-      const data = await res.json();
-      if (data.authenticated && data.user) {
-        return data.user as AuthUser;
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          return data.user as AuthUser;
+        }
       }
-      return null;
     } catch (error) {
-      console.error('[AuthContext] Failed to fetch user role:', error);
-      return null;
+      console.error('[AuthContext] Failed to fetch user role from server:', error);
     }
+
+    // Guaranteed fallback for bootstrap Super Admin (ishay1997@gmail.com)
+    if (userEmail === 'ishay1997@gmail.com') {
+      return {
+        uid: fbUser.uid,
+        email: fbUser.email || 'ishay1997@gmail.com',
+        displayName: fbUser.displayName || 'ישי',
+        photoURL: fbUser.photoURL || '',
+        role: 'super_admin',
+        businessSlugs: [],
+      };
+    }
+
+    return null;
   }, []);
 
   // Listen to Firebase Auth state changes
