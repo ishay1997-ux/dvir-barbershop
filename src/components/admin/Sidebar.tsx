@@ -1,12 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, Calendar, Settings, Users, 
   Scissors, LogOut, Menu, X, ExternalLink 
 } from 'lucide-react';
 import { useState } from 'react';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -18,6 +20,7 @@ const navItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const SidebarContent = () => (
@@ -73,13 +76,17 @@ export default function AdminSidebar() {
         </Link>
 
         <button
-          onClick={() => {
-            if (typeof window !== 'undefined') {
-              sessionStorage.removeItem('thecut_admin_auth');
-              window.location.href = '/admin/login';
+          onClick={async () => {
+            try {
+              if (auth) {
+                await signOut(auth);
+              }
+            } catch (err) {
+              console.error('Logout error:', err);
             }
+            router.push('/admin/login');
           }}
-          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-[#9E9891] hover:bg-red-900/20 hover:text-red-400 transition-all w-full text-xs font-bold active:scale-95"
+          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-[#9E9891] hover:bg-red-900/20 hover:text-red-400 transition-all w-full text-xs font-bold active:scale-95 cursor-pointer"
           aria-label="התנתק מהמערכת"
         >
           <LogOut className="w-4 h-4" />

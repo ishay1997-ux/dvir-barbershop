@@ -1,85 +1,131 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, Scissors, ArrowLeft, ShieldCheck, Eye, EyeOff, KeyRound, Phone, CheckCircle2, X } from 'lucide-react';
+import { Lock, Mail, Scissors, ArrowLeft, ShieldCheck, Eye, EyeOff, KeyRound, CheckCircle2, X } from 'lucide-react';
 import Link from 'next/link';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from 'firebase/auth';
+import { auth, isFirebaseConfigured } from '@/lib/firebase';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [identifier, setIdentifier] = useState('dvir');
-  const [password, setPassword] = useState('cut1234');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Forgot / Reset Password Modal State
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
-  const [resetPhone, setResetPhone] = useState('');
-  const [newResetPassword, setNewResetPassword] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
   const [resetError, setResetError] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // If already logged in, redirect straight to admin dashboard
+  useEffect(() => {
+    if (auth && isFirebaseConfigured) {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          router.replace('/admin');
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      setError('אנא הזן כתובת אימייל');
+      return;
+    }
+
+    if (!cleanEmail.includes('@')) {
+      setError('אנא הזן כתובת אימייל מלאה ותקינה (לדוגמה: dvir@gmail.com)');
+      return;
+    }
+
+    if (!password) {
+      setError('אנא הזן סיסמה');
+      return;
+    }
+
     setLoading(true);
 
-    setTimeout(() => {
-      const cleanIdent = identifier.trim().toLowerCase();
-      const savedPass = typeof window !== 'undefined' ? localStorage.getItem('dvir_admin_password') : null;
-      
-      const isValidUser =
-        cleanIdent === 'dvir' ||
-        cleanIdent === 'admin' ||
-        cleanIdent === 'admin@thecut.co.il' ||
-        cleanIdent === '0521234567' ||
-        cleanIdent === '052-123-4567';
-
-      const isValidPass =
-        password === (savedPass || 'cut1234') ||
-        password === '1234' ||
-        password === 'dvir1234';
-
-      if (isValidUser && isValidPass) {
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('thecut_admin_auth', 'true');
-          localStorage.setItem('dvir_admin_auth', 'true');
-        }
-        router.push('/admin');
-      } else {
-        setError('שם משתמש או סיסמה שגויים. אנא נסה שוב.');
-        setLoading(false);
+    try {
+      if (!auth || !isFirebaseConfigured) {
+        throw new Error('שירות האימות אינו מוגדר. אנא בדוק את הגדרות ה-Firebase.');
       }
-    }, 400);
+
+      await signInWithEmailAndPassword(auth, cleanEmail, password);
+      // AdminAuthGuard / onAuthStateChanged will handle session, redirect now
+      router.push('/admin');
+    } catch (err: any) {
+      console.error('Firebase login error:', err);
+      const code = err?.code || '';
+
+      if (
+        code === 'auth/invalid-credential' ||
+        code === 'auth/user-not-found' ||
+        code === 'auth/wrong-password'
+      ) {
+        setError('כתובת אימייל או סיסמה שגויים. אנא נסה שוב.');
+      } else if (code === 'auth/invalid-email') {
+        setError('כתובת אימייל אינה תקינה.');
+      } else if (code === 'auth/too-many-requests') {
+        setError('בוצעו יותר מדי ניסיונות כושלים. החשבון ננעל זמנית להגנה, אנא נסה שוב בעוד מספר דקות.');
+      } else if (code === 'auth/network-request-failed') {
+        setError('שגיאת תקשורת עם שרת האימות. אנא בדוק את החיבור לרשת.');
+      } else {
+        setError(err?.message || 'אירעה שגיאה בעת ההתחברות. אנא נסה שוב.');
+      }
+      setLoading(false);
+    }
   };
 
-  const handleResetPassword = (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetError('');
 
-    const cleanPhone = resetPhone.replace(/\D/g, '');
-    if (!cleanPhone || cleanPhone.length < 9) {
-      setResetError('אנא הזן מספר טלפון תקין של מנהל המספרה');
+    const cleanEmail = resetEmail.trim();
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setResetError('אנא הזן כתובת אימייל תקינה');
       return;
     }
 
-    if (!newResetPassword.trim() || newResetPassword.length < 4) {
-      setResetError('הסיסמה החדשה חייבת להכיל לפחות 4 תווים');
-      return;
-    }
+    setResetLoading(true);
 
-    // Save new password
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('dvir_admin_password', newResetPassword.trim());
+    try {
+      if (!auth || !isFirebaseConfigured) {
+        throw new Error('שירות האימות אינו זמין כרגע.');
+      }
+
+      await sendPasswordResetEmail(auth, cleanEmail);
       setResetSuccess(true);
       setTimeout(() => {
-        setPassword(newResetPassword.trim());
         setIsForgotModalOpen(false);
         setResetSuccess(false);
-        setResetPhone('');
-        setNewResetPassword('');
-      }, 1500);
+        setResetEmail('');
+      }, 4000);
+    } catch (err: any) {
+      console.error('Firebase password reset error:', err);
+      const code = err?.code || '';
+
+      if (code === 'auth/user-not-found') {
+        setResetError('לא נמצא משתמש המשויך לכתובת אימייל זו.');
+      } else if (code === 'auth/invalid-email') {
+        setResetError('כתובת אימייל אינה תקינה.');
+      } else if (code === 'auth/too-many-requests') {
+        setResetError('נשלחו בקשות רבות מדי. אנא נסה שוב מאוחר יותר.');
+      } else {
+        setResetError('שגיאה בשליחת קישור איפוס סיסמה. אנא נסה שוב.');
+      }
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -126,27 +172,28 @@ export default function AdminLoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Identifier */}
+            {/* Email Field */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="admin-identifier" className="text-xs font-bold text-[#D5CBB8]">
-                שם משתמש / אימייל
+              <label htmlFor="admin-email" className="text-xs font-bold text-[#D5CBB8]">
+                כתובת אימייל
               </label>
               <div className="relative">
                 <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6560]" />
                 <input
-                  id="admin-identifier"
-                  type="text"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
+                  id="admin-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   dir="ltr"
-                  placeholder="dvir / admin"
-                  className="w-full bg-[#1C1C1C] border border-[#3D3D3D] focus:border-gold rounded-xl py-3 pr-10 pl-4 text-white text-sm outline-none transition-colors"
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  className="w-full bg-[#1C1C1C] border border-[#3D3D3D] focus:border-gold rounded-xl py-3 pr-10 pl-4 text-white text-sm outline-none transition-colors placeholder:text-[#555]"
                 />
               </div>
             </div>
 
-            {/* Password */}
+            {/* Password Field */}
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
                 <label htmlFor="admin-password" className="text-xs font-bold text-[#D5CBB8]">
@@ -154,7 +201,12 @@ export default function AdminLoginPage() {
                 </label>
                 <button
                   type="button"
-                  onClick={() => setIsForgotModalOpen(true)}
+                  onClick={() => {
+                    setResetEmail(email);
+                    setResetError('');
+                    setResetSuccess(false);
+                    setIsForgotModalOpen(true);
+                  }}
                   className="text-[11px] text-gold hover:underline font-medium"
                 >
                   שכחת סיסמה?
@@ -170,6 +222,7 @@ export default function AdminLoginPage() {
                   required
                   dir="ltr"
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   className="w-full bg-[#1C1C1C] border border-[#3D3D3D] focus:border-gold rounded-xl py-3 pr-10 pl-10 text-white text-sm outline-none transition-colors"
                 />
                 <button
@@ -183,12 +236,6 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            {/* Hint */}
-            <div className="bg-[#1C1C1C]/60 border border-[#3D3D3D] rounded-xl p-3 text-[11px] text-[#9E9891] leading-relaxed">
-              🔑 <strong>פרטי כניסה ראשוניים:</strong><br />
-              שם משתמש: <span className="text-white font-mono font-bold">dvir</span> | סיסמה: <span className="text-white font-mono font-bold">cut1234</span>
-            </div>
-
             {/* Submit button */}
             <button
               type="submit"
@@ -199,7 +246,7 @@ export default function AdminLoginPage() {
               {loading ? (
                 <>
                   <span className="w-4 h-4 border-2 border-[#1C1C1C]/30 border-t-[#1C1C1C] rounded-full animate-spin" />
-                  מתחבר...
+                  מאמת פרטים מול השרת...
                 </>
               ) : (
                 'התחבר למערכת'
@@ -222,12 +269,12 @@ export default function AdminLoginPage() {
 
             <div className="flex items-center gap-2 text-gold text-xs font-bold uppercase mb-2">
               <KeyRound className="w-4 h-4" />
-              איפוס סיסמת מנהל
+              איפוס סיסמה מאובטח
             </div>
 
-            <h3 className="text-lg font-bold text-white mb-1">שחזור גישה למספרה</h3>
-            <p className="text-xs text-[#9E9891] mb-5">
-              הזן את מספר הטלפון הראשי של דביר ובחר סיסמה חדשה
+            <h3 className="text-lg font-bold text-white mb-1">שחזור גישה למערכת</h3>
+            <p className="text-xs text-[#9E9891] mb-5 leading-relaxed">
+              הזן את כתובת האימייל של מנהל המערכת, ונשלח אליך קישור מאובטח לאיפוס הסיסמה.
             </p>
 
             {resetError && (
@@ -237,41 +284,24 @@ export default function AdminLoginPage() {
             )}
 
             {resetSuccess ? (
-              <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs rounded-xl p-4 font-bold flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                הסיסמה אופסה בהצלחה! מעדכן...
+              <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs rounded-xl p-4 font-bold flex flex-col items-center justify-center text-center gap-2">
+                <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                <p>קישור לאיפוס סיסמה נשלח בהצלחה לאימייל!</p>
+                <p className="text-[11px] text-emerald-300/80 font-normal">בדוק את תיבת הדואר הנכנס שלך.</p>
               </div>
             ) : (
               <form onSubmit={handleResetPassword} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-[#D5CBB8] mb-1">
-                    מספר טלפון של דביר
+                    כתובת האימייל של המנהל
                   </label>
                   <div className="relative">
-                    <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6560]" />
+                    <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6560]" />
                     <input
-                      type="tel"
-                      value={resetPhone}
-                      onChange={(e) => setResetPhone(e.target.value)}
-                      placeholder="052-123-4567"
-                      required
-                      dir="ltr"
-                      className="w-full bg-[#1C1C1C] border border-[#3D3D3D] focus:border-gold rounded-xl py-2.5 pr-10 pl-3 text-white text-xs outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#D5CBB8] mb-1">
-                    סיסמה חדשה לבחירתך
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6560]" />
-                    <input
-                      type="text"
-                      value={newResetPassword}
-                      onChange={(e) => setNewResetPassword(e.target.value)}
-                      placeholder="הקלד סיסמה חדשה"
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      placeholder="name@example.com"
                       required
                       dir="ltr"
                       className="w-full bg-[#1C1C1C] border border-[#3D3D3D] focus:border-gold rounded-xl py-2.5 pr-10 pl-3 text-white text-xs outline-none"
@@ -281,9 +311,17 @@ export default function AdminLoginPage() {
 
                 <button
                   type="submit"
-                  className="btn-shimmer w-full text-[#1C1C1C] font-black text-xs py-3 rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-gold"
+                  disabled={resetLoading}
+                  className="btn-shimmer w-full text-[#1C1C1C] font-black text-xs py-3 rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-gold disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  אפס סיסמה והתחבר
+                  {resetLoading ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-[#1C1C1C]/30 border-t-[#1C1C1C] rounded-full animate-spin" />
+                      שולח קישור...
+                    </>
+                  ) : (
+                    'שלח קישור לאיפוס סיסמה'
+                  )}
                 </button>
               </form>
             )}
