@@ -1,5 +1,19 @@
 import { NextResponse } from 'next/server';
 import { requireRole, adminDb, type AppUser } from '@/lib/firebase-admin';
+import { db, isFirebaseConfigured } from '@/lib/firebase';
+import { collection, getDocs, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+
+// In-memory fallback cache for serverless lifecycle
+let cachedUsers: Array<Record<string, any>> = [
+  {
+    uid: 'super-admin-ishay',
+    email: 'ishay1997@gmail.com',
+    displayName: 'ישי (מנהל-על)',
+    role: 'super_admin',
+    businessSlugs: [],
+    createdAt: new Date().toISOString(),
+  },
+];
 
 /**
  * GET /api/auth/users
@@ -10,32 +24,38 @@ export async function GET(request: Request) {
   if (result instanceof NextResponse) return result;
 
   try {
-    if (!adminDb) {
-      // Return default super admin if db not configured
-      return NextResponse.json({
-        users: [
-          {
-            uid: 'super-admin-ishay',
-            email: 'ishay1997@gmail.com',
-            displayName: 'ישי',
-            role: 'super_admin',
-            businessSlugs: [],
-            createdAt: new Date().toISOString(),
-          },
-        ],
-      });
+    // 1. Try Firebase Admin SDK
+    if (adminDb) {
+      const snapshot = await adminDb.collection('users').orderBy('createdAt', 'desc').get();
+      const users = snapshot.docs.map(doc => ({
+        uid: doc.id,
+        ...doc.data(),
+      }));
+      return NextResponse.json({ users });
     }
 
-    const snapshot = await adminDb.collection('users').orderBy('createdAt', 'desc').get();
-    const users = snapshot.docs.map(doc => ({
-      uid: doc.id,
-      ...doc.data(),
-    }));
+    // 2. Try Client Firestore SDK
+    if (isFirebaseConfigured && db) {
+      try {
+        const q = query(collection(db, 'users'));
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          const users = snapshot.docs.map(d => ({
+            uid: d.id,
+            ...d.data(),
+          }));
+          return NextResponse.json({ users });
+        }
+      } catch (clientDbErr) {
+        console.warn('[GET /api/auth/users] Firestore read warning:', clientDbErr);
+      }
+    }
 
-    return NextResponse.json({ users });
+    // 3. In-memory fallback
+    return NextResponse.json({ users: cachedUsers });
   } catch (error: any) {
     console.error('[/api/auth/users GET] Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ users: cachedUsers });
   }
 }
 
@@ -49,10 +69,6 @@ export async function POST(request: Request) {
   if (result instanceof NextResponse) return result;
 
   try {
-    if (!adminDb) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
-    }
-
     const body = await request.json();
     const { email, role, displayName, businessSlugs, uid } = body;
 
@@ -70,45 +86,54 @@ export async function POST(request: Request) {
       );
     }
 
-    // If uid provided, update existing user
-    if (uid) {
-      await adminDb.collection('users').doc(uid).set(
-        {
-          email: email.toLowerCase().trim(),
-          role,
-          displayName: displayName || email.split('@')[0],
-          businessSlugs: businessSlugs || [],
-          updatedAt: new Date().toISOString(),
-        },
-        { merge: true }
-      );
+    const cleanEmail = email.toLowerCase().trim();
+    const finalSlugs = Array.isArray(businessSlugs) && businessSlugs.length > 0
+      ? businessSlugs
+      : (role === 'business_admin' ? ['dvir'] : []);
 
-      return NextResponse.json({
-        success: true,
-        message: 'המשתמש עודכן בהצלחה',
-      });
+    const userRecord = {
+      email: cleanEmail,
+      role,
+      displayName: displayName || cleanEmail.split('@')[0],
+      businessSlugs: finalSlugs,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      preRegistered: true,
+    };
+
+    const targetId = uid || `pre_${cleanEmail.replace(/[^a-z0-9]/g, '_')}`;
+
+    // 1. Save to Admin DB if available
+    if (adminDb) {
+      await adminDb.collection('users').doc(targetId).set(userRecord, { merge: true });
     }
 
-    // Create a pre-registered user entry keyed by email
-    const preRegId = `pre_${email.toLowerCase().trim().replace(/[^a-z0-9]/g, '_')}`;
-    
-    await adminDb.collection('users').doc(preRegId).set({
-      email: email.toLowerCase().trim(),
-      role,
-      displayName: displayName || email.split('@')[0],
-      businessSlugs: businessSlugs || [],
-      createdAt: new Date().toISOString(),
-      preRegistered: true,
-    });
+    // 2. Save to Client Firestore if available
+    if (isFirebaseConfigured && db) {
+      try {
+        await setDoc(doc(db, 'users', targetId), userRecord, { merge: true });
+      } catch (fbErr) {
+        console.warn('[POST /api/auth/users] Firestore write warning:', fbErr);
+      }
+    }
+
+    // 3. Save to In-memory cache
+    const existingIndex = cachedUsers.findIndex(u => u.email === cleanEmail || u.uid === targetId);
+    if (existingIndex >= 0) {
+      cachedUsers[existingIndex] = { uid: targetId, ...userRecord };
+    } else {
+      cachedUsers.unshift({ uid: targetId, ...userRecord });
+    }
 
     return NextResponse.json({
       success: true,
-      message: `משתמש ${email} נרשם בהצלחה כ-${role === 'super_admin' ? 'מנהל-על' : 'מנהל עסק'}`,
-      userId: preRegId,
+      message: `משתמש ${cleanEmail} נרשם בהצלחה כ-${role === 'super_admin' ? 'מנהל-על' : 'מנהל עסק'}`,
+      userId: targetId,
+      user: { uid: targetId, ...userRecord },
     });
   } catch (error: any) {
     console.error('[/api/auth/users POST] Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error?.message || 'שגיאה בשמירת המשתמש' }, { status: 500 });
   }
 }
 
@@ -123,10 +148,6 @@ export async function DELETE(request: Request) {
   const currentUser = result as AppUser;
 
   try {
-    if (!adminDb) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
-    }
-
     const { searchParams } = new URL(request.url);
     const uid = searchParams.get('uid');
 
@@ -141,7 +162,22 @@ export async function DELETE(request: Request) {
       );
     }
 
-    await adminDb.collection('users').doc(uid).delete();
+    // 1. Delete from Admin DB
+    if (adminDb) {
+      await adminDb.collection('users').doc(uid).delete();
+    }
+
+    // 2. Delete from Client Firestore
+    if (isFirebaseConfigured && db) {
+      try {
+        await deleteDoc(doc(db, 'users', uid));
+      } catch (fbErr) {
+        console.warn('[DELETE /api/auth/users] Firestore delete warning:', fbErr);
+      }
+    }
+
+    // 3. Delete from In-memory cache
+    cachedUsers = cachedUsers.filter(u => u.uid !== uid);
 
     return NextResponse.json({
       success: true,

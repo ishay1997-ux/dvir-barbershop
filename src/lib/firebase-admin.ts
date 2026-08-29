@@ -2,6 +2,8 @@ import { initializeApp, getApps, cert, App } from 'firebase-admin/app';
 import { getAuth, Auth } from 'firebase-admin/auth';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 import { NextResponse } from 'next/server';
+import { db, isFirebaseConfigured } from '@/lib/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 // ============================================================
 // Firebase Admin SDK — Server-Side Only
@@ -219,6 +221,29 @@ export async function verifyAuth(request: Request): Promise<AppUser | null> {
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
       };
+    }
+
+    // Check client Firestore if available
+    if (isFirebaseConfigured && db && email) {
+      try {
+        const q = query(collection(db, 'users'), where('email', '==', email));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          const data = snap.docs[0].data();
+          return {
+            uid,
+            email,
+            displayName: data.displayName || decoded.name || email.split('@')[0],
+            photoURL: data.photoURL || decoded.picture || '',
+            role: data.role as UserRole,
+            businessSlugs: data.businessSlugs || [],
+            createdAt: data.createdAt || new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
+          };
+        }
+      } catch (clientDbErr) {
+        console.warn('Firestore fallback verifyAuth error:', clientDbErr);
+      }
     }
   }
 
