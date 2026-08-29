@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     const resolvedServiceName = String(serviceName || service || 'תספורת גברים').trim().slice(0, 80);
     const resolvedPrice = Number(servicePrice || price) || 80;
     const resolvedSlug = String(businessSlug || 'dvir').toLowerCase().trim();
-    const resolvedBizName = String(businessName || (resolvedSlug === 'sharon' ? 'שרון עיצוב שיער' : 'המספרה של דביר')).trim();
+    const resolvedBizName = String(businessName || 'המספרה של דביר').trim();
 
     if (cleanName.length < 2 || cleanPhone.length < 8) {
       return NextResponse.json(
@@ -307,7 +307,8 @@ export async function DELETE(request: Request) {
     if (id) {
       if (isFirebaseConfigured && db) {
         try {
-          await deleteDoc(doc(db, 'appointments', id));
+          const currentDb = db;
+          await deleteDoc(doc(currentDb, 'appointments', id));
         } catch (fbError) {
           console.error('Firebase delete by ID error:', fbError);
         }

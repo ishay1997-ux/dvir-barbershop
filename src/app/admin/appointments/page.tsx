@@ -126,8 +126,17 @@ export default function AppointmentsPage() {
 
   const dayAppointments = filteredAppointments.filter((a) => isSameDay(a.date, currentDate));
 
-  const handleStatusChange = (id: string, newStatus: AdminAppointment['status']) => {
-    setAppointments(appointments.map((a) => (a.id === id ? { ...a, status: newStatus } : a)));
+  const handleStatusChange = async (id: string, newStatus: AdminAppointment['status']) => {
+    setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a)));
+    try {
+      await fetch('/api/appointments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+    } catch (err) {
+      console.error('Failed to update status on server:', err);
+    }
   };
 
   return (

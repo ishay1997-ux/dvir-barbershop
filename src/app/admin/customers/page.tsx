@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Search,
   Phone,
@@ -54,6 +54,43 @@ export default function CustomersPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<ProcessedCustomer | null>(null);
   const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers);
   const [savedNotice, setSavedNotice] = useState(false);
+
+  useEffect(() => {
+    async function loadLiveCustomers() {
+      try {
+        const res = await fetch('/api/appointments');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.appointments && Array.isArray(data.appointments)) {
+            const map = new Map<string, Customer>();
+            // Add existing local customers first
+            localCustomers.forEach((c) => map.set(c.phone.replace(/\D/g, ''), c));
+            // Merge newly booked appointments
+            data.appointments.forEach((apt: any) => {
+              const cleanP = String(apt.customerPhone || apt.phone || '').replace(/\D/g, '');
+              if (cleanP && !map.has(cleanP)) {
+                map.set(cleanP, {
+                  id: `c-live-${cleanP}`,
+                  name: apt.customerName || 'לקוח חדש',
+                  phone: apt.customerPhone || apt.phone || cleanP,
+                  lastVisit: apt.date || new Date().toISOString(),
+                  totalVisits: 1,
+                  totalSpent: Number(apt.servicePrice || apt.price || 80),
+                  favoriteBranchId: (apt.branchId as any) || 'ariel',
+                  status: 'active',
+                  preferences: { notes: `הוזמן תור ב-${apt.date} ${apt.time}` },
+                });
+              }
+            });
+            setLocalCustomers(Array.from(map.values()));
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching live customers:', e);
+      }
+    }
+    loadLiveCustomers();
+  }, []);
 
   // Editable customer modal state
   const [editSpecs, setEditSpecs] = useState({
