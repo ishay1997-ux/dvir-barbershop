@@ -23,7 +23,9 @@ import {
   Zap,
   Eye,
   EyeOff,
+  Sparkles,
 } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
 
 interface BugReport {
   id: string;
@@ -48,6 +50,102 @@ interface Business {
   status: 'active' | 'pending' | 'suspended';
   plan: 'pro' | 'starter' | 'enterprise';
   createdAt: string;
+}
+
+// Intelligent Appointment Auto-Finder for Support Tickets
+function ReportAppointmentHelper({
+  phone,
+  customerName,
+  businessName,
+}: {
+  phone: string;
+  customerName: string;
+  businessName: string;
+}) {
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function findCustomerAppointments() {
+      try {
+        const res = await fetch(`/api/appointments?phone=${encodeURIComponent(phone)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setAppointments(data.appointments || []);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    findCustomerAppointments();
+  }, [phone]);
+
+  const handleCancelAppointment = async (aptId: string) => {
+    if (!confirm('האם לבטל תור זה ולפנות את המשבצת ביומן?')) return;
+    try {
+      await fetch('/api/appointments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: aptId, status: 'cancelled' }),
+      });
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === aptId ? { ...a, status: 'cancelled' } : a))
+      );
+    } catch (err) {
+      alert('שגיאה בביטול התור');
+    }
+  };
+
+  const activeAppointments = appointments.filter((a) => a.status !== 'cancelled');
+
+  return (
+    <div className="mb-3 p-3 rounded-xl bg-[#171717] border border-[#C9A84C]/25 text-xs text-right font-sans">
+      <div className="flex items-center gap-1.5 text-[#C9A84C] font-black mb-1.5">
+        <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />
+        <span>איתור תורים אוטומטי למספר {phone}:</span>
+      </div>
+
+      {loading ? (
+        <span className="text-[11px] text-zinc-500">מחפש תורים רשומים במערכת...</span>
+      ) : activeAppointments.length > 0 ? (
+        <div className="space-y-2">
+          {activeAppointments.map((apt) => (
+            <div
+              key={apt.id}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg bg-[#222222] border border-white/10"
+            >
+              <div>
+                <div className="font-bold text-white flex items-center gap-2">
+                  <span>📅 תאריך: <strong>{apt.date || 'לא צוין'}</strong></span>
+                  <span>בשעה <strong className="text-[#C9A84C]" dir="ltr">{apt.time || '16:00'}</strong></span>
+                </div>
+                <div className="text-[11px] text-zinc-400 mt-0.5">
+                  {apt.serviceName || apt.service || 'תספורת'} · {apt.branchName || 'סניף ראשי'} ({formatPrice(apt.servicePrice || apt.price || 80)})
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleCancelAppointment(apt.id)}
+                className="px-3 py-1.5 rounded-lg bg-red-950/50 hover:bg-red-900/80 border border-red-500/40 text-red-300 font-bold text-[11px] transition-colors self-start sm:self-center cursor-pointer"
+              >
+                בטל תור זה עכשיו ❌
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : appointments.length > 0 ? (
+        <div className="text-[11px] text-emerald-400 font-bold">
+          ✓ נבדק במערכת: כל התורים הקודמים של הלקוח כבר בוטלו / הושלמו (אין תור פעיל כרגע).
+        </div>
+      ) : (
+        <div className="text-[11px] text-zinc-400">
+          🔍 לא נמצאו תורים עתידיים רשומים במערכת למספר זה (ייתכן שהתור כבר בוטל או שלא הוזמן).
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function SuperAdminPage() {
@@ -499,9 +597,16 @@ export default function SuperAdminPage() {
                       {r.message}
                     </p>
 
+                    {/* Intelligent Appointment Helper for this Customer */}
+                    <ReportAppointmentHelper
+                      phone={r.phone}
+                      customerName={r.fullName}
+                      businessName={r.businessName}
+                    />
+
                     {/* Contact Actions */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-400">
-                      <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-400 pt-1">
+                      <div className="flex flex-wrap items-center gap-2.5">
                         <a
                           href={`tel:${r.phone}`}
                           className="inline-flex items-center gap-1 text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-lg border border-white/10 transition-colors"
@@ -516,6 +621,13 @@ export default function SuperAdminPage() {
                         >
                           <MessageCircle className="w-3.5 h-3.5" /> מענה בוואטסאפ ללקוח
                         </a>
+                        <Link
+                          href="/admin/appointments"
+                          target="_blank"
+                          className="inline-flex items-center gap-1 text-[#C9A84C] hover:text-[#DFCA85] bg-[#C9A84C]/10 hover:bg-[#C9A84C]/20 px-2.5 py-1 rounded-lg border border-[#C9A84C]/30 font-bold transition-colors"
+                        >
+                          <Calendar className="w-3.5 h-3.5" /> יומן תורים של {r.businessName} ↗
+                        </Link>
                       </div>
 
                       <span className="text-[11px] text-zinc-500" dir="ltr">
