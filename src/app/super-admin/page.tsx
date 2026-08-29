@@ -1045,7 +1045,7 @@ const defaultBusinessesList: Business[] = [
         </div>
 
         {/* Tab Navigation */}
-        <div className={`flex border-b mb-6 gap-2 sm:gap-3 transition-colors ${
+        <div className={`flex border-b mb-6 gap-2 sm:gap-3 overflow-x-auto no-scrollbar whitespace-nowrap pb-1 transition-colors ${
           adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'
         }`}>
           <button
