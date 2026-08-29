@@ -549,65 +549,95 @@ export default function SuperAdminPage() {
   });
 
   // ============================================================
-  // LOGIN SCREEN (If not authenticated)
+  // LOGIN SCREEN (If not authenticated) - Professional Enterprise SaaS
   // ============================================================
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#121212] text-white flex items-center justify-center p-4 font-sans" dir="rtl">
-        <div className="max-w-md w-full bg-[#1C1C1C] border border-[#C9A84C]/40 rounded-3xl p-8 shadow-2xl text-center">
-          <div className="w-16 h-16 rounded-2xl bg-[#C9A84C]/15 border border-[#C9A84C]/40 flex items-center justify-center mx-auto mb-4 text-[#C9A84C]">
-            <ShieldCheck className="w-8 h-8" />
+      <div className="min-h-screen bg-[#0E0E10] text-white flex items-center justify-center p-4 relative overflow-hidden font-sans" dir="rtl">
+        {/* Background Ambient Glow & Grid Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,_rgba(201,168,76,0.12)_0%,_transparent_65%)] pointer-events-none" />
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.8) 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
+          }}
+        />
+
+        <div className="relative max-w-md w-full bg-[#18181B]/90 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] text-center">
+          {/* Top Subtle Luxury Accent Line */}
+          <div className="absolute top-0 inset-x-8 h-px bg-gradient-to-r from-transparent via-[#C9A84C]/60 to-transparent" />
+
+          {/* Central Security Badge */}
+          <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-b from-[#2A2A2E] to-[#161618] border border-[#C9A84C]/30 flex items-center justify-center mx-auto mb-5 shadow-xl">
+            <ShieldCheck className="w-8 h-8 text-[#C9A84C]" />
+            <div className="absolute -inset-1 rounded-2xl border border-[#C9A84C]/20 animate-pulse pointer-events-none" />
           </div>
 
-          <h1 className="text-2xl font-black text-white mb-1">פאנל ניהול על · Super Admin</h1>
-          <p className="text-xs text-[#9E9891] mb-6">מערכת שליטה מרכזית עבור ישי (The Cut Platform)</p>
+          {/* Header & Product Identity */}
+          <div className="mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold text-zinc-400 mb-2.5">
+              <Lock className="w-3 h-3 text-[#C9A84C]" />
+              <span>The Cut Platform · Console</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              פורטל ניהול על
+            </h1>
+            <p className="text-xs text-zinc-400 mt-1 font-sans">
+              כניסה מאובטחת למערכת השליטה המרכזית
+            </p>
+          </div>
 
           <div className="space-y-4">
-            {/* 1. Primary Google Sign-In Button */}
+            {/* 1. Primary Google Workspace SSO Button */}
             <button
               type="button"
               onClick={handleGoogleLogin}
               disabled={googleLoading}
-              className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-zinc-100 text-[#1C1C1C] font-black text-sm transition-all shadow-md flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 hover:scale-[1.01]"
+              className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-zinc-100 text-[#18181B] font-bold text-sm transition-all shadow-md flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 hover:shadow-lg active:scale-[0.99]"
             >
               {googleLoading ? (
                 <div className="w-5 h-5 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin" />
               ) : (
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
                   <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"/>
                   <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
                   <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
                 </svg>
               )}
-              <span>{googleLoading ? 'מתחבר לחשבון Google...' : 'התחברות באמצעות Google'}</span>
+              <span>{googleLoading ? 'מתחבר למערכת...' : 'המשך עם חשבון Google'}</span>
             </button>
 
-            {/* Divider */}
+            {/* Elegant Divider */}
             <div className="relative flex py-2 items-center">
-              <div className="flex-grow border-t border-white/10"></div>
-              <span className="flex-shrink mx-4 text-[11px] text-zinc-500 font-bold">או באמצעות סיסמת מנהל</span>
-              <div className="flex-grow border-t border-white/10"></div>
+              <div className="flex-grow border-t border-white/10" />
+              <span className="flex-shrink mx-3 text-[11px] text-zinc-400 font-medium font-sans">או באמצעות מפתח גישה</span>
+              <div className="flex-grow border-t border-white/10" />
             </div>
 
-            {/* 2. Password Form */}
-            <form onSubmit={handleLogin} className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-gray-300 text-right mb-1.5">
-                  סיסמת מנהל ראשי:
+            {/* 2. Secure Passkey Form */}
+            <form onSubmit={handleLogin} className="space-y-3.5">
+              <div className="text-right">
+                <label className="block text-xs font-bold text-zinc-300 mb-1.5">
+                  מפתח אבטחה ראשי
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="הזן 1997 או ishay..."
-                    className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-2xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-colors text-right"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (authError) setAuthError(false);
+                    }}
+                    placeholder="הזן סיסמת גישה מורשית..."
+                    className="w-full bg-[#121214] border border-white/15 focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/50 rounded-2xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition-all text-right font-sans"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="w-6 h-6 text-zinc-400 hover:text-white absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer"
+                    className="w-8 h-8 text-zinc-400 hover:text-white absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer transition-colors"
+                    title={showPassword ? 'הסתר סיסמה' : 'הצג סיסמה'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -615,35 +645,35 @@ export default function SuperAdminPage() {
               </div>
 
               {authError && (
-                <p className="text-xs text-red-400 font-bold bg-red-950/40 p-2.5 rounded-xl border border-red-500/30">
-                  סיסמה שגויה, נסה שנית או השתמש בכפתור Google למעלה.
-                </p>
+                <div className="p-3 rounded-2xl bg-red-950/40 border border-red-500/30 text-xs text-red-300 font-medium text-right flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                  <span>מפתח הגישה שגוי. נסה שוב או השתמש ב-Google SSO.</span>
+                </div>
               )}
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-2xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-sm transition-colors shadow-lg cursor-pointer"
+                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#C9A84C] to-[#DFCA85] hover:opacity-95 text-[#18181B] font-black text-sm transition-all shadow-lg hover:shadow-[#C9A84C]/20 active:scale-[0.99] cursor-pointer"
               >
-                כניסה באמצעות סיסמה ←
+                אימות וכניסה למערכת ←
               </button>
-
-              {/* Quick 1-Click Entry for Ishay */}
-              <div className="pt-1">
-                <button
-                  type="button"
-                  onClick={executeLogin}
-                  className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-bold text-[#C9A84C] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Zap className="w-3.5 h-3.5" /> כניסה מהירה לישי (מנהל ראשי)
-                </button>
-              </div>
             </form>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-white/10">
-            <Link href="/" className="text-xs text-zinc-500 hover:text-white transition-colors inline-flex items-center gap-1">
-              <ArrowRight className="w-3.5 h-3.5" /> חזרה לאתר הראשי
+          {/* Footer Navigation & Security Badges */}
+          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-zinc-400">
+            <Link
+              href="/"
+              className="hover:text-white transition-colors inline-flex items-center gap-1.5 font-medium"
+            >
+              <ArrowRight className="w-3.5 h-3.5" />
+              <span>חזרה לאתר</span>
             </Link>
+
+            <div className="flex items-center gap-1.5 text-[10px] text-zinc-400">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>אימות מאובטח 256-Bit SSL</span>
+            </div>
           </div>
         </div>
       </div>
