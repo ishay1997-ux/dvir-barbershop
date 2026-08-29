@@ -64,7 +64,7 @@ export default function PrivacyPage() {
 
             <section className="space-y-3">
               <h2 className="text-lg sm:text-xl font-black text-[#DFCA85]">4. יצירת קשר בנושאי פרטיות</h2>
-              <p>בכל עת ניתן לפנות לדביר בטלפון 052-123-4567 לבקשת עיון, תיקון או מחיקת פרטיכם ממאגר הלקוחות.</p>
+              <p>בכל עת ניתן לפנות לדביר בטלפון 058-781-5070 לבקשת עיון, תיקון או מחיקת פרטיכם ממאגר הלקוחות.</p>
             </section>
           </div>
         </div>

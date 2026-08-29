@@ -85,7 +85,7 @@ export default function TermsPage() {
               <p>לכל שאלה, הבהרה או בירור לגבי תנאי שימוש אלו או פעילות המספרה, ניתן לפנות אלינו:</p>
               <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-1 font-bold">
                 <p>📍 המספרה של דביר · אריאל & רחובות</p>
-                <p>📞 טלפון / וואטסאפ: 052-123-4567</p>
+                <p>📞 טלפון / וואטסאפ: 058-781-5070</p>
                 <p>🌐 כתובת האתר: thecut-reg-in.vercel.app</p>
               </div>
             </section>

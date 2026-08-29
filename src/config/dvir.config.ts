@@ -5,7 +5,7 @@ export const DVIR_FLAGSHIP_CONFIG: BusinessConfig = {
   name: 'המספרה של דביר',
   slug: 'dvir',
   ownerName: 'דביר',
-  phone: '052-123-4567',
+  phone: '058-781-5070',
   city: 'אריאל & רחובות',
   slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
   announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מראש!',
