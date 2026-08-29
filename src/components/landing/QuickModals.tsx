@@ -270,33 +270,27 @@ export function MyAppointmentsModal({
                           if (!confirmCancel) return;
 
                           try {
-                            await fetch('/api/appointments', {
-                              method: 'PATCH',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ id: apt.id, status: 'cancelled' }),
+                            await fetch(`/api/appointments?id=${encodeURIComponent(apt.id)}`, {
+                              method: 'DELETE',
                             });
 
                             if (typeof window !== 'undefined') {
                               const stored = localStorage.getItem('thecut_customer_appointments_v3');
                               if (stored) {
                                 const parsed = JSON.parse(stored);
-                                const updated = parsed.map((item: any) =>
-                                  item.id === apt.id ? { ...item, status: 'cancelled' } : item
-                                );
+                                const updated = parsed.filter((item: any) => item.id !== apt.id);
                                 localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
                               }
                             }
 
-                            setAppointments((prev) =>
-                              prev.map((a) => (a.id === apt.id ? { ...a, status: 'cancelled' } : a))
-                            );
+                            setAppointments((prev) => prev.filter((a) => a.id !== apt.id));
                           } catch (err) {
                             alert('אירעה שגיאה בביטול התור.');
                           }
                         }}
                         className="flex-1 py-2 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 text-center text-xs font-bold transition-colors"
                       >
-                        בטל תור זה ❌
+                        בטל ומחק תור זה ❌
                       </button>
 
                       <Link

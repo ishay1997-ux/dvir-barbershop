@@ -122,7 +122,7 @@ function ManageBookingContent() {
     fetchAppointments(phone.trim());
   };
 
-  // Cancel Appointment Handler
+  // Cancel & Delete Appointment Handler
   const handleCancel = async (apt: AppointmentData) => {
     const confirmCancel = window.confirm(`האם אתה בטוח שברצונך לבטל את התור לתאריך ${apt.date} בשעה ${apt.time}?`);
     if (!confirmCancel) return;
@@ -130,29 +130,23 @@ function ManageBookingContent() {
     setCancellingId(apt.id);
 
     try {
-      // 1. Call API PATCH
-      await fetch('/api/appointments', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: apt.id, status: 'cancelled' }),
+      // 1. Call API DELETE
+      await fetch(`/api/appointments?id=${encodeURIComponent(apt.id)}`, {
+        method: 'DELETE',
       });
 
-      // 2. Update local storage
+      // 2. Remove from local storage
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('thecut_customer_appointments_v3');
         if (stored) {
           const parsed = JSON.parse(stored);
-          const updated = parsed.map((item: any) =>
-            item.id === apt.id ? { ...item, status: 'cancelled' } : item
-          );
+          const updated = parsed.filter((item: any) => item.id !== apt.id);
           localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
         }
       }
 
       // 3. Update component state
-      setAppointments((prev) =>
-        prev.map((a) => (a.id === apt.id ? { ...a, status: 'cancelled' } : a))
-      );
+      setAppointments((prev) => prev.filter((a) => a.id !== apt.id));
       setCancelledSuccessMap((prev) => ({ ...prev, [apt.id]: true }));
     } catch (err) {
       alert('אירעה שגיאה בביטול התור. אנא צור קשר טלפוני עם המספרה.');

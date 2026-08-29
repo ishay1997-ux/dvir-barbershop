@@ -252,27 +252,44 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const phone = searchParams.get('phone');
+    const cleanPhone = phone ? phone.replace(/\D/g, '') : null;
 
-    if (!id) {
-      return NextResponse.json({ error: 'Missing appointment id' }, { status: 400 });
+    if (!id && !cleanPhone) {
+      return NextResponse.json({ error: 'Missing appointment id or phone parameter' }, { status: 400 });
     }
 
     if (isFirebaseConfigured && db) {
+      const firestore = db;
       try {
-        await deleteDoc(doc(db, 'appointments', id));
+        if (id) {
+          await deleteDoc(doc(firestore, 'appointments', id));
+        } else if (cleanPhone) {
+          const q = query(collection(firestore, 'appointments'), where('cleanPhone', '==', cleanPhone));
+          const snapshot = await getDocs(q);
+          const deletePromises = snapshot.docs.map((d) => deleteDoc(doc(firestore, 'appointments', d.id)));
+          await Promise.all(deletePromises);
+        }
       } catch (fbError) {
         console.error('Firebase delete error:', fbError);
       }
     }
 
-    const idx = memoryAppointments.findIndex((a) => a.id === id);
-    if (idx !== -1) {
-      memoryAppointments.splice(idx, 1);
+    // Purge from memory store
+    if (id) {
+      const idx = memoryAppointments.findIndex((a) => a.id === id);
+      if (idx !== -1) memoryAppointments.splice(idx, 1);
+    } else if (cleanPhone) {
+      for (let i = memoryAppointments.length - 1; i >= 0; i--) {
+        if (memoryAppointments[i].customerPhone.replace(/\D/g, '').includes(cleanPhone)) {
+          memoryAppointments.splice(i, 1);
+        }
+      }
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Appointment deleted successfully',
+      message: 'Appointments deleted and purged successfully',
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
