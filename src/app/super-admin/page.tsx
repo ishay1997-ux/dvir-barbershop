@@ -265,7 +265,7 @@ const defaultBusinessesList: Business[] = [
     name: 'המספרה של דביר',
     slug: 'dvir',
     ownerName: 'דביר',
-    phone: '058-781-5071',
+    phone: '058-781-5070',
     city: 'אריאל & רחובות',
     slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
     announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מראש!',
@@ -1588,7 +1588,7 @@ const defaultBusinessesList: Business[] = [
                   מלא בטופס
                 </button>
                 <a
-                  href={`https://wa.me/972587815071?text=${encodeURIComponent(
+                  href={`https://wa.me/972587815070?text=${encodeURIComponent(
                     `היי דביר אח יקר! 🔥\nהאתר של המספרה שלך באוויר בקישור:\nhttps://thecut-reg-in.vercel.app/dvir\n\nוכדי לנהל את היומן, התורים והמחירון שלך, היכנס מכאן באמצעות חשבון ה-Google שלך:\nhttps://thecut-reg-in.vercel.app/admin/login\n(חשבון Google שלך כבר מוגדר כמנהל!)`
                   )}`}
                   target="_blank"
