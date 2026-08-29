@@ -60,7 +60,7 @@ export const SHOP_INFO = {
   name: 'המספרה של דביר',
   nameEnglish: 'Dvir Barbershop',
   tagline: 'אמנות התספורת והזקן – אריאל & רחובות',
-  phone: '058-781-5070',
+  phone: '058-781-5071',
   branches: INITIAL_BRANCHES,
   instagram: 'https://instagram.com/dvir_barber',
   facebook: 'https://facebook.com/dvirbarber',

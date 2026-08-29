@@ -173,8 +173,8 @@ export default function AccessibilityPage() {
                   </div>
                   <div>
                     <div className="text-xs text-[#6B6560]">טלפון / WhatsApp</div>
-                    <a href={`tel:${SHOP_INFO.phone}`} className="font-bold text-[#1C1C1C] text-sm hover:text-[#085B7A]" dir="ltr">
-                      {SHOP_INFO.phone}
+                    <a href="tel:0587815070" className="font-bold text-[#1C1C1C] text-sm hover:text-[#085B7A]" dir="ltr">
+                      058-781-5070
                     </a>
                   </div>
                 </div>
