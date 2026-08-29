@@ -58,5 +58,6 @@ export interface BusinessConfig {
   wazeUrl?: string;
   whatsappNumber?: string;
   websiteUrl?: string;
+  avatarUrl?: string;
   experienceYears?: number;
 }

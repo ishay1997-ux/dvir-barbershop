@@ -93,6 +93,8 @@ interface Business {
   wazeUrl?: string;
   whatsappNumber?: string;
   websiteUrl?: string;
+  avatarUrl?: string;
+  galleryImages?: string[];
   branchesCount: number;
   status: 'active' | 'pending' | 'suspended';
   plan: 'pro' | 'starter' | 'enterprise';
@@ -286,9 +288,10 @@ const defaultBusinessesList: Business[] = [
 
   // Edit Business Customization State
   const [editingBiz, setEditingBiz] = useState<Business | null>(null);
-  const [editTab, setEditTab] = useState<'branding' | 'social' | 'services' | 'branches' | 'banner'>('branding');
+  const [editTab, setEditTab] = useState<'branding' | 'social' | 'gallery' | 'services' | 'branches' | 'banner'>('branding');
   const [isSavingBiz, setIsSavingBiz] = useState(false);
   const [saveNotice, setSaveNotice] = useState(false);
+  const [newGalleryImageUrl, setNewGalleryImageUrl] = useState('');
 
   // New service inside edit modal
   const [newServiceName, setNewServiceName] = useState('');
@@ -1503,6 +1506,15 @@ const defaultBusinessesList: Business[] = [
               </button>
               <button
                 type="button"
+                onClick={() => setEditTab('gallery')}
+                className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
+                  editTab === 'gallery' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
+                }`}
+              >
+                🖼️ תמונות וגלריה
+              </button>
+              <button
+                type="button"
                 onClick={() => setEditTab('services')}
                 className={`pb-2 px-3 border-b-2 transition-colors cursor-pointer ${
                   editTab === 'services' ? 'border-[#C9A84C] text-[#C9A84C]' : 'border-transparent text-zinc-400 hover:text-white'
@@ -1711,6 +1723,146 @@ const defaultBusinessesList: Business[] = [
                       placeholder="https://my-barbershop.co.il"
                       className="w-full bg-[#141414] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3.5 py-2.5 text-white outline-none"
                     />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: PHOTOS & GALLERY MANAGEMENT */}
+            {editTab === 'gallery' && (
+              <div className="space-y-4 text-xs">
+                {/* 1. Barber Avatar Photo */}
+                <div className="p-3.5 bg-[#141414] border border-white/10 rounded-2xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-black text-white text-xs flex items-center gap-1.5">
+                        <span>👤 תמונת פרופיל / תמונת הספר:</span>
+                      </h4>
+                      <p className="text-[11px] text-[#9E9891]">מופיעה בכרטיס המאסטר "הכירו את הספר"</p>
+                    </div>
+                    {editingBiz.avatarUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setEditingBiz({ ...editingBiz, avatarUrl: '' })}
+                        className="text-[10px] text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        הסר תמונה (חזור לאות ראשונה) 🗑️
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-14 h-14 rounded-full border-2 overflow-hidden flex items-center justify-center bg-black/60 shrink-0 text-white font-black text-lg shadow-md"
+                      style={{ borderColor: editingBiz.themeColor || '#C9A84C', color: editingBiz.themeColor || '#C9A84C' }}
+                    >
+                      {editingBiz.avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={editingBiz.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <span>{editingBiz.ownerName?.charAt(0) || 'ד'}</span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        type="url"
+                        value={editingBiz.avatarUrl || ''}
+                        onChange={(e) => setEditingBiz({ ...editingBiz, avatarUrl: e.target.value })}
+                        placeholder="הדבק קישור ישיר לתמונה (URL)..."
+                        dir="ltr"
+                        className="w-full bg-[#1C1C1C] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Haircut Gallery Photos Grid */}
+                <div className="p-3.5 bg-[#141414] border border-white/10 rounded-2xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-black text-white text-xs flex items-center gap-1.5">
+                        <span>⭐ גלריית עבודות ותספורות:</span>
+                      </h4>
+                      <p className="text-[11px] text-[#9E9891]">מופיעה לצד המחירון בעמוד הראשי (לחץ על 🗑️ למחיקה)</p>
+                    </div>
+                    <span className="text-[10px] text-[#C9A84C] font-bold">
+                      {editingBiz.galleryImages?.length || 6} תמונות בגלריה
+                    </span>
+                  </div>
+
+                  {/* Current Photos Grid */}
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                    {(editingBiz.galleryImages && editingBiz.galleryImages.length > 0
+                      ? editingBiz.galleryImages
+                      : [
+                          'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=600&q=80',
+                          'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80',
+                          'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=600&q=80',
+                          'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=600&q=80',
+                          'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=600&q=80',
+                          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+                        ]
+                    ).map((imgUrl, imgIdx) => (
+                      <div key={imgIdx} className="relative aspect-square rounded-xl overflow-hidden bg-black/60 border border-white/10 group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={imgUrl} alt={`עבודה ${imgIdx + 1}`} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const current = editingBiz.galleryImages && editingBiz.galleryImages.length > 0
+                              ? [...editingBiz.galleryImages]
+                              : [
+                                  'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=600&q=80',
+                                  'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80',
+                                  'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=600&q=80',
+                                  'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=600&q=80',
+                                  'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=600&q=80',
+                                  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+                                ];
+                            current.splice(imgIdx, 1);
+                            setEditingBiz({ ...editingBiz, galleryImages: current });
+                          }}
+                          className="absolute inset-0 bg-red-950/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs"
+                          title="מחק תמונה זו"
+                        >
+                          🗑️ מחק
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Add Image Input */}
+                  <div className="flex gap-2 pt-2 border-t border-white/10">
+                    <input
+                      type="url"
+                      value={newGalleryImageUrl}
+                      onChange={(e) => setNewGalleryImageUrl(e.target.value)}
+                      placeholder="הדבק קישור ישיר לתמונת עבודה חדשה (URL)..."
+                      dir="ltr"
+                      className="flex-1 bg-[#1C1C1C] border border-white/15 focus:border-[#C9A84C] rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!newGalleryImageUrl.trim()) return;
+                        const current = editingBiz.galleryImages && editingBiz.galleryImages.length > 0
+                          ? [...editingBiz.galleryImages]
+                          : [
+                              'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=600&q=80',
+                              'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80',
+                              'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=600&q=80',
+                              'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=600&q=80',
+                              'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=600&q=80',
+                              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+                            ];
+                        current.push(newGalleryImageUrl.trim());
+                        setEditingBiz({ ...editingBiz, galleryImages: current });
+                        setNewGalleryImageUrl('');
+                      }}
+                      className="px-4 py-2 bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs rounded-xl transition-colors shrink-0 cursor-pointer"
+                    >
+                      + הוסף לגלריה
+                    </button>
                   </div>
                 </div>
               </div>

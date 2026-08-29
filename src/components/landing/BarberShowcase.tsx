@@ -89,16 +89,25 @@ export default function BarberShowcase({
                 <Sparkles className="w-10 h-10" />
               </div>
 
-              {/* Big avatar letter */}
+              {/* Barber Avatar Photo or Monogram Letter */}
               <div
-                className="w-24 h-24 rounded-full border-2 flex items-center justify-center text-white text-4xl font-black shadow-2xl"
+                className="w-24 h-24 rounded-full border-2 flex items-center justify-center text-white text-4xl font-black shadow-2xl overflow-hidden relative"
                 style={{
-                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  backgroundColor: 'rgba(0,0,0,0.6)',
                   borderColor: themeColor,
                   color: themeColor,
                 }}
               >
-                {ownerName.charAt(0)}
+                {business?.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={business.avatarUrl}
+                    alt={ownerName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>{ownerName.charAt(0)}</span>
+                )}
               </div>
 
               {/* Color bar indicator */}

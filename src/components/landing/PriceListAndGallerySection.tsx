@@ -66,11 +66,21 @@ export default function PriceListAndGallerySection({
         price: s.price,
         duration: s.duration,
         description: s.description,
+        popular: false,
       }));
 
   const instagram = business?.instagramHandle
     ? (business.instagramHandle.startsWith('http') ? business.instagramHandle : `https://instagram.com/${business.instagramHandle.replace('@', '')}`)
     : 'https://instagram.com/dvir_barber';
+
+  const galleryPhotos = business?.galleryImages && business.galleryImages.length > 0
+    ? business.galleryImages.map((imgUrl, i) => ({
+        id: i + 1,
+        title: `תספורת ועבודה #${i + 1} - ${bizName}`,
+        category: 'עבודות מספרה',
+        src: imgUrl,
+      }))
+    : DEFAULT_GALLERY_PHOTOS;
 
   return (
     <section id="services-and-gallery" className="py-12 sm:py-16 bg-[#181818] text-white" dir="rtl">
@@ -119,41 +129,42 @@ export default function PriceListAndGallerySection({
                   {/* Service Info (Right in RTL) */}
                   <div className="flex-1 text-right">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-white group-hover:text-amber-200 transition-colors">
+                      <span className="font-black text-sm text-white group-hover:text-amber-200 transition-colors">
                         {service.name}
                       </span>
+                      {service.popular && (
+                        <span
+                          className="text-[10px] font-extrabold px-2 py-0.5 rounded-full text-[#1C1C1C]"
+                          style={{ backgroundColor: themeColor }}
+                        >
+                          פופולרי 🔥
+                        </span>
+                      )}
                     </div>
                     {service.description && (
-                      <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 line-clamp-1 font-sans">
+                      <p className="text-xs text-[#9E9891] mt-0.5 font-sans leading-relaxed">
                         {service.description}
                       </p>
                     )}
-                    <span className="text-[10px] text-zinc-500 font-medium">⏱️ {service.duration} דקות</span>
                   </div>
 
-                  {/* Price & Book Button (Left in RTL) */}
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="text-left font-black text-base sm:text-lg" style={{ color: themeColor }}>
+                  {/* Price & Duration (Left in RTL) */}
+                  <div className="text-left flex flex-col items-end gap-1 shrink-0">
+                    <span className="font-black text-base text-white">
                       {formatPrice(service.price)}
-                    </div>
-
-                    <Link
-                      href={slug === 'dvir' || slug === 'thecut' ? `/booking?service=${encodeURIComponent(service.name)}` : `/${slug}/booking?service=${encodeURIComponent(service.name)}`}
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1 cursor-pointer shadow-xs text-black"
-                      style={{ backgroundColor: themeColor }}
-                    >
-                      <span>הזמן</span>
-                      <ChevronLeft className="w-3.5 h-3.5" />
-                    </Link>
+                    </span>
+                    <span className="text-[11px] text-[#9E9891]">
+                      {service.duration} דקות
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Total CTA footer */}
-            <div className="mt-5 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <span className="text-xs text-zinc-400 text-center sm:text-right">
-                חוויית פרימיום הכוללת ייעוץ אישי, חפיפה והתאמת קווי פנים
+            {/* Quick Action Footer in Price Box */}
+            <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+              <span className="text-xs text-[#9E9891]">
+                שריון תור אונליין מהיר תוך 30 שניות
               </span>
               <Link
                 href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
@@ -179,10 +190,10 @@ export default function PriceListAndGallerySection({
 
             {/* 3x2 Photos Grid */}
             <div className="grid grid-cols-3 gap-2.5">
-              {DEFAULT_GALLERY_PHOTOS.map((photo) => (
+              {galleryPhotos.slice(0, 9).map((photo) => (
                 <button
                   key={photo.id}
-                  onClick={() => setSelectedPhoto(photo)}
+                  onClick={() => setSelectedPhoto(photo as any)}
                   className="group relative aspect-square rounded-2xl overflow-hidden bg-zinc-800 border border-white/10 focus:outline-none focus:ring-2 cursor-pointer"
                   style={{ '--tw-ring-color': themeColor } as any}
                 >
