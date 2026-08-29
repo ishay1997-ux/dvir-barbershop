@@ -40,6 +40,8 @@ import {
   Users,
   UserPlus,
   Mail,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { useToast } from '@/components/common/ToastProvider';
@@ -229,6 +231,26 @@ export default function SuperAdminPage() {
   } : null;
   const [googleLoading, setGoogleLoading] = useState(false);
   const [authError, setAuthError] = useState(false);
+
+  // Light / Dark Theme Mode for Super Admin
+  const [adminTheme, setAdminTheme] = useState<'dark' | 'light'>('dark');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('cutweb_admin_theme');
+      if (saved === 'light' || saved === 'dark') {
+        setAdminTheme(saved);
+      }
+    } catch (_) {}
+  }, []);
+
+  const toggleAdminTheme = () => {
+    const next = adminTheme === 'dark' ? 'light' : 'dark';
+    setAdminTheme(next);
+    try {
+      localStorage.setItem('cutweb_admin_theme', next);
+    } catch (_) {}
+  };
 
   const [activeTab, setActiveTab] = useState<'reports' | 'businesses' | 'users'>('businesses');
 
@@ -815,9 +837,13 @@ const defaultBusinessesList: Business[] = [
   // AUTHENTICATED SUPER-ADMIN DASHBOARD
   // ============================================================
   return (
-    <div className="min-h-screen bg-[#121212] text-white font-sans" dir="rtl">
+    <div className={`min-h-screen font-sans transition-colors duration-300 ${
+      adminTheme === 'light' ? 'bg-[#F8FAFC] text-slate-900' : 'bg-[#121212] text-white'
+    }`} dir="rtl">
       {/* Top Navbar */}
-      <header className="bg-[#1C1C1C] border-b border-white/10 sticky top-0 z-40">
+      <header className={`border-b sticky top-0 z-40 transition-colors ${
+        adminTheme === 'light' ? 'bg-white border-slate-200 shadow-xs' : 'bg-[#1C1C1C] border-white/10'
+      }`}>
         <div className="container mx-auto px-4 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {adminUser?.photoURL ? (
@@ -833,21 +859,49 @@ const defaultBusinessesList: Business[] = [
             )}
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-black text-white">
+                <h1 className={`text-base sm:text-lg font-black ${
+                  adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                }`}>
                   The Cut · פאנל מנהל מערכת ({adminUser?.displayName || 'ישי'})
                 </h1>
-                <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <span className="bg-emerald-500/20 text-emerald-600 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">
                   {adminUser?.email ? `מחובר כ-${adminUser.email}` : 'מחובר ✓'}
                 </span>
               </div>
-              <p className="text-[11px] text-[#9E9891]">ניהול מרובה מספרות, התאמה אישית ותמיכה טכנית</p>
+              <p className={`text-[11px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'}`}>
+                ניהול מרובה מספרות, התאמה אישית ותמיכה טכנית
+              </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Light / Dark Mode Toggle */}
+            <button
+              type="button"
+              onClick={toggleAdminTheme}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                adminTheme === 'light'
+                  ? 'bg-amber-50 border-amber-300 text-amber-900 hover:bg-amber-100 shadow-xs'
+                  : 'bg-white/10 border-white/15 text-zinc-200 hover:text-white'
+              }`}
+              title={adminTheme === 'light' ? 'החלף למצב כהה' : 'החלף למצב בהיר'}
+            >
+              {adminTheme === 'light' ? (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>מצב כהה 🌙</span>
+                </>
+              ) : (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <span>מצב בהיר ☀️</span>
+                </>
+              )}
+            </button>
+
             <button
               onClick={handleLogout}
-              className="text-xs text-red-400 hover:text-red-300 bg-red-950/30 hover:bg-red-950/50 px-3 py-1.5 rounded-xl transition-colors border border-red-500/30 font-bold cursor-pointer"
+              className="text-xs text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20 px-3 py-1.5 rounded-xl transition-colors border border-red-500/30 font-bold cursor-pointer"
             >
               התנתק
             </button>
