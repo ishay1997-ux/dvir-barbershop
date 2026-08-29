@@ -1538,9 +1538,9 @@ const defaultBusinessesList: Business[] = [
                   ✂️
                 </div>
                 <div>
-                  <h4 className="font-black text-xs sm:text-sm">גישה ישירה מהירה לדביר (058-781-5071)</h4>
+                  <h4 className="font-black text-xs sm:text-sm">גישה ישירה ומאובטחת לדביר (dvirattias10@gmail.com)</h4>
                   <p className="text-[11px] opacity-80">
-                    דביר מוגדר מראש ומורשה להתחבר מיידית עם מספר הטלפון שלו בדף <code className="font-mono font-bold">/admin/login</code>
+                    דביר מוגדר מראש ומורשה להתחבר עם חשבון Google שלו בדף <code className="font-mono font-bold">/admin/login</code>
                   </p>
                 </div>
               </div>
@@ -1549,8 +1549,8 @@ const defaultBusinessesList: Business[] = [
                 <button
                   type="button"
                   onClick={() => {
-                    setNewUserEmail('dvir.barber@gmail.com');
-                    setNewUserDisplayName('דביר');
+                    setNewUserEmail('dvirattias10@gmail.com');
+                    setNewUserDisplayName('דביר אטיאס');
                     setNewUserRole('business_admin');
                     setNewUserBusinessSlugs('dvir');
                   }}
@@ -1560,7 +1560,7 @@ const defaultBusinessesList: Business[] = [
                 </button>
                 <a
                   href={`https://wa.me/972587815071?text=${encodeURIComponent(
-                    `היי דביר אח יקר! 🔥\nהאתר של המספרה שלך באוויר בקישור:\nhttps://thecut-reg-in.vercel.app/dvir\n\nוכדי לנהל את היומן, התורים והמחירון שלך, היכנס מכאן:\nhttps://thecut-reg-in.vercel.app/admin/login\n(מספר הטלפון שלך 0587815071 כבר מוגדר כמנהל!)`
+                    `היי דביר אח יקר! 🔥\nהאתר של המספרה שלך באוויר בקישור:\nhttps://thecut-reg-in.vercel.app/dvir\n\nוכדי לנהל את היומן, התורים והמחירון שלך, היכנס מכאן באמצעות חשבון ה-Google שלך:\nhttps://thecut-reg-in.vercel.app/admin/login\n(חשבון Google שלך כבר מוגדר כמנהל!)`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
