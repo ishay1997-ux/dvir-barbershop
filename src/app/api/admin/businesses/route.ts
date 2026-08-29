@@ -46,30 +46,6 @@ const defaultBusinesses: BusinessItem[] = [
       { name: 'תספורת ילדים ונוער', price: 70, duration: 30 },
     ],
   },
-  {
-    id: 'biz-sharon',
-    name: 'שרון עיצוב שיער',
-    slug: 'sharon',
-    ownerName: 'שרון',
-    phone: '050-765-4321',
-    city: 'תל אביב',
-    slogan: 'עיצוב שיער נשים וגברים, החלקות אורגניות, בלונד וגוונים',
-    announcement: '✨ 10% הנחה על כל טיפולי השיער וההחלקות בימי שלישי!',
-    themeColor: '#DFCA85',
-    branchesCount: 1,
-    status: 'active',
-    plan: 'pro',
-    createdAt: '2025-02-01',
-    branches: [
-      { name: 'סניף תל אביב', address: 'דיזנגוף 120, תל אביב', wazeLink: 'https://waze.com/ul?q=Dizengoff%20120%20Tel%20Aviv' },
-    ],
-    services: [
-      { name: 'תספורת נשים / גברים', price: 90, duration: 30 },
-      { name: 'החלקה אורגנית פרימיום', price: 450, duration: 90 },
-      { name: 'גוונים / בליאז׳', price: 350, duration: 60 },
-      { name: 'פן ועיצוב תסרוקת', price: 70, duration: 25 },
-    ],
-  },
 ];
 
 // GET /api/admin/businesses?slug=...

@@ -14,19 +14,7 @@ export interface BugReportPayload {
   createdAt: string;
 }
 
-const memoryBugReports: BugReportPayload[] = [
-  {
-    id: 'report-demo-1',
-    fullName: 'עומר כהן',
-    phone: '054-9876543',
-    email: 'omer@example.com',
-    category: 'בעיה במחיקת / עדכון תור',
-    message: 'ניסיתי לבטל את התור שלי לשעה 16:00 ורציתי לוודא שהמשבצת אכן פונתה.',
-    businessName: 'המספרה של דביר',
-    status: 'new',
-    createdAt: new Date().toISOString(),
-  },
-];
+const memoryBugReports: BugReportPayload[] = [];
 
 // 1. CREATE BUG REPORT (POST)
 export async function POST(request: Request) {
