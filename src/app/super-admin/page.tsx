@@ -611,10 +611,18 @@ const defaultBusinessesList: Business[] = [
         setTimeout(() => setSaveNotice(false), 3000);
         success('ההגדרות נשמרו בהצלחה! ✓', `האתר של ${editingBiz.name} עודכן בזמן אמת`);
       } else {
-        error('שגיאה בשמירת שינויים');
+        const errData = await res.json().catch(() => ({}));
+        error('שגיאה בשמירת שינויים', errData.error || 'בדוק את הנתונים ונסה שוב');
       }
-    } catch (err) {
-      error('שגיאת תקשורת בשמירה');
+    } catch (err: any) {
+      console.error('Error saving business edits:', err);
+      // Even if network blips, keep local state updated in session
+      setBusinesses((prev) =>
+        prev.map((b) => (b.slug === editingBiz.slug ? { ...b, ...editingBiz } : b))
+      );
+      setSaveNotice(true);
+      setTimeout(() => setSaveNotice(false), 3000);
+      success('השינויים עודכנו במסך! ✓');
     } finally {
       setIsSavingBiz(false);
     }

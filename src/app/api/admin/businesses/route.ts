@@ -271,6 +271,14 @@ export async function PATCH(request: Request) {
     }
     const targetDocId = id || (targetSlug ? `biz-${targetSlug}` : `biz-${Date.now()}`);
 
+    // Sanitize updates to prevent Firestore undefined field errors
+    const sanitizedUpdates: Record<string, any> = {};
+    for (const [key, value] of Object.entries(updates)) {
+      if (value !== undefined) {
+        sanitizedUpdates[key] = value;
+      }
+    }
+
     if (isFirebaseConfigured && db) {
       try {
         if (id) {
@@ -279,7 +287,7 @@ export async function PATCH(request: Request) {
             {
               id,
               ...(targetSlug ? { slug: targetSlug } : {}),
-              ...updates,
+              ...sanitizedUpdates,
               updatedAt: serverTimestamp(),
             },
             { merge: true }
@@ -294,7 +302,7 @@ export async function PATCH(request: Request) {
               {
                 id: existingId,
                 slug: targetSlug,
-                ...updates,
+                ...sanitizedUpdates,
                 updatedAt: serverTimestamp(),
               },
               { merge: true }
@@ -305,7 +313,7 @@ export async function PATCH(request: Request) {
               {
                 id: targetDocId,
                 slug: targetSlug,
-                ...updates,
+                ...sanitizedUpdates,
                 serverCreatedAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
               },
@@ -321,16 +329,16 @@ export async function PATCH(request: Request) {
     // Update in-memory store
     const found = defaultBusinesses.find((b) => (targetSlug && b.slug === targetSlug) || (id && b.id === id));
     if (found) {
-      Object.assign(found, updates);
-      if (updates.branches) {
-        found.branchesCount = updates.branches.length;
+      Object.assign(found, sanitizedUpdates);
+      if (sanitizedUpdates.branches) {
+        found.branchesCount = sanitizedUpdates.branches.length;
       }
     }
 
     return NextResponse.json({
       success: true,
       message: 'הגדרות העסק עודכנו בהצלחה',
-      business: found || { id: targetDocId, slug: targetSlug, ...updates },
+      business: found || { id: targetDocId, slug: targetSlug, ...sanitizedUpdates },
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
