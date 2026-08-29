@@ -99,6 +99,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     }
 
+    // Guaranteed fallback for Dvir Barbershop Admin (dvirattias10@gmail.com)
+    if (userEmail === 'dvirattias10@gmail.com') {
+      return {
+        uid: fbUser.uid,
+        email: fbUser.email || 'dvirattias10@gmail.com',
+        displayName: fbUser.displayName || 'דביר אטיאס',
+        photoURL: fbUser.photoURL || '',
+        role: 'business_admin',
+        businessSlugs: ['dvir', 'thecut'],
+      };
+    }
+
     return null;
   }, []);
 

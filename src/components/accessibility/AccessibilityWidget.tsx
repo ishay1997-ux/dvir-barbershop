@@ -539,21 +539,21 @@ export default function AccessibilityWidget() {
 
   return (
     <>
-      {/* 1. Floating Accessibility Button (Matching User's Reference Image) */}
+      {/* 1. Floating Accessibility Button (Circular by default, expands to badge on hover) */}
       {!isHiddenTemporarily && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 left-6 z-[9999] bg-[#1A2228] text-white hover:bg-[#253038] shadow-2xl border border-white/20 rounded-2xl flex items-center gap-2.5 p-2 px-3.5 transition-all duration-300 transform hover:scale-105 active:scale-95 a11y-ignore group cursor-pointer"
+          className="fixed bottom-6 left-6 z-[9999] h-12 w-12 hover:w-auto bg-[#085B7A] text-white hover:bg-[#064961] shadow-2xl border-2 border-white/40 rounded-full hover:rounded-2xl flex items-center justify-center hover:justify-start gap-2.5 p-2 hover:px-3.5 transition-all duration-300 transform hover:scale-105 active:scale-95 a11y-ignore group cursor-pointer overflow-hidden"
           aria-label="פתח תפריט נגישות (מקש קיצור: Alt + A)"
           aria-expanded={isOpen}
           id="a11y-trigger-btn"
           dir="rtl"
         >
-          {/* Universal Accessibility Icon + 4 Directional Arrows */}
-          <div className="flex flex-col items-center justify-center text-white border-l border-white/20 pl-2.5">
-            <Move className="w-3 h-3 text-cyan-300 opacity-80 mb-0.5" />
+          {/* Universal Accessibility Icon + 4 Directional Arrows on hover */}
+          <div className="flex flex-col items-center justify-center text-white shrink-0 group-hover:border-l group-hover:border-white/20 group-hover:pl-2">
+            <Move className="w-3 h-3 text-cyan-300 opacity-0 group-hover:opacity-100 transition-opacity hidden group-hover:block -mb-0.5" />
             <svg
-              className="w-5 h-5 fill-current text-white transition-transform group-hover:rotate-6"
+              className="w-6 h-6 fill-current text-white transition-transform group-hover:scale-90"
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
@@ -561,18 +561,19 @@ export default function AccessibilityWidget() {
             </svg>
           </div>
 
-          <div className="text-right">
-            <span className="block text-xs font-black text-white tracking-wide">
+          {/* Text that only shows smoothly on hover */}
+          <div className="text-right hidden group-hover:block whitespace-nowrap animate-fadeIn">
+            <span className="block text-[11px] font-black text-white leading-tight">
               כפתור
             </span>
-            <span className="block text-xs font-bold text-cyan-300">
+            <span className="block text-[11px] font-bold text-cyan-300 leading-tight">
               נגישות
             </span>
           </div>
 
           {isModified && (
             <span
-              className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white animate-pulse"
+              className="absolute top-0 right-0 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white animate-pulse"
               title="הגדרות נגישות מופעלות"
             />
           )}

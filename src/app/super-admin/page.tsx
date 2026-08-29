@@ -466,6 +466,9 @@ const defaultBusinessesList: Business[] = [
       return;
     }
     setIsAddingUser(true);
+    const parsedSlugs = newUserBusinessSlugs.split(',').map(s => s.trim()).filter(Boolean);
+    const finalSlugs = parsedSlugs.length > 0 ? parsedSlugs : (newUserRole === 'business_admin' ? ['dvir'] : []);
+
     try {
       const res = await authFetch('/api/auth/users', {
         method: 'POST',
@@ -474,14 +477,14 @@ const defaultBusinessesList: Business[] = [
           email: newUserEmail.trim(),
           role: newUserRole,
           displayName: newUserDisplayName.trim() || newUserEmail.split('@')[0],
-          businessSlugs: newUserBusinessSlugs.split(',').map(s => s.trim()).filter(Boolean),
+          businessSlugs: finalSlugs,
         }),
       });
       if (res.ok) {
-        success('משתמש נוסף בהצלחה! ✓', `${newUserEmail} נרשם כ-${newUserRole === 'super_admin' ? 'מנהל-על' : 'מנהל עסק'}`);
+        success('משתמש נוסף בהצלחה! ✓', `${newUserEmail} נרשם כ-${newUserRole === 'super_admin' ? 'מנהל-על' : 'מנהל עסק'} עבור ${finalSlugs.join(', ') || 'המספרה של דביר'}`);
         setNewUserEmail('');
         setNewUserDisplayName('');
-        setNewUserBusinessSlugs('');
+        setNewUserBusinessSlugs('dvir');
         fetchUsers();
       } else {
         const data = await res.json();
@@ -1639,20 +1642,23 @@ const defaultBusinessesList: Business[] = [
                 {newUserRole === 'business_admin' && (
                   <div>
                     <label className={`block text-[11px] font-bold mb-1 ${adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-400'}`}>
-                      מזהה עסק (Slugs מופרדים בפסיק):
+                      שיוך למספרה / עסק:
                     </label>
-                    <input
-                      type="text"
-                      value={newUserBusinessSlugs}
+                    <select
+                      value={newUserBusinessSlugs || 'dvir'}
                       onChange={(e) => setNewUserBusinessSlugs(e.target.value)}
-                      placeholder="dvir, sharon"
-                      dir="ltr"
-                      className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors ${
+                      className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors cursor-pointer font-bold ${
                         adminTheme === 'light'
                           ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
-                        : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                          : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
                       }`}
-                    />
+                    >
+                      {businesses.map((b) => (
+                        <option key={b.slug} value={b.slug}>
+                          {b.name} ({b.slug})
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 )}
               </div>

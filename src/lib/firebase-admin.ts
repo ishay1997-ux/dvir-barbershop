@@ -206,6 +206,20 @@ export async function verifyAuth(request: Request): Promise<AppUser | null> {
         lastLogin: new Date().toISOString(),
       };
     }
+
+    // Flagship Barber admin fallback for Dvir
+    if (email === 'dvirattias10@gmail.com') {
+      return {
+        uid,
+        email,
+        displayName: decoded.name || 'דביר אטיאס',
+        photoURL: decoded.picture || '',
+        role: 'business_admin',
+        businessSlugs: ['dvir', 'thecut'],
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+      };
+    }
   }
 
   return null;
