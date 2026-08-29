@@ -16,10 +16,16 @@ import {
   Edit2,
   Navigation,
   Calendar,
+  Sparkles,
+  X,
+  Zap,
+  RotateCcw,
 } from 'lucide-react';
-import { useShopStore } from '@/lib/store';
+import { format, addDays, startOfToday, isSameDay } from 'date-fns';
+import { he } from 'date-fns/locale';
+import { useShopStore, getEffectiveShiftForDate } from '@/lib/store';
 import { formatPrice, formatDuration } from '@/lib/utils';
-import type { Branch, Service, Barber, ServiceCategory, ShopSettings } from '@/lib/types';
+import type { Branch, Service, Barber, ServiceCategory, ShopSettings, DailyShiftOverride } from '@/lib/types';
 
 const DAYS_META = [
   { dayIndex: 0, name: 'ראשון' },
@@ -32,6 +38,7 @@ const DAYS_META = [
 ];
 
 export default function SettingsPage() {
+  const today = startOfToday();
   const {
     branches,
     services,
@@ -52,6 +59,23 @@ export default function SettingsPage() {
   const [localBarbers, setLocalBarbers] = useState<Barber[]>(barbers);
   const [adminPasswordInput, setAdminPasswordInput] = useState('');
   const [passwordChangedNotice, setPasswordChangedNotice] = useState(false);
+
+  // Dynamic Shift Modal States
+  const [scheduleDaysView, setScheduleDaysView] = useState<7 | 14 | 21>(14);
+  const [editingDate, setEditingDate] = useState<Date | null>(null);
+  const [shiftForm, setShiftForm] = useState<{
+    branchId: 'ariel' | 'rehovot' | 'closed';
+    isOpen: boolean;
+    startTime: string;
+    endTime: string;
+    note: string;
+  }>({
+    branchId: 'ariel',
+    isOpen: true,
+    startTime: '16:00',
+    endTime: '19:00',
+    note: '3 שעות ערב',
+  });
 
   // Modals / Add states
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -87,7 +111,97 @@ export default function SettingsPage() {
     setTimeout(() => setSavedNotice(false), 2500);
   };
 
-  // 1. Save Weekly Branch Schedule
+  // Open Shift Editor for a specific date
+  const openShiftEditor = (date: Date) => {
+    const shift = getEffectiveShiftForDate(date, localSettings);
+    setEditingDate(date);
+    setShiftForm({
+      branchId: shift.branchId,
+      isOpen: shift.isOpen,
+      startTime: shift.startTime || '09:00',
+      endTime: shift.endTime || '20:00',
+      note: shift.note || '',
+    });
+  };
+
+  // Save Shift Override to Store + Firestore API
+  const handleSaveShiftOverride = async () => {
+    if (!editingDate) return;
+    const y = editingDate.getFullYear();
+    const m = String(editingDate.getMonth() + 1).padStart(2, '0');
+    const d = String(editingDate.getDate()).padStart(2, '0');
+    const dateKey = `${y}-${m}-${d}`;
+
+    const newOverride: DailyShiftOverride = {
+      date: dateKey,
+      branchId: shiftForm.branchId,
+      isOpen: shiftForm.isOpen && shiftForm.branchId !== 'closed',
+      startTime: shiftForm.startTime,
+      endTime: shiftForm.endTime,
+      note: shiftForm.note.trim() || undefined,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const updatedOverrides = {
+      ...(localSettings.dailyOverrides || {}),
+      [dateKey]: newOverride,
+    };
+
+    const updated = {
+      ...localSettings,
+      dailyOverrides: updatedOverrides,
+    };
+
+    setLocalSettings(updated);
+    saveSettings(updated);
+    setEditingDate(null);
+    notifySave();
+
+    // Async sync with Firestore API
+    try {
+      await fetch('/api/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOverride),
+      });
+    } catch (e) {
+      console.error('Failed to sync schedule override to cloud:', e);
+    }
+  };
+
+  // Reset Shift Override to default template
+  const handleResetShiftOverride = async (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const dateKey = `${y}-${m}-${d}`;
+
+    const updatedOverrides = { ...(localSettings.dailyOverrides || {}) };
+    delete updatedOverrides[dateKey];
+
+    const updated = {
+      ...localSettings,
+      dailyOverrides: updatedOverrides,
+    };
+
+    setLocalSettings(updated);
+    saveSettings(updated);
+    setEditingDate(null);
+    notifySave();
+
+    // Async sync with Firestore API
+    try {
+      await fetch('/api/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: dateKey, isOpen: false, branchId: 'closed', reset: true }),
+      });
+    } catch (e) {
+      console.error('Failed to reset schedule override on cloud:', e);
+    }
+  };
+
+  // 1. Save Weekly Branch Schedule Template
   const handleScheduleChange = (dayIndex: number, location: 'ariel' | 'rehovot' | 'closed') => {
     const updatedSchedule = {
       ...localSettings.branchSchedule,
@@ -200,7 +314,7 @@ export default function SettingsPage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-[#1C1C1C]">הגדרות ושליטה במספרה של דביר</h1>
           <p className="text-[#6B6560] text-sm mt-1">
-            שיבוץ ימי עבודה (אריאל/רחובות), מחירון שירותים, הודעות באנר דחופות והפסקות
+            שיבוץ ימי עבודה ושעות גמישות (אריאל/רחובות), מחירון שירותים, הודעות באנר דחופות והפסקות
           </p>
         </div>
 
@@ -223,7 +337,7 @@ export default function SettingsPage() {
           }`}
         >
           <Calendar className="w-4 h-4" />
-          שיבוץ שבועי (אריאל & רחובות)
+          שיבוץ שבועי & שעות גמישות
         </button>
 
         <button
@@ -276,37 +390,182 @@ export default function SettingsPage() {
       </div>
 
       {/* ============================================================ */}
-      {/* TAB 1: WEEKLY BRANCH PLANNER                                 */}
+      {/* TAB 1: DYNAMIC DAILY SCHEDULE & HOURLY SHIFTS                 */}
       {/* ============================================================ */}
       {activeTab === 'schedule' && (
-        <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#E5DDD0] p-6 shadow-sm">
+        <div className="space-y-8">
+          {/* Section 1: Upcoming Dynamic Timeline */}
+          <div className="bg-white rounded-3xl border border-[#E5DDD0] p-5 sm:p-7 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-gold animate-ping" />
+                  <h2 className="text-lg font-black text-[#1C1C1C]">לוח שיבוץ יומי דינמי (השבועות הקרובים)</h2>
+                </div>
+                <p className="text-xs text-[#6B6560] mt-1">
+                  הלו"ז שלך משתנה? לחץ על כל יום כדי לשנות סניף או לקבוע שעות מדויקות (למשל: 3 שעות בלבד בערב). השינוי מתעדכן מיידית ללקוחות!
+                </p>
+              </div>
+
+              {/* Range Selector */}
+              <div className="flex items-center bg-[#FAF7F2] border border-[#E5DDD0] p-1 rounded-xl self-start sm:self-auto">
+                <button
+                  onClick={() => setScheduleDaysView(7)}
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                    scheduleDaysView === 7 ? 'bg-gold text-[#1C1C1C] shadow-xs' : 'text-[#6B6560]'
+                  }`}
+                >
+                  7 ימים
+                </button>
+                <button
+                  onClick={() => setScheduleDaysView(14)}
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                    scheduleDaysView === 14 ? 'bg-gold text-[#1C1C1C] shadow-xs' : 'text-[#6B6560]'
+                  }`}
+                >
+                  14 ימים
+                </button>
+                <button
+                  onClick={() => setScheduleDaysView(21)}
+                  className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                    scheduleDaysView === 21 ? 'bg-gold text-[#1C1C1C] shadow-xs' : 'text-[#6B6560]'
+                  }`}
+                >
+                  21 ימים
+                </button>
+              </div>
+            </div>
+
+            {/* Daily Shift Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {Array.from({ length: scheduleDaysView }).map((_, idx) => {
+                const dayDate = addDays(today, idx);
+                const shift = getEffectiveShiftForDate(dayDate, localSettings);
+                const isTodayDate = isSameDay(dayDate, today);
+
+                return (
+                  <div
+                    key={shift.date}
+                    onClick={() => openShiftEditor(dayDate)}
+                    className={`group relative p-4 rounded-2xl border transition-all cursor-pointer hover:shadow-md hover:scale-[1.01] active:scale-95 flex flex-col justify-between gap-3 ${
+                      shift.isCustomOverride
+                        ? 'bg-amber-500/5 border-gold shadow-xs'
+                        : shift.isOpen
+                        ? 'bg-[#FAF7F2] border-[#E5DDD0] hover:border-gold/60'
+                        : 'bg-zinc-50 border-zinc-200 opacity-70'
+                    }`}
+                  >
+                    {/* Top Row: Date & Status */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-black text-sm text-[#1C1C1C]">
+                            {format(dayDate, 'EEEE', { locale: he })}
+                          </span>
+                          {isTodayDate && (
+                            <span className="bg-gold text-[#1C1C1C] text-[10px] font-black px-2 py-0.5 rounded-full">
+                              היום
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs text-[#6B6560] block font-mono mt-0.5">
+                          {format(dayDate, 'd בMMMM yyyy', { locale: he })}
+                        </span>
+                      </div>
+
+                      {/* Branch Badge */}
+                      <span
+                        className={`text-xs font-bold px-2.5 py-1 rounded-xl flex items-center gap-1 shadow-2xs ${
+                          shift.branchId === 'ariel'
+                            ? 'bg-gold/20 text-[#856514] border border-gold/40'
+                            : shift.branchId === 'rehovot'
+                            ? 'bg-amber-900/15 text-amber-900 border border-amber-900/30'
+                            : 'bg-zinc-200 text-zinc-600 border border-zinc-300'
+                        }`}
+                      >
+                        <MapPin className="w-3 h-3" />
+                        {shift.branchId === 'ariel'
+                          ? 'אריאל'
+                          : shift.branchId === 'rehovot'
+                          ? 'רחובות'
+                          : 'סגור'}
+                      </span>
+                    </div>
+
+                    {/* Middle Row: Active Hours & Notes */}
+                    <div className="pt-2 border-t border-black/5 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 text-[#1C1C1C] font-bold">
+                        <Clock className="w-3.5 h-3.5 text-gold flex-shrink-0" />
+                        {shift.isOpen ? (
+                          <span className="font-mono">
+                            {shift.startTime} - {shift.endTime}
+                          </span>
+                        ) : (
+                          <span className="text-zinc-500 font-normal">אין קבלת קהל</span>
+                        )}
+                      </div>
+
+                      {shift.isCustomOverride ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-black text-gold bg-[#1C1C1C] px-2 py-0.5 rounded-lg">
+                          <Sparkles className="w-3 h-3 text-gold" />
+                          {shift.note || 'מותאם אישית'}
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-[#9E9891]">תבנית קבועה</span>
+                      )}
+                    </div>
+
+                    {/* Bottom Action: Edit Hint */}
+                    <div className="flex items-center justify-between text-[11px] font-bold text-gold opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span>לחץ לעריכת שעות/סניף ✏️</span>
+                      {shift.isCustomOverride && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleResetShiftOverride(dayDate);
+                          }}
+                          className="text-red-500 hover:underline flex items-center gap-1"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          איפוס
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section 2: Recurring Weekly Default Template */}
+          <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm">
             <div className="mb-6">
-              <h2 className="text-lg font-black text-[#1C1C1C]">לוח שיבוץ שבועי של דביר (באיזה סניף אני כל יום?)</h2>
+              <h2 className="text-base font-black text-[#1C1C1C]">תבנית שבועית קבועה (ברירת מחדל)</h2>
               <p className="text-xs text-[#6B6560] mt-1">
-                בלחיצה אחת תוכל לקבוע באיזה סניף תספר בכל יום בשבוע. לוח השנה ללקוחות מתעדכן מיד ומונע בלבול ושאלות מיותרות!
+                הגדרת סניף ברירת מחדל לכל יום בשבוע. תאריכים שלא הוגדרו עבורם שעות מותאמות אישית ישתמשו בתבנית זו.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-2.5">
               {DAYS_META.map((day) => {
                 const currentLoc = localSettings.branchSchedule?.[day.dayIndex] || (day.dayIndex < 3 ? 'ariel' : day.dayIndex < 6 ? 'rehovot' : 'closed');
 
                 return (
                   <div
                     key={day.dayIndex}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD0]"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD0]"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-full bg-[#1C1C1C] text-gold font-black text-xs flex items-center justify-center flex-shrink-0">
+                      <span className="w-7 h-7 rounded-full bg-[#1C1C1C] text-gold font-black text-xs flex items-center justify-center flex-shrink-0">
                         {day.name.slice(0, 1)}
                       </span>
                       <div>
-                        <span className="font-bold text-sm text-[#1C1C1C]">יום {day.name}</span>
-                        <div className="text-xs text-[#6B6560]">
-                          {currentLoc === 'ariel' && '📍 באוניברסיטת אריאל'}
-                          {currentLoc === 'rehovot' && '📍 ברחובות (בית ההורים)'}
-                          {currentLoc === 'closed' && '⚪ יום חופש / סגור'}
+                        <span className="font-bold text-xs sm:text-sm text-[#1C1C1C]">יום {day.name}</span>
+                        <div className="text-[11px] text-[#6B6560]">
+                          {currentLoc === 'ariel' && '📍 סניף אריאל'}
+                          {currentLoc === 'rehovot' && '📍 סניף רחובות'}
+                          {currentLoc === 'closed' && '⚪ סגור / חופש'}
                         </div>
                       </div>
                     </div>
@@ -315,7 +574,7 @@ export default function SettingsPage() {
                     <div className="flex items-center gap-1.5 self-end sm:self-center">
                       <button
                         onClick={() => handleScheduleChange(day.dayIndex, 'ariel')}
-                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                           currentLoc === 'ariel'
                             ? 'bg-gold text-[#1C1C1C] shadow-sm font-black'
                             : 'bg-white text-[#6B6560] border hover:border-gold'
@@ -326,7 +585,7 @@ export default function SettingsPage() {
 
                       <button
                         onClick={() => handleScheduleChange(day.dayIndex, 'rehovot')}
-                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                           currentLoc === 'rehovot'
                             ? 'bg-amber-800 text-white shadow-sm font-black'
                             : 'bg-white text-[#6B6560] border hover:border-amber-800'
@@ -343,7 +602,7 @@ export default function SettingsPage() {
                             : 'bg-white text-[#9E9891] border hover:bg-zinc-100'
                         }`}
                       >
-                        סגור / חופש
+                        סגור
                       </button>
                     </div>
                   </div>
@@ -352,8 +611,8 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Blocked Dates (Vacation / Military) */}
-          <div className="bg-white rounded-2xl border border-[#E5DDD0] p-6 shadow-sm">
+          {/* Section 3: Blocked Dates (Vacation / Military) */}
+          <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm">
             <h2 className="font-black text-base text-[#1C1C1C] mb-1">חסימת ימי מילואים או חופשות ספציפיות</h2>
             <p className="text-xs text-[#6B6560] mb-4">תאריך שנחסם כאן ייסגר להזמנות אוטומטית</p>
 
@@ -399,6 +658,185 @@ export default function SettingsPage() {
                 className="btn-shimmer px-4 py-2 rounded-xl text-xs font-bold text-[#1C1C1C]"
               >
                 הוסף חסימה
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* QUICK DAILY SHIFT MODAL                                      */}
+      {/* ============================================================ */}
+      {editingDate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 w-full max-w-md shadow-2xl relative" dir="rtl">
+            <button
+              onClick={() => setEditingDate(null)}
+              className="absolute top-4 left-4 text-[#9E9891] hover:text-[#1C1C1C] p-1.5 rounded-full hover:bg-black/5"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2 text-gold text-xs font-black uppercase mb-1">
+              <Sparkles className="w-4 h-4 text-gold" />
+              עריכת שיבוץ יומי מהיר
+            </div>
+
+            <h3 className="text-xl font-black text-[#1C1C1C]">
+              {format(editingDate, 'EEEE, d בMMMM yyyy', { locale: he })}
+            </h3>
+            <p className="text-xs text-[#6B6560] mb-5">
+              הגדר באיזה סניף תעבוד ובאילו שעות תוכל לקבל לקוחות ביום זה:
+            </p>
+
+            {/* 1. Branch Selector */}
+            <div className="mb-5">
+              <label className="block text-xs font-black text-[#1C1C1C] mb-2">
+                באיזה סניף אתה ביום זה?
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShiftForm({ ...shiftForm, branchId: 'ariel', isOpen: true })}
+                  className={`py-2.5 px-2 rounded-xl text-xs font-bold transition-all border text-center ${
+                    shiftForm.branchId === 'ariel' && shiftForm.isOpen
+                      ? 'bg-gold text-[#1C1C1C] border-gold font-black shadow-sm ring-2 ring-gold/30'
+                      : 'bg-[#FAF7F2] text-[#6B6560] border-[#E5DDD0] hover:border-gold'
+                  }`}
+                >
+                  📍 סניף אריאל
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShiftForm({ ...shiftForm, branchId: 'rehovot', isOpen: true })}
+                  className={`py-2.5 px-2 rounded-xl text-xs font-bold transition-all border text-center ${
+                    shiftForm.branchId === 'rehovot' && shiftForm.isOpen
+                      ? 'bg-amber-900 text-white border-amber-900 font-black shadow-sm ring-2 ring-amber-900/30'
+                      : 'bg-[#FAF7F2] text-[#6B6560] border-[#E5DDD0] hover:border-amber-900'
+                  }`}
+                >
+                  📍 סניף רחובות
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShiftForm({ ...shiftForm, branchId: 'closed', isOpen: false, note: 'סגור' })}
+                  className={`py-2.5 px-2 rounded-xl text-xs font-bold transition-all border text-center ${
+                    !shiftForm.isOpen || shiftForm.branchId === 'closed'
+                      ? 'bg-zinc-800 text-white border-zinc-800 font-black shadow-sm'
+                      : 'bg-[#FAF7F2] text-[#9E9891] border-[#E5DDD0] hover:bg-zinc-100'
+                  }`}
+                >
+                  ⛔ סגור היום
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Fast 1-Click Shift Presets */}
+            {shiftForm.isOpen && shiftForm.branchId !== 'closed' && (
+              <div className="mb-5">
+                <label className="block text-xs font-black text-[#1C1C1C] mb-2 flex items-center justify-between">
+                  <span>⚡ כפתורי קיצור לשעות עבודה:</span>
+                  <span className="text-[10px] text-[#9E9891] font-normal">בלחיצה אחת</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShiftForm({ ...shiftForm, isOpen: true, startTime: '16:00', endTime: '19:00', note: '3 שעות ערב' })}
+                    className="flex flex-col items-start p-2.5 rounded-xl border border-[#E5DDD0] bg-[#FAF7F2] hover:bg-gold/15 hover:border-gold transition-all text-right"
+                  >
+                    <span className="text-xs font-black text-[#1C1C1C]">⚡ 3 שעות ערב</span>
+                    <span className="text-[10px] text-[#6B6560] font-mono mt-0.5">16:00 - 19:00</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShiftForm({ ...shiftForm, isOpen: true, startTime: '09:00', endTime: '13:00', note: 'בוקר בלבד' })}
+                    className="flex flex-col items-start p-2.5 rounded-xl border border-[#E5DDD0] bg-[#FAF7F2] hover:bg-gold/15 hover:border-gold transition-all text-right"
+                  >
+                    <span className="text-xs font-black text-[#1C1C1C]">🌅 בוקר בלבד</span>
+                    <span className="text-[10px] text-[#6B6560] font-mono mt-0.5">09:00 - 13:00</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShiftForm({ ...shiftForm, isOpen: true, startTime: '09:00', endTime: '20:00', note: 'יום מלא' })}
+                    className="flex flex-col items-start p-2.5 rounded-xl border border-[#E5DDD0] bg-[#FAF7F2] hover:bg-gold/15 hover:border-gold transition-all text-right"
+                  >
+                    <span className="text-xs font-black text-[#1C1C1C]">☀️ יום מלא</span>
+                    <span className="text-[10px] text-[#6B6560] font-mono mt-0.5">09:00 - 20:00</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShiftForm({ ...shiftForm, isOpen: true, startTime: '14:00', endTime: '21:00', note: 'אחה״צ וערב' })}
+                    className="flex flex-col items-start p-2.5 rounded-xl border border-[#E5DDD0] bg-[#FAF7F2] hover:bg-gold/15 hover:border-gold transition-all text-right"
+                  >
+                    <span className="text-xs font-black text-[#1C1C1C]">🌙 אחה״צ וערב</span>
+                    <span className="text-[10px] text-[#6B6560] font-mono mt-0.5">14:00 - 21:00</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 3. Custom Time Inputs */}
+            {shiftForm.isOpen && shiftForm.branchId !== 'closed' && (
+              <div className="mb-5 p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD0]">
+                <span className="block text-xs font-black text-[#1C1C1C] mb-2.5">
+                  או התאם שעות ידנית:
+                </span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] text-[#6B6560] mb-1 font-bold">שעת פתיחה</label>
+                    <input
+                      type="time"
+                      value={shiftForm.startTime}
+                      onChange={(e) => setShiftForm({ ...shiftForm, startTime: e.target.value })}
+                      className="w-full bg-white border border-[#E5DDD0] focus:border-gold rounded-xl px-3 py-2 text-xs font-mono font-bold outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] text-[#6B6560] mb-1 font-bold">שעת סגירה</label>
+                    <input
+                      type="time"
+                      value={shiftForm.endTime}
+                      onChange={(e) => setShiftForm({ ...shiftForm, endTime: e.target.value })}
+                      className="w-full bg-white border border-[#E5DDD0] focus:border-gold rounded-xl px-3 py-2 text-xs font-mono font-bold outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <label className="block text-[11px] text-[#6B6560] mb-1 font-bold">הערה מיוחדת (מוצגת ללקוחות)</label>
+                  <input
+                    type="text"
+                    placeholder="למשל: 3 שעות בלבד / חלון ערב"
+                    value={shiftForm.note}
+                    onChange={(e) => setShiftForm({ ...shiftForm, note: e.target.value })}
+                    className="w-full bg-white border border-[#E5DDD0] focus:border-gold rounded-xl px-3 py-2 text-xs outline-none"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={handleSaveShiftOverride}
+                className="btn-shimmer flex-1 text-[#1C1C1C] font-black text-xs py-3 rounded-xl shadow-gold hover:scale-[1.02] active:scale-95 transition-all text-center"
+              >
+                שמור ועדכן תורים ללקוחות ✨
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleResetShiftOverride(editingDate)}
+                className="px-3 py-3 rounded-xl border border-[#E5DDD0] text-[#6B6560] hover:text-red-600 hover:border-red-200 text-xs font-bold transition-all"
+                title="איפוס לתבנית שבועית קבועה"
+              >
+                <RotateCcw className="w-4 h-4" />
               </button>
             </div>
           </div>

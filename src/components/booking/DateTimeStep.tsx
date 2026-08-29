@@ -5,8 +5,8 @@ import { DayPicker } from 'react-day-picker';
 import { he } from 'date-fns/locale';
 import { format, addDays, startOfToday } from 'date-fns';
 import { cn, generateTimeSlots } from '@/lib/utils';
-import { useShopStore } from '@/lib/store';
-import { Clock, Sun, Sunset, Moon, Bell, Phone, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useShopStore, getEffectiveShiftForDate } from '@/lib/store';
+import { Clock, Sun, Sunset, Moon, Bell, Phone, Sparkles, CheckCircle2, MapPin } from 'lucide-react';
 import type { Service, Barber, Branch } from '@/lib/types';
 import 'react-day-picker/dist/style.css';
 
@@ -39,14 +39,24 @@ export default function DateTimeStep({
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
   const [waitlistPhone, setWaitlistPhone] = useState('');
 
-  // 1. Generate & filter slots with lunch break protection
+  // 1. Calculate dynamic effective shift for selected date
+  const currentShift = useMemo(() => {
+    if (!selectedDate) return null;
+    return getEffectiveShiftForDate(selectedDate, settings);
+  }, [selectedDate, settings]);
+
+  // 2. Generate & filter slots strictly within the date's active hours
   const timeSlots = useMemo(() => {
-    if (!selectedDate) return [];
+    if (!selectedDate || !currentShift || !currentShift.isOpen) return [];
     const dateKey = format(selectedDate, 'yyyy-MM-dd');
     const booked = MOCK_BOOKED[dateKey] ?? [];
 
-    // Base slots 09:00 to 20:00
-    const all = generateTimeSlots('09:00', '20:00', service?.duration && service.duration >= 45 ? 45 : 30);
+    const start = currentShift.startTime || '09:00';
+    const end = currentShift.endTime || '20:00';
+    const interval = service?.duration && service.duration >= 45 ? 45 : 30;
+
+    // Generate slots within Dvir's exact hours for this specific day
+    const all = generateTimeSlots(start, end, interval);
 
     return all.map((time) => {
       // Check lunch break
@@ -61,7 +71,7 @@ export default function DateTimeStep({
         isLunch,
       };
     });
-  }, [selectedDate, service, settings.lunchBreak]);
+  }, [selectedDate, currentShift, service, settings.lunchBreak]);
 
   // Group slots into Morning / Afternoon / Evening
   const morningSlots = timeSlots.filter((s) => s.time < '12:00');
@@ -73,9 +83,10 @@ export default function DateTimeStep({
   const disabledDays = [
     { before: today, after: addDays(today, settings.bookingWindowDays || 30) },
     (date: Date) => {
-      if (date.getDay() === 6) return true; // Saturday closed
-      if (branch && branch.activeDays && branch.activeDays.length > 0) {
-        return !branch.activeDays.includes(date.getDay());
+      const shift = getEffectiveShiftForDate(date, settings);
+      if (!shift.isOpen || shift.branchId === 'closed') return true;
+      if (branch && shift.branchId !== branch.id) {
+        return true;
       }
       return false;
     },
@@ -120,8 +131,22 @@ export default function DateTimeStep({
       </div>
 
       {/* Time Slots Area */}
-      {selectedDate && (
+      {selectedDate && currentShift && (
         <div className="bg-white rounded-3xl border border-[#E5DDD0] p-5 sm:p-6 shadow-sm animate-fadeIn">
+          {/* Active Shift Indicator */}
+          <div className="flex items-center justify-between bg-gold/10 border border-gold/30 rounded-2xl px-4 py-2.5 mb-4 text-xs font-bold text-[#1C1C1C]">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-gold flex-shrink-0" />
+              <span>
+                שעות קבלת קהל: <strong className="font-mono text-black">{currentShift.startTime} - {currentShift.endTime}</strong>
+                {currentShift.note ? ` (${currentShift.note})` : ''}
+              </span>
+            </div>
+            <span className="text-[11px] text-[#6B6560] hidden sm:inline">
+              📍 {currentShift.branchId === 'ariel' ? 'סניף אריאל' : currentShift.branchId === 'rehovot' ? 'סניף רחובות' : ''}
+            </span>
+          </div>
+
           {/* Header & Live Capacity Status */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 pb-4 border-b border-[#F0EBE1]">
             <div>

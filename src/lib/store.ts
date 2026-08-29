@@ -215,9 +215,70 @@ export const INITIAL_SETTINGS: ShopSettings = {
     5: 'rehovot',
     6: 'closed',
   },
+  dailyOverrides: {},
   instagramUrl: 'https://instagram.com/dvir_barber',
   facebookUrl: 'https://facebook.com/dvirbarber',
 };
+
+// ============================================================
+// DYNAMIC SHIFT CALCULATION UTILITY
+// ============================================================
+
+/**
+ * Calculates the effective shift for a specific date:
+ * 1. Checks if a specific daily override exists for this YYYY-MM-DD.
+ * 2. If not, falls back to the recurring weekly branchSchedule template.
+ */
+export function getEffectiveShiftForDate(
+  date: Date,
+  settings: ShopSettings
+): {
+  date: string;
+  branchId: 'ariel' | 'rehovot' | 'closed';
+  isOpen: boolean;
+  startTime: string;
+  endTime: string;
+  note?: string;
+  isCustomOverride: boolean;
+} {
+  // Safe ISO format YYYY-MM-DD
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  const dateKey = `${y}-${m}-${d}`;
+
+  const override = settings.dailyOverrides?.[dateKey];
+
+  if (override) {
+    return {
+      date: dateKey,
+      branchId: override.branchId,
+      isOpen: override.isOpen && override.branchId !== 'closed',
+      startTime: override.startTime || '09:00',
+      endTime: override.endTime || '20:00',
+      note: override.note,
+      isCustomOverride: true,
+    };
+  }
+
+  // Fallback to weekly schedule template
+  const dayOfWeek = date.getDay(); // 0=Sun, 6=Sat
+  const defaultBranch = settings.branchSchedule[dayOfWeek] || 'closed';
+  const isClosed = defaultBranch === 'closed' || dayOfWeek === 6;
+
+  // Friday default is shorter (e.g. 08:30 - 13:30)
+  const isFriday = dayOfWeek === 5;
+
+  return {
+    date: dateKey,
+    branchId: defaultBranch,
+    isOpen: !isClosed,
+    startTime: isFriday ? '08:30' : '09:00',
+    endTime: isFriday ? '13:30' : '20:00',
+    note: undefined,
+    isCustomOverride: false,
+  };
+}
 
 // ============================================================
 // REACT HOOK FOR GLOBAL DATA STORE
@@ -244,7 +305,14 @@ export function useShopStore() {
       if (storedServices) setServices(JSON.parse(storedServices));
       if (storedBarbers) setBarbers(JSON.parse(storedBarbers));
       if (storedCustomers) setCustomers(JSON.parse(storedCustomers));
-      if (storedSettings) setSettings(JSON.parse(storedSettings));
+      if (storedSettings) {
+        const parsed = JSON.parse(storedSettings);
+        setSettings({
+          ...INITIAL_SETTINGS,
+          ...parsed,
+          dailyOverrides: parsed.dailyOverrides || {},
+        });
+      }
       setIsLoaded(true);
     }
   }, []);

@@ -110,6 +110,16 @@ export interface BlockedDate {
   reason: string; // 'מילואים', 'חופשה', 'מחלה', 'אירוע'
 }
 
+export interface DailyShiftOverride {
+  date: string; // YYYY-MM-DD
+  branchId: 'ariel' | 'rehovot' | 'closed';
+  isOpen: boolean;
+  startTime: string; // HH:mm e.g. "16:00"
+  endTime: string;   // HH:mm e.g. "19:00"
+  note?: string;     // e.g. "3 שעות בלבד", "חלון ערב"
+  updatedAt?: string;
+}
+
 export interface ShopSettings {
   shopName: string;
   ownerName: string;
@@ -129,6 +139,7 @@ export interface ShopSettings {
     isActive: boolean;
   };
   branchSchedule: Record<number, 'ariel' | 'rehovot' | 'closed'>; // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+  dailyOverrides?: Record<string, DailyShiftOverride>; // Key: YYYY-MM-DD
   instagramUrl?: string;
   facebookUrl?: string;
   tiktokUrl?: string;

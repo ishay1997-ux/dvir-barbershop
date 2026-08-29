@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { MapPin, Navigation, Calendar, Check, Phone } from 'lucide-react';
-import { MOCK_BRANCHES } from '@/lib/utils';
+import { useShopStore } from '@/lib/store';
 import type { Branch } from '@/lib/types';
 
 interface BranchStepProps {
@@ -13,6 +13,8 @@ interface BranchStepProps {
 const dayNames = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'];
 
 export default function BranchStep({ selectedBranch, onSelectBranch }: BranchStepProps) {
+  const { branches } = useShopStore();
+
   return (
     <div>
       <div className="text-center mb-8">
@@ -21,12 +23,12 @@ export default function BranchStep({ selectedBranch, onSelectBranch }: BranchSte
           באיזה סניף תרצה להסתפר?
         </h2>
         <p className="text-[#6B6560] text-sm max-w-sm mx-auto">
-          דביר מספר באריאל (ימים א׳-ג׳) וברחובות (ימים ד׳-ו׳). בחר את המיקום הנוח עבורך.
+          דביר מספר באריאל וברחובות. בחר את המיקום הנוח עבורך להזמנת תור.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {MOCK_BRANCHES.map((branch) => {
+        {branches.map((branch) => {
           const isSelected = selectedBranch?.id === branch.id;
           const activeDaysFormatted = branch.activeDays.map((d) => dayNames[d]).join(', ');
 
