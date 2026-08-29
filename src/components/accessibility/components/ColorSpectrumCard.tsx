@@ -13,6 +13,8 @@ interface ColorSpectrumCardProps {
   onResetColors: () => void;
   colorSliderRef: React.RefObject<HTMLDivElement | null>;
   t: typeof A11Y_I18N.he;
+  currentDirection?: 'rtl' | 'ltr';
+  isRtl?: boolean;
 }
 
 export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
@@ -23,46 +25,58 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
   onResetColors,
   colorSliderRef,
   t,
+  currentDirection = 'rtl',
+  isRtl = true,
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs">
-      <div className="flex items-center justify-between mb-2">
-        <div>
-          <h3 className="font-bold text-sm text-[#085B7A]">{t.colorSectionTitle}</h3>
-          <p className="text-xs text-[#085B7A]/80">{t.colorSectionDesc}</p>
+    <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs" dir={currentDirection}>
+      {/* Header with Title and Sliders Icon */}
+      <div className="flex items-center justify-between mb-3">
+        <div className={isRtl ? 'text-right' : 'text-left'}>
+          <h3 className="font-bold text-sm text-[#085B7A] leading-snug">
+            {t.colorSectionTitle}
+          </h3>
+          <p className="text-xs text-[#085B7A]/80 font-medium leading-snug">
+            {t.colorSectionDesc}
+          </p>
         </div>
-        <Sliders className="w-4 h-4 text-[#085B7A]" />
+        <div className="text-[#085B7A] shrink-0">
+          <Sliders className="w-5 h-5" />
+        </div>
       </div>
 
-      {/* Target Buttons */}
-      <div className="grid grid-cols-3 gap-1.5 mb-2.5">
+      {/* Target Pills: רקעים / כותרות / תכנים */}
+      <div className="grid grid-cols-3 gap-2 mb-3.5">
         <button
           onClick={() => onSelectTarget('background')}
-          className={`py-1.5 px-2 rounded-full text-xs font-bold transition-all border cursor-pointer ${
+          className={`py-2 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer text-center ${
             colorTarget === 'background'
               ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
               : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
           }`}
+          aria-pressed={colorTarget === 'background'}
         >
           {t.targetBackground}
         </button>
         <button
           onClick={() => onSelectTarget('headings')}
-          className={`py-1.5 px-2 rounded-full text-xs font-bold transition-all border cursor-pointer ${
+          className={`py-2 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer text-center ${
             colorTarget === 'headings'
               ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
               : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
           }`}
+          aria-pressed={colorTarget === 'headings'}
         >
           {t.targetHeadings}
         </button>
         <button
           onClick={() => onSelectTarget('text')}
-          className={`py-1.5 px-2 rounded-full text-xs font-bold transition-all border cursor-pointer ${
+          className={`py-2 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer text-center ${
             colorTarget === 'text'
               ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
               : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
           }`}
+          aria-pressed={colorTarget === 'text'}
         >
           {t.targetText}
         </button>
@@ -72,29 +86,29 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
       <div
         ref={colorSliderRef}
         onClick={onColorSpectrumClick}
-        className="relative h-5 rounded-full cursor-pointer shadow-inner mb-2.5 border border-black/10"
+        className="relative h-6 rounded-full cursor-pointer shadow-inner mb-3 border border-black/10 select-none overflow-hidden"
         style={{
           background:
-            'linear-gradient(to right, #000 0%, #fff 15%, #ff0000 25%, #ffff00 40%, #00ff00 55%, #00ffff 70%, #0000ff 85%, #ff00ff 100%)',
+            'linear-gradient(to right, #000 0%, #fff 12%, #ff0000 25%, #ffff00 40%, #00ff00 55%, #00ffff 70%, #0000ff 85%, #ff00ff 100%)',
         }}
         title={t.colorSectionTitle}
       >
         {currentTargetHue !== null && (
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white border-2 border-[#085B7A] shadow-md -ml-2.5 pointer-events-none"
+            className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border-2 border-[#085B7A] shadow-md -ml-3 pointer-events-none"
             style={{ left: `${(currentTargetHue / 360) * 100}%` }}
           />
         )}
       </div>
 
-      {/* Reset Colors Button */}
-      <div className="flex items-center justify-between pt-1">
+      {/* Reset Colors Button (Right-aligned in RTL matching screenshot) */}
+      <div className="flex items-center justify-between pt-0.5">
         <button
           onClick={onResetColors}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-[#085B7A] hover:underline cursor-pointer"
         >
+          <span>{t.resetColors}</span>
           <RotateCcw className="w-3.5 h-3.5" />
-          {t.resetColors}
         </button>
 
         {currentTargetHue !== null && (

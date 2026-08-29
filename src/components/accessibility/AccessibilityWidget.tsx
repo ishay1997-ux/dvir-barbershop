@@ -404,6 +404,8 @@ export default function AccessibilityWidget() {
                   onResetColors={handleResetColors}
                   colorSliderRef={colorSliderRef}
                   t={t}
+                  currentDirection={currentDirection}
+                  isRtl={isRtl}
                 />
 
                 {/* Stop Animations Card */}
