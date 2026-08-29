@@ -123,6 +123,20 @@ export default function Footer() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-[#9E9891]">
             <Link
+              href="/terms"
+              className="hover:text-gold transition-colors"
+            >
+              תנאי שימוש
+            </Link>
+            <span>·</span>
+            <Link
+              href="/privacy"
+              className="hover:text-gold transition-colors"
+            >
+              מדיניות פרטיות
+            </Link>
+            <span>·</span>
+            <Link
               href="/accessibility"
               className="hover:text-gold transition-colors flex items-center gap-1.5"
             >
