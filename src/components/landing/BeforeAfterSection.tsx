@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Sparkles, MoveHorizontal, Scissors } from 'lucide-react';
 import Link from 'next/link';
+import { BusinessConfig } from '@/types/business';
 
 interface Transformation {
   id: string;
@@ -12,55 +13,58 @@ interface Transformation {
   description: string;
   beforeGradient: string;
   afterGradient: string;
-  barber: string;
 }
 
-const transformations: Transformation[] = [
+const DEFAULT_TRANSFORMATIONS: Transformation[] = [
   {
     id: '1',
     title: 'סקין פייד קלאסי ועיצוב קווי מתאר',
     category: 'תספורת פרימיום',
     description: 'מעבר משיער פרוע לפייד מדויק עם קווי מתאר חדים וטקסטורה עליונה.',
-    beforeGradient: 'from-stone-800 via-stone-700 to-zinc-900',
+    beforeGradient: 'from-stone-900 via-stone-800 to-zinc-900',
     afterGradient: 'from-amber-900 via-amber-800 to-yellow-700',
-    barber: 'יוסי כהן',
   },
   {
     id: '2',
     title: 'פיסול זקן מלא + דירוג לחיים',
     category: 'עיצוב זקן',
     description: 'יישור סימטרי מדויק של קו הלחיים והצוואר, שמן הזנה ועיצוב עם תער חם.',
-    beforeGradient: 'from-zinc-900 via-neutral-800 to-stone-800',
+    beforeGradient: 'from-zinc-900 via-neutral-900 to-stone-900',
     afterGradient: 'from-amber-950 via-amber-900 to-amber-700',
-    barber: 'דניאל לוי',
   },
   {
     id: '3',
     title: 'פרנץ\' קרופ מודרני וטקסטורה עשירה',
     category: 'סגנון מודרני',
     description: 'מראה צעיר, רענן וקל לעיצוב יומיומי עם חימר מט פרימיום.',
-    beforeGradient: 'from-neutral-800 via-zinc-700 to-stone-900',
+    beforeGradient: 'from-neutral-900 via-zinc-800 to-stone-900',
     afterGradient: 'from-yellow-950 via-amber-800 to-yellow-600',
-    barber: 'אבי מזרחי',
   },
 ];
 
-export default function BeforeAfterSection() {
+export default function BeforeAfterSection({
+  business,
+}: {
+  business?: Partial<BusinessConfig>;
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
   const [activeItem, setActiveItem] = useState(0);
-  const [sliderPosition, setSliderPosition] = useState(50); // percentage (0 - 100)
+  const [sliderPosition, setSliderPosition] = useState(50); // percentage (0 - 100 from left)
   const isDragging = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const current = transformations[activeItem];
+  const themeColor = business?.themeColor || '#C9A84C';
+  const ownerName = business?.ownerName || 'דביר';
+  const slug = business?.slug || 'dvir';
+
+  const current = DEFAULT_TRANSFORMATIONS[activeItem];
 
   const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const percentage = Math.max(5, Math.min(95, (x / rect.width) * 100));
-    // RTL: left in DOM is right in RTL visually
     setSliderPosition(percentage);
   }, []);
 
@@ -78,11 +82,15 @@ export default function BeforeAfterSection() {
     <section
       id="transformations"
       ref={ref}
-      className="py-24 bg-[#1C1C1C] text-white relative overflow-hidden"
+      className="py-20 bg-[#161616] text-white relative overflow-hidden"
       aria-labelledby="transformations-heading"
+      dir="rtl"
     >
       {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-3xl pointer-events-none" />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl pointer-events-none opacity-10"
+        style={{ backgroundColor: themeColor }}
+      />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Heading */}
@@ -90,40 +98,51 @@ export default function BeforeAfterSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14"
+          className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/30 bg-gold/10 mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-gold" />
-            <span className="text-gold text-xs font-bold tracking-widest uppercase">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border mb-3"
+            style={{
+              borderColor: `${themeColor}40`,
+              backgroundColor: `${themeColor}15`,
+              color: themeColor,
+            }}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="text-xs font-black tracking-widest uppercase">
               מהפך ושינוי סגנון
             </span>
           </div>
           <h2
             id="transformations-heading"
-            className="text-4xl sm:text-5xl font-black text-white mt-2 mb-4"
+            className="text-3xl sm:text-4xl font-black text-white mt-1 mb-3"
           >
             לפני ואחרי
           </h2>
-          <div className="gold-divider" />
-          <p className="text-[#9E9891] mt-4 max-w-md mx-auto text-sm sm:text-base">
-            גרור את הסליידר כדי לראות את ההבדל והתוצאה המקצועית של הצוות שלנו.
+          <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: themeColor }} />
+          <p className="text-zinc-400 mt-4 max-w-md mx-auto text-xs sm:text-sm font-sans">
+            גרור את הסליידר כדי לראות את התוצאה המדויקת והחדה
           </p>
         </motion.div>
 
         {/* Tab selector for transformations */}
-        <div className="flex flex-wrap justify-center gap-2.5 mb-10 max-w-2xl mx-auto">
-          {transformations.map((t, index) => (
+        <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-2xl mx-auto">
+          {DEFAULT_TRANSFORMATIONS.map((t, index) => (
             <button
               key={t.id}
               onClick={() => {
                 setActiveItem(index);
                 setSliderPosition(50);
               }}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
                 activeItem === index
-                  ? 'bg-gold text-[#1C1C1C] border-gold shadow-md'
-                  : 'bg-[#2A2A2A] text-[#9E9891] border-[#3D3D3D] hover:border-gold/40 hover:text-white'
+                  ? 'text-[#1C1C1C] shadow-md'
+                  : 'bg-[#222222] text-zinc-400 border-white/10 hover:text-white'
               }`}
+              style={{
+                backgroundColor: activeItem === index ? themeColor : undefined,
+                borderColor: activeItem === index ? themeColor : undefined,
+              }}
             >
               {t.title.split(' ')[0]} {t.title.split(' ')[1]}
             </button>
@@ -135,7 +154,7 @@ export default function BeforeAfterSection() {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-3xl mx-auto bg-[#2A2A2A] border border-[#3D3D3D] rounded-3xl p-4 sm:p-6 shadow-2xl"
+          className="max-w-3xl mx-auto bg-[#202020] border border-white/10 rounded-3xl p-4 sm:p-6 shadow-2xl"
         >
           <div
             ref={containerRef}
@@ -144,78 +163,100 @@ export default function BeforeAfterSection() {
             onMouseLeave={() => (isDragging.current = false)}
             onMouseMove={handleMouseMove}
             onTouchMove={handleTouchMove}
-            className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden cursor-ew-resize select-none touch-none border border-[#3D3D3D]"
+            className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden cursor-ew-resize select-none touch-none border border-white/10"
             aria-label="סליידר השוואת לפני ואחרי"
           >
-            {/* AFTER Layer (Full Background) */}
+            {/* RTL LOGIC: In RTL Hebrew, RIGHT is BEFORE and LEFT is AFTER */}
+
+            {/* 1. BEFORE LAYER (Full Background - Visible on the RIGHT) */}
             <div
-              className={`absolute inset-0 bg-gradient-to-br ${current.afterGradient} flex items-center justify-center p-8 text-center`}
+              className={`absolute inset-0 bg-gradient-to-br ${current.beforeGradient} flex items-center justify-end p-8 text-center`}
             >
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center text-gold mb-3 shadow-gold">
-                  <Scissors className="w-8 h-8 -rotate-45" />
+              <div className="relative z-10 flex flex-col items-center ml-8 sm:ml-16">
+                <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/60 mb-2">
+                  <span className="text-xl font-black">✂</span>
                 </div>
-                <span className="text-gold font-display italic text-2xl sm:text-3xl font-black">
-                  אחרי
+                <span className="text-white/80 text-xl sm:text-2xl font-black">
+                  לפני
                 </span>
-                <span className="text-white text-xs sm:text-sm font-semibold mt-1 max-w-xs">
-                  גימור מדויק, דירוג נקי וסטיילינג פרימיום
+                <span className="text-white/50 text-xs mt-1 max-w-[140px] hidden sm:block">
+                  שיער לא מעוצב
                 </span>
               </div>
 
-              {/* After label badge */}
-              <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 border border-gold/40 text-gold text-xs font-bold">
-                אחרי הטיפול ✨
+              {/* Before label badge (Top Right in RTL) */}
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/70 border border-white/20 text-zinc-300 text-xs font-bold">
+                לפני הטיפול
               </div>
             </div>
 
-            {/* BEFORE Layer (Clipped Foreground) */}
+            {/* 2. AFTER LAYER (Clipped Overlay - Visible on the LEFT) */}
             <div
-              className={`absolute inset-0 bg-gradient-to-br ${current.beforeGradient} flex items-center justify-center p-8 text-center`}
+              className={`absolute inset-0 bg-gradient-to-br ${current.afterGradient} flex items-center justify-start p-8 text-center`}
               style={{
                 clipPath: `polygon(0 0, ${sliderPosition}% 0, ${sliderPosition}% 100%, 0 100%)`,
               }}
             >
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/60 mb-3">
-                  <span className="text-2xl font-black">✂</span>
+              <div className="relative z-10 flex flex-col items-center mr-8 sm:mr-16">
+                <div
+                  className="w-14 h-14 rounded-full border flex items-center justify-center mb-2 shadow-lg"
+                  style={{
+                    backgroundColor: `${themeColor}30`,
+                    borderColor: themeColor,
+                    color: themeColor,
+                  }}
+                >
+                  <Scissors className="w-6 h-6 -rotate-45" />
                 </div>
-                <span className="text-white/80 font-display text-2xl sm:text-3xl font-black">
-                  לפני
+                <span className="text-xl sm:text-2xl font-black" style={{ color: themeColor }}>
+                  אחרי ✨
                 </span>
-                <span className="text-white/60 text-xs sm:text-sm mt-1 max-w-xs">
-                  שיער לא מעוצב וקווי מתאר מטושטשים
+                <span className="text-white text-xs mt-1 max-w-[140px] hidden sm:block font-bold">
+                  דירוג חד ועיצוב מושלם
                 </span>
               </div>
 
-              {/* Before label badge */}
-              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/60 border border-white/20 text-white/80 text-xs font-bold">
-                לפני הטיפול
+              {/* After label badge (Top Left in RTL) */}
+              <div
+                className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 border text-xs font-bold"
+                style={{ borderColor: `${themeColor}60`, color: themeColor }}
+              >
+                אחרי הטיפול ✨
               </div>
             </div>
 
             {/* Split Divider Line & Draggable Handle */}
             <div
-              className="absolute top-0 bottom-0 w-1 bg-gold shadow-[0_0_15px_rgba(201,168,76,0.8)] z-20 pointer-events-none"
-              style={{ left: `${sliderPosition}%` }}
+              className="absolute top-0 bottom-0 w-1 shadow-2xl z-20 pointer-events-none"
+              style={{
+                left: `${sliderPosition}%`,
+                backgroundColor: themeColor,
+                boxShadow: `0 0 15px ${themeColor}`,
+              }}
             >
-              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-gold border-2 border-white text-[#1C1C1C] flex items-center justify-center shadow-2xl">
-                <MoveHorizontal className="w-5 h-5" />
+              <div
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full border-2 border-white text-[#1C1C1C] flex items-center justify-center shadow-2xl"
+                style={{ backgroundColor: themeColor }}
+              >
+                <MoveHorizontal className="w-4 h-4" />
               </div>
             </div>
           </div>
 
           {/* Details & CTA below slider */}
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#3D3D3D]">
-            <div>
-              <div className="text-xs text-gold font-bold">{current.category} · בוצע ע"י {current.barber}</div>
-              <h3 className="text-lg font-black text-white mt-0.5">{current.title}</h3>
-              <p className="text-[#9E9891] text-xs sm:text-sm mt-1">{current.description}</p>
+          <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10">
+            <div className="text-right">
+              <div className="text-xs font-bold" style={{ color: themeColor }}>
+                {current.category} · בוצע ע"י {ownerName}
+              </div>
+              <h3 className="text-base sm:text-lg font-black text-white mt-0.5">{current.title}</h3>
+              <p className="text-zinc-400 text-xs mt-1 font-sans">{current.description}</p>
             </div>
 
             <Link
-              href="/booking"
-              className="btn-shimmer text-[#1C1C1C] font-bold text-xs sm:text-sm px-6 py-3 rounded-full flex-shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md"
+              href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+              className="text-[#1C1C1C] font-black text-xs sm:text-sm px-5 py-2.5 rounded-2xl shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md cursor-pointer"
+              style={{ backgroundColor: themeColor }}
             >
               רוצה תוצאה כזאת? הזמן תור ←
             </Link>

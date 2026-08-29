@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Scissors, Phone, MapPin, Clock, Lock } from 'lucide-react';
 import { SHOP_INFO } from '@/lib/utils';
+import { BusinessConfig } from '@/types/business';
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -20,40 +21,64 @@ function FacebookIcon({ className }: { className?: string }) {
   );
 }
 
-export default function Footer() {
+export default function Footer({
+  business,
+}: {
+  business?: Partial<BusinessConfig>;
+}) {
   const currentYear = new Date().getFullYear();
 
+  const themeColor = business?.themeColor || '#C9A84C';
+  const bizName = business?.name || 'המספרה של דביר';
+  const city = business?.city || 'אריאל & רחובות';
+  const phone = business?.phone || SHOP_INFO.phone;
+  const slug = business?.slug || 'dvir';
+
+  const instagram = business?.instagramHandle
+    ? (business.instagramHandle.startsWith('http') ? business.instagramHandle : `https://instagram.com/${business.instagramHandle.replace('@', '')}`)
+    : SHOP_INFO.instagram;
+
+  const branches = business?.branches && business.branches.length > 0
+    ? business.branches
+    : [
+        { name: 'סניף אריאל (אוניברסיטה)', address: 'מעונות הסטודנטים', hours: 'ימים א׳-ג׳: 09:00 – 20:00' },
+        { name: 'סניף רחובות (קליניקה פרטית)', address: 'רחובות', hours: 'ימים ד׳-ו׳: 09:00 – 20:00' },
+      ];
+
   return (
-    <footer className="bg-[#1C1C1C] text-white" role="contentinfo" id="footer">
-      {/* Gold top border */}
-      <div className="h-0.5 gradient-gold" />
+    <footer className="bg-[#1C1C1C] text-white" role="contentinfo" id="footer" dir="rtl">
+      {/* Brand top border */}
+      <div className="h-0.5" style={{ backgroundColor: themeColor }} />
 
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-right">
           {/* Brand */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gold flex items-center justify-center">
-                <Scissors className="w-5 h-5 text-[#1C1C1C] -rotate-45" />
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-[#1C1C1C]"
+                style={{ backgroundColor: themeColor }}
+              >
+                <Scissors className="w-5 h-5 -rotate-45" />
               </div>
               <div>
                 <span className="block text-xl font-black tracking-wider">
-                  המספרה של <span className="text-gold">דביר</span>
+                  {bizName}
                 </span>
-                <span className="text-xs text-[#6B6560]">אריאל & רחובות</span>
+                <span className="text-xs text-[#9E9891]">{city}</span>
               </div>
             </div>
-            <p className="text-[#9E9891] text-sm leading-relaxed max-w-xs">
-              {SHOP_INFO.tagline}. תספורות גברים, דירוגי פייד ופיסול זקן ברמה הגבוהה ביותר.
+            <p className="text-[#9E9891] text-xs sm:text-sm leading-relaxed max-w-xs font-sans">
+              {business?.slogan || 'תספורות פרימיום, דירוגי פייד ופיסול זקן ברמה הגבוהה ביותר בישראל.'}
             </p>
             {/* Social */}
             <div className="flex gap-3 mt-2">
               <a
-                href={SHOP_INFO.instagram}
+                href={instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-gold hover:text-gold transition-all duration-200"
+                className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-white hover:text-white transition-all duration-200"
               >
                 <InstagramIcon className="w-4 h-4" />
               </a>
@@ -62,7 +87,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-gold hover:text-gold transition-all duration-200"
+                className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-white hover:text-white transition-all duration-200"
               >
                 <FacebookIcon className="w-4 h-4" />
               </a>
@@ -71,85 +96,67 @@ export default function Footer() {
 
           {/* Hours & Branches */}
           <div>
-            <h3 className="text-sm font-bold tracking-widest text-gold mb-5 uppercase">סניפים ושעות פעילות</h3>
+            <h3 className="text-sm font-bold tracking-widest mb-5 uppercase" style={{ color: themeColor }}>
+              סניפים ושעות פעילות
+            </h3>
             <ul className="flex flex-col gap-3 text-xs">
-              <li className="bg-[#2A2A2A] p-3 rounded-xl border border-[#3D3D3D]">
-                <div className="font-bold text-white mb-1">📍 סניף אריאל (אוניברסיטה)</div>
-                <div className="text-[#9E9891]">ימים א׳-ג׳: 09:00 – 20:00</div>
-              </li>
-              <li className="bg-[#2A2A2A] p-3 rounded-xl border border-[#3D3D3D]">
-                <div className="font-bold text-white mb-1">📍 סניף רחובות (בית ההורים)</div>
-                <div className="text-[#9E9891]">ימים ד׳-ו׳: 09:00 – 20:00 (ו׳ עד 14:00)</div>
-              </li>
+              {branches.map((b, idx) => (
+                <li key={idx} className="bg-[#2A2A2A] p-3 rounded-xl border border-[#3D3D3D]">
+                  <div className="font-bold text-white mb-1">📍 {b.name}</div>
+                  <div className="text-[#9E9891]">{b.hours || b.address}</div>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact + CTA */}
           <div>
-            <h3 className="text-sm font-bold tracking-widest text-gold mb-5 uppercase">יצירת קשר</h3>
+            <h3 className="text-sm font-bold tracking-widest mb-5 uppercase" style={{ color: themeColor }}>
+              יצירת קשר
+            </h3>
             <ul className="flex flex-col gap-4 mb-8">
               <li className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-gold flex-shrink-0" />
+                <Phone className="w-4 h-4 flex-shrink-0" style={{ color: themeColor }} />
                 <a
-                  href={`tel:${SHOP_INFO.phone}`}
-                  className="text-sm text-[#9E9891] hover:text-gold transition-colors"
+                  href={`tel:${phone}`}
+                  className="text-sm text-[#9E9891] hover:text-white transition-colors"
                   dir="ltr"
                 >
-                  {SHOP_INFO.phone}
+                  {phone}
                 </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Clock className="w-4 h-4 text-gold flex-shrink-0" />
-                <span className="text-sm text-[#9E9891]">הזמנות אונליין 24/7</span>
               </li>
             </ul>
 
-            <div className="flex flex-col gap-3">
-              <Link
-                href="/booking"
-                className="btn-shimmer inline-block text-center text-[#1C1C1C] font-bold text-sm px-6 py-3 rounded-full hover:scale-105 transition-transform duration-200 shadow-md"
-                id="footer-cta-button"
-              >
-                הזמן תור עכשיו ←
-              </Link>
-            </div>
+            <Link
+              href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+              className="inline-block w-full text-[#1C1C1C] font-black text-center text-sm py-3 px-6 rounded-full transition-opacity hover:opacity-90 shadow-lg cursor-pointer"
+              style={{ backgroundColor: themeColor }}
+            >
+              הזמן תור עכשיו
+            </Link>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-[#2A2A2A] mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-[#6B6560]">
-            © {currentYear} המספרה של דביר. כל הזכויות שמורות.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-[#9E9891]">
-            <Link
-              href="/terms"
-              className="hover:text-gold transition-colors"
-            >
+        <div className="mt-12 pt-8 border-t border-[#3D3D3D] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9E9891]">
+          <div>
+            © {currentYear} {bizName} · כל הזכויות שמורות
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/terms" className="hover:text-white transition-colors">
               תנאי שימוש
             </Link>
             <span>·</span>
-            <Link
-              href="/privacy"
-              className="hover:text-gold transition-colors"
-            >
+            <Link href="/privacy" className="hover:text-white transition-colors">
               מדיניות פרטיות
             </Link>
             <span>·</span>
-            <Link
-              href="/accessibility"
-              className="hover:text-gold transition-colors flex items-center gap-1.5"
-            >
-              <span className="inline-block w-2 h-2 rounded-full bg-gold/50" />
-              הצהרת נגישות (ת"י 5568)
+            <Link href="/accessibility" className="hover:text-white transition-colors">
+              הצהרת נגישות
             </Link>
             <span>·</span>
-            <Link
-              href="/admin"
-              className="hover:text-gold transition-colors flex items-center gap-1.5 font-bold text-gold/80 hover:text-gold bg-white/5 hover:bg-white/10 px-3 py-1 rounded-full border border-white/10"
-            >
-              <Lock className="w-3 h-3" />
-              כניסת מנהל (דביר)
+            <Link href="/admin" className="hover:text-white transition-colors flex items-center gap-1">
+              <Lock className="w-3 h-3" /> ניהול
             </Link>
           </div>
         </div>

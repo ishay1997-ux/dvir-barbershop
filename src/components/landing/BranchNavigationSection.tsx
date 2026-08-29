@@ -3,72 +3,87 @@
 import { useState } from 'react';
 import { MapPin, Navigation, Phone, Clock, ExternalLink, Sparkles } from 'lucide-react';
 import { INITIAL_BRANCHES } from '@/lib/store';
+import { BusinessConfig } from '@/types/business';
 
-export default function BranchNavigationSection() {
+export default function BranchNavigationSection({
+  business,
+}: {
+  business?: Partial<BusinessConfig>;
+}) {
   const currentDay = new Date().getDay();
-  // Ariel: Sun, Mon, Tue (0, 1, 2). Rehovot: Wed, Thu, Fri (3, 4, 5)
-  const isArielToday = currentDay <= 2;
-  const [selectedBranchId, setSelectedBranchId] = useState<'ariel' | 'rehovot'>(
-    isArielToday ? 'ariel' : 'rehovot'
-  );
+  const themeColor = business?.themeColor || '#C9A84C';
+  const bizName = business?.name || 'המספרה של דביר';
 
-  const branch = INITIAL_BRANCHES.find((b) => b.id === selectedBranchId) || INITIAL_BRANCHES[0];
+  const branches = business?.branches && business.branches.length > 0
+    ? business.branches.map((b, i) => ({
+        id: `branch-${i}`,
+        name: b.name,
+        address: b.address,
+        wazeUrl: b.wazeLink || `https://waze.com/ul?q=${encodeURIComponent(b.address || b.name)}`,
+        phone: b.phone || business?.phone || '052-1234567',
+        hours: b.hours || '09:00 - 19:00',
+      }))
+    : INITIAL_BRANCHES.map((b) => ({
+        id: b.id,
+        name: b.name,
+        address: b.address,
+        wazeUrl: b.wazeUrl,
+        phone: b.phone,
+        hours: b.id === 'ariel' ? 'א׳-ג׳: 09:00 - 20:00' : 'ד׳-ו׳: 09:00 - 20:00',
+      }));
+
+  const [selectedBranchIndex, setSelectedBranchIndex] = useState<number>(0);
+  const activeBranch = branches[selectedBranchIndex] || branches[0];
 
   return (
     <section id="locations" className="py-12 sm:py-16 bg-[#141414] text-white" dir="rtl">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-8">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#33CCFF]/10 border border-[#33CCFF]/30 text-[#33CCFF] text-xs font-bold mb-2.5">
+          <div
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2.5 border"
+            style={{
+              backgroundColor: `${themeColor}15`,
+              borderColor: `${themeColor}40`,
+              color: themeColor,
+            }}
+          >
             <Navigation className="w-3.5 h-3.5" />
             <span>סניפים ודרכי הגעה</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white">
             איפה אנחנו נמצאים?
           </h2>
-          <p className="text-xs sm:text-sm text-[#9E9891] mt-1.5">
-            דביר פועל בשני סניפים נוחים עם חניה צמודה וגישה נוחה
+          <p className="text-xs sm:text-sm text-[#9E9891] mt-1.5 font-sans">
+            {bizName} – הגעה נוחה, חניה צמודה ומיקום מרכזי
           </p>
         </div>
 
         {/* Branch Toggle Tabs */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-[#222222] p-1.5 rounded-2xl border border-white/10 flex gap-1 shadow-lg">
-            <button
-              onClick={() => setSelectedBranchId('ariel')}
-              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all ${
-                selectedBranchId === 'ariel'
-                  ? 'bg-gradient-to-r from-[#C9A84C] to-[#DFCA85] text-[#1C1C1C] shadow-md'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              📍 סניף אריאל (ימים א׳-ג׳)
-              {isArielToday && (
-                <span className="mr-1.5 bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
-                  פתוח היום
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setSelectedBranchId('rehovot')}
-              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all ${
-                selectedBranchId === 'rehovot'
-                  ? 'bg-gradient-to-r from-[#C9A84C] to-[#DFCA85] text-[#1C1C1C] shadow-md'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              📍 סניף רחובות (ימים ד׳-ו׳)
-              {!isArielToday && currentDay !== 6 && (
-                <span className="mr-1.5 bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
-                  פתוח היום
-                </span>
-              )}
-            </button>
+        {branches.length > 1 && (
+          <div className="flex justify-center mb-6">
+            <div className="bg-[#222222] p-1.5 rounded-2xl border border-white/10 flex gap-1 shadow-lg flex-wrap justify-center">
+              {branches.map((b, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedBranchIndex(idx)}
+                  className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
+                    selectedBranchIndex === idx
+                      ? 'text-[#1C1C1C] shadow-md'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                  style={{
+                    backgroundColor: selectedBranchIndex === idx ? themeColor : undefined,
+                  }}
+                >
+                  📍 {b.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Interactive Map & Navigation Card (Matching Screenshot 2) */}
+        {/* Interactive Map & Navigation Card */}
         <div className="max-w-4xl mx-auto bg-[#202020] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
           {/* Map Preview Graphic Frame */}
           <div className="relative h-64 sm:h-72 w-full bg-[#18232c] overflow-hidden flex items-center justify-center">
@@ -77,7 +92,7 @@ export default function BranchNavigationSection() {
               className="absolute inset-0 opacity-40"
               style={{
                 backgroundImage: `
-                  radial-gradient(circle at 50% 50%, rgba(51, 204, 255, 0.15) 0%, transparent 60%),
+                  radial-gradient(circle at 50% 50%, ${themeColor}20 0%, transparent 60%),
                   linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
                   linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
                 `,
@@ -95,67 +110,83 @@ export default function BranchNavigationSection() {
 
             {/* Central Animated Location Pin */}
             <div className="relative z-10 flex flex-col items-center animate-bounce">
-              <div className="w-12 h-12 rounded-full bg-red-600 border-3 border-white shadow-2xl flex items-center justify-center text-white">
+              <div
+                className="w-12 h-12 rounded-full border-3 border-white shadow-2xl flex items-center justify-center text-white"
+                style={{ backgroundColor: themeColor }}
+              >
                 <MapPin className="w-6 h-6 fill-current" />
               </div>
-              <div className="mt-2 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-xs font-bold text-white shadow-md">
-                {branch.name}
+              <div
+                className="mt-2 px-3 py-1 rounded-full text-white text-[11px] font-black shadow-lg border border-white/20 whitespace-nowrap bg-black/80"
+              >
+                {activeBranch.name}
               </div>
             </div>
 
-            {/* Map UI Controls Overlay */}
-            <div className="absolute top-4 left-4 flex flex-col gap-1.5 bg-black/60 backdrop-blur-md p-1.5 rounded-xl border border-white/15 text-xs text-zinc-300">
-              <span className="px-2 py-0.5 font-bold">🚗 רכב / חניה צמודה</span>
-            </div>
+            {/* Live Navigation CTA Overlay */}
+            <a
+              href={activeBranch.wazeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-4 left-4 z-20 px-4 py-2 rounded-xl bg-[#33CCFF] hover:bg-[#33CCFF]/90 text-[#1C1C1C] text-xs font-black flex items-center gap-1.5 shadow-lg active:scale-95 transition-transform cursor-pointer"
+            >
+              <Navigation className="w-4 h-4 fill-current" />
+              <span>פתח ניווט ישיר ב-Waze</span>
+            </a>
           </div>
 
-          {/* Location Details & Navigation Buttons */}
-          <div className="p-6 sm:p-8 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <h3 className="text-lg sm:text-xl font-black text-white">{branch.name}</h3>
-                </div>
-                <p className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-[#C9A84C]" />
-                  <span>{branch.address}</span>
-                </p>
+          {/* Branch Details Row */}
+          <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            {/* Address */}
+            <div className="flex items-start gap-3.5 text-right">
+              <div
+                className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border"
+                style={{
+                  backgroundColor: `${themeColor}15`,
+                  borderColor: `${themeColor}40`,
+                  color: themeColor,
+                }}
+              >
+                <MapPin className="w-5 h-5" />
               </div>
-
-              <div className="text-xs sm:text-sm font-bold text-[#C9A84C] bg-[#C9A84C]/10 px-3 py-1.5 rounded-xl border border-[#C9A84C]/30 self-start sm:self-auto">
-                {branch.shortDescription}
+              <div>
+                <span className="text-[11px] text-zinc-400 font-bold block">כתובת הסניף</span>
+                <p className="font-black text-sm text-white mt-0.5">{activeBranch.address}</p>
               </div>
             </div>
 
-            {/* Direct Navigation Buttons Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              {/* 1. Waze Button */}
+            {/* Hours */}
+            <div className="flex items-start gap-3.5 text-right">
+              <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-300 shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[11px] text-zinc-400 font-bold block">שעות פתיחה</span>
+                <p className="font-bold text-xs sm:text-sm text-white mt-0.5" dir="ltr">
+                  {activeBranch.hours || '09:00 - 19:00'}
+                </p>
+              </div>
+            </div>
+
+            {/* Direct Call CTA */}
+            <div className="flex gap-2">
               <a
-                href={branch.wazeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="py-3 px-4 rounded-2xl bg-[#33CCFF] hover:bg-[#28b8e6] text-[#003344] font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02] active:scale-95"
+                href={`tel:${activeBranch.phone}`}
+                className="flex-1 py-3 px-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs text-center flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
-                <Navigation className="w-4 h-4 fill-current" /> נווט ב-Waze
+                <Phone className="w-4 h-4" style={{ color: themeColor }} />
+                <span>חייג לסניף</span>
               </a>
 
-              {/* 2. Google Maps Button */}
               <a
-                href={`https://maps.google.com/?q=${encodeURIComponent(branch.address)}`}
+                href={activeBranch.wazeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-3 px-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-white/15 shadow-md transition-colors"
+                className="flex-1 py-3 px-4 rounded-2xl text-[#1C1C1C] font-black text-xs text-center flex items-center justify-center gap-2 hover:opacity-95 transition-opacity shadow-md cursor-pointer"
+                style={{ backgroundColor: themeColor }}
               >
-                <MapPin className="w-4 h-4 text-emerald-400" /> Google Maps
-              </a>
-
-              {/* 3. Call Branch Button */}
-              <a
-                href={`tel:${branch.phone}`}
-                className="py-3 px-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-white/15 shadow-md transition-colors"
-              >
-                <Phone className="w-4 h-4 text-[#C9A84C]" /> התקשר לדביר
+                <Navigation className="w-4 h-4" />
+                <span>Waze</span>
               </a>
             </div>
           </div>

@@ -3,27 +3,37 @@
 import { useRef } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import { Scissors, Star, Award, Sparkles, MapPin } from 'lucide-react';
-import { useShopStore } from '@/lib/store';
+import { Scissors, Star, Award, Sparkles, MapPin, CheckCircle2 } from 'lucide-react';
+import { BusinessConfig } from '@/types/business';
 
-const avatarGradients = [
-  'from-amber-700 via-amber-600 to-yellow-500',
-  'from-stone-600 via-stone-500 to-stone-400',
-  'from-amber-900 via-amber-700 to-amber-500',
-];
-
-export default function BarberShowcase() {
+export default function BarberShowcase({
+  business,
+}: {
+  business?: Partial<BusinessConfig>;
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
-  const { barbers } = useShopStore();
-  const activeBarbers = barbers.filter((b) => b.is_active);
+
+  const themeColor = business?.themeColor || '#C9A84C';
+  const ownerName = business?.ownerName || 'דביר';
+  const bizName = business?.name || 'המספרה של דביר';
+  const city = business?.city || 'ישראל';
+  const experienceYears = business?.experienceYears || 5;
+
+  const specialties = [
+    'סקין פייד מדויק',
+    'פיסול ויישור זקן בתער',
+    'התאמת קווי פנים',
+    'חפיפה וטיפוח VIP',
+  ];
 
   return (
     <section
-      id="barbers"
+      id="about"
       ref={ref}
-      className="py-24 bg-[#F0EBE1]"
+      className="py-20 bg-[#1A1A1A] text-white border-y border-white/10"
       aria-labelledby="barbers-heading"
+      dir="rtl"
     >
       <div className="container mx-auto px-4">
         {/* Heading */}
@@ -31,96 +41,131 @@ export default function BarberShowcase() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <span className="text-gold text-sm font-bold tracking-[0.2em] uppercase">הספר שלכם</span>
+          <span
+            className="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-full border inline-block mb-2"
+            style={{
+              color: themeColor,
+              borderColor: `${themeColor}40`,
+              backgroundColor: `${themeColor}10`,
+            }}
+          >
+            המאסטר שלכם
+          </span>
           <h2
             id="barbers-heading"
-            className="text-4xl sm:text-5xl font-black text-[#1C1C1C] mt-2 mb-4"
+            className="text-3xl sm:text-4xl font-black text-white mt-1 mb-3"
           >
-            הכירו את דביר
+            הכירו את {ownerName}
           </h2>
-          <div className="gold-divider" />
-          <p className="text-[#6B6560] mt-4 max-w-md mx-auto text-base">
-            אמן תספורות ומומחה לפיידים מודרניים, פיסול זקן מדויק וחוויית שירות אישית ברמה הגבוהה ביותר.
+          <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: themeColor }} />
+          <p className="text-zinc-300 mt-4 max-w-lg mx-auto text-xs sm:text-sm leading-relaxed font-sans">
+            {business?.slogan || 'אמן תספורות ומומחה לפיידים מודרניים, פיסול זקן מדויק וחוויית שירות אישית ברמה הגבוהה ביותר.'}
           </p>
         </motion.div>
 
-        {/* Barber Cards */}
-        <div className={`grid gap-8 mx-auto ${activeBarbers.length === 1 ? 'max-w-lg' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 max-w-4xl'}`}>
-          {activeBarbers.map((barber, i) => (
-            <motion.div
-              key={barber.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="card-hover group bg-white rounded-3xl overflow-hidden shadow-[var(--shadow-card)] border border-[#E5DDD0] text-center"
-              role="article"
-              aria-label={`הספר ${barber.name}`}
+        {/* Barber Luxury Showcase Card */}
+        <div className="max-w-xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+            className="bg-[#222222] rounded-3xl overflow-hidden shadow-2xl border border-white/10 text-center"
+            role="article"
+          >
+            {/* Avatar area with gradient */}
+            <div
+              className="relative h-48 flex items-center justify-center overflow-hidden"
+              style={{
+                background: `linear-gradient(135deg, #1C1C1C, #2E2818, #1C1C1C)`,
+              }}
             >
-              {/* Avatar area */}
-              <div className={`relative h-48 bg-gradient-to-br ${avatarGradients[i]}`}>
-                {/* Pattern overlay */}
-                <div
-                  className="absolute inset-0 opacity-10"
-                  style={{
-                    backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.3) 8px, rgba(255,255,255,0.3) 9px)',
-                  }}
-                />
-                {/* Scissors decoration */}
-                <div className="absolute top-4 left-4 text-white/20">
-                  <Scissors className="w-8 h-8 -rotate-45" />
-                </div>
-                {/* Big avatar letter */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-white text-4xl font-black">
-                    {barber.name[0]}
-                  </div>
-                </div>
-                {/* Color bar indicator */}
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-1"
-                  style={{ backgroundColor: barber.color }}
-                />
+              {/* Scissors decoration */}
+              <div className="absolute top-4 right-4 text-white/10">
+                <Scissors className="w-12 h-12 -rotate-45" />
+              </div>
+              <div className="absolute bottom-4 left-4 text-white/10">
+                <Sparkles className="w-10 h-10" />
               </div>
 
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-black text-[#1C1C1C] mb-1 group-hover:text-gold transition-colors">
-                  {barber.name}
-                </h3>
-                <p className="text-[#6B6560] text-sm mb-4 leading-relaxed">{barber.bio}</p>
+              {/* Big avatar letter */}
+              <div
+                className="w-24 h-24 rounded-full border-2 flex items-center justify-center text-white text-4xl font-black shadow-2xl"
+                style={{
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  borderColor: themeColor,
+                  color: themeColor,
+                }}
+              >
+                {ownerName.charAt(0)}
+              </div>
 
-                {/* Specialties */}
-                <div className="flex flex-wrap justify-center gap-2 mb-5">
-                  {barber.specialties.map((spec) => (
+              {/* Color bar indicator */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-1"
+                style={{ backgroundColor: themeColor }}
+              />
+            </div>
+
+            {/* Content */}
+            <div className="p-6 text-right space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-black text-white">{ownerName}</h3>
+                  <span className="text-xs font-bold" style={{ color: themeColor }}>
+                    מאסטר ברבר ומעצב שיער מוסמך
+                  </span>
+                </div>
+                <div
+                  className="px-3 py-1 rounded-full text-xs font-black border flex items-center gap-1"
+                  style={{
+                    backgroundColor: `${themeColor}15`,
+                    borderColor: `${themeColor}40`,
+                    color: themeColor,
+                  }}
+                >
+                  <Award className="w-3.5 h-3.5" /> מעל {experienceYears} שנות דיוק
+                </div>
+              </div>
+
+              <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed font-sans">
+                ב-{bizName} כל לקוח מקבל יחס VIP מלא הכולל אבחון סוג השיער ומבנה הפנים, סטריליזציה קפדנית, שימוש במוצרי הטיפוח המובילים בעולם וחוויית מספרה יוקרתית.
+              </p>
+
+              {/* Specialties Pills */}
+              <div>
+                <span className="block text-[11px] font-bold text-zinc-400 mb-2">התמחויות מרכזיות:</span>
+                <div className="flex flex-wrap gap-2">
+                  {specialties.map((spec) => (
                     <span
                       key={spec}
-                      className="text-xs px-2.5 py-1 rounded-full bg-[#F0EBE1] text-[#6B6560] border border-[#E5DDD0]"
+                      className="text-xs px-3 py-1.5 rounded-xl bg-white/5 text-zinc-200 border border-white/10 flex items-center gap-1.5"
                     >
-                      {spec}
+                      <CheckCircle2 className="w-3.5 h-3.5" style={{ color: themeColor }} />
+                      <span>{spec}</span>
                     </span>
                   ))}
                 </div>
-
-                {/* Rating */}
-                <div className="flex items-center justify-center gap-1.5 mb-5">
-                  {[1,2,3,4,5].map((s) => (
-                    <Star key={s} className="w-3.5 h-3.5 text-gold fill-gold" />
-                  ))}
-                  <span className="text-xs text-[#9E9891] font-semibold">5.0</span>
-                </div>
-
-                <Link
-                  href={`/booking?barber=${barber.id}`}
-                  className="btn-shimmer block text-[#1C1C1C] font-bold text-sm py-2.5 px-5 rounded-full hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
-                  id={`barber-book-${barber.id}`}
-                >
-                  הזמן עם {barber.name.split(' ')[0]}
-                </Link>
               </div>
-            </motion.div>
-          ))}
+
+              {/* Badges row */}
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-center text-xs">
+                <div className="bg-[#181818] p-2.5 rounded-xl border border-white/5">
+                  <span className="block font-black text-sm" style={{ color: themeColor }}>100%</span>
+                  <span className="text-[10px] text-zinc-400">שביעות רצון</span>
+                </div>
+                <div className="bg-[#181818] p-2.5 rounded-xl border border-white/5">
+                  <span className="block font-black text-sm" style={{ color: themeColor }}>סטריליות</span>
+                  <span className="text-[10px] text-zinc-400">חיטוי מלא</span>
+                </div>
+                <div className="bg-[#181818] p-2.5 rounded-xl border border-white/5">
+                  <span className="block font-black text-sm text-emerald-400">24/7</span>
+                  <span className="text-[10px] text-zinc-400">זימון אונליין</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

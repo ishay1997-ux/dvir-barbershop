@@ -6,8 +6,10 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Scissors, Sparkles, X, ChevronLeft, Star } from 'lucide-react';
 import { INITIAL_SERVICES } from '@/lib/store';
+import { BusinessConfig } from '@/types/business';
+import { formatPrice } from '@/lib/utils';
 
-const GALLERY_PHOTOS = [
+const DEFAULT_GALLERY_PHOTOS = [
   {
     id: 1,
     title: 'סקין פייד מדויק עם קו תער חד',
@@ -46,22 +48,50 @@ const GALLERY_PHOTOS = [
   },
 ];
 
-export default function PriceListAndGallerySection() {
-  const [selectedPhoto, setSelectedPhoto] = useState<typeof GALLERY_PHOTOS[0] | null>(null);
+export default function PriceListAndGallerySection({
+  business,
+}: {
+  business?: Partial<BusinessConfig>;
+}) {
+  const [selectedPhoto, setSelectedPhoto] = useState<typeof DEFAULT_GALLERY_PHOTOS[0] | null>(null);
+
+  const themeColor = business?.themeColor || '#C9A84C';
+  const bizName = business?.name || 'דביר';
+  const slug = business?.slug || 'dvir';
+
+  const services = business?.services && business.services.length > 0
+    ? business.services
+    : INITIAL_SERVICES.map((s) => ({
+        name: s.name,
+        price: s.price,
+        duration: s.duration,
+        description: s.description,
+      }));
+
+  const instagram = business?.instagramHandle
+    ? (business.instagramHandle.startsWith('http') ? business.instagramHandle : `https://instagram.com/${business.instagramHandle.replace('@', '')}`)
+    : 'https://instagram.com/dvir_barber';
 
   return (
     <section id="services-and-gallery" className="py-12 sm:py-16 bg-[#181818] text-white" dir="rtl">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/30 text-[#C9A84C] text-xs font-bold mb-2.5">
+          <div
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2.5 border"
+            style={{
+              backgroundColor: `${themeColor}15`,
+              borderColor: `${themeColor}40`,
+              color: themeColor,
+            }}
+          >
             <Sparkles className="w-3.5 h-3.5" />
             <span>מחירון ושירותי פרימיום</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white">
-            השירותים והעבודות של דביר
+            השירותים והעבודות של {bizName}
           </h2>
-          <p className="text-xs sm:text-sm text-[#9E9891] mt-1.5">
+          <p className="text-xs sm:text-sm text-[#9E9891] mt-1.5 font-sans">
             מחירים שקופים, דיוק ללא פשרות, ואווירה אישית ומקצועית
           </p>
         </div>
@@ -74,42 +104,46 @@ export default function PriceListAndGallerySection() {
           <div className="lg:col-span-7 bg-[#202020] rounded-3xl border border-white/10 p-5 sm:p-7 shadow-xl">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
               <div className="flex items-center gap-2">
-                <Scissors className="w-5 h-5 text-[#C9A84C]" />
+                <Scissors className="w-5 h-5" style={{ color: themeColor }} />
                 <h3 className="font-black text-base sm:text-lg text-white">מחירון שירותי מספרה</h3>
               </div>
               <span className="text-xs text-zinc-400">משך זמן ומחיר</span>
             </div>
 
             <div className="divide-y divide-white/5 space-y-1">
-              {INITIAL_SERVICES.map((service) => (
+              {services.map((service, idx) => (
                 <div
-                  key={service.id}
-                  className="py-3.5 flex items-center justify-between gap-3 group hover:bg-white/[0.02] px-2 rounded-2xl transition-colors"
+                  key={idx}
+                  className="py-3.5 flex items-center justify-between gap-3 group hover:bg-white/[0.03] px-2 rounded-2xl transition-colors"
                 >
-                  {/* Service Info */}
-                  <div className="flex-1">
+                  {/* Service Info (Right in RTL) */}
+                  <div className="flex-1 text-right">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-white group-hover:text-[#DFCA85] transition-colors">
+                      <span className="font-bold text-sm text-white group-hover:text-amber-200 transition-colors">
                         {service.name}
                       </span>
                     </div>
-                    <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 line-clamp-1">
-                      {service.description}
-                    </p>
+                    {service.description && (
+                      <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 line-clamp-1 font-sans">
+                        {service.description}
+                      </p>
+                    )}
                     <span className="text-[10px] text-zinc-500 font-medium">⏱️ {service.duration} דקות</span>
                   </div>
 
-                  {/* Price & Book Button */}
+                  {/* Price & Book Button (Left in RTL) */}
                   <div className="flex items-center gap-3 shrink-0">
-                    <div className="text-left font-black text-base sm:text-lg text-[#C9A84C]">
-                      ₪{service.price}
+                    <div className="text-left font-black text-base sm:text-lg" style={{ color: themeColor }}>
+                      {formatPrice(service.price)}
                     </div>
 
                     <Link
-                      href={`/booking?service=${service.id}`}
-                      className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-[#C9A84C] hover:text-[#1C1C1C] text-white text-xs font-bold transition-all active:scale-95 flex items-center gap-1"
+                      href={slug === 'dvir' || slug === 'thecut' ? `/booking?service=${encodeURIComponent(service.name)}` : `/${slug}/booking?service=${encodeURIComponent(service.name)}`}
+                      className="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1 cursor-pointer shadow-xs text-black"
+                      style={{ backgroundColor: themeColor }}
                     >
-                      הזמן <ChevronLeft className="w-3 h-3" />
+                      <span>הזמן</span>
+                      <ChevronLeft className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>
@@ -117,11 +151,14 @@ export default function PriceListAndGallerySection() {
             </div>
 
             {/* Total CTA footer */}
-            <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
-              <span className="text-xs text-zinc-400">חייל / סטודנט? מחירון מוזל בלחיצה על השירות</span>
+            <div className="mt-5 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-xs text-zinc-400 text-center sm:text-right">
+                חוויית פרימיום הכוללת ייעוץ אישי, חפיפה והתאמת קווי פנים
+              </span>
               <Link
-                href="/booking"
-                className="py-2.5 px-5 rounded-xl bg-gradient-to-r from-[#C9A84C] to-[#DFCA85] text-[#1C1C1C] font-black text-xs hover:opacity-95 transition-opacity"
+                href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+                className="py-2.5 px-5 rounded-xl text-[#1C1C1C] font-black text-xs hover:opacity-95 transition-opacity shadow-md cursor-pointer shrink-0"
+                style={{ backgroundColor: themeColor }}
               >
                 לקביעת תור מהיר ←
               </Link>
@@ -134,7 +171,7 @@ export default function PriceListAndGallerySection() {
           <div className="lg:col-span-5 bg-[#202020] rounded-3xl border border-white/10 p-5 sm:p-7 shadow-xl">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
               <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-[#C9A84C] fill-[#C9A84C]" />
+                <Star className="w-5 h-5 fill-current" style={{ color: themeColor }} />
                 <h3 className="font-black text-base sm:text-lg text-white">גלריית עבודות אחרונות</h3>
               </div>
               <span className="text-xs text-zinc-400">לחץ להגדלה</span>
@@ -142,11 +179,12 @@ export default function PriceListAndGallerySection() {
 
             {/* 3x2 Photos Grid */}
             <div className="grid grid-cols-3 gap-2.5">
-              {GALLERY_PHOTOS.map((photo) => (
+              {DEFAULT_GALLERY_PHOTOS.map((photo) => (
                 <button
                   key={photo.id}
                   onClick={() => setSelectedPhoto(photo)}
-                  className="group relative aspect-square rounded-2xl overflow-hidden bg-zinc-800 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]"
+                  className="group relative aspect-square rounded-2xl overflow-hidden bg-zinc-800 border border-white/10 focus:outline-none focus:ring-2 cursor-pointer"
+                  style={{ '--tw-ring-color': themeColor } as any}
                 >
                   <Image
                     src={photo.src}
@@ -166,12 +204,13 @@ export default function PriceListAndGallerySection() {
 
             <div className="mt-4 pt-3 border-t border-white/10 text-center">
               <a
-                href="https://instagram.com/dvir_barber"
+                href={instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-bold text-[#C9A84C] hover:underline"
+                className="text-xs font-bold hover:underline"
+                style={{ color: themeColor }}
               >
-                צפה בעבודות נוספות באינסטגרם של דביר ←
+                צפה בעבודות נוספות באינסטגרם של {bizName} ←
               </a>
             </div>
           </div>
@@ -189,7 +228,8 @@ export default function PriceListAndGallerySection() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="relative max-w-lg w-full bg-[#1C1C1C] rounded-3xl overflow-hidden border border-[#C9A84C]/40 p-4"
+              className="relative max-w-lg w-full bg-[#1C1C1C] rounded-3xl overflow-hidden border p-4 shadow-2xl"
+              style={{ borderColor: `${themeColor}60` }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative aspect-4/3 w-full rounded-2xl overflow-hidden mb-3">
@@ -202,14 +242,14 @@ export default function PriceListAndGallerySection() {
               </div>
 
               <div className="flex items-center justify-between">
-                <div>
+                <div className="text-right">
                   <h4 className="font-bold text-sm text-white">{selectedPhoto.title}</h4>
-                  <span className="text-xs text-[#C9A84C] font-semibold">{selectedPhoto.category}</span>
+                  <span className="text-xs font-semibold" style={{ color: themeColor }}>{selectedPhoto.category}</span>
                 </div>
 
                 <button
                   onClick={() => setSelectedPhoto(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
