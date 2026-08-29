@@ -25,6 +25,8 @@ interface MemoryAppointment {
   barberName: string;
   branchId: string;
   branchName: string;
+  businessSlug: string;
+  businessName: string;
   date: string;
   time: string;
   customerName: string;
@@ -44,25 +46,43 @@ export async function POST(request: Request) {
     const {
       serviceId,
       serviceName,
+      service,
       servicePrice,
+      price,
       barberId,
       barberName,
       branchId,
       branchName,
+      businessSlug,
+      businessName,
       date,
       time,
       customerName,
       customerPhone,
     } = body;
 
-    if (!serviceId || !date || !time || !customerName || !customerPhone) {
+    // Strict input validation
+    if ((!serviceId && !serviceName && !service) || !date || !time || !customerName || !customerPhone) {
       return NextResponse.json(
-        { error: 'Missing required appointment fields' },
+        { error: 'נא למלא את כל שדות החובה להזמנת תור' },
         { status: 400 }
       );
     }
 
-    const cleanPhone = customerPhone.replace(/\D/g, '');
+    const cleanName = String(customerName).trim().slice(0, 60);
+    const cleanPhone = String(customerPhone).replace(/\D/g, '').slice(0, 20);
+    const resolvedServiceName = String(serviceName || service || 'תספורת גברים').trim().slice(0, 80);
+    const resolvedPrice = Number(servicePrice || price) || 80;
+    const resolvedSlug = String(businessSlug || 'dvir').toLowerCase().trim();
+    const resolvedBizName = String(businessName || (resolvedSlug === 'sharon' ? 'שרון עיצוב שיער' : 'המספרה של דביר')).trim();
+
+    if (cleanName.length < 2 || cleanPhone.length < 8) {
+      return NextResponse.json(
+        { error: 'שם מלא או מספר טלפון אינם תקינים' },
+        { status: 400 }
+      );
+    }
+
     let appointmentId = `apt-${Date.now()}`;
 
     // 1. Primary: Firebase Firestore Cloud Database
@@ -73,11 +93,12 @@ export async function POST(request: Request) {
         await setDoc(
           customerRef,
           {
-            name: customerName,
+            name: cleanName,
             phone: customerPhone,
             cleanPhone,
             lastVisit: new Date().toISOString(),
             favoriteBranchId: branchId || 'ariel',
+            businessSlug: resolvedSlug,
             updatedAt: serverTimestamp(),
           },
           { merge: true }
@@ -85,17 +106,19 @@ export async function POST(request: Request) {
 
         // Add Appointment to 'appointments' collection
         const appointmentDoc = await addDoc(collection(db, 'appointments'), {
-          serviceId,
-          serviceName: serviceName || 'תספורת גברים',
-          servicePrice: Number(servicePrice) || 80,
+          serviceId: serviceId || 'srv-haircut',
+          serviceName: resolvedServiceName,
+          servicePrice: resolvedPrice,
           barberId: barberId || 'dvir',
           barberName: barberName || 'דביר',
           branchId: branchId || 'ariel',
-          branchName: branchName || 'סניף אריאל',
-          date,
-          time,
-          customerName,
-          customerPhone,
+          branchName: branchName || (branchId === 'rehovot' ? 'סניף רחובות' : 'סניף אריאל'),
+          businessSlug: resolvedSlug,
+          businessName: resolvedBizName,
+          date: String(date).trim(),
+          time: String(time).trim(),
+          customerName: cleanName,
+          customerPhone: String(customerPhone).trim(),
           cleanPhone,
           status: 'confirmed',
           createdAt: serverTimestamp(),
@@ -110,17 +133,19 @@ export async function POST(request: Request) {
     // Save to memory store as backup
     const newApt: MemoryAppointment = {
       id: appointmentId,
-      serviceId,
-      serviceName: serviceName || 'תספורת גברים',
-      servicePrice: Number(servicePrice) || 80,
+      serviceId: serviceId || 'srv-haircut',
+      serviceName: resolvedServiceName,
+      servicePrice: resolvedPrice,
       barberId: barberId || 'dvir',
       barberName: barberName || 'דביר',
       branchId: branchId || 'ariel',
-      branchName: branchName || 'סניף אריאל',
-      date,
-      time,
-      customerName,
-      customerPhone,
+      branchName: branchName || (branchId === 'rehovot' ? 'סניף רחובות' : 'סניף אריאל'),
+      businessSlug: resolvedSlug,
+      businessName: resolvedBizName,
+      date: String(date).trim(),
+      time: String(time).trim(),
+      customerName: cleanName,
+      customerPhone: String(customerPhone).trim(),
       status: 'confirmed',
       createdAt: new Date().toISOString(),
     };
@@ -130,168 +155,208 @@ export async function POST(request: Request) {
       success: true,
       appointmentId,
       appointment: newApt,
-      message: 'Appointment successfully created and confirmed',
+      message: 'התור נקבע ואושר בהצלחה',
     });
   } catch (error) {
     console.error('Appointment API error:', error);
     return NextResponse.json(
-      { error: 'Internal server error processing appointment' },
+      { error: 'שגיאה בעת שמירת התור במערכת' },
       { status: 500 }
     );
   }
 }
 
 // ============================================================
-// 2. GET APPOINTMENTS (GET) - Supports ?phone=... or ?id=...
+// 2. GET APPOINTMENTS (GET) with phone / slug filter
 // ============================================================
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const phoneParam = searchParams.get('phone');
-    const idParam = searchParams.get('id');
+    const phoneFilter = searchParams.get('phone');
+    const slugFilter = searchParams.get('businessSlug');
 
-    const cleanPhone = phoneParam ? phoneParam.replace(/\D/g, '') : null;
+    // If searching by customer phone
+    if (phoneFilter) {
+      const cleanSearchPhone = phoneFilter.replace(/\D/g, '');
 
+      if (isFirebaseConfigured && db) {
+        try {
+          const q = query(
+            collection(db, 'appointments'),
+            where('cleanPhone', '==', cleanSearchPhone)
+          );
+          const snapshot = await getDocs(q);
+
+          if (!snapshot.empty) {
+            const list = snapshot.docs.map((docSnap) => ({
+              id: docSnap.id,
+              ...docSnap.data(),
+            }));
+            return NextResponse.json({ appointments: list, source: 'firestore' });
+          }
+        } catch (fbError) {
+          console.error('Firebase search error:', fbError);
+        }
+      }
+
+      // Memory fallback search
+      const memoryMatches = memoryAppointments.filter((a) =>
+        a.customerPhone.replace(/\D/g, '').includes(cleanSearchPhone)
+      );
+      return NextResponse.json({ appointments: memoryMatches, source: 'memory' });
+    }
+
+    // Default: List all appointments
     if (isFirebaseConfigured && db) {
       try {
-        const appointmentsRef = collection(db, 'appointments');
-        let q;
-
-        if (idParam) {
-          const docSnap = await getDoc(doc(db, 'appointments', idParam));
-          if (docSnap.exists()) {
-            return NextResponse.json({
-              appointments: [{ id: docSnap.id, ...docSnap.data() }],
-              provider: 'firebase',
-            });
-          }
-        }
-
-        if (cleanPhone) {
-          q = query(appointmentsRef, where('cleanPhone', '==', cleanPhone));
-          const snapshot = await getDocs(q);
-          const appointments = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          return NextResponse.json({ appointments, provider: 'firebase' });
-        }
-
-        // Admin overview (all appointments)
-        q = query(appointmentsRef, orderBy('date', 'desc'));
+        const q = query(collection(db, 'appointments'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(q);
-        const appointments = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        return NextResponse.json({ appointments, provider: 'firebase' });
+
+        if (!snapshot.empty) {
+          let list = snapshot.docs.map((docSnap) => ({
+            id: docSnap.id,
+            ...docSnap.data(),
+          }));
+
+          if (slugFilter) {
+            list = list.filter((a: any) => a.businessSlug === slugFilter);
+          }
+
+          return NextResponse.json({ appointments: list, source: 'firestore' });
+        }
       } catch (fbError) {
         console.error('Firebase read error:', fbError);
       }
     }
 
-    // Memory store fallback
-    let filtered = memoryAppointments;
-    if (idParam) {
-      filtered = memoryAppointments.filter((a) => a.id === idParam);
-    } else if (cleanPhone) {
-      filtered = memoryAppointments.filter(
-        (a) => a.customerPhone.replace(/\D/g, '').includes(cleanPhone) || cleanPhone.includes(a.customerPhone.replace(/\D/g, ''))
-      );
+    let result = memoryAppointments;
+    if (slugFilter) {
+      result = result.filter((a) => a.businessSlug === slugFilter);
     }
 
-    return NextResponse.json({
-      appointments: filtered,
-      provider: 'memory',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message, appointments: [] }, { status: 500 });
+    return NextResponse.json({ appointments: result, source: 'memory' });
+  } catch (error) {
+    console.error('Appointment GET error:', error);
+    return NextResponse.json(
+      { error: 'שגיאה באחזור תורים', appointments: [] },
+      { status: 500 }
+    );
   }
 }
 
 // ============================================================
-// 3. CANCEL / UPDATE APPOINTMENT (PATCH & DELETE)
+// 3. UPDATE APPOINTMENT (PATCH)
 // ============================================================
 export async function PATCH(request: Request) {
   try {
     const body = await request.json();
     const { id, status } = body;
 
-    if (!id) {
-      return NextResponse.json({ error: 'Missing appointment id' }, { status: 400 });
+    if (!id || !status) {
+      return NextResponse.json(
+        { error: 'Missing appointment ID or status' },
+        { status: 400 }
+      );
     }
 
-    const newStatus = status || 'cancelled';
+    if (status !== 'confirmed' && status !== 'cancelled' && status !== 'completed' && status !== 'no_show') {
+      return NextResponse.json({ error: 'סטטוס לא תקין' }, { status: 400 });
+    }
 
-    // 1. Firebase Firestore
     if (isFirebaseConfigured && db) {
       try {
         const aptRef = doc(db, 'appointments', id);
         await updateDoc(aptRef, {
-          status: newStatus,
+          status,
           updatedAt: serverTimestamp(),
         });
       } catch (fbError) {
-        console.error('Firebase update error:', fbError);
+        console.error('Firebase update status error:', fbError);
       }
     }
 
-    // 2. Update memory store
     const found = memoryAppointments.find((a) => a.id === id);
     if (found) {
-      found.status = newStatus;
+      found.status = status;
     }
 
     return NextResponse.json({
       success: true,
       id,
-      status: newStatus,
-      message: 'Appointment status updated successfully',
+      status,
+      message: 'סטטוס התור עודכן בהצלחה',
     });
-  } catch (error: any) {
-    console.error('Cancel API error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    console.error('Appointment PATCH error:', error);
+    return NextResponse.json(
+      { error: 'שגיאה בעדכון סטטוס התור' },
+      { status: 500 }
+    );
   }
 }
 
+// ============================================================
+// 4. DELETE / PURGE APPOINTMENTS (DELETE)
+// ============================================================
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const phone = searchParams.get('phone');
-    const cleanPhone = phone ? phone.replace(/\D/g, '') : null;
 
-    if (!id && !cleanPhone) {
-      return NextResponse.json({ error: 'Missing appointment id or phone parameter' }, { status: 400 });
-    }
-
-    if (isFirebaseConfigured && db) {
-      const firestore = db;
-      try {
-        if (id) {
-          await deleteDoc(doc(firestore, 'appointments', id));
-        } else if (cleanPhone) {
-          const q = query(collection(firestore, 'appointments'), where('cleanPhone', '==', cleanPhone));
-          const snapshot = await getDocs(q);
-          const deletePromises = snapshot.docs.map((d) => deleteDoc(doc(firestore, 'appointments', d.id)));
-          await Promise.all(deletePromises);
-        }
-      } catch (fbError) {
-        console.error('Firebase delete error:', fbError);
-      }
-    }
-
-    // Purge from memory store
     if (id) {
+      if (isFirebaseConfigured && db) {
+        try {
+          await deleteDoc(doc(db, 'appointments', id));
+        } catch (fbError) {
+          console.error('Firebase delete by ID error:', fbError);
+        }
+      }
       const idx = memoryAppointments.findIndex((a) => a.id === id);
       if (idx !== -1) memoryAppointments.splice(idx, 1);
-    } else if (cleanPhone) {
+      return NextResponse.json({ success: true, message: 'התור נמחק בהצלחה' });
+    }
+
+    if (phone) {
+      const cleanPhone = phone.replace(/\D/g, '');
+      if (isFirebaseConfigured && db) {
+        try {
+          const q = query(
+            collection(db, 'appointments'),
+            where('cleanPhone', '==', cleanPhone)
+          );
+          const snapshot = await getDocs(q);
+          const currentDb = db;
+          const deletePromises = snapshot.docs.map((docSnap) =>
+            deleteDoc(doc(currentDb, 'appointments', docSnap.id))
+          );
+          await Promise.all(deletePromises);
+        } catch (fbError) {
+          console.error('Firebase bulk delete error:', fbError);
+        }
+      }
+
       for (let i = memoryAppointments.length - 1; i >= 0; i--) {
-        if (memoryAppointments[i].customerPhone.replace(/\D/g, '').includes(cleanPhone)) {
+        if (memoryAppointments[i].customerPhone.replace(/\D/g, '') === cleanPhone) {
           memoryAppointments.splice(i, 1);
         }
       }
+
+      return NextResponse.json({
+        success: true,
+        message: `כל התורים עבור מספר ${phone} נמחקו בהצלחה`,
+      });
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Appointments deleted and purged successfully',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'יש לספק ID או מספר טלפון למחיקה' },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error('Appointment DELETE error:', error);
+    return NextResponse.json(
+      { error: 'שגיאה במחיקת התורים' },
+      { status: 500 }
+    );
   }
 }
