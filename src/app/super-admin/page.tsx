@@ -1555,22 +1555,34 @@ const defaultBusinessesList: Business[] = [
                   />
                 </div>
 
-                {/* Theme Palette Picker */}
+                {/* Theme Palette Picker & Custom Color */}
                 <div>
-                  <label className="block text-zinc-300 font-bold mb-1.5">פלטת צבעי מיתוג לאתר:</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-zinc-300 font-bold">פלטת צבעי מיתוג והילת תאורה לאתר:</label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-zinc-400">צבע מותאם אישית:</span>
+                      <input
+                        type="color"
+                        value={editingBiz.themeColor || '#C9A84C'}
+                        onChange={(e) => setEditingBiz({ ...editingBiz, themeColor: e.target.value })}
+                        className="w-7 h-7 rounded-lg border border-white/20 bg-transparent cursor-pointer"
+                        title="בחר צבע חופשי"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {THEME_PALETTES.map((pal) => (
                       <button
                         key={pal.id}
                         type="button"
                         onClick={() => setEditingBiz({ ...editingBiz, themeColor: pal.color })}
-                        className={`p-2 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${
+                        className={`p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${
                           editingBiz.themeColor === pal.color
-                            ? 'border-[#C9A84C] bg-white/10'
+                            ? 'border-[#C9A84C] bg-white/10 shadow-sm'
                             : 'border-white/10 bg-[#141414] hover:bg-white/5'
                         }`}
                       >
-                        <div className="w-4 h-4 rounded-full shadow-xs" style={{ backgroundColor: pal.color }} />
+                        <div className="w-4 h-4 rounded-full shadow-xs flex-shrink-0" style={{ backgroundColor: pal.color }} />
                         <span className="text-[11px] font-bold text-white truncate">{pal.name.split('·')[0]}</span>
                       </button>
                     ))}

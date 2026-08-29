@@ -116,17 +116,17 @@ export default function SidebarDrawer({ isOpen, onClose }: SidebarDrawerProps) {
     <>
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-[99999] flex justify-end bg-black/60 backdrop-blur-xs" dir="rtl">
+          <div className="fixed inset-0 z-[99999] flex justify-start bg-black/60 backdrop-blur-xs" dir="rtl">
             {/* Backdrop Overlay */}
             <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
 
-            {/* Sliding Drawer Container (Left side of the screen) */}
+            {/* Sliding Drawer Container (Right side of the screen) */}
             <motion.div
-              initial={{ x: '-100%' }}
+              initial={{ x: '100%' }}
               animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
+              exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 26, stiffness: 240 }}
-              className="relative w-[280px] sm:w-[310px] h-full bg-[#F4F4F6] text-[#2C2C2C] flex flex-col shadow-2xl z-10 font-sans border-r border-gray-300 select-none"
+              className="relative w-[280px] sm:w-[310px] h-full bg-[#F4F4F6] text-[#2C2C2C] flex flex-col shadow-2xl z-10 font-sans border-l border-gray-300 select-none"
             >
               {/* ============================================================ */}
               {/* 1. TOP HEADER (Wood desk + Calendar + Avatar + 'אורח')         */}

@@ -36,7 +36,18 @@ export default function HomePage() {
   return (
     <>
       <Header business={business || undefined} />
-      <main id="main-content">
+      <main
+        id="main-content"
+        className="relative overflow-hidden transition-colors duration-500"
+        style={{
+          backgroundColor: '#121212',
+          backgroundImage: `
+            radial-gradient(ellipse 80% 50% at 50% 0%, ${themeColor}1A, transparent 70%),
+            radial-gradient(ellipse 60% 40% at 100% 30%, ${themeColor}10, transparent 70%),
+            radial-gradient(ellipse 60% 40% at 0% 70%, ${themeColor}10, transparent 70%)
+          `,
+        }}
+      >
         {/* 1. Sleek Hero Banner Hub: Cover Image, Monogram Logo, Waze, WhatsApp & 4 Action Pills */}
         <BarbershopHeroHub business={business || undefined} />
 

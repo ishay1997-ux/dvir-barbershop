@@ -45,25 +45,38 @@ export default function Header({
         <AnnouncementBanner business={business} />
 
         <div className="container mx-auto px-4 py-3 sm:py-3.5 flex items-center justify-between">
-          {/* Logo */}
-          <Link
-            href={slug === 'dvir' || slug === 'thecut' ? '/' : `/${slug}`}
-            className="flex items-center gap-2.5 group"
-            aria-label={`${bizName} - עמוד הבית`}
-          >
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg text-[#1C1C1C]"
-              style={{ backgroundColor: themeColor }}
+          {/* Right Side: Hamburger Button + Logo */}
+          <div className="flex items-center gap-3">
+            {/* Hamburger Button opening Slide-out Sidebar Drawer on Right */}
+            <button
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center border border-white/10 cursor-pointer"
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="פתח תפריט צד"
+              title="תפריט אפליקציה"
             >
-              <Scissors className="w-5 h-5 -rotate-45" />
-            </div>
-            <div className="leading-tight">
-              <span className="block text-base sm:text-lg font-black tracking-wider text-white">
-                {bizName}
-              </span>
-              <span className="text-[10px] text-[#9E9891]">{city}</span>
-            </div>
-          </Link>
+              <Menu className="w-5 h-5" style={{ color: themeColor }} />
+            </button>
+
+            {/* Logo */}
+            <Link
+              href={slug === 'dvir' || slug === 'thecut' ? '/' : `/${slug}`}
+              className="flex items-center gap-2.5 group"
+              aria-label={`${bizName} - עמוד הבית`}
+            >
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg text-[#1C1C1C]"
+                style={{ backgroundColor: themeColor }}
+              >
+                <Scissors className="w-5 h-5 -rotate-45" />
+              </div>
+              <div className="leading-tight">
+                <span className="block text-base sm:text-lg font-black tracking-wider text-white">
+                  {bizName}
+                </span>
+                <span className="text-[10px] text-[#9E9891]">{city}</span>
+              </div>
+            </Link>
+          </div>
 
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-6" aria-label="ניווט ראשי">
@@ -82,7 +95,7 @@ export default function Header({
             ))}
           </nav>
 
-          {/* Right Action Controls */}
+          {/* Left Action Controls (Status, Admin, Book CTA) */}
           <div className="flex items-center gap-2.5">
             <div className="hidden sm:block">
               <OpenStatusBadge />
@@ -108,16 +121,6 @@ export default function Header({
             >
               הזמן תור
             </Link>
-
-            {/* Hamburger Button opening Slide-out Sidebar Drawer */}
-            <button
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center border border-white/10 cursor-pointer"
-              onClick={() => setIsSidebarOpen(true)}
-              aria-label="פתח תפריט צד"
-              title="תפריט אפליקציה"
-            >
-              <Menu className="w-5 h-5" style={{ color: themeColor }} />
-            </button>
           </div>
         </div>
       </header>
