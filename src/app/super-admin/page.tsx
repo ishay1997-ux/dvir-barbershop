@@ -226,8 +226,36 @@ export default function SuperAdminPage() {
   const [reportsLoading, setReportsLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'all' | 'new' | 'in_progress' | 'resolved'>('all');
 
+const defaultBusinessesList: Business[] = [
+  {
+    id: 'biz-dvir',
+    name: 'המספרה של דביר',
+    slug: 'dvir',
+    ownerName: 'דביר',
+    phone: '052-123-4567',
+    city: 'אריאל & רחובות',
+    slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
+    announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מראש!',
+    themeColor: '#C9A84C',
+    branchesCount: 2,
+    status: 'active',
+    plan: 'enterprise',
+    createdAt: '2025-01-01',
+    branches: [
+      { name: 'סניף אריאל (אוניברסיטת אריאל)', address: 'קמפוס אוניברסיטת אריאל (מרכז הסטודנט)', wazeLink: 'https://waze.com/ul?q=Ariel%20University' },
+      { name: 'סניף רחובות (מרכז העיר)', address: 'הרצל 180, רחובות (ליד מכון ויצמן)', wazeLink: 'https://waze.com/ul?q=Herzl%20180%20Rehovot' },
+    ],
+    services: [
+      { name: 'תספורת גברים פרימיום', price: 80, duration: 30 },
+      { name: 'עיצוב ופיסול זקן Master', price: 40, duration: 20 },
+      { name: 'חבילת VIP משולבת (תספורת + זקן)', price: 110, duration: 45 },
+      { name: 'תספורת ילדים ונוער', price: 70, duration: 30 },
+    ],
+  },
+];
+
   // Businesses state
-  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [businesses, setBusinesses] = useState<Business[]>(defaultBusinessesList);
   const [businessesLoading, setBusinessesLoading] = useState(false);
   const [isNewBizModalOpen, setIsNewBizModalOpen] = useState(false);
 
@@ -810,7 +838,9 @@ export default function SuperAdminPage() {
               <Building2 className="w-4 h-4 text-[#C9A84C]" />
             </div>
             <div className="text-2xl font-black text-white">{businesses.length}</div>
-            <span className="text-[10px] text-emerald-400">כולל דביר ושרון (פעיל)</span>
+            <span className="text-[10px] text-emerald-400">
+              {businesses.length > 0 ? `${businesses.filter(b => b.status === 'active').length} מספרות פעילות באוויר` : 'סנכרון ענן פעיל'}
+            </span>
           </div>
 
           <div className="bg-[#1C1C1C] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg">
