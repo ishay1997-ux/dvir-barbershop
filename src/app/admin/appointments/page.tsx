@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { useShopStore } from '@/lib/store';
 import { formatPrice } from '@/lib/utils';
+import { useToast } from '@/components/common/ToastProvider';
 import Link from 'next/link';
 
 const today = startOfToday();
@@ -53,6 +54,7 @@ interface AdminAppointment {
 const INITIAL_APPOINTMENTS: AdminAppointment[] = [];
 
 export default function AppointmentsPage() {
+  const { success, error } = useToast();
   const { settings, branches } = useShopStore();
   const [appointments, setAppointments] = useState<AdminAppointment[]>(INITIAL_APPOINTMENTS);
   const [isLoading, setIsLoading] = useState(true);
@@ -129,13 +131,26 @@ export default function AppointmentsPage() {
   const handleStatusChange = async (id: string, newStatus: AdminAppointment['status']) => {
     setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a)));
     try {
-      await fetch('/api/appointments', {
+      const res = await fetch('/api/appointments', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, status: newStatus }),
       });
+      if (res.ok) {
+        const labels: Record<string, string> = {
+          confirmed: 'מאושר 🟢',
+          cancelled: 'בוטל ❌',
+          completed: 'הושלם ✓',
+          no_show: 'לא הגיע ⚠️',
+          pending: 'ממתין 🟡',
+        };
+        success('סטטוס התור עודכן בהצלחה', `התור עודכן ל-${labels[newStatus] || newStatus}`);
+      } else {
+        error('שגיאה בעדכון התור בשרת');
+      }
     } catch (err) {
       console.error('Failed to update status on server:', err);
+      error('שגיאת תקשורת בעדכון התור');
     }
   };
 

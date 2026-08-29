@@ -15,6 +15,8 @@ import {
   MessageCircle,
 } from 'lucide-react';
 
+import { useToast } from './ToastProvider';
+
 interface BugReportModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,6 +31,7 @@ const CATEGORIES = [
 ] as const;
 
 export default function BugReportModal({ isOpen, onClose }: BugReportModalProps) {
+  const { success, error } = useToast();
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -44,6 +47,7 @@ export default function BugReportModal({ isOpen, onClose }: BugReportModalProps)
     e.preventDefault();
     if (!fullName.trim() || !phone.trim() || !message.trim()) {
       setErrorMsg('נא למלא את כל שדות החובה המסומנים');
+      error('נא למלא את כל שדות החובה המסומנים');
       return;
     }
 
@@ -66,12 +70,15 @@ export default function BugReportModal({ isOpen, onClose }: BugReportModalProps)
 
       if (res.ok) {
         setIsSubmitted(true);
+        success('הדיווח נשלח בהצלחה! ✓', 'הפנייה הועברה ישירות לטיפול מנהל המערכת');
       } else {
         const data = await res.json();
         setErrorMsg(data.error || 'אירעה שגיאה בשליחת הטופס');
+        error('שגיאה בשליחת הטופס', data.error);
       }
     } catch {
       setErrorMsg('אירעה שגיאת תקשורת. נא לנסות שנית.');
+      error('שגיאת תקשורת', 'נא לנסות שנית מאוחר יותר');
     } finally {
       setIsSubmitting(false);
     }

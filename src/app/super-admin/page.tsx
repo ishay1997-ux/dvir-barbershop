@@ -34,6 +34,7 @@ import {
   Key,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import { useToast } from '@/components/common/ToastProvider';
 
 interface BugReport {
   id: string;
@@ -86,6 +87,7 @@ function ReportAppointmentHelper({
   customerName: string;
   businessName: string;
 }) {
+  const { success, error, showConfirm } = useToast();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -106,20 +108,32 @@ function ReportAppointmentHelper({
     findCustomerAppointments();
   }, [phone]);
 
-  const handleCancelAppointment = async (aptId: string) => {
-    if (!confirm('האם לבטל תור זה ולפנות את המשבצת ביומן?')) return;
-    try {
-      await fetch('/api/appointments', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: aptId, status: 'cancelled' }),
-      });
-      setAppointments((prev) =>
-        prev.map((a) => (a.id === aptId ? { ...a, status: 'cancelled' } : a))
-      );
-    } catch (err) {
-      alert('שגיאה בביטול התור');
-    }
+  const handleCancelAppointment = (aptId: string, aptTime: string) => {
+    showConfirm({
+      title: 'ביטול תור ופינוי משבצת',
+      message: `האם לבטל את התור של ${customerName} בשעה ${aptTime} ולפנות את המשבצת ביומן של ${businessName}?`,
+      confirmText: 'בטל תור עכשיו ❌',
+      type: 'danger',
+      onConfirm: async () => {
+        try {
+          const res = await fetch('/api/appointments', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: aptId, status: 'cancelled' }),
+          });
+          if (res.ok) {
+            setAppointments((prev) =>
+              prev.map((a) => (a.id === aptId ? { ...a, status: 'cancelled' } : a))
+            );
+            success('התור בוטל בהצלחה! ✓', `המשבצת לשעה ${aptTime} פונתה ביומן`);
+          } else {
+            error('שגיאה בביטול התור', 'נסה שוב מאוחר יותר');
+          }
+        } catch (err) {
+          error('שגיאת תקשורת בביטול התור');
+        }
+      },
+    });
   };
 
   const activeAppointments = appointments.filter((a) => a.status !== 'cancelled');
@@ -151,7 +165,8 @@ function ReportAppointmentHelper({
               </div>
 
               <button
-                onClick={() => handleCancelAppointment(apt.id)}
+                type="button"
+                onClick={() => handleCancelAppointment(apt.id, apt.time || '16:00')}
                 className="px-3 py-1.5 rounded-lg bg-red-950/50 hover:bg-red-900/80 border border-red-500/40 text-red-300 font-bold text-[11px] transition-colors self-start sm:self-center cursor-pointer"
               >
                 בטל תור זה עכשיו ❌
@@ -174,6 +189,7 @@ function ReportAppointmentHelper({
 
 export default function SuperAdminPage() {
   const router = useRouter();
+  const { success, error, info, showConfirm } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -232,6 +248,7 @@ export default function SuperAdminPage() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('thecut_superadmin_auth_v1', 'true');
     }
+    success('ברוך הבא ישי!', 'התחברת בהצלחה לפאנל ה-Super Admin');
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -242,6 +259,7 @@ export default function SuperAdminPage() {
       executeLogin();
     } else {
       setAuthError(true);
+      error('סיסמה שגויה', 'בדוק את הסיסמה ונסה שנית');
     }
   };
 
@@ -250,6 +268,7 @@ export default function SuperAdminPage() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('thecut_superadmin_auth_v1');
     }
+    info('התנתקת בהצלחה', 'להתראות!');
   };
 
   // Fetch Bug Reports
@@ -302,22 +321,36 @@ export default function SuperAdminPage() {
       setReports((prev) =>
         prev.map((r) => (r.id === reportId ? { ...r, status: newStatus } : r))
       );
+      const statusLabel = newStatus === 'new' ? 'חדש 🟢' : newStatus === 'in_progress' ? 'בטיפול 🟡' : 'טופל ונסגר ⚪';
+      success('סטטוס הפנייה עודכן בהצלחה', `הסטטוס שונה ל-${statusLabel}`);
     } catch (err) {
-      alert('שגיאה בעדכון סטטוס הפנייה');
+      error('שגיאה בעדכון סטטוס הפנייה');
     }
   };
 
   // Delete Report
-  const handleDeleteReport = async (reportId: string) => {
-    if (!confirm('האם למחוק דיווח זה?')) return;
-    try {
-      await fetch(`/api/bug-reports?id=${encodeURIComponent(reportId)}`, {
-        method: 'DELETE',
-      });
-      setReports((prev) => prev.filter((r) => r.id !== reportId));
-    } catch (err) {
-      alert('שגיאה במחיקת הדיווח');
-    }
+  const handleDeleteReport = (reportId: string) => {
+    showConfirm({
+      title: 'מחיקת דיווח תקלה',
+      message: 'האם למחוק דיווח זה לצמיתות מרשימת הפניות?',
+      confirmText: 'מחק דיווח 🗑️',
+      type: 'danger',
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/bug-reports?id=${encodeURIComponent(reportId)}`, {
+            method: 'DELETE',
+          });
+          if (res.ok) {
+            setReports((prev) => prev.filter((r) => r.id !== reportId));
+            success('הדיווח נמחק בהצלחה ✓');
+          } else {
+            error('שגיאה במחיקת הדיווח');
+          }
+        } catch (err) {
+          error('שגיאת תקשורת במחיקת הדיווח');
+        }
+      },
+    });
   };
 
   // Create New Business Handler
@@ -349,11 +382,12 @@ export default function SuperAdminPage() {
         setNewBizOwner('');
         setNewBizPhone('');
         setNewBizCity('');
+        success(`המספרה "${newBizName}" הוקמה בהצלחה! 🎉`, `האתר thecut.co.il/${newBizSlug} זמין באוויר`);
       } else {
-        alert('שגיאה בהקמת העסק');
+        error('שגיאה בהקמת העסק', 'בדוק את השדות ונסה שנית');
       }
     } catch (err) {
-      alert('שגיאת תקשורת');
+      error('שגיאת תקשורת בהקמת העסק');
     } finally {
       setIsCreatingBiz(false);
     }
@@ -376,35 +410,44 @@ export default function SuperAdminPage() {
         );
         setSaveNotice(true);
         setTimeout(() => setSaveNotice(false), 3000);
+        success('ההגדרות נשמרו בהצלחה! ✓', `האתר של ${editingBiz.name} עודכן בזמן אמת`);
       } else {
-        alert('שגיאה בשמירת שינויים');
+        error('שגיאה בשמירת שינויים');
       }
     } catch (err) {
-      alert('שגיאת תקשורת בשמירה');
+      error('שגיאת תקשורת בשמירה');
     } finally {
       setIsSavingBiz(false);
     }
   };
 
   // Delete Business Handler
-  const handleDeleteBusiness = async (slug: string, name: string) => {
+  const handleDeleteBusiness = (slug: string, name: string) => {
     if (slug === 'dvir') {
-      alert('לא ניתן למחוק את עסק הדגל של דביר');
+      error('פעולה חסומה', 'לא ניתן למחוק את עסק הדגל של דביר');
       return;
     }
-    if (!confirm(`האם למחוק לצמיתות את המספרה "${name}"?`)) return;
-    try {
-      const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(slug)}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        setBusinesses((prev) => prev.filter((b) => b.slug !== slug));
-      } else {
-        alert('שגיאה במחיקת המספרה');
-      }
-    } catch (err) {
-      alert('שגיאת תקשורת במחיקה');
-    }
+    showConfirm({
+      title: `מחיקת ${name}`,
+      message: `האם אתה בטוח שברצונך למחוק לצמיתות את המספרה "${name}" (thecut.co.il/${slug})?`,
+      confirmText: 'מחק מספרה 🗑️',
+      type: 'danger',
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(slug)}`, {
+            method: 'DELETE',
+          });
+          if (res.ok) {
+            setBusinesses((prev) => prev.filter((b) => b.slug !== slug));
+            success(`המספרה "${name}" נמחקה בהצלחה מהמערכת ✓`);
+          } else {
+            error('שגיאה במחיקת המספרה');
+          }
+        } catch (err) {
+          error('שגיאת תקשורת במחיקת המספרה');
+        }
+      },
+    });
   };
 
   // Filtered reports

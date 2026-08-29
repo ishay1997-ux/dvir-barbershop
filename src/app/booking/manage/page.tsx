@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useShopStore } from '@/lib/store';
 import { formatPrice, SHOP_INFO } from '@/lib/utils';
+import { useToast } from '@/components/common/ToastProvider';
 import Link from 'next/link';
 
 interface AppointmentData {
@@ -43,6 +44,7 @@ function ManageBookingContent() {
   const initialId = searchParams.get('id') || '';
 
   const { settings } = useShopStore();
+  const { success, error, showConfirm } = useToast();
 
   const [phone, setPhone] = useState(initialPhone);
   const [appointments, setAppointments] = useState<AppointmentData[]>([]);
@@ -123,36 +125,41 @@ function ManageBookingContent() {
   };
 
   // Cancel & Delete Appointment Handler
-  const handleCancel = async (apt: AppointmentData) => {
-    const confirmCancel = window.confirm(`האם אתה בטוח שברצונך לבטל את התור לתאריך ${apt.date} בשעה ${apt.time}?`);
-    if (!confirmCancel) return;
+  const handleCancel = (apt: AppointmentData) => {
+    showConfirm({
+      title: 'ביטול תור',
+      message: `האם אתה בטוח שברצונך לבטל את התור לתאריך ${apt.date} בשעה ${apt.time}?`,
+      confirmText: 'בטל תור ❌',
+      type: 'danger',
+      onConfirm: async () => {
+        setCancellingId(apt.id);
+        try {
+          // 1. Call API DELETE
+          const res = await fetch(`/api/appointments?id=${encodeURIComponent(apt.id)}`, {
+            method: 'DELETE',
+          });
 
-    setCancellingId(apt.id);
+          // 2. Remove from local storage
+          if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('thecut_customer_appointments_v3');
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              const updated = parsed.filter((item: any) => item.id !== apt.id);
+              localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
+            }
+          }
 
-    try {
-      // 1. Call API DELETE
-      await fetch(`/api/appointments?id=${encodeURIComponent(apt.id)}`, {
-        method: 'DELETE',
-      });
-
-      // 2. Remove from local storage
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('thecut_customer_appointments_v3');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          const updated = parsed.filter((item: any) => item.id !== apt.id);
-          localStorage.setItem('thecut_customer_appointments_v3', JSON.stringify(updated));
+          // 3. Update component state
+          setAppointments((prev) => prev.filter((a) => a.id !== apt.id));
+          setCancelledSuccessMap((prev) => ({ ...prev, [apt.id]: true }));
+          success('התור בוטל בהצלחה! ✓', 'המשבצת פונתה במערכת');
+        } catch (err) {
+          error('אירעה שגיאה בביטול התור', 'אנא צור קשר טלפוני עם המספרה');
+        } finally {
+          setCancellingId(null);
         }
-      }
-
-      // 3. Update component state
-      setAppointments((prev) => prev.filter((a) => a.id !== apt.id));
-      setCancelledSuccessMap((prev) => ({ ...prev, [apt.id]: true }));
-    } catch (err) {
-      alert('אירעה שגיאה בביטול התור. אנא צור קשר טלפוני עם המספרה.');
-    } finally {
-      setCancellingId(null);
-    }
+      },
+    });
   };
 
   return (

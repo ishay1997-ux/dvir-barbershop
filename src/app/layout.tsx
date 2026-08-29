@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Heebo, Playfair_Display } from 'next/font/google';
 import SkipToContent from '@/components/accessibility/SkipToContent';
 import AccessibilityWidget from '@/components/accessibility/AccessibilityWidget';
+import { ToastProvider } from '@/components/common/ToastProvider';
 import './globals.css';
 
 const heebo = Heebo({
@@ -67,9 +68,11 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <SkipToContent />
-        {children}
-        <AccessibilityWidget />
+        <ToastProvider>
+          <SkipToContent />
+          {children}
+          <AccessibilityWidget />
+        </ToastProvider>
       </body>
     </html>
   );
