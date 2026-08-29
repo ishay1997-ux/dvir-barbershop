@@ -296,53 +296,136 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
-   ACCESSIBILITY TOOLBAR MODES (IS 5568 / WCAG 2.1 AA)
+   ACCESSIBILITY SYSTEM RULES (תקן ישראלי 5568 / WCAG 2.1 AA)
    ============================================================ */
-/* Font scaling */
-html.a11y-font-sm body { font-size: 95% !important; }
-html.a11y-font-md body { font-size: 110% !important; }
-html.a11y-font-lg body { font-size: 120% !important; }
-html.a11y-font-xl body { font-size: 130% !important; }
 
-/* Readable Font (Dyslexia / Visual ease) */
-html.a11y-readable-font *,
+/* CSS Variables for Dynamic Font & Color Adjustments */
+:root {
+  --a11y-font-scale: 1;
+  --a11y-line-height: 1.5;
+  --a11y-word-spacing: 0px;
+  --a11y-letter-spacing: 0px;
+  --a11y-custom-bg: transparent;
+  --a11y-custom-headings: inherit;
+  --a11y-custom-text: inherit;
+}
+
+/* Dynamic Font Scaling */
+html.a11y-scaled body,
+html.a11y-scaled p,
+html.a11y-scaled span:not(.a11y-ignore *),
+html.a11y-scaled a:not(.a11y-ignore *),
+html.a11y-scaled button:not(.a11y-ignore *),
+html.a11y-scaled li,
+html.a11y-scaled input,
+html.a11y-scaled textarea,
+html.a11y-scaled select {
+  font-size: calc(1rem * var(--a11y-font-scale, 1)) !important;
+}
+
+/* Dynamic Line Height */
+html.a11y-line-height body,
+html.a11y-line-height p,
+html.a11y-line-height span:not(.a11y-ignore *),
+html.a11y-line-height div:not(.a11y-ignore),
+html.a11y-line-height li {
+  line-height: var(--a11y-line-height, 1.6) !important;
+}
+
+/* Dynamic Word Spacing */
+html.a11y-word-spacing body,
+html.a11y-word-spacing p,
+html.a11y-word-spacing h1,
+html.a11y-word-spacing h2,
+html.a11y-word-spacing h3,
+html.a11y-word-spacing span:not(.a11y-ignore *),
+html.a11y-word-spacing a:not(.a11y-ignore *),
+html.a11y-word-spacing li {
+  word-spacing: var(--a11y-word-spacing, 0px) !important;
+}
+
+/* Dynamic Letter Spacing */
+html.a11y-letter-spacing body,
+html.a11y-letter-spacing p,
+html.a11y-letter-spacing h1,
+html.a11y-letter-spacing h2,
+html.a11y-letter-spacing h3,
+html.a11y-letter-spacing span:not(.a11y-ignore *),
+html.a11y-letter-spacing a:not(.a11y-ignore *),
+html.a11y-letter-spacing li {
+  letter-spacing: var(--a11y-letter-spacing, 0px) !important;
+}
+
+/* Custom Background Color */
+html.a11y-custom-bg body,
+html.a11y-custom-bg main,
+html.a11y-custom-bg section,
+html.a11y-custom-bg div:not(.a11y-ignore) {
+  background-color: var(--a11y-custom-bg) !important;
+}
+
+/* Custom Headings Color */
+html.a11y-custom-headings h1,
+html.a11y-custom-headings h2,
+html.a11y-custom-headings h3,
+html.a11y-custom-headings h4,
+html.a11y-custom-headings h5,
+html.a11y-custom-headings h6 {
+  color: var(--a11y-custom-headings) !important;
+}
+
+/* Custom Text Color */
+html.a11y-custom-text p,
+html.a11y-custom-text span:not(.a11y-ignore *),
+html.a11y-custom-text li,
+html.a11y-custom-text label,
+html.a11y-custom-text a:not(.a11y-ignore *) {
+  color: var(--a11y-custom-text) !important;
+}
+
+/* Readable Font (Dyslexia Friendly) */
 html.a11y-readable-font body,
 html.a11y-readable-font h1,
 html.a11y-readable-font h2,
 html.a11y-readable-font h3,
 html.a11y-readable-font h4,
+html.a11y-readable-font p,
+html.a11y-readable-font span,
+html.a11y-readable-font a,
 html.a11y-readable-font button,
-html.a11y-readable-font input {
-  font-family: Arial, Helvetica, Tahoma, sans-serif !important;
-  letter-spacing: 0.04em !important;
-  line-height: 1.8 !important;
+html.a11y-readable-font input,
+html.a11y-readable-font select {
+  font-family: Arial, Helvetica, system-ui, sans-serif !important;
 }
 
 /* Dark High Contrast */
 html.a11y-contrast-dark,
 html.a11y-contrast-dark body {
   background-color: #000000 !important;
-  color: #FFFFFF !important;
+  color: #FFFF00 !important;
 }
 html.a11y-contrast-dark div:not(.a11y-ignore),
 html.a11y-contrast-dark section,
 html.a11y-contrast-dark main,
 html.a11y-contrast-dark header,
 html.a11y-contrast-dark footer,
-html.a11y-contrast-dark article {
+html.a11y-contrast-dark article,
+html.a11y-contrast-dark nav {
   background-color: #000000 !important;
-  color: #FFFFFF !important;
+  color: #FFFF00 !important;
   border-color: #FFFF00 !important;
 }
 html.a11y-contrast-dark a,
-html.a11y-contrast-dark button {
+html.a11y-contrast-dark button:not(.a11y-ignore *),
+html.a11y-contrast-dark p,
+html.a11y-contrast-dark span:not(.a11y-ignore *) {
   color: #FFFF00 !important;
 }
 html.a11y-contrast-dark h1,
 html.a11y-contrast-dark h2,
 html.a11y-contrast-dark h3,
 html.a11y-contrast-dark h4 {
-  color: #FFFF00 !important;
+  color: #00FFFF !important;
 }
 
 /* Light High Contrast */
@@ -371,6 +454,28 @@ html.a11y-grayscale {
   filter: grayscale(100%) !important;
 }
 
+/* Invert Contrast */
+html.a11y-invert {
+  filter: invert(100%) hue-rotate(180deg) !important;
+}
+html.a11y-invert img,
+html.a11y-invert video,
+html.a11y-invert .a11y-ignore {
+  filter: invert(100%) hue-rotate(180deg) !important;
+}
+
+/* Display Zoom */
+html.a11y-zoom {
+  zoom: 1.15;
+}
+
+/* Keyboard Navigation Enhanced Focus Ring */
+html.a11y-keyboard-nav *:focus-visible {
+  outline: 3px solid #0088cc !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 12px rgba(0, 136, 204, 0.7) !important;
+}
+
 /* Stop all animations & motion */
 html.a11y-stop-animations *,
 html.a11y-stop-animations *::before,
@@ -381,14 +486,15 @@ html.a11y-stop-animations *::after {
 }
 
 /* Highlight Links */
-html.a11y-highlight-links a {
+html.a11y-highlight-links a:not(.a11y-ignore a) {
   text-decoration: underline !important;
-  text-decoration-thickness: 2px !important;
+  text-decoration-thickness: 3px !important;
   text-underline-offset: 4px !important;
   background-color: #FEF08A !important;
   color: #000000 !important;
   padding: 0 4px !important;
-  border-radius: 2px !important;
+  border-radius: 4px !important;
+  border: 1px solid #CA8A04 !important;
 }
 
 /* Highlight Headings */
@@ -398,10 +504,10 @@ html.a11y-highlight-headings h3,
 html.a11y-highlight-headings h4,
 html.a11y-highlight-headings h5,
 html.a11y-highlight-headings h6 {
-  outline: 2px solid #C9A84C !important;
+  outline: 2px solid #085B7A !important;
   outline-offset: 4px !important;
-  background-color: rgba(201, 168, 76, 0.15) !important;
-  border-radius: 4px !important;
+  background-color: rgba(8, 91, 122, 0.15) !important;
+  border-radius: 6px !important;
 }
 
 /* Big Cursor */
