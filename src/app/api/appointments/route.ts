@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { collection, addDoc, doc, setDoc, getDocs, query, orderBy, serverTimestamp } from 'firebase/firestore';
 
 export async function POST(request: Request) {
@@ -72,46 +71,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // 2. Secondary: Supabase (if configured)
-    if (isSupabaseConfigured && supabase) {
-      const startTime = new Date(`${date}T${time}:00`);
-      const endTime = new Date(startTime.getTime() + 45 * 60000);
-
-      const { data: customerData } = await supabase
-        .from('customers')
-        .upsert(
-          { name: customerName, phone: customerPhone, last_visit: new Date().toISOString() },
-          { onConflict: 'phone' }
-        )
-        .select()
-        .single();
-
-      const { data: appointmentData, error: appointmentError } = await supabase
-        .from('appointments')
-        .insert({
-          barber_id: barberId === 'any' ? null : barberId,
-          service_id: serviceId,
-          customer_id: customerData?.id || null,
-          customer_name: customerName,
-          customer_phone: customerPhone,
-          start_time: startTime.toISOString(),
-          end_time: endTime.toISOString(),
-          status: 'confirmed',
-        })
-        .select()
-        .single();
-
-      if (!appointmentError && appointmentData) {
-        return NextResponse.json({
-          success: true,
-          appointmentId: appointmentData.id,
-          provider: 'supabase',
-          message: 'Appointment successfully created in Supabase database',
-        });
-      }
-    }
-
-    // 3. Fallback mode (Mock mode for instant offline / local testing)
+    // 2. Fallback mode (Mock mode for instant offline / local testing)
     return NextResponse.json({
       success: true,
       appointmentId: `mock-${Date.now()}`,
@@ -137,18 +97,6 @@ export async function GET() {
     } catch (fbError: any) {
       return NextResponse.json({ error: fbError.message }, { status: 500 });
     }
-  }
-
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('appointments')
-      .select('*, barbers(name), services(name, price)')
-      .order('start_time', { ascending: true });
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-    return NextResponse.json({ appointments: data, provider: 'supabase' });
   }
 
   return NextResponse.json({
