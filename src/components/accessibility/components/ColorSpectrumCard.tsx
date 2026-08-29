@@ -82,21 +82,24 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
         </button>
       </div>
 
-      {/* Rainbow Spectrum Color Bar */}
+      {/* Rainbow Spectrum Color Bar - Mathematically aligned 0° to 360° */}
       <div
         ref={colorSliderRef}
         onClick={onColorSpectrumClick}
         className="relative h-7 sm:h-8 rounded-full cursor-pointer shadow-inner mb-3 border border-black/10 select-none overflow-hidden"
         style={{
           background:
-            'linear-gradient(to right, #000 0%, #fff 12%, #ff0000 25%, #ffff00 40%, #00ff00 55%, #00ffff 70%, #0000ff 85%, #ff00ff 100%)',
+            'linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)',
         }}
         title={t.colorSectionTitle}
       >
         {currentTargetHue !== null && (
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white border-2 border-[#085B7A] shadow-md -ml-3 pointer-events-none"
-            style={{ left: `${(currentTargetHue / 360) * 100}%` }}
+            className="absolute top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-white shadow-md -ml-3 pointer-events-none transition-all duration-75"
+            style={{
+              left: `${(currentTargetHue / 360) * 100}%`,
+              backgroundColor: `hsl(${currentTargetHue}, 90%, 50%)`,
+            }}
           />
         )}
       </div>
