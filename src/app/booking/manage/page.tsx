@@ -280,14 +280,14 @@ function ManageBookingContent() {
                   <CheckCircle className="w-6 h-6" />
                 </div>
                 <h3 className="text-base font-black text-white">
-                  {appointments.some((a) => a.status === 'cancelled' || cancelledSuccessMap[a.id])
-                    ? 'התור בוטל בהצלחה! אין כרגע תורים פעילים'
-                    : 'לא נמצאו תורים פעילים עבור מספר זה'}
+                  {cancelledSuccessMap[Object.keys(cancelledSuccessMap)[0]]
+                    ? 'התור בוטל בהצלחה! המשבצת פונתה במערכת'
+                    : 'לא נמצאו תורים עתידיים למספר זה'}
                 </h3>
                 <p className="text-xs text-zinc-400">
-                  {appointments.some((a) => a.status === 'cancelled' || cancelledSuccessMap[a.id])
-                    ? 'המשבצת פונתה במערכת ודביר עודכן. נשמח לראותך במועד אחר!'
-                    : 'וודא שהזנת את מספר הטלפון המדויק איתו ביצעת את ההזמנה.'}
+                  {cancelledSuccessMap[Object.keys(cancelledSuccessMap)[0]]
+                    ? 'נשמח לראותך במועד אחר. מעוניין לשריין תור חדש?'
+                    : 'וודא שהזנת את מספר הטלפון המדויק, או שריין מועד חדש לתספורת אצל דביר.'}
                 </p>
                 <div className="pt-3 flex flex-col sm:flex-row gap-2 justify-center">
                   <Link

@@ -123,6 +123,7 @@ export function MyAppointmentsModal({
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [justCancelled, setJustCancelled] = useState(false);
 
   if (!isOpen) return null;
 
@@ -130,6 +131,7 @@ export function MyAppointmentsModal({
     e.preventDefault();
     if (!phone || phone.length < 9) return;
 
+    setJustCancelled(false);
     setIsLoading(true);
     const results: any[] = [];
     const cleanPhone = phone.replace(/\D/g, '');
@@ -284,6 +286,7 @@ export function MyAppointmentsModal({
                             }
 
                             setAppointments((prev) => prev.filter((a) => a.id !== apt.id));
+                            setJustCancelled(true);
                           } catch (err) {
                             alert('אירעה שגיאה בביטול התור.');
                           }
@@ -309,11 +312,15 @@ export function MyAppointmentsModal({
                   <Calendar className="w-5 h-5" />
                 </div>
                 <p className="text-sm font-bold text-white mb-1">
-                  {appointments.some((a) => a.status === 'cancelled')
-                    ? 'התור בוטל בהצלחה! אין כרגע תורים פעילים'
-                    : 'לא נמצאו תורים פעילים עתידיים לטלפון זה'}
+                  {justCancelled
+                    ? 'התור בוטל בהצלחה! המשבצת פונתה במערכת'
+                    : 'לא נמצאו תורים עתידיים למספר זה'}
                 </p>
-                <p className="text-xs text-zinc-400 mb-4">רוצה לשריין מועד חדש?</p>
+                <p className="text-xs text-zinc-400 mb-4">
+                  {justCancelled
+                    ? 'נשמח לראותך במועד אחר. מעוניין לשריין תור חדש?'
+                    : 'מעוניין לשריין מועד לתספורת אצל דביר?'}
+                </p>
                 <Link
                   href="/booking"
                   onClick={onClose}
