@@ -123,25 +123,83 @@ export default function BarbershopHeroHub({
   const industryMeta = (() => {
     const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
     if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
-      return { icon: '💅', label: 'Beauty & Nails' };
+      return { 
+        icon: '💅', 
+        label: 'Beauty & Nails',
+        heroImage: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1600&q=80',
+        masterTitle: 'אמנית ציפורניים ומטפלת ראשית',
+        vipBadge: 'LUXURY BEAUTY & NAILS LOUNGE',
+        actionIcon: '💅',
+        actionLabel: 'קביעת תור',
+      };
     }
     if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
-      return { icon: '🌿', label: 'Spa & Wellness' };
+      return { 
+        icon: '🌿', 
+        label: 'Spa & Wellness',
+        heroImage: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1600&q=80',
+        masterTitle: 'מטפלת מוסמכת ומנהלת ספא',
+        vipBadge: 'HOLISTIC WELLNESS SPA EXPERIENCE',
+        actionIcon: '🌿',
+        actionLabel: 'הזמנת טיפול',
+      };
     }
     if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
-      return { icon: '⚡', label: 'Tattoo Studio' };
+      return { 
+        icon: '⚡', 
+        label: 'Tattoo Studio',
+        heroImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1600&q=80',
+        masterTitle: 'אמן קעקועים ראשי',
+        vipBadge: 'CUSTOM TATTOO ART & PIERCING',
+        actionIcon: '⚡',
+        actionLabel: 'תיאום סשן',
+      };
     }
     if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
-      return { icon: '🏋️', label: 'Fitness & Coach' };
+      return { 
+        icon: '🏋️', 
+        label: 'Fitness & Coach',
+        heroImage: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80',
+        masterTitle: 'מאמן כושר אישי בכיר',
+        vipBadge: 'PRO FITNESS & BODY COACHING',
+        actionIcon: '🏋️',
+        actionLabel: 'תיאום אימון',
+      };
     }
     if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
-      return { icon: '🩺', label: 'Aesthetic Clinic' };
+      return { 
+        icon: '🩺', 
+        label: 'Aesthetic Clinic',
+        heroImage: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1600&q=80',
+        masterTitle: 'רופא מומחה ומנהל קליניקה',
+        vipBadge: 'ADVANCED MEDICAL AESTHETIC CLINIC',
+        actionIcon: '🩺',
+        actionLabel: 'קביעת ייעוץ',
+      };
     }
     if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
-      return { icon: '🔧', label: 'Tech & Repair' };
+      return { 
+        icon: '🔧', 
+        label: 'Tech & Repair',
+        heroImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
+        masterTitle: 'טכנאי מוסמך וחשמלאי מורשה',
+        vipBadge: 'CERTIFIED PRO HOME SERVICES',
+        actionIcon: '🔧',
+        actionLabel: 'הזמן שירות',
+      };
     }
-    return { icon: '✂️', label: 'Barbershop' };
+    return { 
+      icon: '✂️', 
+      label: 'Barbershop',
+      heroImage: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1600&q=80',
+      masterTitle: 'מאסטר ברבר ראשי',
+      vipBadge: 'VIP BARBERSHOP & GROOMING EXPERIENCE',
+      actionIcon: '✂️',
+      actionLabel: 'קביעת תור',
+    };
   })();
+
+  const heroBg = (business?.heroImages && business.heroImages[0]) || industryMeta.heroImage;
 
   return (
     <>
@@ -151,7 +209,7 @@ export default function BarbershopHeroHub({
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
               style={{
-                backgroundImage: `url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1600&q=80')`,
+                backgroundImage: `url('${heroBg}')`,
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/70 to-black/60" />
@@ -327,7 +385,7 @@ export default function BarbershopHeroHub({
                 id="action-pill-book"
                 className="py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-xs sm:text-sm text-center shadow-lg hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-emerald-400/30 cursor-pointer"
               >
-                <Scissors className="w-4 h-4" /> קביעת תור
+                <span className="text-sm">{industryMeta.actionIcon}</span> {industryMeta.actionLabel}
               </Link>
               <button
                 onClick={() => setIsMyAppointmentsOpen(true)}
@@ -370,7 +428,7 @@ export default function BarbershopHeroHub({
                     }}
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>חוויית תספורת פרימיום</span>
+                    <span>{industryMeta.vipBadge}</span>
                   </span>
                   <OpenStatusBadge className="bg-[#1C1C1E] border border-white/10" />
                 </div>
@@ -380,7 +438,7 @@ export default function BarbershopHeroHub({
                 </h1>
 
                 <p className="text-sm sm:text-base text-zinc-300 leading-relaxed font-sans max-w-xl">
-                  {business?.slogan || 'עיצוב שיער גברים, דירוגים כירורגיים ופיסול זקן ברמה הגבוהה ביותר בישראל.'}
+                  {business?.slogan || 'שירות פרימיום, יחס אישי ומקצועיות ברמה הגבוהה ביותר בישראל.'}
                 </p>
 
                 <div className="flex items-center gap-4 text-xs font-bold text-zinc-300 py-1">
@@ -402,22 +460,22 @@ export default function BarbershopHeroHub({
                     </div>
                     <Link
                       href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
-                      className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2"
+                      className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
                     >
-                      <Scissors className="w-4 h-4" /> הזמן עכשיו
+                      <span className="text-sm">{industryMeta.actionIcon}</span> {industryMeta.actionLabel}
                     </Link>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 pt-3 border-t border-white/10">
                     <button
                       onClick={() => setIsMyAppointmentsOpen(true)}
-                      className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all"
+                      className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                     >
                       <Calendar className="w-3.5 h-3.5" style={{ color: themeColor }} /> התורים שלי
                     </button>
                     <button
                       onClick={() => setIsHoursOpen(true)}
-                      className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all"
+                      className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                     >
                       <Clock className="w-3.5 h-3.5 text-[#33CCFF]" /> שעות פתיחה
                     </button>
@@ -427,14 +485,14 @@ export default function BarbershopHeroHub({
                 <div className="flex items-center gap-2 pt-2">
                   <button
                     onClick={handleShareClick}
-                    className="p-2.5 rounded-xl bg-[#1C1C20] border border-white/10 hover:bg-[#25252A] text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                    className="p-2.5 rounded-xl bg-[#1C1C20] border border-white/10 hover:bg-[#25252A] text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
                   >
                     <Share2 className="w-4 h-4" style={{ color: themeColor }} /> שתף
                   </button>
                   {phone && (
                     <a
                       href={`tel:${phone}`}
-                      className="p-2.5 rounded-xl bg-[#1C1C20] border border-white/10 hover:bg-[#25252A] text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                      className="p-2.5 rounded-xl bg-[#1C1C20] border border-white/10 hover:bg-[#25252A] text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
                       dir="ltr"
                     >
                       <Phone className="w-4 h-4 text-emerald-400" /> {phone}
@@ -445,7 +503,7 @@ export default function BarbershopHeroHub({
                       href={whatsapp}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2.5 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 hover:bg-[#25D366]/25 text-[#25D366] text-xs font-bold flex items-center gap-1.5 transition-all"
+                      className="p-2.5 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 hover:bg-[#25D366]/25 text-[#25D366] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
                     >
                       <MessageCircle className="w-4 h-4 text-[#25D366]" /> וואטסאפ
                     </a>
@@ -458,7 +516,7 @@ export default function BarbershopHeroHub({
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                     style={{
-                      backgroundImage: `url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1000&q=80')`,
+                      backgroundImage: `url('${heroBg}')`,
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
@@ -466,7 +524,7 @@ export default function BarbershopHeroHub({
                   <div className="absolute bottom-4 inset-x-4 p-4 rounded-2xl bg-black/70 backdrop-blur-md border border-white/15 text-right">
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-xs font-bold text-zinc-400 block">מאסטר ברבר ראשי</span>
+                        <span className="text-xs font-bold text-zinc-400 block">{industryMeta.masterTitle}</span>
                         <span className="text-base font-black text-white">{ownerName}</span>
                       </div>
                       <div
@@ -505,7 +563,7 @@ export default function BarbershopHeroHub({
             >
               <Sparkles className="w-4 h-4" />
               <span className="text-xs font-black tracking-widest uppercase">
-                VIP BARBERSHOP & GROOMING EXPERIENCE
+                {industryMeta.vipBadge}
               </span>
             </div>
 

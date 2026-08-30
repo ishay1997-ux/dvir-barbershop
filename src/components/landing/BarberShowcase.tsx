@@ -30,6 +30,57 @@ export default function BarberShowcase({
     'היגיינה וסטריליזציה קפדנית',
   ];
 
+  const industryMeta = (() => {
+    const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
+    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
+      return { 
+        title: 'אמנית ציפורניים ומטפלת ראשית',
+        badge: 'הכירו את המומחית',
+        icon: '💅',
+      };
+    }
+    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
+      return { 
+        title: 'מטפלת מוסמכת ומנהלת הספא',
+        badge: 'אודות המרכז והמטפלים',
+        icon: '🌿',
+      };
+    }
+    if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
+      return { 
+        title: 'אמן קעקועים ראשי ומעצב',
+        badge: 'אודות הסטודיו והאמן',
+        icon: '⚡',
+      };
+    }
+    if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
+      return { 
+        title: 'מאמן כושר אישי בכיר',
+        badge: 'המאמן שלכם',
+        icon: '🏋️',
+      };
+    }
+    if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
+      return { 
+        title: 'רופא מומחה ומנהל הקליניקה',
+        badge: 'אודות הצוות הרפואי',
+        icon: '🩺',
+      };
+    }
+    if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
+      return { 
+        title: 'טכנאי מוסמך וחשמלאי מורשה',
+        badge: 'אודות איש המקצוע',
+        icon: '🔧',
+      };
+    }
+    return { 
+      title: 'מאסטר ברבר ראשי ומנהל',
+      badge: 'המאסטר שלכם',
+      icon: '✂️',
+    };
+  })();
+
   return (
     <section
       id="about"
@@ -54,7 +105,7 @@ export default function BarberShowcase({
               backgroundColor: `${themeColor}10`,
             }}
           >
-            המאסטר שלכם
+            {industryMeta.badge}
           </span>
           <h2
             id="barbers-heading"
@@ -64,7 +115,7 @@ export default function BarberShowcase({
           </h2>
           <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: themeColor }} />
           <p className={`mt-4 max-w-lg mx-auto text-xs sm:text-sm leading-relaxed font-sans ${t.textSecondary}`}>
-            {business?.slogan || 'אמן תספורות ומומחה לפיידים מודרניים, פיסול זקן מדויק וחוויית שירות אישית ברמה הגבוהה ביותר.'}
+            {business?.slogan || 'שירות מקצועי, יחס אישי וסטנדרט עבודה ברמה הגבוהה ביותר בישראל.'}
           </p>
         </motion.div>
 
@@ -86,9 +137,9 @@ export default function BarberShowcase({
                   : `linear-gradient(135deg, #1C1C1C, #2E2818, #1C1C1C)`,
               }}
             >
-              {/* Scissors decoration */}
-              <div className={`absolute top-4 right-4 ${t.isLight ? 'text-slate-400/20' : 'text-white/10'}`}>
-                <Scissors className="w-12 h-12 -rotate-45" />
+              {/* Industry decoration */}
+              <div className={`absolute top-4 right-4 text-2xl ${t.isLight ? 'opacity-20' : 'opacity-30'}`}>
+                {industryMeta.icon}
               </div>
               <div className={`absolute bottom-4 left-4 ${t.isLight ? 'text-slate-400/20' : 'text-white/10'}`}>
                 <Sparkles className="w-10 h-10" />
@@ -128,7 +179,7 @@ export default function BarberShowcase({
                 <div>
                   <h3 className={`text-xl font-black ${t.textPrimary}`}>{ownerName}</h3>
                   <span className="text-xs font-bold" style={{ color: themeColor }}>
-                    מאסטר ואיש מקצוע מוסמך
+                    {industryMeta.title}
                   </span>
                 </div>
                 <div

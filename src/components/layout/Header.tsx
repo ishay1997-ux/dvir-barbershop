@@ -41,6 +41,29 @@ export default function Header({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const industryIcon = (() => {
+    const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
+    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
+      return '💅';
+    }
+    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
+      return '🌿';
+    }
+    if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
+      return '⚡';
+    }
+    if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
+      return '🏋️';
+    }
+    if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
+      return '🩺';
+    }
+    if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
+      return '🔧';
+    }
+    return '✂️';
+  })();
+
   return (
     <>
       <header className={`sticky top-0 inset-x-0 z-50 backdrop-blur-md border-b shadow-md transition-all duration-300 ${t.isLight ? 'bg-white/95 border-slate-200 text-slate-900' : 'bg-[#1C1C1C]/95 border-white/10 text-white'}`}>
@@ -67,10 +90,19 @@ export default function Header({
               aria-label={`${bizName} - עמוד הבית`}
             >
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg text-[#1C1C1C]"
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 shadow-lg text-[#1C1C1C] overflow-hidden"
                 style={{ backgroundColor: themeColor }}
               >
-                <Scissors className="w-5 h-5 -rotate-45" />
+                {business?.logoUrl || business?.avatarUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={business.logoUrl || business.avatarUrl}
+                    alt={bizName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-base">{industryIcon}</span>
+                )}
               </div>
               <div className="leading-tight">
                 <span className={`block text-base sm:text-lg font-black tracking-wider ${t.textPrimary}`}>
