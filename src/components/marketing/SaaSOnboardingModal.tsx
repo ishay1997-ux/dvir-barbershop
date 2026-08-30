@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   X,
   Sparkles,
@@ -16,7 +17,10 @@ import {
   ChevronRight,
   ShieldCheck,
   Layers,
+  Mail,
 } from 'lucide-react';
+import { auth, isFirebaseConfigured } from '@/lib/firebase';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 interface SaaSOnboardingModalProps {
   isOpen: boolean;
@@ -29,7 +33,7 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
   isOpen,
   onClose,
   initialPlan = 'pro',
-  initialIndustry = 'מספרות גברים',
+  initialIndustry = 'מספרות ועיצוב שיער גברים',
 }) => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [businessName, setBusinessName] = useState('');
@@ -37,6 +41,12 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
   const [email, setEmail] = useState('');
+  const [googleUser, setGoogleUser] = useState<{
+    name: string;
+    email: string;
+    photo?: string;
+  } | null>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [industry, setIndustry] = useState(initialIndustry);
   const [plan, setPlan] = useState<'starter' | 'pro' | 'team'>(initialPlan);
   const [notes, setNotes] = useState('');
@@ -52,6 +62,39 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
     { id: 'אינסטלציה, טכנאים & שירותי בית', label: 'טכנאים ושירותי בית', icon: '🔧' },
     { id: 'מאמנים אישיים, קליניקות & טיפולים', label: 'קליניקה & מאמנים', icon: '🏋️' },
   ];
+
+  // Wix-Style 1-Click Google Sign-In
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setErrorMsg('');
+    try {
+      if (!auth || !isFirebaseConfigured) {
+        throw new Error('שירות ההתחברות אינו מוגדר כעת.');
+      }
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await signInWithPopup(auth, provider);
+      const u = result.user;
+
+      if (u) {
+        const gInfo = {
+          name: u.displayName || '',
+          email: u.email || '',
+          photo: u.photoURL || undefined,
+        };
+        setGoogleUser(gInfo);
+        if (gInfo.name && !ownerName) setOwnerName(gInfo.name);
+        if (gInfo.email && !email) setEmail(gInfo.email);
+      }
+    } catch (err: any) {
+      console.error('Google Sign In error:', err);
+      if (err?.code !== 'auth/popup-closed-by-user') {
+        setErrorMsg(err?.message || 'שגיאה בהתחברות עם Google, אנא נסה שוב או המשך ידנית');
+      }
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,11 +114,12 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
           businessName,
           ownerName,
           phone,
-          email,
+          email: email || googleUser?.email || '',
           city,
           industry,
           plan,
           notes,
+          authProvider: googleUser ? 'google' : 'manual',
         }),
       });
 
@@ -100,6 +144,7 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
     setCity('');
     setEmail('');
     setNotes('');
+    setGoogleUser(null);
     onClose();
   };
 
@@ -179,9 +224,78 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
             </div>
           )}
 
-          {/* STEP 1: BUSINESS & INDUSTRY */}
+          {/* STEP 1: BUSINESS & INDUSTRY + GOOGLE AUTH OPTION (Wix Style) */}
           {step === 1 && (
             <div className="space-y-4">
+              {/* Wix Style Google Fast Sign-In */}
+              {googleUser ? (
+                <div className="p-3.5 rounded-2xl bg-indigo-50/80 border border-indigo-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    {googleUser.photo ? (
+                      <img
+                        src={googleUser.photo}
+                        alt={googleUser.name}
+                        className="w-8 h-8 rounded-full border border-indigo-300"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+                        {googleUser.name.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-xs font-bold text-indigo-950 block">
+                        מחובר באמצעות Google: {googleUser.name}
+                      </span>
+                      <span className="text-[11px] text-indigo-700">{googleUser.email}</span>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                    מאומת ✓
+                  </span>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={googleLoading}
+                    className="w-full py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs border border-slate-300/90 transition-all flex items-center justify-center gap-2.5 shadow-xs cursor-pointer hover:border-slate-400"
+                  >
+                    {googleLoading ? (
+                      <div className="w-4 h-4 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin" />
+                    ) : (
+                      <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <path
+                          fill="#4285F4"
+                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                        />
+                        <path
+                          fill="#EA4335"
+                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                        />
+                      </svg>
+                    )}
+                    <span>התחברו מהר באמצעות Google (מומלץ)</span>
+                  </button>
+
+                  <div className="relative flex items-center justify-center my-2">
+                    <div className="border-t border-slate-200 w-full" />
+                    <span className="bg-white px-3 text-[11px] text-slate-400 font-medium shrink-0">
+                      או מלאו את פרטי העסק ידנית
+                    </span>
+                    <div className="border-t border-slate-200 w-full" />
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-black text-slate-700 mb-1.5">
                   שם העסק / המותג *
@@ -319,9 +433,12 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
                 </label>
                 <input
                   type="text"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="לדוגמה: מעוניין בחיבור דומיין אישי / עזרה בהזנת מחירון..."
+                  value={notes || email}
+                  onChange={(e) => {
+                    setNotes(e.target.value);
+                    if (e.target.value.includes('@')) setEmail(e.target.value);
+                  }}
+                  placeholder="אימייל / הערות להקמה מהירה..."
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-600 outline-none text-xs text-slate-900 bg-white placeholder:text-slate-400"
                 />
               </div>
@@ -348,6 +465,19 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
                   <span>שליחה והקמת חשבון</span>
                 </button>
               </div>
+
+              {/* Wix-Style Terms & Privacy Micro Footer */}
+              <p className="text-[10px] text-slate-400 text-center pt-2 leading-relaxed">
+                * בהרשמתך הנך מאשר את{' '}
+                <Link href="/terms" className="underline hover:text-slate-600" target="_blank">
+                  תנאי השימוש
+                </Link>{' '}
+                ו-
+                <Link href="/privacy" className="underline hover:text-slate-600" target="_blank">
+                  מדיניות הפרטיות
+                </Link>{' '}
+                של פלטפורמת CutWeb.
+              </p>
             </form>
           )}
 
@@ -374,7 +504,9 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
                 </span>
                 <a
                   href={`https://wa.me/972587815070?text=${encodeURIComponent(
-                    `היי ישי! 👋\nמילאתי עכשיו טופס הצטרפות באתר CutWeb עבור "${businessName}".\nתחום: ${industry}\nמסלול מבוקש: ${plan}\nטלפון: ${phone}\n\nאשמח להפעיל את המערכת ולקבל את הקישורים לאתר!`
+                    `היי ישי! 👋\nמילאתי עכשיו טופס הצטרפות באתר CutWeb עבור "${businessName}".\nתחום: ${industry}\nמסלול מבוקש: ${plan}\nטלפון: ${phone}\n${
+                      email ? `אימייל: ${email}\n` : ''
+                    }\nאשמח להפעיל את המערכת ולקבל את הקישורים לאתר!`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"

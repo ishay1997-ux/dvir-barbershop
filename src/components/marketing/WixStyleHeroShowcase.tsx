@@ -176,11 +176,10 @@ export const WixStyleHeroShowcase: React.FC<WixStyleHeroShowcaseProps> = ({
             <button
               key={site.id}
               onClick={() => setActiveIndex(idx)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-                isActive
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${isActive
                   ? 'bg-slate-900 text-white shadow-md scale-105'
                   : 'bg-white/80 hover:bg-white text-slate-600 border border-slate-200/80 shadow-xs'
-              }`}
+                }`}
             >
               <span
                 className="w-2 h-2 rounded-full"
