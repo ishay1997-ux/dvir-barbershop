@@ -48,6 +48,8 @@ export interface ServiceItem {
   staffIds?: string[];
 }
 
+export type BusinessService = ServiceItem;
+
 export interface BranchItem {
   id?: string;
   name: string;

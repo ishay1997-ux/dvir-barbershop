@@ -37,6 +37,8 @@ export interface TimeWindowOption {
   available: boolean;
 }
 
+export type TimeWindowSlot = TimeWindowOption;
+
 /**
  * Converts "HH:mm" to minutes from midnight
  */
