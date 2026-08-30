@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useSuperAdminData } from '@/hooks/useSuperAdminData';
 import { ReportsTab } from '@/components/super-admin/ReportsTab';
 import { UsersTab } from '@/components/super-admin/UsersTab';
+import { LeadsTab } from '@/components/super-admin/LeadsTab';
 import { BusinessesTableView } from '@/components/super-admin/BusinessesTableView';
 import { EditBusinessModal } from '@/components/super-admin/EditBusinessModal';
 import { CreateBusinessModal } from '@/components/super-admin/CreateBusinessModal';
@@ -48,6 +49,10 @@ export default function SuperAdminPage() {
     handleCloneBusiness,
     handleSaveEditedBusiness,
     handleDeleteBusiness,
+    // Leads
+    leads,
+    leadsLoading,
+    fetchLeads,
     // Reports
     reports,
     reportsLoading,
@@ -100,6 +105,7 @@ export default function SuperAdminPage() {
   }
 
   const newReportsCount = reports.filter((r) => r.status === 'new').length;
+  const newLeadsCount = leads.filter((l: any) => l.status === 'new').length;
 
   // ----------------------------------------------------------------
   // AUTHENTICATED ENTERPRISE DASHBOARD (REGIN / Caliber Style)
@@ -116,6 +122,7 @@ export default function SuperAdminPage() {
         activeTab={activeTab}
         onSelectTab={setActiveTab}
         businessesCount={businesses.length}
+        leadsCount={newLeadsCount}
         reportsCount={newReportsCount}
         usersCount={managedUsers.length}
         adminTheme={adminTheme}
@@ -148,6 +155,16 @@ export default function SuperAdminPage() {
               onCloneBusiness={handleCloneBusiness}
               onDeleteBusiness={handleDeleteBusiness}
               searchQuery={searchQuery}
+            />
+          )}
+
+          {/* TAB 2: LEADS (Wix Style Registrations) */}
+          {activeTab === 'leads' && (
+            <LeadsTab
+              adminTheme={adminTheme}
+              onConvertLeadToBusiness={(lead) => {
+                setIsNewBizModalOpen(true);
+              }}
             />
           )}
 

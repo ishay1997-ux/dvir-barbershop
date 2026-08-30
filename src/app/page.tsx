@@ -28,6 +28,7 @@ import {
   Send,
   Info,
 } from 'lucide-react';
+import { SaaSOnboardingModal } from '@/components/marketing/SaaSOnboardingModal';
 
 export default function SaaSPlatformLandingPage() {
   const [selectedIndustry, setSelectedIndustry] = useState<
@@ -35,6 +36,17 @@ export default function SaaSPlatformLandingPage() {
   >('barber');
 
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+
+  // Onboarding Wizard Modal State (Wix / Fresha Style)
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [onboardingPlan, setOnboardingPlan] = useState<'starter' | 'pro' | 'team'>('pro');
+  const [onboardingIndustry, setOnboardingIndustry] = useState<string>('מספרות ועיצוב שיער גברים');
+
+  const openOnboarding = (plan: 'starter' | 'pro' | 'team' = 'pro', ind: string = 'מספרות ועיצוב שיער גברים') => {
+    setOnboardingPlan(plan);
+    setOnboardingIndustry(ind);
+    setIsOnboardingOpen(true);
+  };
 
   const industryData = {
     barber: {
@@ -128,13 +140,21 @@ export default function SaaSPlatformLandingPage() {
             >
               כניסת עסקים
             </Link>
+            <button
+              type="button"
+              onClick={() => openOnboarding('starter')}
+              className="text-xs font-black px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              <span>הקמת עסק חינם</span>
+            </button>
             <Link
               href="/dvir"
               target="_blank"
-              className="text-xs font-black px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-md shadow-indigo-500/25 flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
+              className="text-xs font-bold px-3.5 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition-all border border-indigo-200/80 flex items-center gap-1.5 cursor-pointer"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>דמו חי (מספרת גברים)</span>
+              <span>דמו חי</span>
             </Link>
           </div>
         </div>
@@ -167,23 +187,32 @@ export default function SaaSPlatformLandingPage() {
 
           {/* Action CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+            <button
+              type="button"
+              onClick={() => openOnboarding('starter')}
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
+            >
+              <span>התחילו עכשיו בחינם (Starter 0 ₪)</span>
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+
             <Link
               href="/dvir"
               target="_blank"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm border border-slate-200/90 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
             >
-              <span>צפו באתר לדוגמה (פיילוט מספרה)</span>
-              <ArrowLeft className="w-4 h-4" />
+              <ExternalLink className="w-4 h-4 text-indigo-600" />
+              <span>צפו באתר לדוגמה (מספרת גברים)</span>
             </Link>
 
             <a
-              href="https://wa.me/972500000000?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%94%D7%A7%D7%9E%D7%AA%20%D7%90%D7%AA%D7%A8%20%D7%95%D7%9E%D7%A2%D7%A8%D7%9B%D7%AA%20%D7%AA%D7%95%D7%A8%D7%99%D7%9D%20%D7%9C%D7%A2%D7%A1%D7%A2%20%D7%A9%D7%9C%D7%99"
+              href="https://wa.me/972587815070?text=%D7%94%D7%99%D7%99%20%D7%99%D7%A9%D7%99%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%94%D7%A7%D7%9E%D7%AA%20%D7%90%D7%AA%D7%A8%20%D7%95%D7%9E%D7%A2%D7%A8%D7%9B%D7%AA%20%D7%AA%D7%95%D7%A8%D7%99%D7%9D%20%D7%9C%D7%A2%D7%A1%D7%A2%20%D7%A9%D7%9C%D7%99"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm border border-slate-200/90 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+              className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#128C7E] border border-[#25D366]/30 font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-600" />
-              <span>דברו איתנו בוואטסאפ</span>
+              <MessageCircle className="w-4 h-4 text-[#25D366]" />
+              <span>וואטסאפ מהיר לישי</span>
             </a>
           </div>
 
@@ -282,15 +311,14 @@ export default function SaaSPlatformLandingPage() {
                   <span>{currentInd.ctaLabel}</span>
                 </Link>
               ) : (
-                <a
-                  href={`https://wa.me/972587815071?text=${encodeURIComponent(currentInd.waMsg)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-emerald-600/20 hover:scale-105"
+                <button
+                  type="button"
+                  onClick={() => openOnboarding('pro', currentInd.title)}
+                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/20 hover:scale-105 cursor-pointer"
                 >
-                  <MessageCircle className="w-3.5 h-3.5" />
+                  <Sparkles className="w-3.5 h-3.5" />
                   <span>{currentInd.ctaLabel}</span>
-                </a>
+                </button>
               )}
             </div>
           </div>
@@ -330,72 +358,72 @@ export default function SaaSPlatformLandingPage() {
               <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <Smartphone className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-black text-slate-900">אתר הזמנות ייעודי ללקוח</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                דף נחיתה מעוצב תחת הכתובת שלכם, מותאם מושלם לנייד, עם בחירת שירות, יום ושעה ב-3 קליקים פשוטים.
+              <h3 className="text-base font-black text-slate-900">אתר אישי מהיר וממותג</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                אתר לקוחות מותאם לסלולר הפועל ללא צורך בהורדת אפליקציה מחנות האפליקציות, עם כתובת ייעודית (thecut.co.il/[slug]).
               </p>
             </div>
 
             {/* Feature 2 */}
             <div className="p-7 rounded-3xl bg-[#F8FAFC] border border-slate-200/80 hover:border-indigo-300 hover:shadow-lg transition-all space-y-3.5">
               <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <Zap className="w-6 h-6" />
+                <Calendar className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-black text-slate-900">יומן Drag & Drop אינטראקטיבי</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                יומן מודרני מבוסס Schedule-X המאפשר לגרור תורים בעכבר בין שעות וימים בסנכרון ענן מיידי.
+              <h3 className="text-base font-black text-slate-900">יומן Drag & Drop מתקדם</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                ממשק ניהול יומן מודרני מבוסס Schedule-X המאפשר גרירת תורים בזמן אמת, חסימת ימים וסנכרון תורים חי.
               </p>
             </div>
 
             {/* Feature 3 */}
             <div className="p-7 rounded-3xl bg-[#F8FAFC] border border-slate-200/80 hover:border-indigo-300 hover:shadow-lg transition-all space-y-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <MessageCircle className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-black text-slate-900">תזכורות ואישורים בוואטסאפ</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                הלקוחות מקבלים קישור אישור מיידי לוואטסאפ עם כל פרטי התור, ניווט ב-Waze וקובץ תזכורת ליומן.
+              <h3 className="text-base font-black text-slate-900">תזכורות WhatsApp חכמות</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                אישורי הגעה ישירים, שליחת הודעות wa.me מותאמות אישית בלחיצה, והפחתת ביטולים ב-80% ללא עלות נוספת.
               </p>
             </div>
 
             {/* Feature 4 */}
             <div className="p-7 rounded-3xl bg-[#F8FAFC] border border-slate-200/80 hover:border-indigo-300 hover:shadow-lg transition-all space-y-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <Users className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-black text-slate-900">ניהול עובדים וסניפים מרובים</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                שיוך שירותים לאנשי צוות שונים, הגדרת הרשאות מדויקות ושליטה בלוחות זמנים של מספר סניפים במקביל.
+              <h3 className="text-base font-black text-slate-900">מיני-CRM ונוסחת טיפול</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                שמירת היסטוריית תורים לכל לקוח, תיעוד נוסחת תספורת (פייד, זקן) או שדות מותאמים אישית לפי מקצוע.
               </p>
             </div>
 
             {/* Feature 5 */}
             <div className="p-7 rounded-3xl bg-[#F8FAFC] border border-slate-200/80 hover:border-indigo-300 hover:shadow-lg transition-all space-y-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                <Clock className="w-6 h-6" />
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <Layers className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-black text-slate-900">רשימת המתנה חכמה (Waitlist)</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                מילוי חורים אוטומטי בעת ביטולים – לקוחות ברשימת ההמתנה מקבלים הודעה על תור שהתפנה.
+              <h3 className="text-base font-black text-slate-900">תמיכה בריבוי עובדים וסניפים</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                ניהול מספר אנשי צוות, יומן נפרד לכל עובד, שיוך שירותים וניהול סניפים שונים תחת פאנל אחד.
               </p>
             </div>
 
             {/* Feature 6 */}
             <div className="p-7 rounded-3xl bg-[#F8FAFC] border border-slate-200/80 hover:border-indigo-300 hover:shadow-lg transition-all space-y-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                <BarChart3 className="w-6 h-6" />
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <Zap className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-black text-slate-900">CRM ואנליטיקה עסקית</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                דוחות הכנסה, ממוצע עסקה, שעות שיא, היסטוריית טיפולים אישית ותיעוד העדפות מדויק לכל לקוח.
+              <h3 className="text-base font-black text-slate-900">ענן מסונכרן 24/7 (Firestore)</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                סנכרון תורים מיידי ללא התנגשויות (Double Booking), עבודה ללא הפסקה גם בשעות העומס וגיבוי מלא.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Modern SaaS Pricing Section with Updated 3-Tier Model */}
-      <section id="pricing" className="py-16 sm:py-24 bg-[#F8FAFC] border-t border-slate-200/80">
+      {/* Transparent Pricing Section */}
+      <section id="pricing" className="py-16 sm:py-24 bg-[#FAFAFC] border-t border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           <div className="text-center max-w-2xl mx-auto mb-8 space-y-2">
             <span className="text-xs font-black text-indigo-600 uppercase tracking-wider">
@@ -472,14 +500,13 @@ export default function SaaSPlatformLandingPage() {
                   </div>
                 </div>
               </div>
-              <a
-                href="https://wa.me/972500000000?text=%D7%94%D7%99%D7%99%20%D7%90%D7%A0%D7%99%20%D7%A8%D7%95%D7%A6%D7%94%20%D7%9C%D7%94%D7%AA%D7%97%D7%99%D7%9C%20%D7%A2%D7%9D%20%D7%9E%D7%A1%D7%9C%D7%95%D7%9C%20Starter%20%D7%94%D7%97%D7%99%D7%A0%D7%9E%D7%99"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs text-center transition-colors block cursor-pointer"
+              <button
+                type="button"
+                onClick={() => openOnboarding('starter')}
+                className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs text-center transition-all shadow-xs block cursor-pointer"
               >
-                התחל בחינם עכשיו
-              </a>
+                התחל בחינם עכשיו (Starter)
+              </button>
             </div>
 
             {/* 2. Pro (עצמאי) - FEATURED */}
@@ -534,16 +561,13 @@ export default function SaaSPlatformLandingPage() {
                   </div>
                 </div>
               </div>
-              <a
-                href={`https://wa.me/972500000000?text=${encodeURIComponent(
-                  `היי, אני מעוניין להצטרף למסלול Pro (${billingCycle === 'monthly' ? '59 ₪ לחודש' : '490 ₪ לשנה'})`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs text-center transition-all shadow-md shadow-indigo-600/25 block cursor-pointer"
+              <button
+                type="button"
+                onClick={() => openOnboarding('pro')}
+                className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs text-center transition-all shadow-md shadow-indigo-600/25 block cursor-pointer hover:scale-[1.02]"
               >
-                הצטרף למסלול Pro
-              </a>
+                הצטרף למסלול Pro (הכי פופולרי)
+              </button>
             </div>
 
             {/* 3. Team (צוות) */}
@@ -591,16 +615,13 @@ export default function SaaSPlatformLandingPage() {
                   </div>
                 </div>
               </div>
-              <a
-                href={`https://wa.me/972500000000?text=${encodeURIComponent(
-                  `היי, אני מעוניין להצטרף למסלול Team (${billingCycle === 'monthly' ? '119 ₪ לחודש' : '990 ₪ לשנה'})`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs text-center transition-colors block cursor-pointer"
+              <button
+                type="button"
+                onClick={() => openOnboarding('team')}
+                className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs text-center transition-all shadow-xs block cursor-pointer"
               >
                 הצטרף למסלול Team
-              </a>
+              </button>
             </div>
           </div>
 
@@ -666,6 +687,14 @@ export default function SaaSPlatformLandingPage() {
         </div>
         <p>© {new Date().getFullYear()} CutWeb Platform · כל הזכויות שמורות לפלטפורמת CutWeb</p>
       </footer>
+
+      {/* Wix / Fresha Style SaaS Onboarding Wizard Modal */}
+      <SaaSOnboardingModal
+        isOpen={isOnboardingOpen}
+        onClose={() => setIsOnboardingOpen(false)}
+        initialPlan={onboardingPlan}
+        initialIndustry={onboardingIndustry}
+      />
     </div>
   );
 }

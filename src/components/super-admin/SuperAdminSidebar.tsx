@@ -17,9 +17,10 @@ import {
 } from 'lucide-react';
 
 interface SuperAdminSidebarProps {
-  activeTab: 'overview' | 'businesses' | 'users' | 'reports' | 'settings';
-  onSelectTab: (tab: 'overview' | 'businesses' | 'users' | 'reports' | 'settings') => void;
+  activeTab: 'overview' | 'businesses' | 'leads' | 'users' | 'reports' | 'settings';
+  onSelectTab: (tab: 'overview' | 'businesses' | 'leads' | 'users' | 'reports' | 'settings') => void;
   businessesCount: number;
+  leadsCount?: number;
   reportsCount: number;
   usersCount: number;
   adminTheme: 'dark' | 'light';
@@ -30,6 +31,7 @@ export const SuperAdminSidebar: React.FC<SuperAdminSidebarProps> = ({
   activeTab,
   onSelectTab,
   businessesCount,
+  leadsCount = 0,
   reportsCount,
   usersCount,
   adminTheme,
@@ -43,6 +45,13 @@ export const SuperAdminSidebar: React.FC<SuperAdminSidebarProps> = ({
       label: 'ניהול מספרות ועסקים',
       icon: Building2,
       badge: businessesCount,
+    },
+    {
+      id: 'leads' as const,
+      label: 'לידים והרשמות חדשות',
+      icon: Sparkles,
+      badge: leadsCount,
+      alert: leadsCount > 0,
     },
     {
       id: 'users' as const,

@@ -65,7 +65,26 @@ export function useSuperAdminData() {
 
   const [googleLoading, setGoogleLoading] = useState(false);
   const [adminTheme, setAdminTheme] = useState<'dark' | 'light'>('light');
-  const [activeTab, setActiveTab] = useState<'reports' | 'businesses' | 'users' | 'overview' | 'settings'>('businesses');
+  const [activeTab, setActiveTab] = useState<'reports' | 'businesses' | 'leads' | 'users' | 'overview' | 'settings'>('businesses');
+
+  // Leads state
+  const [leads, setLeads] = useState<any[]>([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+
+  const fetchLeads = async () => {
+    setLeadsLoading(true);
+    try {
+      const res = await fetch('/api/leads');
+      if (res.ok) {
+        const data = await res.json();
+        setLeads(data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLeadsLoading(false);
+    }
+  };
 
   // Reports state
   const [reports, setReports] = useState<BugReport[]>([]);
@@ -242,6 +261,7 @@ export function useSuperAdminData() {
       fetchBusinesses();
       fetchReports();
       fetchUsers();
+      fetchLeads();
     }
   }, [isAuthenticated]);
 
@@ -508,6 +528,10 @@ export function useSuperAdminData() {
     fetchReports,
     handleStatusChange,
     handleDeleteReport,
+    // Leads
+    leads,
+    leadsLoading,
+    fetchLeads,
     // Users
     managedUsers,
     usersLoading,
