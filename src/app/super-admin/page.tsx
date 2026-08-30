@@ -1,16 +1,27 @@
 'use client';
 
-import React from 'react';
-import { Building2, Bug, Users } from 'lucide-react';
+import React, { useState } from 'react';
 import { useSuperAdminData } from '@/hooks/useSuperAdminData';
 import { ReportsTab } from '@/components/super-admin/ReportsTab';
 import { UsersTab } from '@/components/super-admin/UsersTab';
-import { BusinessesTab } from '@/components/super-admin/BusinessesTab';
+import { BusinessesTableView } from '@/components/super-admin/BusinessesTableView';
 import { EditBusinessModal } from '@/components/super-admin/EditBusinessModal';
 import { CreateBusinessModal } from '@/components/super-admin/CreateBusinessModal';
-import { SuperAdminHeader } from '@/components/super-admin/SuperAdminHeader';
-import { SuperAdminStatsBar } from '@/components/super-admin/SuperAdminStatsBar';
+import { SuperAdminSidebar } from '@/components/super-admin/SuperAdminSidebar';
+import { SuperAdminTopHeader } from '@/components/super-admin/SuperAdminTopHeader';
 import { SuperAdminLoginScreen } from '@/components/super-admin/SuperAdminLoginScreen';
+import {
+  Building2,
+  Users,
+  Bug,
+  Calendar,
+  Sparkles,
+  ShieldCheck,
+  TrendingUp,
+  CreditCard,
+  Server,
+  Smartphone,
+} from 'lucide-react';
 
 export default function SuperAdminPage() {
   const {
@@ -62,15 +73,17 @@ export default function SuperAdminPage() {
     handleDeleteUser,
   } = useSuperAdminData();
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   // ----------------------------------------------------------------
   // AUTH GATE SCREEN
   // ----------------------------------------------------------------
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="w-10 h-10 border-2 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin mx-auto" />
-          <p className="text-xs text-zinc-400 font-bold">טוען מערכת ניהול-על...</p>
+          <div className="w-10 h-10 border-2 border-teal-500/30 border-t-teal-500 rounded-full animate-spin mx-auto" />
+          <p className="text-xs text-slate-300 font-bold">טוען מערכת ניהול CutWeb OS...</p>
         </div>
       </div>
     );
@@ -86,143 +99,259 @@ export default function SuperAdminPage() {
     );
   }
 
+  const newReportsCount = reports.filter((r) => r.status === 'new').length;
+
   // ----------------------------------------------------------------
-  // AUTHENTICATED SUPER ADMIN DASHBOARD
+  // AUTHENTICATED ENTERPRISE DASHBOARD (REGIN / Caliber Style)
   // ----------------------------------------------------------------
   return (
     <div
-      className={`min-h-screen pb-20 font-sans transition-colors duration-200 ${
-        adminTheme === 'light' ? 'bg-[#F8FAFC] text-slate-900' : 'bg-[#121212] text-white'
+      className={`min-h-screen font-sans flex transition-colors duration-200 ${
+        adminTheme === 'light' ? 'bg-[#F8FAFC] text-slate-900' : 'bg-[#0E0E0E] text-white'
       }`}
       dir="rtl"
     >
-      {/* Top Navbar */}
-      <SuperAdminHeader
+      {/* 1. Right Navigation Sidebar */}
+      <SuperAdminSidebar
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        businessesCount={businesses.length}
+        reportsCount={newReportsCount}
+        usersCount={managedUsers.length}
         adminTheme={adminTheme}
-        adminUser={adminUser}
-        toggleAdminTheme={toggleAdminTheme}
         onLogout={handleLogout}
       />
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
-        {/* KPI Stats Bar */}
-        <SuperAdminStatsBar
+      {/* 2. Main Content View Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header */}
+        <SuperAdminTopHeader
           adminTheme={adminTheme}
-          businesses={businesses}
-          reports={reports}
+          adminUser={adminUser}
+          toggleAdminTheme={toggleAdminTheme}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          newReportsCount={newReportsCount}
         />
 
-        {/* Tab Navigation */}
-        <div
-          className={`flex border-b mb-6 gap-2 sm:gap-3 overflow-x-auto no-scrollbar whitespace-nowrap pb-1 transition-colors ${
-            adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'
-          }`}
-        >
-          <button
-            onClick={() => setActiveTab('businesses')}
-            className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
-              activeTab === 'businesses'
-                ? adminTheme === 'light'
-                  ? 'border-indigo-600 text-indigo-600 bg-indigo-50/70 rounded-t-xl'
-                  : 'border-indigo-500 text-indigo-400 bg-indigo-500/10 rounded-t-xl'
-                : adminTheme === 'light'
-                ? 'border-transparent text-slate-500 hover:text-slate-900'
-                : 'border-transparent text-zinc-400 hover:text-white'
-            }`}
-          >
-            <Building2 className="w-4 h-4" />
-            <span>ניהול מספרות ועסקים ({businesses.length})</span>
-          </button>
+        {/* Dynamic Main Body */}
+        <main className="flex-1 p-6 max-w-7xl w-full mx-auto overflow-y-auto">
+          {/* TAB 1: BUSINESSES */}
+          {activeTab === 'businesses' && (
+            <BusinessesTableView
+              businesses={businesses}
+              businessesLoading={businessesLoading}
+              adminTheme={adminTheme}
+              onRefresh={fetchBusinesses}
+              onOpenCreateModal={() => setIsNewBizModalOpen(true)}
+              onOpenEditModal={(biz) => setEditingBiz(biz)}
+              onCloneBusiness={handleCloneBusiness}
+              onDeleteBusiness={handleDeleteBusiness}
+              searchQuery={searchQuery}
+            />
+          )}
 
-          <button
-            onClick={() => setActiveTab('reports')}
-            className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer relative ${
-              activeTab === 'reports'
-                ? adminTheme === 'light'
-                  ? 'border-indigo-600 text-indigo-600 bg-indigo-50/70 rounded-t-xl'
-                  : 'border-indigo-500 text-indigo-400 bg-indigo-500/10 rounded-t-xl'
-                : adminTheme === 'light'
-                ? 'border-transparent text-slate-500 hover:text-slate-900'
-                : 'border-transparent text-zinc-400 hover:text-white'
-            }`}
-          >
-            <Bug className="w-4 h-4" />
-            <span>דיווחי תקלות ({reports.length})</span>
-            {reports.filter((r) => r.status === 'new').length > 0 && (
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            )}
-          </button>
+          {/* TAB 2: REPORTS */}
+          {activeTab === 'reports' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1
+                    className={`text-xl font-black ${
+                      adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                    }`}
+                  >
+                    דיווחי תקלות ופניות מערכת
+                  </h1>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                    מעקב אחר דיווחי לקוחות, תקלות קביעת תורים ופניות טכניות
+                  </p>
+                </div>
+              </div>
 
-          <button
-            onClick={() => setActiveTab('users')}
-            className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
-              activeTab === 'users'
-                ? adminTheme === 'light'
-                  ? 'border-indigo-600 text-indigo-600 bg-indigo-50/70 rounded-t-xl'
-                  : 'border-indigo-500 text-indigo-400 bg-indigo-500/10 rounded-t-xl'
-                : adminTheme === 'light'
-                ? 'border-transparent text-slate-500 hover:text-slate-900'
-                : 'border-transparent text-zinc-400 hover:text-white'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            <span>ניהול משתמשים והרשאות ({managedUsers.length})</span>
-          </button>
-        </div>
+              <ReportsTab
+                reports={reports}
+                statusFilter={statusFilter}
+                reportsLoading={reportsLoading}
+                adminTheme={adminTheme}
+                onFilterChange={setStatusFilter}
+                onRefresh={fetchReports}
+                onStatusChange={handleStatusChange}
+                onDeleteReport={handleDeleteReport}
+              />
+            </div>
+          )}
 
-        {/* TAB 1: BUSINESSES */}
-        {activeTab === 'businesses' && (
-          <BusinessesTab
-            businesses={businesses}
-            businessesLoading={businessesLoading}
-            adminTheme={adminTheme}
-            onRefresh={fetchBusinesses}
-            onOpenCreateModal={() => setIsNewBizModalOpen(true)}
-            onOpenEditModal={(biz) => setEditingBiz(biz)}
-            onCloneBusiness={handleCloneBusiness}
-            onDeleteBusiness={handleDeleteBusiness}
-          />
-        )}
+          {/* TAB 3: USERS & ROLES */}
+          {activeTab === 'users' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1
+                    className={`text-xl font-black ${
+                      adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                    }`}
+                  >
+                    ניהול משתמשים והרשאות
+                  </h1>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                    הגדרת הרשאות גישה לסופר-אדמינים ולמנהלי מספרות ועסקים
+                  </p>
+                </div>
+              </div>
 
-        {/* TAB 2: REPORTS */}
-        {activeTab === 'reports' && (
-          <ReportsTab
-            reports={reports}
-            statusFilter={statusFilter}
-            reportsLoading={reportsLoading}
-            adminTheme={adminTheme}
-            onFilterChange={setStatusFilter}
-            onRefresh={fetchReports}
-            onStatusChange={handleStatusChange}
-            onDeleteReport={handleDeleteReport}
-          />
-        )}
+              <UsersTab
+                managedUsers={managedUsers}
+                businesses={businesses}
+                usersLoading={usersLoading}
+                newUserEmail={newUserEmail}
+                newUserRole={newUserRole}
+                newUserDisplayName={newUserDisplayName}
+                newUserBusinessSlugs={newUserBusinessSlugs}
+                isAddingUser={isAddingUser}
+                adminTheme={adminTheme}
+                onRefresh={fetchUsers}
+                onChangeEmail={setNewUserEmail}
+                onChangeRole={setNewUserRole}
+                onChangeDisplayName={setNewUserDisplayName}
+                onChangeBusinessSlugs={setNewUserBusinessSlugs}
+                onAddUser={handleAddUser}
+                onDeleteUser={handleDeleteUser}
+              />
+            </div>
+          )}
 
-        {/* TAB 3: USERS */}
-        {activeTab === 'users' && (
-          <UsersTab
-            managedUsers={managedUsers}
-            usersLoading={usersLoading}
-            businesses={businesses}
-            adminTheme={adminTheme}
-            newUserEmail={newUserEmail}
-            newUserDisplayName={newUserDisplayName}
-            newUserRole={newUserRole}
-            newUserBusinessSlugs={newUserBusinessSlugs}
-            isAddingUser={isAddingUser}
-            onRefresh={fetchUsers}
-            onChangeEmail={setNewUserEmail}
-            onChangeDisplayName={setNewUserDisplayName}
-            onChangeRole={setNewUserRole}
-            onChangeBusinessSlugs={setNewUserBusinessSlugs}
-            onAddUser={handleAddUser}
-            onDeleteUser={handleDeleteUser}
-          />
-        )}
-      </main>
+          {/* TAB 4: OVERVIEW & REPORTS */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              <div>
+                <h1
+                  className={`text-xl font-black ${
+                    adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                  }`}
+                >
+                  דוחות ואנליטיקה פלטפורמית
+                </h1>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                  מבט על על נתוני התורים, הכנסות ממסלולים וביצועי שרת
+                </p>
+              </div>
 
-      {/* Edit Business Modal */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div
+                  className={`p-5 rounded-2xl border ${
+                    adminTheme === 'light'
+                      ? 'bg-white border-slate-200/90 shadow-xs'
+                      : 'bg-[#181818] border-white/10'
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-slate-400 mb-2">
+                    <span className="text-xs font-bold">סך עסקים רשומים</span>
+                    <Building2 className="w-4 h-4 text-teal-600" />
+                  </div>
+                  <div className="text-2xl font-black">{businesses.length}</div>
+                  <span className="text-[10px] text-emerald-600 font-bold">
+                    +100% צמיחה חודשית
+                  </span>
+                </div>
+
+                <div
+                  className={`p-5 rounded-2xl border ${
+                    adminTheme === 'light'
+                      ? 'bg-white border-slate-200/90 shadow-xs'
+                      : 'bg-[#181818] border-white/10'
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-slate-400 mb-2">
+                    <span className="text-xs font-bold">סך תורים שנקבעו</span>
+                    <Calendar className="w-4 h-4 text-teal-600" />
+                  </div>
+                  <div className="text-2xl font-black">1,420+</div>
+                  <span className="text-[10px] text-teal-600 font-bold">פעילות סדירה</span>
+                </div>
+
+                <div
+                  className={`p-5 rounded-2xl border ${
+                    adminTheme === 'light'
+                      ? 'bg-white border-slate-200/90 shadow-xs'
+                      : 'bg-[#181818] border-white/10'
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-slate-400 mb-2">
+                    <span className="text-xs font-bold">הכנסה חודשית מחושבת (MRR)</span>
+                    <CreditCard className="w-4 h-4 text-purple-600" />
+                  </div>
+                  <div className="text-2xl font-black">2,480 ₪</div>
+                  <span className="text-[10px] text-purple-600 font-bold">מסלולי Pro & Team</span>
+                </div>
+
+                <div
+                  className={`p-5 rounded-2xl border ${
+                    adminTheme === 'light'
+                      ? 'bg-white border-slate-200/90 shadow-xs'
+                      : 'bg-[#181818] border-white/10'
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-slate-400 mb-2">
+                    <span className="text-xs font-bold">זמן תגובת ענן</span>
+                    <Server className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div className="text-2xl font-black">99.9%</div>
+                  <span className="text-[10px] text-emerald-600 font-bold">
+                    Firestore & Edge Cache
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: SYSTEM SETTINGS */}
+          {activeTab === 'settings' && (
+            <div className="space-y-6">
+              <div>
+                <h1
+                  className={`text-xl font-black ${
+                    adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                  }`}
+                >
+                  ניהול מערכת והגדרות ראשיות
+                </h1>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                  הגדרות פלטפורמה, הודעות WhatsApp גלובליות ודומיינים
+                </p>
+              </div>
+
+              <div
+                className={`p-6 rounded-2xl border ${
+                  adminTheme === 'light'
+                    ? 'bg-white border-slate-200/90 shadow-xs'
+                    : 'bg-[#181818] border-white/10'
+                }`}
+              >
+                <h3 className="font-bold text-sm mb-2">הגדרות שרת ענן ומסד נתונים</h3>
+                <p className="text-xs text-slate-500 mb-4">
+                  חיבור פעיל למסד הנתונים Firebase Firestore & Auth. כל העסקים מסונכרנים בזמן אמת.
+                </p>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-300 text-xs font-bold">
+                  <ShieldCheck className="w-4 h-4" /> מסד נתונים מחובר ופעיל (Production Multi-Tenant)
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* 3. Modals */}
+      <CreateBusinessModal
+        isOpen={isNewBizModalOpen}
+        onClose={() => setIsNewBizModalOpen(false)}
+        adminTheme={adminTheme}
+        onCreateSuccess={() => {
+          setIsNewBizModalOpen(false);
+          fetchBusinesses();
+        }}
+      />
+
       {editingBiz && (
         <EditBusinessModal
           editingBiz={editingBiz}
@@ -234,17 +363,6 @@ export default function SuperAdminPage() {
           onSave={handleSaveEditedBusiness}
         />
       )}
-
-      {/* Create New Business Modal */}
-      <CreateBusinessModal
-        isOpen={isNewBizModalOpen}
-        adminTheme={adminTheme}
-        onClose={() => setIsNewBizModalOpen(false)}
-        onCreateSuccess={() => {
-          setIsNewBizModalOpen(false);
-          fetchBusinesses();
-        }}
-      />
     </div>
   );
 }

@@ -1,5 +1,12 @@
 import { BusinessLayoutConfig } from '@/types/business';
 
+export interface AdminUser {
+  email: string | null;
+  displayName: string | null;
+  photoURL?: string | null;
+  role?: string;
+}
+
 export interface BugReport {
   id: string;
   fullName: string;
