@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, Calendar, Settings, Users, 
-  Scissors, LogOut, Menu, X, ExternalLink 
+  Scissors, LogOut, Menu, X, ExternalLink, Share2 
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
+import ShareStorefrontModal from '@/components/admin/ShareStorefrontModal';
 
 const navItems = [
   { href: '/admin', label: 'לוח בקרה ראשי', icon: LayoutDashboard },
@@ -31,6 +32,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const { logout } = useAuth();
 
   const SidebarContent = () => (
@@ -96,12 +98,25 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      {/* Bottom actions: View Site & Logout */}
+      {/* Bottom actions: Share Site, View Site & Logout */}
       <div className="p-4 border-t border-[#2A2A2A] space-y-2">
+        <button
+          onClick={() => setIsShareOpen(true)}
+          className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-gold/15 hover:bg-gold/25 text-gold border border-gold/30 transition-all text-xs font-black w-full cursor-pointer shadow-xs"
+        >
+          <div className="flex items-center gap-2">
+            <Share2 className="w-3.5 h-3.5" />
+            <span>שתף אתר לקוחות</span>
+          </div>
+          <span className="text-[10px] bg-gold text-[#1C1C1C] px-1.5 py-0.5 rounded font-black">
+            Bio
+          </span>
+        </button>
+
         <Link
           href="/"
           target="_blank"
-          className="flex items-center justify-between px-4 py-2.5 rounded-xl text-[#9E9891] hover:bg-white/5 hover:text-gold transition-colors text-xs font-bold"
+          className="flex items-center justify-between px-4 py-2 rounded-xl text-[#9E9891] hover:bg-white/5 hover:text-gold transition-colors text-xs font-bold"
         >
           <span>צפה באתר הלקוחות</span>
           <ExternalLink className="w-3.5 h-3.5" />
@@ -112,7 +127,7 @@ export default function AdminSidebar() {
             await logout();
             router.push('/admin/login');
           }}
-          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-[#9E9891] hover:bg-red-900/20 hover:text-red-400 transition-all w-full text-xs font-bold active:scale-95 cursor-pointer"
+          className="flex items-center gap-2.5 px-4 py-2 rounded-xl text-[#9E9891] hover:bg-red-900/20 hover:text-red-400 transition-all w-full text-xs font-bold active:scale-95 cursor-pointer"
           aria-label="התנתק מהמערכת"
         >
           <LogOut className="w-4 h-4" />
@@ -139,13 +154,22 @@ export default function AdminSidebar() {
             המספרה של <span className="text-gold">דביר</span>
           </span>
         </div>
-        <button
-          onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="p-2 text-[#9E9891] hover:text-white"
-          aria-label="פתח תפריט"
-        >
-          {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-gold" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsShareOpen(true)}
+            className="p-2 rounded-lg bg-gold/20 text-gold text-xs font-bold flex items-center gap-1 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+            <span className="hidden xs:inline">שתף</span>
+          </button>
+          <button
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            className="p-2 text-[#9E9891] hover:text-white"
+            aria-label="פתח תפריט"
+          >
+            {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-gold" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile drawer */}
@@ -157,6 +181,9 @@ export default function AdminSidebar() {
           </div>
         </div>
       )}
+
+      {/* Share Storefront Modal */}
+      <ShareStorefrontModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
     </>
   );
 }

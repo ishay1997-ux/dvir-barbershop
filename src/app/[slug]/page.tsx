@@ -59,28 +59,51 @@ export default function DynamicBusinessLandingPage({
 
   if (notFound && slug !== 'dvir' && slug !== 'thecut') {
     return (
-      <div className="min-h-screen bg-[#121212] text-white flex items-center justify-center p-4 font-sans" dir="rtl">
-        <div className="max-w-md w-full bg-[#1C1C1C] border border-white/10 rounded-3xl p-8 text-center space-y-4 shadow-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-[#C9A84C]">
-            <Scissors className="w-7 h-7" />
+      <div className="min-h-screen bg-[#0E131F] text-white flex items-center justify-center p-4 font-sans" dir="rtl">
+        <div className="max-w-lg w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-8 text-center space-y-6 shadow-2xl backdrop-blur-xl">
+          <div className="w-16 h-16 rounded-3xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400 shadow-indigo-500/20 shadow-lg">
+            <Sparkles className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-black text-white">המספרה לא נמצאה</h1>
-          <p className="text-xs text-[#9E9891] leading-relaxed">
-            לא נמצא עסק פעיל תחת הכתובת <code className="text-[#C9A84C] font-mono">/{slug}</code>.
-            ייתכן שהקישור שגוי או שהאתר הועבר לכתובת אחרת.
-          </p>
-          <div className="pt-2 flex flex-col sm:flex-row gap-2">
+
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 text-xs font-bold">
+              <span>כתובת פנויה ב-CutWeb</span>
+              <span className="font-mono text-white" dir="ltr">/{slug}</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white">
+              עסק זה עדיין לא קיים במערכת
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-md mx-auto">
+              הכתובת שחיפשת פנויה. רוצה להקים אתר יוקרתי, יומן חכם ומערכת תורים אוטונומית לעסק שלך תוך 60 שניות?
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 text-right space-y-2">
+            <div className="text-xs font-black text-white flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>מה מקבלים בחינם במסלול Starter?</span>
+            </div>
+            <ul className="text-[11px] text-slate-300 space-y-1 pr-3 list-disc">
+              <li>אתר הזמנות מעוצב ומותאם אישית לנייד</li>
+              <li>יומן ניהול תורים חכם עם גרירה (Drag & Drop)</li>
+              <li>אישורי הגעה ותזכורות WhatsApp בלחיצה</li>
+              <li>כרטיס לקוח ומיני-CRM ללא תשלום</li>
+            </ul>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <Link
               href="/"
-              className="flex-1 py-3 rounded-2xl bg-[#C9A84C] text-[#1C1C1C] font-black text-xs hover:bg-[#DFCA85] transition-colors"
+              className="flex-1 py-3.5 px-6 rounded-2xl bg-white hover:bg-slate-100 text-slate-950 font-black text-xs transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
             >
-              למספרת הדגל הראשית
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              <span>הקמת עסק בחינם ב-CutWeb</span>
             </Link>
             <Link
-              href="/super-admin"
-              className="flex-1 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-colors"
+              href="/dvir"
+              className="py-3.5 px-6 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition-all border border-slate-700 flex items-center justify-center gap-2"
             >
-              לוח סופר אדמין
+              <span>צפייה בדמו לדוגמה</span>
             </Link>
           </div>
         </div>
