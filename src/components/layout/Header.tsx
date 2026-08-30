@@ -9,6 +9,7 @@ import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 import AnnouncementBanner from '@/components/common/AnnouncementBanner';
 import SidebarDrawer from './SidebarDrawer';
 import { getThemeTokens } from '@/lib/theme-tokens';
+import { getIndustryMeta } from '@/lib/industry-terminology';
 
 export default function Header({
   business,
@@ -41,28 +42,7 @@ export default function Header({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const industryIcon = (() => {
-    const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
-    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
-      return '💅';
-    }
-    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
-      return '🌿';
-    }
-    if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
-      return '⚡';
-    }
-    if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
-      return '🏋️';
-    }
-    if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
-      return '🩺';
-    }
-    if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
-      return '🔧';
-    }
-    return '✂️';
-  })();
+  const industryIcon = getIndustryMeta(business).icon;
 
   return (
     <>

@@ -238,42 +238,151 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
   },
 };
 
+export interface IndustryMeta {
+  categoryKey: string;
+  icon: string;
+  label: string;
+  heroImage: string;
+  masterTitle: string;
+  vipBadge: string;
+  actionIcon: string;
+  actionLabel: string;
+}
+
+export const INDUSTRY_META_MAP: Record<string, IndustryMeta> = {
+  barber: {
+    categoryKey: 'barber',
+    icon: '✂️',
+    label: 'Barbershop',
+    heroImage: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1600&q=80',
+    masterTitle: 'מאסטר ברבר ראשי ומנהל',
+    vipBadge: 'VIP BARBERSHOP & GROOMING EXPERIENCE',
+    actionIcon: '✂️',
+    actionLabel: 'קביעת תור',
+  },
+  beauty_salon: {
+    categoryKey: 'beauty_salon',
+    icon: '💅',
+    label: 'Beauty & Nails',
+    heroImage: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1600&q=80',
+    masterTitle: 'אמנית ציפורניים ומטפלת ראשית',
+    vipBadge: 'LUXURY BEAUTY & NAILS LOUNGE',
+    actionIcon: '💅',
+    actionLabel: 'קביעת תור',
+  },
+  clinic_therapist: {
+    categoryKey: 'clinic_therapist',
+    icon: '🌿',
+    label: 'Spa & Wellness',
+    heroImage: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1600&q=80',
+    masterTitle: 'מטפלת מוסמכת ומנהלת ספא',
+    vipBadge: 'HOLISTIC WELLNESS SPA EXPERIENCE',
+    actionIcon: '🌿',
+    actionLabel: 'הזמנת טיפול',
+  },
+  private_instructor: {
+    categoryKey: 'private_instructor',
+    icon: '🏋️',
+    label: 'Fitness & Coach',
+    heroImage: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80',
+    masterTitle: 'מאמן כושר אישי בכיר',
+    vipBadge: 'PRO FITNESS & BODY COACHING',
+    actionIcon: '🏋️',
+    actionLabel: 'תיאום אימון',
+  },
+  clinics_aesthetics: {
+    categoryKey: 'clinics_aesthetics',
+    icon: '🩺',
+    label: 'Aesthetic Clinic',
+    heroImage: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1600&q=80',
+    masterTitle: 'רופא מומחה ומנהל קליניקה',
+    vipBadge: 'ADVANCED MEDICAL AESTHETIC CLINIC',
+    actionIcon: '🩺',
+    actionLabel: 'קביעת ייעוץ',
+  },
+  home_technician: {
+    categoryKey: 'home_technician',
+    icon: '🔧',
+    label: 'Tech & Repair',
+    heroImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
+    masterTitle: 'טכנאי מוסמך וחשמלאי מורשה',
+    vipBadge: 'CERTIFIED PRO HOME SERVICES',
+    actionIcon: '🔧',
+    actionLabel: 'הזמן שירות',
+  },
+  tattoo_piercing: {
+    categoryKey: 'tattoo_piercing',
+    icon: '⚡',
+    label: 'Tattoo Studio',
+    heroImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1600&q=80',
+    masterTitle: 'אמן קעקועים ראשי ומעצב',
+    vipBadge: 'CUSTOM TATTOO ART & PIERCING',
+    actionIcon: '⚡',
+    actionLabel: 'תיאום סשן',
+  },
+};
+
 /**
- * Helper to infer the appropriate terminology given a BusinessConfig, settings, or category/slug string.
+ * Resolves the clean category key from BusinessConfig or string
  */
-export function getIndustryTerminology(business?: any): IndustryTerminology {
-  if (!business) return INDUSTRY_TERMINOLOGIES.barber;
+export function resolveIndustryCategoryKey(business?: any): string {
+  if (!business) return 'barber';
 
   if (typeof business === 'string') {
     const raw = business.trim().toLowerCase();
-    if (INDUSTRY_TERMINOLOGIES[raw]) return INDUSTRY_TERMINOLOGIES[raw];
-    if (raw === 'beauty' || raw === 'nails' || raw === 'nails-beauty' || raw === 'cosmetics') return INDUSTRY_TERMINOLOGIES.beauty_salon;
-    if (raw === 'trainer' || raw === 'fitness' || raw === 'fitness-trainer' || raw === 'coach') return INDUSTRY_TERMINOLOGIES.private_instructor;
-    if (raw === 'spa' || raw === 'massage' || raw === 'spa-massage') return INDUSTRY_TERMINOLOGIES.clinic_therapist;
-    if (raw === 'clinic' || raw === 'clinics' || raw === 'clinics-aesthetics' || raw === 'doctor' || raw === 'aesthetics') return INDUSTRY_TERMINOLOGIES.clinics_aesthetics;
-    if (raw === 'services' || raw === 'tech' || raw === 'home-technician' || raw === 'plumber' || raw === 'ac') return INDUSTRY_TERMINOLOGIES.home_technician;
-    if (raw === 'tattoo' || raw === 'tattoo-piercing' || raw === 'piercing') return INDUSTRY_TERMINOLOGIES.tattoo_piercing;
-    return INDUSTRY_TERMINOLOGIES.barber;
+    if (INDUSTRY_META_MAP[raw]) return raw;
+    if (raw === 'beauty' || raw === 'nails' || raw === 'nails-beauty' || raw === 'cosmetics') return 'beauty_salon';
+    if (raw === 'trainer' || raw === 'fitness' || raw === 'fitness-trainer' || raw === 'coach') return 'private_instructor';
+    if (raw === 'spa' || raw === 'massage' || raw === 'spa-massage') return 'clinic_therapist';
+    if (raw === 'clinic' || raw === 'clinics' || raw === 'clinics-aesthetics' || raw === 'doctor' || raw === 'aesthetics') return 'clinics_aesthetics';
+    if (raw === 'services' || raw === 'tech' || raw === 'home-technician' || raw === 'plumber' || raw === 'ac') return 'home_technician';
+    if (raw === 'tattoo' || raw === 'tattoo-piercing' || raw === 'piercing') return 'tattoo_piercing';
+    if (raw === 'dvir' || raw === 'thecut' || raw === 'barber' || raw === 'barbershop') return 'barber';
+    return 'barber';
   }
 
-  let cat = business?.category;
+  // Priority 1: Flagship or explicit slug
+  const slug = (business.slug || '').toLowerCase().trim();
+  if (slug === 'dvir' || slug === 'thecut') return 'barber';
+  if (slug === 'beauty') return 'beauty_salon';
+  if (slug === 'spa') return 'clinic_therapist';
+  if (slug === 'trainer') return 'private_instructor';
+  if (slug === 'clinic') return 'clinics_aesthetics';
+  if (slug === 'services') return 'home_technician';
+  if (slug === 'tattoo') return 'tattoo_piercing';
 
-  // Direct category alias map
+  // Priority 2: Explicit category field
+  const cat = business.category;
   if (cat) {
-    if (INDUSTRY_TERMINOLOGIES[cat]) return INDUSTRY_TERMINOLOGIES[cat];
-    if (cat === 'beauty' || cat === 'nails' || cat === 'nails-beauty' || cat === 'cosmetics') return INDUSTRY_TERMINOLOGIES.beauty_salon;
-    if (cat === 'trainer' || cat === 'fitness' || cat === 'fitness-trainer' || cat === 'coach') return INDUSTRY_TERMINOLOGIES.private_instructor;
-    if (cat === 'spa' || cat === 'massage' || cat === 'spa-massage') return INDUSTRY_TERMINOLOGIES.clinic_therapist;
-    if (cat === 'clinic' || cat === 'clinics' || cat === 'clinics-aesthetics' || cat === 'doctor' || cat === 'aesthetics') return INDUSTRY_TERMINOLOGIES.clinics_aesthetics;
-    if (cat === 'services' || cat === 'tech' || cat === 'home-technician' || cat === 'plumber' || cat === 'ac') return INDUSTRY_TERMINOLOGIES.home_technician;
-    if (cat === 'tattoo' || cat === 'tattoo-piercing' || cat === 'piercing') return INDUSTRY_TERMINOLOGIES.tattoo_piercing;
+    if (INDUSTRY_META_MAP[cat]) return cat;
+    if (cat === 'beauty' || cat === 'nails' || cat === 'nails-beauty' || cat === 'cosmetics') return 'beauty_salon';
+    if (cat === 'trainer' || cat === 'fitness' || cat === 'fitness-trainer' || cat === 'coach') return 'private_instructor';
+    if (cat === 'spa' || cat === 'massage' || cat === 'spa-massage') return 'clinic_therapist';
+    if (cat === 'clinic' || cat === 'clinics' || cat === 'clinics-aesthetics' || cat === 'doctor' || cat === 'aesthetics') return 'clinics_aesthetics';
+    if (cat === 'services' || cat === 'tech' || cat === 'home-technician' || cat === 'plumber' || cat === 'ac') return 'home_technician';
+    if (cat === 'tattoo' || cat === 'tattoo-piercing' || cat === 'piercing') return 'tattoo_piercing';
+    if (cat === 'barber' || cat === 'barbershop') return 'barber';
   }
 
-  // Keyword-based detection from business name, shopName, slogan
-  const name = business.name || business.shopName || '';
-  const slogan = business.slogan || '';
-  const combined = `${name} ${slogan}`.toLowerCase();
-  const themeColor = (business.themeColor || '').toUpperCase();
+  // Priority 3: Explicit business name analysis (Barbershops check FIRST)
+  const name = (business.name || business.shopName || '').toLowerCase();
+  const slogan = (business.slogan || '').toLowerCase();
+  const combined = `${name} ${slogan}`;
+
+  if (
+    combined.includes('מספרה') ||
+    combined.includes('מספרת') ||
+    combined.includes('ברבר') ||
+    combined.includes('barber') ||
+    combined.includes('תספורת') ||
+    combined.includes('שיער') ||
+    combined.includes('זקן') ||
+    combined.includes('פייד') ||
+    combined.includes('fade') ||
+    combined.includes('דביר')
+  ) {
+    return 'barber';
+  }
 
   if (
     combined.includes('ביוטי') ||
@@ -282,34 +391,26 @@ export function getIndustryTerminology(business?: any): IndustryTerminology {
     combined.includes('ציפורניים') ||
     combined.includes('ציפורן') ||
     combined.includes('קוסמטיקה') ||
-    combined.includes('יופי') ||
-    combined.includes('פדיקור') ||
     combined.includes('מניקור') ||
-    combined.includes('לק') ||
+    combined.includes('פדיקור') ||
+    combined.includes('לק ג׳ל') ||
     combined.includes('מבנה אנטומי') ||
-    combined.includes('ריסים') ||
-    themeColor === '#EC4899' ||
-    themeColor === '#8B5CF6' ||
-    themeColor === '#A855F7'
+    combined.includes('ריסים')
   ) {
-    return INDUSTRY_TERMINOLOGIES.beauty_salon;
+    return 'beauty_salon';
   }
 
   if (
     combined.includes('כושר') ||
     combined.includes('מאמן') ||
     combined.includes('אימונים') ||
-    combined.includes('אימון') ||
+    combined.includes('אימון אישי') ||
     combined.includes('אופק') ||
-    combined.includes('סטודיו אופק') ||
     combined.includes('fitness') ||
     combined.includes('trainer') ||
-    combined.includes('gym') ||
-    combined.includes('פילאטיס') ||
-    combined.includes('יוגה') ||
-    themeColor === '#10B981'
+    combined.includes('gym')
   ) {
-    return INDUSTRY_TERMINOLOGIES.private_instructor;
+    return 'private_instructor';
   }
 
   if (
@@ -318,51 +419,58 @@ export function getIndustryTerminology(business?: any): IndustryTerminology {
     combined.includes('מסאז') ||
     combined.includes('לוטוס') ||
     combined.includes('רפלקסולוגיה') ||
-    combined.includes('טיפולי גוף') ||
-    themeColor === '#14B8A6' ||
-    themeColor === '#059669'
+    combined.includes('wellness')
   ) {
-    return INDUSTRY_TERMINOLOGIES.clinic_therapist;
+    return 'clinic_therapist';
   }
 
   if (
     combined.includes('קליניקה') ||
     combined.includes('אסתטיקה') ||
-    combined.includes('ד״ר') ||
-    combined.includes('דוקטור') ||
-    combined.includes('לוי') ||
-    combined.includes('רופא') ||
     combined.includes('הזרקות') ||
     combined.includes('בוטוקס') ||
-    combined.includes('טיפולי פנים') ||
-    themeColor === '#3B82F6'
+    combined.includes('חומצה היאלורונית') ||
+    combined.includes('ד״ר')
   ) {
-    return INDUSTRY_TERMINOLOGIES.clinics_aesthetics;
+    return 'clinics_aesthetics';
   }
 
   if (
     combined.includes('טכנאי') ||
     combined.includes('מנעולן') ||
-    combined.includes('תיקונים') ||
     combined.includes('מיזוג') ||
-    combined.includes('חשמל') ||
-    combined.includes('אינסטלטור') ||
-    combined.includes('שרון') ||
-    themeColor === '#0EA5E9'
+    combined.includes('אינסטלציה') ||
+    combined.includes('חשמלאי') ||
+    combined.includes('תיקונים')
   ) {
-    return INDUSTRY_TERMINOLOGIES.home_technician;
+    return 'home_technician';
   }
 
   if (
     combined.includes('קעקוע') ||
     combined.includes('קעקועים') ||
     combined.includes('פירסינג') ||
-    combined.includes('אינק') ||
-    combined.includes('tattoo') ||
-    themeColor === '#E2E8F0'
+    combined.includes('tattoo')
   ) {
-    return INDUSTRY_TERMINOLOGIES.tattoo_piercing;
+    return 'tattoo_piercing';
   }
 
-  return INDUSTRY_TERMINOLOGIES.barber;
+  return 'barber';
 }
+
+/**
+ * Authoritative Industry Meta resolver for all components
+ */
+export function getIndustryMeta(business?: any): IndustryMeta {
+  const catKey = resolveIndustryCategoryKey(business);
+  return INDUSTRY_META_MAP[catKey] || INDUSTRY_META_MAP.barber;
+}
+
+/**
+ * Authoritative Industry Terminology resolver
+ */
+export function getIndustryTerminology(business?: any): IndustryTerminology {
+  const catKey = resolveIndustryCategoryKey(business);
+  return INDUSTRY_TERMINOLOGIES[catKey] || INDUSTRY_TERMINOLOGIES.barber;
+}
+

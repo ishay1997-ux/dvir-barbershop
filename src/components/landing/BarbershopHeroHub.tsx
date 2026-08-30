@@ -10,6 +10,7 @@ import { HubMonogramHero } from './hero/HubMonogramHero';
 import { SplitCinemaHero } from './hero/SplitCinemaHero';
 import { MinimalistVipHero } from './hero/MinimalistVipHero';
 import { HeroSharedProps } from './hero/hero-types';
+import { getIndustryMeta } from '@/lib/industry-terminology';
 
 export default function BarbershopHeroHub({
   business,
@@ -72,86 +73,7 @@ export default function BarbershopHeroHub({
   };
 
   const heroStyle = business?.layout?.heroStyle || 'hub-monogram';
-
-  // Determine dynamic Industry Info
-  const industryMeta = (() => {
-    const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
-    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || combined.includes('שירן') || themeColor === '#EC4899' || themeColor === '#8B5CF6' || themeColor === '#A855F7') {
-      return { 
-        icon: '💅', 
-        label: 'Beauty & Nails',
-        heroImage: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1600&q=80',
-        masterTitle: 'אמנית ציפורניים ומטפלת ראשית',
-        vipBadge: 'LUXURY BEAUTY & NAILS LOUNGE',
-        actionIcon: '💅',
-        actionLabel: 'קביעת תור',
-      };
-    }
-    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || combined.includes('לוטוס') || themeColor === '#14B8A6' || themeColor === '#059669') {
-      return { 
-        icon: '🌿', 
-        label: 'Spa & Wellness',
-        heroImage: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1600&q=80',
-        masterTitle: 'מטפלת מוסמכת ומנהלת ספא',
-        vipBadge: 'HOLISTIC WELLNESS SPA EXPERIENCE',
-        actionIcon: '🌿',
-        actionLabel: 'הזמנת טיפול',
-      };
-    }
-    if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
-      return { 
-        icon: '⚡', 
-        label: 'Tattoo Studio',
-        heroImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=1600&q=80',
-        masterTitle: 'אמן קעקועים ראשי',
-        vipBadge: 'CUSTOM TATTOO ART & PIERCING',
-        actionIcon: '⚡',
-        actionLabel: 'תיאום סשן',
-      };
-    }
-    if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
-      return { 
-        icon: '🏋️', 
-        label: 'Fitness & Coach',
-        heroImage: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80',
-        masterTitle: 'מאמן כושר אישי בכיר',
-        vipBadge: 'PRO FITNESS & BODY COACHING',
-        actionIcon: '🏋️',
-        actionLabel: 'תיאום אימון',
-      };
-    }
-    if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
-      return { 
-        icon: '🩺', 
-        label: 'Aesthetic Clinic',
-        heroImage: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1600&q=80',
-        masterTitle: 'רופא מומחה ומנהל קליניקה',
-        vipBadge: 'ADVANCED MEDICAL AESTHETIC CLINIC',
-        actionIcon: '🩺',
-        actionLabel: 'קביעת ייעוץ',
-      };
-    }
-    if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
-      return { 
-        icon: '🔧', 
-        label: 'Tech & Repair',
-        heroImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80',
-        masterTitle: 'טכנאי מוסמך וחשמלאי מורשה',
-        vipBadge: 'CERTIFIED PRO HOME SERVICES',
-        actionIcon: '🔧',
-        actionLabel: 'הזמן שירות',
-      };
-    }
-    return { 
-      icon: '✂️', 
-      label: 'Barbershop',
-      heroImage: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1600&q=80',
-      masterTitle: 'מאסטר ברבר ראשי',
-      vipBadge: 'VIP BARBERSHOP & GROOMING EXPERIENCE',
-      actionIcon: '✂️',
-      actionLabel: 'קביעת תור',
-    };
-  })();
+  const industryMeta = getIndustryMeta(business);
 
   const heroProps: HeroSharedProps = {
     business,

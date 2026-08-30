@@ -4,6 +4,7 @@ import { SHOP_INFO } from '@/lib/utils';
 import { BusinessConfig } from '@/types/business';
 import { SHORT_VERSION_LABEL } from '@/config/version';
 import { getThemeTokens } from '@/lib/theme-tokens';
+import { getIndustryMeta } from '@/lib/industry-terminology';
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -50,28 +51,7 @@ export default function Footer({
         { name: 'סניף רחובות (קליניקה פרטית)', address: 'רחובות', hours: 'ימים ד׳-ו׳: 09:00 – 20:00' },
       ];
 
-  const industryIcon = (() => {
-    const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
-    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
-      return '💅';
-    }
-    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
-      return '🌿';
-    }
-    if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
-      return '⚡';
-    }
-    if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
-      return '🏋️';
-    }
-    if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
-      return '🩺';
-    }
-    if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
-      return '🔧';
-    }
-    return '✂️';
-  })();
+  const industryIcon = getIndustryMeta(business).icon;
 
   return (
     <footer className={`border-t transition-colors ${t.isLight ? 'bg-white text-slate-900 border-slate-200' : 'bg-[#1C1C1C] text-white border-white/10'}`} role="contentinfo" id="footer" dir="rtl">

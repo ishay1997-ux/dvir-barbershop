@@ -6,6 +6,7 @@ import { motion, useInView } from 'framer-motion';
 import { Scissors, Star, Award, Sparkles, MapPin, CheckCircle2 } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { getThemeTokens } from '@/lib/theme-tokens';
+import { getIndustryMeta } from '@/lib/industry-terminology';
 
 export default function BarberShowcase({
   business,
@@ -30,56 +31,12 @@ export default function BarberShowcase({
     'היגיינה וסטריליזציה קפדנית',
   ];
 
-  const industryMeta = (() => {
-    const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
-    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || combined.includes('שירן') || themeColor === '#EC4899' || themeColor === '#8B5CF6' || themeColor === '#A855F7') {
-      return { 
-        title: 'אמנית ציפורניים ומטפלת ראשית',
-        badge: 'הכירו את המומחית',
-        icon: '💅',
-      };
-    }
-    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || combined.includes('לוטוס') || themeColor === '#14B8A6' || themeColor === '#059669') {
-      return { 
-        title: 'מטפלת מוסמכת ומנהלת הספא',
-        badge: 'אודות המרכז והמטפלים',
-        icon: '🌿',
-      };
-    }
-    if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
-      return { 
-        title: 'אמן קעקועים ראשי ומעצב',
-        badge: 'אודות הסטודיו והאמן',
-        icon: '⚡',
-      };
-    }
-    if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
-      return { 
-        title: 'מאמן כושר אישי בכיר',
-        badge: 'המאמן שלכם',
-        icon: '🏋️',
-      };
-    }
-    if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
-      return { 
-        title: 'רופא מומחה ומנהל הקליניקה',
-        badge: 'אודות הצוות הרפואי',
-        icon: '🩺',
-      };
-    }
-    if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
-      return { 
-        title: 'טכנאי מוסמך וחשמלאי מורשה',
-        badge: 'אודות איש המקצוע',
-        icon: '🔧',
-      };
-    }
-    return { 
-      title: 'מאסטר ברבר ראשי ומנהל',
-      badge: 'המאסטר שלכם',
-      icon: '✂️',
-    };
-  })();
+  const meta = getIndustryMeta(business);
+  const industryMeta = {
+    title: meta.masterTitle,
+    badge: meta.categoryKey === 'barber' ? 'המאסטר שלכם' : meta.categoryKey === 'beauty_salon' ? 'הכירו את המומחית' : meta.vipBadge,
+    icon: meta.icon,
+  };
 
   return (
     <section

@@ -10,6 +10,7 @@ export const DVIR_FLAGSHIP_CONFIG: BusinessConfig = {
   slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
   announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מראש!',
   themeColor: '#C9A84C',
+  category: 'barber',
   branchesCount: 2,
   status: 'active',
   plan: 'enterprise',

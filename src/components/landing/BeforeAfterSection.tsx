@@ -6,6 +6,7 @@ import { Sparkles, MoveHorizontal, Scissors, Dumbbell, Stethoscope, HeartHandsha
 import Link from 'next/link';
 import { BusinessConfig } from '@/types/business';
 import { getThemeTokens } from '@/lib/theme-tokens';
+import { resolveIndustryCategoryKey } from '@/lib/industry-terminology';
 import InstagramMasonryGallery from './gallery/InstagramMasonryGallery';
 import AmbientCarouselGallery from './gallery/AmbientCarouselGallery';
 
@@ -151,18 +152,17 @@ export default function BeforeAfterSection({
   const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
   const t = getThemeTokens(bgTheme);
 
-  // Determine industry-appropriate transformation dataset
-  const combinedIndustry = `${business?.name || ''} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
+  const catKey = resolveIndustryCategoryKey(business);
   
   let transformations = BARBER_TRANSFORMATIONS;
   let industryBadge = 'מהפך ושינוי סגנון';
   let SectionIcon = Scissors;
 
-  if (combinedIndustry.includes('כושר') || combinedIndustry.includes('מאמן') || combinedIndustry.includes('אימונים') || themeColor === '#10B981') {
+  if (catKey === 'private_instructor') {
     transformations = FITNESS_TRANSFORMATIONS;
     industryBadge = 'תוצאות ושינוי גוף';
     SectionIcon = Dumbbell;
-  } else if (combinedIndustry.includes('קליניקה') || combinedIndustry.includes('אסתטיקה') || combinedIndustry.includes('רופא') || themeColor === '#0EA5E9' || themeColor === '#3B82F6') {
+  } else if (catKey === 'clinics_aesthetics' || catKey === 'clinic_therapist') {
     transformations = CLINIC_TRANSFORMATIONS;
     industryBadge = 'תוצאות טיפולים ואסתטיקה';
     SectionIcon = Stethoscope;
