@@ -363,6 +363,37 @@ export default function SuperAdminPage() {
     });
   };
 
+  // Clone Business
+  const handleCloneBusiness = async (biz: Business) => {
+    try {
+      const clonedSlug = `${biz.slug}-copy`;
+      const clonedName = `${biz.name} (עותק)`;
+      const newBizData = {
+        ...biz,
+        id: `biz-${clonedSlug}`,
+        slug: clonedSlug,
+        name: clonedName,
+        createdAt: new Date().toISOString().split('T')[0],
+      };
+
+      const res = await authFetch('/api/admin/businesses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newBizData),
+      });
+
+      if (res.ok) {
+        success('העסק שוכפל בהצלחה! 📋', `נוצר עותק חדש תחת הכתובת /${clonedSlug}`);
+        fetchBusinesses();
+      } else {
+        const data = await res.json();
+        error(data.error || 'שגיאה בשכפול העסק');
+      }
+    } catch {
+      error('שגיאה בשכפול העסק');
+    }
+  };
+
   // Update Report Status
   const handleStatusChange = async (reportId: string, newStatus: BugReport['status']) => {
     try {
@@ -860,6 +891,7 @@ export default function SuperAdminPage() {
             onRefresh={fetchBusinesses}
             onOpenCreateModal={() => setIsNewBizModalOpen(true)}
             onOpenEditModal={(biz) => setEditingBiz(biz)}
+            onCloneBusiness={handleCloneBusiness}
             onDeleteBusiness={handleDeleteBusiness}
           />
         )}

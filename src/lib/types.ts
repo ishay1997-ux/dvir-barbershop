@@ -80,6 +80,7 @@ export interface CustomerPreferences {
   fadeType?: string;      // e.g. "Low Fade", "Mid Fade", "Skin Fade"
   beardStyle?: string;    // e.g. "קווים חדים, שמן ארגן"
   notes?: string;         // e.g. "רגיש בעורף, שותה מים קרים"
+  customAttributes?: Record<string, string | number | boolean>;
 }
 
 export interface Customer {
@@ -93,6 +94,7 @@ export interface Customer {
   favoriteBarberId?: string;
   favoriteBranchId?: string;
   preferences?: CustomerPreferences;
+  customAttributes?: Record<string, string | number | boolean>;
   haircutFormula?: HaircutFormula;
 }
 

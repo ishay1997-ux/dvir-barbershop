@@ -11,6 +11,8 @@ import {
   Key,
   Trash2,
   Building2,
+  Copy,
+  Download,
 } from 'lucide-react';
 import type { Business } from './types';
 
@@ -21,6 +23,7 @@ interface BusinessesTabProps {
   onRefresh: () => void;
   onOpenCreateModal: () => void;
   onOpenEditModal: (biz: Business) => void;
+  onCloneBusiness?: (biz: Business) => void;
   onDeleteBusiness: (slug: string, name: string) => void;
 }
 
@@ -31,6 +34,7 @@ export const BusinessesTab: React.FC<BusinessesTabProps> = ({
   onRefresh,
   onOpenCreateModal,
   onOpenEditModal,
+  onCloneBusiness,
   onDeleteBusiness,
 }) => {
   const router = useRouter();
@@ -278,6 +282,40 @@ export const BusinessesTab: React.FC<BusinessesTabProps> = ({
                   >
                     <Key className="w-3.5 h-3.5" /> כניסה כמנהל
                   </button>
+
+                  <button
+                    onClick={() => {
+                      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(biz, null, 2));
+                      const downloadAnchor = document.createElement('a');
+                      downloadAnchor.setAttribute('href', dataStr);
+                      downloadAnchor.setAttribute('download', `${biz.slug}-backup.json`);
+                      document.body.appendChild(downloadAnchor);
+                      downloadAnchor.click();
+                      downloadAnchor.remove();
+                    }}
+                    className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                        : 'bg-white/10 hover:bg-white/15 text-zinc-300 border-transparent'
+                    }`}
+                    title="ייצא גיבוי JSON של העסק"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
+
+                  {onCloneBusiness && (
+                    <button
+                      onClick={() => onCloneBusiness(biz)}
+                      className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+                        adminTheme === 'light'
+                          ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200'
+                          : 'bg-amber-950/30 hover:bg-amber-900/50 text-amber-400 border-amber-500/30'
+                      }`}
+                      title="שכפל עסק זה להקמת עסק חדש"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                  )}
 
                   <button
                     onClick={() => onDeleteBusiness(biz.slug, biz.name)}
