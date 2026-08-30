@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { THEME_PALETTES } from '@/lib/archetypes';
+import { VisualPuckPageBuilder } from '@/components/admin/settings/VisualPuckPageBuilder';
 import type { Business } from '../types';
 
 interface EditLayoutTabProps {
@@ -258,6 +259,22 @@ export const EditLayoutTab: React.FC<EditLayoutTabProps> = ({
             );
           })}
         </div>
+      </div>
+
+      {/* Visual Puck Page Builder Module */}
+      <div className="pt-4 border-t border-slate-200 dark:border-white/10">
+        <VisualPuckPageBuilder
+          layout={editingBiz.layout || {}}
+          themeColor={editingBiz.themeColor || '#C9A84C'}
+          businessName={editingBiz.name}
+          adminTheme={adminTheme}
+          onChangeLayout={(newLayout) => {
+            setEditingBiz({
+              ...editingBiz,
+              layout: newLayout,
+            });
+          }}
+        />
       </div>
     </div>
   );
