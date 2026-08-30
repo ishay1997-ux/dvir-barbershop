@@ -1,0 +1,264 @@
+'use client';
+
+import React from 'react';
+import { THEME_PALETTES } from '@/lib/archetypes';
+import type { Business } from '../types';
+
+interface EditLayoutTabProps {
+  editingBiz: Business;
+  adminTheme: 'dark' | 'light';
+  setEditingBiz: (biz: Business) => void;
+}
+
+export const EditLayoutTab: React.FC<EditLayoutTabProps> = ({
+  editingBiz,
+  adminTheme,
+  setEditingBiz,
+}) => {
+  return (
+    <div className="space-y-4 text-xs">
+      <div
+        className={`p-3 rounded-xl border ${
+          adminTheme === 'light'
+            ? 'bg-slate-50 border-slate-200 text-slate-700'
+            : 'bg-[#141414] border-white/10 text-zinc-300'
+        }`}
+      >
+        <span
+          className={`font-bold block mb-1 ${
+            adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+          }`}
+        >
+          📐 התאמה אישית של מבנה האתר (Layout & Structure):
+        </span>
+        באפשרותך לקבוע את ערכת הרקע, צבע המיתוג ולהפעיל או לכבות סקשנים לפי העדפת הספר.
+      </div>
+
+      {/* Website Background Theme Selector */}
+      <div>
+        <label
+          className={`block font-bold mb-2 ${
+            adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'
+          }`}
+        >
+          ערכת רקע ואווירה כללית לאתר (Website Theme):
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {[
+            {
+              id: 'dark-obsidian',
+              name: 'שחור אובסידיאן',
+              sub: 'Dark Obsidian',
+              icon: '🌑',
+            },
+            {
+              id: 'brand-midnight',
+              name: 'כהה גוון מותג',
+              sub: 'Brand Midnight',
+              icon: '🌌',
+            },
+            {
+              id: 'luxury-light',
+              name: 'בהיר פרימיום',
+              sub: 'Luxury Light',
+              icon: '☀️',
+            },
+            {
+              id: 'cyber-carbon',
+              name: 'קרבון וניאון',
+              sub: 'Cyber Carbon',
+              icon: '⚡',
+            },
+          ].map((th) => {
+            const currentBg = editingBiz.layout?.bgTheme || 'dark-obsidian';
+            const isSelected = currentBg === th.id;
+            return (
+              <button
+                key={th.id}
+                type="button"
+                onClick={() => {
+                  setEditingBiz({
+                    ...editingBiz,
+                    layout: {
+                      ...(editingBiz.layout || {}),
+                      bgTheme: th.id as any,
+                    },
+                  });
+                }}
+                className={`p-3 rounded-xl border flex flex-col items-center text-center cursor-pointer transition-all ${
+                  isSelected
+                    ? 'border-[#C9A84C] bg-amber-500/10 shadow-xs ring-1 ring-[#C9A84C]'
+                    : adminTheme === 'light'
+                    ? 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800'
+                    : 'border-white/10 bg-[#141414] hover:bg-white/5 opacity-80'
+                }`}
+              >
+                <span className="text-xl mb-1">{th.icon}</span>
+                <span
+                  className={`text-xs font-bold ${
+                    adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                  }`}
+                >
+                  {th.name}
+                </span>
+                <span
+                  className={`text-[10px] ${
+                    adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'
+                  }`}
+                >
+                  {th.sub}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Theme Palette Picker & Custom Color */}
+      <div>
+        <div className="flex items-center justify-between mb-1.5">
+          <label
+            className={`block font-bold ${
+              adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'
+            }`}
+          >
+            🎨 פלטת צבעי מיתוג והילת תאורה לאתר (Brand Color & Aura):
+          </label>
+          <div className="flex items-center gap-2">
+            <span
+              className={`text-[11px] ${
+                adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'
+              }`}
+            >
+              דוגם צבע חופשי:
+            </span>
+            <input
+              type="color"
+              value={editingBiz.themeColor || '#C9A84C'}
+              onChange={(e) => setEditingBiz({ ...editingBiz, themeColor: e.target.value })}
+              className="w-7 h-7 rounded-lg border border-slate-300 bg-transparent cursor-pointer"
+              title="בחר צבע חופשי"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {THEME_PALETTES.map((pal) => (
+            <button
+              key={pal.id}
+              type="button"
+              onClick={() => setEditingBiz({ ...editingBiz, themeColor: pal.color })}
+              className={`p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${
+                editingBiz.themeColor === pal.color
+                  ? 'border-[#C9A84C] bg-amber-500/10 shadow-xs ring-1 ring-[#C9A84C]'
+                  : adminTheme === 'light'
+                  ? 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800'
+                  : 'border-white/10 bg-[#141414] hover:bg-white/5'
+              }`}
+            >
+              <div
+                className="w-4 h-4 rounded-full shadow-xs flex-shrink-0"
+                style={{ backgroundColor: pal.color }}
+              />
+              <span
+                className={`text-[11px] font-bold truncate ${
+                  adminTheme === 'light' ? 'text-slate-800' : 'text-white'
+                }`}
+              >
+                {pal.name.split('·')[0]}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Section Visibility Toggles */}
+      <div>
+        <label
+          className={`block font-bold mb-2 ${
+            adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'
+          }`}
+        >
+          מודולים וסקשנים פעילים בעמוד הבית:
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {[
+            {
+              key: 'showBio',
+              label: '✂️ אודות הספר והניסיון (Barber Bio & Philosophy)',
+              desc: 'הצגת פסקת האודות, שנות הניסיון והסטנדרטים',
+            },
+            {
+              key: 'showBranches',
+              label: '📍 סניפים וניווט Waze (Branches & Hours)',
+              desc: 'הצגת שעות פעילות, כתובת וניווט ישיר',
+            },
+            {
+              key: 'showBeforeAfter',
+              label: '🌓 סליידר לפני / אחרי (Before & After Slider)',
+              desc: 'סליידר אינטראקטיבי למהפכי תספורת וזקן',
+            },
+            {
+              key: 'showReviews',
+              label: '⭐ ביקורות והמלצות (Google Reviews 5.0★)',
+              desc: 'הצגת פידבק לקוחות מרוצים וציון ממוצע',
+            },
+            {
+              key: 'showFaqs',
+              label: '❓ שאלות נפוצות (FAQ Section)',
+              desc: 'אקורדיון שאלות ותשובות לקוחות',
+            },
+          ].map((sec) => {
+            const isEnabled = (editingBiz.layout as any)?.[sec.key] !== false;
+            return (
+              <div
+                key={sec.key}
+                onClick={() => {
+                  setEditingBiz({
+                    ...editingBiz,
+                    layout: {
+                      ...(editingBiz.layout || {}),
+                      [sec.key]: !isEnabled,
+                    },
+                  });
+                }}
+                className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                  isEnabled
+                    ? adminTheme === 'light'
+                    ? 'bg-emerald-50 border-emerald-300 text-slate-900 shadow-xs'
+                    : 'bg-emerald-950/20 border-emerald-500/40 text-white'
+                    : adminTheme === 'light'
+                    ? 'bg-slate-50 border-slate-200 text-slate-400 opacity-70'
+                    : 'bg-white/5 border-white/10 text-zinc-500 opacity-60'
+                }`}
+              >
+                <div>
+                  <div
+                    className={`font-bold text-xs ${
+                      adminTheme === 'light' ? 'text-slate-900' : 'text-white'
+                    }`}
+                  >
+                    {sec.label}
+                  </div>
+                  <div
+                    className={`text-[10px] mt-0.5 ${
+                      adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'
+                    }`}
+                  >
+                    {sec.desc}
+                  </div>
+                </div>
+                <div
+                  className={`w-8 h-5 rounded-full flex items-center px-0.5 transition-colors ${
+                    isEnabled ? 'bg-emerald-500 justify-end' : 'bg-zinc-400 justify-start'
+                  }`}
+                >
+                  <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
