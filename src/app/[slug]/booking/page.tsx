@@ -353,24 +353,32 @@ export default function DynamicBusinessBookingPage({
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-2">3. בחר שעה פנויה:</label>
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5" dir="ltr">
-                  {AVAILABLE_HOURS.map((t) => (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => setSelectedTime(t)}
-                      className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                        selectedTime === t
-                          ? 'text-black'
-                          : 'bg-[#141414] border-white/10 text-zinc-300 hover:text-white'
-                      }`}
-                      style={{
-                        backgroundColor: selectedTime === t ? themeColor : '#141414',
-                        borderColor: selectedTime === t ? themeColor : 'rgba(255,255,255,0.1)',
-                      }}
-                    >
-                      {t}
-                    </button>
-                  ))}
+                  {AVAILABLE_HOURS.map((t) => {
+                    const isToday = selectedDate === format(new Date(), 'yyyy-MM-dd');
+                    const isPast = isToday && t <= format(new Date(), 'HH:mm');
+
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        disabled={isPast}
+                        onClick={() => !isPast && setSelectedTime(t)}
+                        className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                          isPast
+                            ? 'opacity-25 bg-white/5 border-transparent text-zinc-600 cursor-not-allowed line-through'
+                            : selectedTime === t
+                            ? 'text-black cursor-pointer shadow-md'
+                            : 'bg-[#141414] border-white/10 text-zinc-300 hover:text-white cursor-pointer'
+                        }`}
+                        style={{
+                          backgroundColor: !isPast && selectedTime === t ? themeColor : '#141414',
+                          borderColor: !isPast && selectedTime === t ? themeColor : 'rgba(255,255,255,0.1)',
+                        }}
+                      >
+                        {t}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

@@ -75,19 +75,78 @@ export async function POST(request: Request) {
     const resolvedPrice = Number(servicePrice || price) || 80;
     const resolvedSlug = String(businessSlug || 'dvir').toLowerCase().trim();
     const resolvedBizName = String(businessName || 'המספרה של דביר').trim();
+    const resolvedDate = String(date).trim();
+    const resolvedTime = String(time).trim();
+    const resolvedBarberId = String(barberId || 'dvir').trim();
 
-    if (cleanName.length < 2 || cleanPhone.length < 8) {
+    if (cleanName.length < 2 || cleanPhone.length < 9) {
       return NextResponse.json(
-        { error: 'שם מלא או מספר טלפון אינם תקינים' },
+        { error: 'שם מלא (לפחות 2 תווים) או מספר טלפון תקין (לפחות 9 ספרות) נדרשים' },
         { status: 400 }
+      );
+    }
+
+    // 1. Date & Time validity and past validation
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(resolvedDate) || !/^\d{2}:\d{2}$/.test(resolvedTime)) {
+      return NextResponse.json(
+        { error: 'פורמט תאריך או שעה אינו תקין' },
+        { status: 400 }
+      );
+    }
+
+    try {
+      const appointmentDateTime = new Date(`${resolvedDate}T${resolvedTime}:00`);
+      if (isNaN(appointmentDateTime.getTime()) || appointmentDateTime.getTime() < Date.now() - 5 * 60 * 1000) {
+        return NextResponse.json(
+          { error: 'לא ניתן לקבוע תור למועד שעבר. אנא בחר שעה עתידית.' },
+          { status: 400 }
+        );
+      }
+    } catch {
+      // ignore parse fallback
+    }
+
+    // 2. Conflict Check: In-memory store
+    const conflictInMemory = memoryAppointments.find(
+      (a) =>
+        a.businessSlug === resolvedSlug &&
+        a.date === resolvedDate &&
+        a.time === resolvedTime &&
+        a.barberId === resolvedBarberId &&
+        a.status === 'confirmed'
+    );
+    if (conflictInMemory) {
+      return NextResponse.json(
+        { error: 'מועד זה כבר נתפס על ידי לקוח אחר. אנא בחר שעה אחרת.' },
+        { status: 409 }
       );
     }
 
     let appointmentId = `apt-${Date.now()}`;
 
-    // 1. Primary: Firebase Firestore Cloud Database
+    // 3. Primary: Firebase Firestore Cloud Database with double-booking check
     if (isFirebaseConfigured && db) {
       try {
+        const conflictQuery = query(
+          collection(db, 'appointments'),
+          where('businessSlug', '==', resolvedSlug),
+          where('date', '==', resolvedDate),
+          where('time', '==', resolvedTime),
+          where('status', '==', 'confirmed')
+        );
+        const conflictSnap = await getDocs(conflictQuery);
+        if (!conflictSnap.empty) {
+          const barberConflict = conflictSnap.docs.some(
+            (d) => (d.data().barberId || 'dvir') === resolvedBarberId
+          );
+          if (barberConflict) {
+            return NextResponse.json(
+              { error: 'מועד זה כבר נתפס על ידי לקוח אחר. אנא בחר שעה אחרת.' },
+              { status: 409 }
+            );
+          }
+        }
+
         // Record Customer in Firestore
         const customerRef = doc(db, 'customers', cleanPhone);
         await setDoc(
@@ -109,14 +168,14 @@ export async function POST(request: Request) {
           serviceId: serviceId || 'srv-haircut',
           serviceName: resolvedServiceName,
           servicePrice: resolvedPrice,
-          barberId: barberId || 'dvir',
+          barberId: resolvedBarberId,
           barberName: barberName || 'דביר',
           branchId: branchId || 'ariel',
           branchName: branchName || (branchId === 'rehovot' ? 'סניף רחובות' : 'סניף אריאל'),
           businessSlug: resolvedSlug,
           businessName: resolvedBizName,
-          date: String(date).trim(),
-          time: String(time).trim(),
+          date: resolvedDate,
+          time: resolvedTime,
           customerName: cleanName,
           customerPhone: String(customerPhone).trim(),
           cleanPhone,

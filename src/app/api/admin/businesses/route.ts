@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
-import { collection, getDocs, doc, query, where, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc, query, where, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { verifyAuth, requireRole } from '@/lib/firebase-admin';
 
 export interface BusinessItem {
@@ -198,7 +198,25 @@ export async function POST(request: Request) {
     }
 
     const cleanSlug = slug.toLowerCase().trim().replace(/[^a-z0-9-_]/g, '');
+    if (!cleanSlug || cleanSlug.length < 2) {
+      return NextResponse.json({ error: 'מזהה הקישור (slug) חייב להכיל לפחות 2 תווים באנגלית או מספרים' }, { status: 400 });
+    }
     const docId = `biz-${cleanSlug}`;
+
+    // Slug uniqueness check in Firestore
+    if (isFirebaseConfigured && db) {
+      try {
+        const existingDoc = await getDoc(doc(db, 'businesses', docId));
+        if (existingDoc.exists()) {
+          return NextResponse.json(
+            { error: `מזהה הקישור (Slug) "${cleanSlug}" כבר קיים במערכת. אנא בחר מזהה ייחודי אחר.` },
+            { status: 409 }
+          );
+        }
+      } catch (fbErr) {
+        console.error('Firebase slug check error:', fbErr);
+      }
+    }
 
     const { generateTailoredBusinessConfig } = await import('@/lib/archetypes');
 

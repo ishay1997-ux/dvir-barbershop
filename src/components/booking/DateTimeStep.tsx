@@ -4,6 +4,7 @@ import React, { useMemo, useState } from 'react';
 import {
   format,
   addDays,
+  isToday,
   startOfToday,
   startOfMonth,
   endOfMonth,
@@ -114,8 +115,14 @@ export default function DateTimeStep({
 
     // Generate slots within Dvir's exact hours for this specific day
     const all = generateTimeSlots(start, end, interval);
+    const now = new Date();
+    const isSelectedToday = isToday(selectedDate);
+    const currentTimeStr = format(now, 'HH:mm');
 
     return all.map((time) => {
+      // Check if slot has already passed today
+      const isPastTime = isSelectedToday && time <= currentTimeStr;
+
       // Check lunch break
       const isLunch =
         settings.lunchBreak?.isActive &&
@@ -124,7 +131,7 @@ export default function DateTimeStep({
 
       return {
         time,
-        available: !booked.includes(time) && !isLunch,
+        available: !booked.includes(time) && !isLunch && !isPastTime,
         isLunch,
       };
     });

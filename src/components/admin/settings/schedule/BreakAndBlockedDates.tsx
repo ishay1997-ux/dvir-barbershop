@@ -124,9 +124,15 @@ export const BreakAndBlockedDates: React.FC<BreakAndBlockedDatesProps> = ({
                 className="px-3 py-1.5 border rounded-xl bg-white font-mono font-bold"
               />
             </div>
-            <span className="text-[#9E9891] text-[11px]">
-              (שעות אלו ייחסמו אוטומטית לקביעת תור)
-            </span>
+            {settings.lunchBreak?.start && settings.lunchBreak?.end && settings.lunchBreak.start >= settings.lunchBreak.end ? (
+              <span className="text-red-600 font-bold text-xs">
+                ⚠️ שעת סיום ההפסקה חייבת להיות מאוחרת משעת ההתחלה
+              </span>
+            ) : (
+              <span className="text-[#9E9891] text-[11px]">
+                (שעות אלו ייחסמו אוטומטית לקביעת תור)
+              </span>
+            )}
           </div>
         )}
       </div>

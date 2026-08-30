@@ -25,20 +25,33 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { date, branchId, isOpen, startTime, endTime, note } = body;
 
-    if (!date) {
-      return NextResponse.json({ error: 'Date is required' }, { status: 400 });
+    if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) {
+      return NextResponse.json({ error: 'תאריך תקין בפורמט YYYY-MM-DD הוא שדה חובה' }, { status: 400 });
+    }
+
+    const openBool = Boolean(isOpen);
+    const resolvedStart = startTime || '09:00';
+    const resolvedEnd = endTime || '20:00';
+
+    if (openBool) {
+      if (!/^\d{2}:\d{2}$/.test(resolvedStart) || !/^\d{2}:\d{2}$/.test(resolvedEnd)) {
+        return NextResponse.json({ error: 'פורמט שעות אינו תקין (נדרש HH:mm)' }, { status: 400 });
+      }
+      if (resolvedStart >= resolvedEnd) {
+        return NextResponse.json({ error: 'שעת סיום המשמרת חייבת להיות מאוחרת משעת ההתחלה' }, { status: 400 });
+      }
     }
 
     if (isFirebaseConfigured && db) {
-      const docRef = doc(db, 'schedule_overrides', date);
+      const docRef = doc(db, 'schedule_overrides', String(date));
       await setDoc(
         docRef,
         {
-          date,
-          branchId: branchId || 'closed',
-          isOpen: Boolean(isOpen),
-          startTime: startTime || '09:00',
-          endTime: endTime || '20:00',
+          date: String(date),
+          branchId: branchId || (openBool ? 'ariel' : 'closed'),
+          isOpen: openBool,
+          startTime: resolvedStart,
+          endTime: resolvedEnd,
           note: note || '',
           updatedAt: serverTimestamp(),
         },

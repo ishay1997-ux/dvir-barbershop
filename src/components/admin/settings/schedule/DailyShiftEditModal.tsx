@@ -234,12 +234,20 @@ export const DailyShiftEditModal: React.FC<DailyShiftEditModalProps> = ({
           </div>
         )}
 
+        {/* Invalid time range warning */}
+        {shiftForm.isOpen && shiftForm.branchId !== 'closed' && shiftForm.startTime >= shiftForm.endTime && (
+          <div className="p-2.5 mb-3 bg-red-50 text-red-700 text-xs font-bold rounded-xl border border-red-200 text-center">
+            ⚠️ שעת הסיום ({shiftForm.endTime}) חייבת להיות מאוחרת משעת הפתיחה ({shiftForm.startTime})
+          </div>
+        )}
+
         {/* Actions */}
         <div className="flex items-center gap-2 pt-2">
           <button
             type="button"
+            disabled={shiftForm.isOpen && shiftForm.branchId !== 'closed' && shiftForm.startTime >= shiftForm.endTime}
             onClick={onSaveShiftOverride}
-            className="btn-shimmer flex-1 text-[#1C1C1C] font-black text-xs py-3 rounded-xl shadow-gold hover:scale-[1.02] active:scale-95 transition-all text-center cursor-pointer"
+            className="btn-shimmer flex-1 text-[#1C1C1C] font-black text-xs py-3 rounded-xl shadow-gold hover:scale-[1.02] active:scale-95 transition-all text-center cursor-pointer disabled:opacity-40 disabled:pointer-events-none"
           >
             שמור ועדכן תורים ללקוחות ✨
           </button>
