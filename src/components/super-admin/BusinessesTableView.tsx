@@ -278,20 +278,21 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                       >
                         {biz.ownerName || 'לא צוין'}
                       </span>
-                      <div className="flex items-center gap-1.5 mt-0.5" dir="ltr">
-                        <span className="text-slate-400 text-[11px]">{biz.phone}</span>
-                        <a
-                          href={`https://wa.me/${(biz.phone || '').replace(/\D/g, '').replace(/^0/, '972')}?text=${encodeURIComponent(
-                            `היי ${biz.ownerName || 'יקר/ה'}! 🎉\nהאתר והמערכת שלך עבור "${biz.name}" מוכנים באוויר!\n\n🌐 קישור לאתר הלקוחות:\nhttps://thecut.co.il/${biz.slug}\n\n🔐 קישור לפאנל הניהול שלך:\nhttps://thecut.co.il/admin/login`
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[#25D366] hover:opacity-80 transition-opacity"
-                          title="שלח WhatsApp"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
+                      <span className="text-slate-400 text-[11px] block font-mono" dir="ltr">
+                        {biz.phone}
+                      </span>
+                      <a
+                        href={`https://wa.me/${(biz.phone || '').replace(/\D/g, '').replace(/^0/, '972')}?text=${encodeURIComponent(
+                          `היי ${biz.ownerName || 'יקר/ה'}! 🎉\nהאתר והמערכת שלך עבור "${biz.name}" מוכנים באוויר!\n\n🌐 קישור לאתר הלקוחות:\nhttps://thecut.co.il/${biz.slug}\n\n🔐 קישור לפאנל הניהול שלך:\nhttps://thecut.co.il/admin/login`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#E8F7F3] hover:bg-[#D1F2EB] text-[#00796B] border border-[#B2DFDB] transition-colors cursor-pointer"
+                        title="שלח קישורים ישירות לוואטסאפ של בעל העסק"
+                      >
+                        <MessageCircle className="w-3 h-3 text-[#25D366]" />
+                        <span>וואטסאפ לבעל העסק</span>
+                      </a>
                     </td>
 
                     {/* 3. Branches & Services */}
