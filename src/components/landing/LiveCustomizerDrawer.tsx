@@ -108,10 +108,15 @@ export function LiveCustomizerDrawer({
         bgTheme: preset.bgTheme,
         heroStyle: preset.heroStyle,
         servicesStyle: preset.servicesStyle,
+        galleryStyle: preset.galleryStyle,
+        showBeforeAfter: preset.showBeforeAfter ?? true,
+        showBio: preset.showBio ?? true,
+        showBranches: preset.showBranches ?? true,
         borderRadius: preset.borderRadius,
         fontStyle: preset.fontStyle,
         trustBadges: preset.trustBadges,
         policies: preset.policies,
+        sectionsOrder: (preset.sectionsOrder || DEFAULT_SECTIONS_ORDER) as any,
       },
     });
   };

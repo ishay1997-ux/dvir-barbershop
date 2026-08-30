@@ -1,4 +1,5 @@
 import { BusinessConfig, ServiceItem, FaqItem } from '@/types/business';
+import { TransformationItem } from '@/lib/types';
 
 export interface IndustryPreset {
   id: string;
@@ -11,6 +12,10 @@ export interface IndustryPreset {
   bgTheme: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
   heroStyle: 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
   servicesStyle: 'split-gallery' | 'cards-grid' | 'compact-menu';
+  galleryStyle: 'before-after-slider' | 'instagram-masonry' | 'ambient-carousel';
+  showBeforeAfter?: boolean;
+  showBio?: boolean;
+  showBranches?: boolean;
   borderRadius: 'modern-rounded' | 'sharp-luxury' | 'classic-soft';
   fontStyle: 'modern-sans' | 'urban-bold' | 'luxury-serif';
   shopName: string;
@@ -20,6 +25,8 @@ export interface IndustryPreset {
   trustBadges: string[];
   services: ServiceItem[];
   faqs: FaqItem[];
+  transformations?: TransformationItem[];
+  sectionsOrder?: Array<'hero' | 'announcement' | 'trust-badges' | 'services' | 'gallery' | 'bio' | 'policies' | 'branches' | 'reviews' | 'faqs'>;
   policies: {
     cancellationNotice: string;
     arrivalTime: string;
@@ -40,12 +47,43 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     bgTheme: 'dark-obsidian',
     heroStyle: 'hub-monogram',
     servicesStyle: 'split-gallery',
+    galleryStyle: 'before-after-slider',
+    showBeforeAfter: true,
+    showBio: true,
+    showBranches: true,
     borderRadius: 'modern-rounded',
     fontStyle: 'urban-bold',
     shopName: 'המספרה של דביר',
     ownerName: 'דביר',
     slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
     announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מקום מראש!',
+    sectionsOrder: ['hero', 'announcement', 'trust-badges', 'services', 'gallery', 'bio', 'policies', 'branches', 'reviews', 'faqs'],
+    transformations: [
+      {
+        id: '1',
+        title: 'סקין פייד קלאסי ועיצוב קווי מתאר',
+        category: 'תספורת פרימיום',
+        description: 'מעבר משיער פרוע לפייד מדויק עם קווי מתאר חדים וטקסטורה עליונה.',
+        beforeGradient: 'from-stone-900 via-stone-800 to-zinc-900',
+        afterGradient: 'from-amber-900 via-amber-800 to-yellow-700',
+      },
+      {
+        id: '2',
+        title: 'פיסול זקן מלא + דירוג לחיים',
+        category: 'עיצוב זקן',
+        description: 'יישור סימטרי מדויק של קו הלחיים והצוואר, שמן הזנה ועיצוב עם תער חם.',
+        beforeGradient: 'from-zinc-900 via-neutral-900 to-stone-900',
+        afterGradient: 'from-amber-950 via-amber-900 to-amber-700',
+      },
+      {
+        id: '3',
+        title: 'פרנץ\' קרופ מודרני וטקסטורה עשירה',
+        category: 'סגנון מודרני',
+        description: 'מראה צעיר, רענן וקל לעיצוב יומיומי עם חימר מט פרימיום.',
+        beforeGradient: 'from-neutral-900 via-zinc-800 to-stone-900',
+        afterGradient: 'from-yellow-950 via-amber-800 to-yellow-600',
+      },
+    ],
     trustBadges: [
       'דירוג 5.0 כוכבים (420+ ביקורות Google)',
       '10+ שנות ותק וניסיון מקצועי',
@@ -77,17 +115,22 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     categoryName: 'קוסמטיקה ויופי',
     icon: '💅',
     badge: 'Luxury Beauty Lounge',
-    description: 'מראה שמפניה ואלבסטר רך, גלריית עבודות מרהיבה, מבנה אנטומי וטיפולי פנים.',
+    description: 'מראה שמפניה ואלבסטר רך, גלריית אינסטגרם עשירה, מבנה אנטומי וטיפולי פנים.',
     themeColor: '#EC4899', // Rose Blush
     bgTheme: 'luxury-light',
     heroStyle: 'split-cinema',
     servicesStyle: 'cards-grid',
+    galleryStyle: 'instagram-masonry',
+    showBeforeAfter: true,
+    showBio: true,
+    showBranches: false,
     borderRadius: 'modern-rounded',
     fontStyle: 'luxury-serif',
     shopName: 'סטודיו שירן ביוטי & בוטיק',
     ownerName: 'שירן',
     slogan: 'עיצוב ציפורניים במבנה אנטומי, הרמת ריסים וטיפולי פנים מתקדמים',
     announcement: '✨ מבצע חודשי: 10% הנחה על טיפול פנים משולב למצטרפות חדשות!',
+    sectionsOrder: ['announcement', 'hero', 'trust-badges', 'gallery', 'services', 'bio', 'policies', 'reviews', 'faqs'],
     trustBadges: [
       'סטריליזציה ברמה רפואית (Autoclave)',
       'חומרי פרימיום היפואלרגניים בלבד',
@@ -118,17 +161,22 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     categoryName: 'ספא ובריאות',
     icon: '🌿',
     badge: 'Holistic Wellness Spa',
-    description: 'גווני טורקיז נורדי ואלבסטר חם, שקט נפשי, מוזיקה מרגיעה ועיסויי גוף עמוקים.',
+    description: 'גווני טורקיז נורדי ואלבסטר חם, קרוסלת חדרי טיפול מרגיעה ועיסויי גוף עמוקים.',
     themeColor: '#14B8A6', // Nordic Teal
     bgTheme: 'luxury-light',
     heroStyle: 'minimalist-vip',
     servicesStyle: 'cards-grid',
+    galleryStyle: 'ambient-carousel',
+    showBeforeAfter: true,
+    showBio: true,
+    showBranches: true,
     borderRadius: 'classic-soft',
     fontStyle: 'modern-sans',
     shopName: 'ספא לוטוס – בית למנוחה ומרגוע',
     ownerName: 'מיכל',
     slogan: 'עיסויים מקצועיים, שחרור שרירים עמוק ופינוק הוליסטי לגוף ולנפש',
     announcement: '🌿 חבילת פינוק זוגית כוללת שמנים ארומטיים וכיבוד – להזמנה ישירה',
+    sectionsOrder: ['announcement', 'hero', 'trust-badges', 'gallery', 'services', 'bio', 'policies', 'reviews', 'faqs'],
     trustBadges: [
       'מטפלים מוסמכים בעלי תעודות בכירות',
       'שמנים אורגניים 100% טבעיים',
@@ -159,17 +207,22 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     categoryName: 'קעקועים ופירסינג',
     icon: '⚡',
     badge: 'Custom Tattoo Art Studio',
-    description: 'מראה Cyber Carbon שחור מוחלט, דגש על סקיצות אישיות, סטריליות ותיק עבודות.',
+    description: 'מראה Cyber Carbon שחור מוחלט, גלריית עבודות Custom Art ופירסינג סטרילי.',
     themeColor: '#A855F7', // Royal Violet / Neon
     bgTheme: 'cyber-carbon',
     heroStyle: 'split-cinema',
     servicesStyle: 'cards-grid',
+    galleryStyle: 'instagram-masonry',
+    showBeforeAfter: true,
+    showBio: false,
+    showBranches: false,
     borderRadius: 'sharp-luxury',
     fontStyle: 'urban-bold',
     shopName: 'סטודיו בלאק אינק טאטו',
     ownerName: 'רון',
     slogan: 'קעקועים מותאמים אישית (Custom Art), כיסויים (Cover-up) ופירסינג מקצועי',
     announcement: '🔥 שריינו סקיצה אישית לפרויקטים גדולים – ייעוץ ראשוני ללא עלות!',
+    sectionsOrder: ['hero', 'trust-badges', 'gallery', 'services', 'policies', 'reviews', 'faqs'],
     trustBadges: [
       'רישיון משרד הבריאות וסטריליזציה מלאה',
       'מחטים וציוד חד-פעמי שנפתח מול הלקוח',
@@ -198,17 +251,48 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     categoryName: 'כושר וספורט',
     icon: '🏋️',
     badge: 'Pro Fitness & Body Coaching',
-    description: 'מראה ירוק אמרלד ספורטיבי, תוכניות ליווי אישיות, תזונה ותוצאות מוכחות.',
+    description: 'מראה ירוק אמרלד ספורטיבי, סליידר תוצאות גוף וחיטוב, תוכניות VIP ותזונה.',
     themeColor: '#10B981', // Cyber Emerald
     bgTheme: 'dark-obsidian',
     heroStyle: 'split-cinema',
     servicesStyle: 'cards-grid',
+    galleryStyle: 'before-after-slider',
+    showBeforeAfter: true,
+    showBio: true,
+    showBranches: false,
     borderRadius: 'modern-rounded',
     fontStyle: 'urban-bold',
     shopName: 'סטודיו אופק – אימונים אישיים',
     ownerName: 'אופק',
     slogan: 'אימוני כושר אישיים, חיטוב והעלאת מסת שריר בליווי תזונתי מדויק',
     announcement: '💪 הצטרפו עכשיו לתוכנית הליווי הממוקדת לחיטוב הגוף – מספר מקומות מוגבל!',
+    sectionsOrder: ['hero', 'announcement', 'trust-badges', 'services', 'gallery', 'bio', 'reviews', 'faqs', 'policies'],
+    transformations: [
+      {
+        id: '1',
+        title: 'חיטוב גוף מלא וירידה ב-8% שומן',
+        category: 'תוכנית ליווי 90 יום',
+        description: 'תהליך חיטוב ממוקד המשלב אימוני כוח אישיים ותפריט תזונה עשיר בחלבון.',
+        beforeGradient: 'from-stone-900 via-stone-800 to-zinc-900',
+        afterGradient: 'from-emerald-950 via-teal-900 to-emerald-700',
+      },
+      {
+        id: '2',
+        title: 'עלייה במסת שריר ושיפור יציבה',
+        category: 'אימוני היפרטרופיה',
+        description: 'עלייה של 4.5 ק״ג מסת שריר נקייה, חיזוק חגורת הכתפיים ושרירי הליבה.',
+        beforeGradient: 'from-zinc-900 via-neutral-900 to-stone-900',
+        afterGradient: 'from-teal-950 via-emerald-900 to-teal-700',
+      },
+      {
+        id: '3',
+        title: 'הצרת היקפים ובטן חטובה',
+        category: 'חיטוב פונקציונלי',
+        description: 'ירידה של 7 ס״מ בהיקף המותניים ושיפור דרמטי בסיבולת לב-ריאה.',
+        beforeGradient: 'from-neutral-900 via-zinc-800 to-stone-900',
+        afterGradient: 'from-emerald-900 via-teal-800 to-emerald-600',
+      },
+    ],
     trustBadges: [
       'מאמנים מוסמכי וינגייט בעלי תואר ראשון',
       'תוכניות מותאמות אישית לפי בדיקת מדדים',
@@ -236,17 +320,48 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     categoryName: 'קליניקות ורפואה',
     icon: '🩺',
     badge: 'Advanced Aesthetic Clinic',
-    description: 'מראה Brand Midnight כחול-ספיר יוקרתי, טיפולי הזרקות ואסתטיקה רפואית מתקדמת.',
+    description: 'מראה Brand Midnight כחול-ספיר יוקרתי, תוצאות הזרקות וטיפולי פנים רפואיים.',
     themeColor: '#0EA5E9', // Electric Blue / Sapphire
     bgTheme: 'brand-midnight',
     heroStyle: 'minimalist-vip',
     servicesStyle: 'cards-grid',
+    galleryStyle: 'before-after-slider',
+    showBeforeAfter: true,
+    showBio: true,
+    showBranches: false,
     borderRadius: 'classic-soft',
     fontStyle: 'modern-sans',
     shopName: 'קליניקת ד״ר לוי לאסתטיקה רפואית',
     ownerName: 'ד״ר לוי',
     slogan: 'רפואה אסתטית מתקדמת, פיסול פנים, בוטוקס וחומצה היאלורונית',
     announcement: '💎 ייעוץ ואבחון פנים מקצועי ללא עלות בהרשמה מראש דרך האתר',
+    sectionsOrder: ['hero', 'announcement', 'trust-badges', 'gallery', 'services', 'bio', 'policies', 'reviews', 'faqs'],
+    transformations: [
+      {
+        id: '1',
+        title: 'טיפול פנים זוהר והעלמת פיגמנטציה',
+        category: 'פרוטוקול Glow רפואי',
+        description: 'חידוש מרקם העור, אחידות גוון הפנים והחזרת הברק הטבעי.',
+        beforeGradient: 'from-slate-900 via-zinc-900 to-slate-950',
+        afterGradient: 'from-sky-950 via-blue-900 to-sky-700',
+      },
+      {
+        id: '2',
+        title: 'פיסול ועיבוי שפתיים סימטרי',
+        category: 'חומצה היאלורונית פרימיום',
+        description: 'עיצוב קווי מתאר עדינים והענקת נפח טבעי ומחמיא במיוחד.',
+        beforeGradient: 'from-slate-900 via-neutral-900 to-zinc-900',
+        afterGradient: 'from-blue-950 via-indigo-900 to-sky-700',
+      },
+      {
+        id: '3',
+        title: 'טשטוש קמטי הבעה במצח',
+        category: 'בוטוקס רפואי מדויק',
+        description: 'מראה מצח חלק, פתוח ורענן תוך שמירה מלאה על הבעות הפנים הטבעיות.',
+        beforeGradient: 'from-zinc-900 via-slate-900 to-stone-900',
+        afterGradient: 'from-sky-900 via-blue-800 to-indigo-700',
+      },
+    ],
     trustBadges: [
       'טיפולים ע״י רופאים מוסמכים בלבד',
       'חומרי מילוי באישור FDA ומשרד הבריאות',
@@ -274,17 +389,22 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     categoryName: 'טכנאים ושירותים',
     icon: '🔧',
     badge: 'Certified Home Pro Services',
-    description: 'מראה נקי, זמני הגעה מהירים, שקיפות מחירים מלאה ואזורי פעילות ברורים.',
+    description: 'מראה נקי, הגעה מהירה, שקיפות מחירים מלאה, אחריות בכתב ואזורי שירות.',
     themeColor: '#F59E0B', // Amber Bronze
     bgTheme: 'dark-obsidian',
     heroStyle: 'split-cinema',
     servicesStyle: 'compact-menu',
+    galleryStyle: 'compact-menu' as any,
+    showBeforeAfter: false, // Technicians do not have haircut/makeup sliders
+    showBio: false,
+    showBranches: true,
     borderRadius: 'sharp-luxury',
     fontStyle: 'modern-sans',
     shopName: 'שרון שירותי מיזוג וחשמל',
     ownerName: 'שרון',
     slogan: 'התקנה ותיקון מזגנים, פתרונות חשמל מתקדמים ושירות מהיר ואמין',
     announcement: '⚡ זמינות להגעת חירום באזור המרכז תוך 60 דקות – התקשרו עכשיו!',
+    sectionsOrder: ['hero', 'announcement', 'trust-badges', 'services', 'branches', 'policies', 'reviews', 'faqs'],
     trustBadges: [
       'טכנאי מוסמך וחשמלאי מורשה',
       'אחריות מלאה בכתב על כל עבודה',

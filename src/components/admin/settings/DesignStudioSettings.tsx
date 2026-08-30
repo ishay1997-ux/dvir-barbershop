@@ -80,6 +80,19 @@ const COLOR_PALETTES = [
   { name: 'פלטינום וסילבר (Platinum Slate)', hex: '#E2E8F0' },
 ];
 
+const DEFAULT_SECTIONS_ORDER: Array<'hero' | 'announcement' | 'trust-badges' | 'services' | 'gallery' | 'bio' | 'policies' | 'branches' | 'reviews' | 'faqs'> = [
+  'hero',
+  'announcement',
+  'trust-badges',
+  'services',
+  'gallery',
+  'bio',
+  'policies',
+  'branches',
+  'reviews',
+  'faqs',
+];
+
 export default function DesignStudioSettings({
   settings,
   onUpdateSettings,
@@ -145,15 +158,21 @@ export default function DesignStudioSettings({
       themeColor: preset.themeColor,
       bgTheme: preset.bgTheme,
       announcement: preset.announcement,
+      transformations: preset.transformations,
       layout: {
         ...(settings.layout || {}),
         bgTheme: preset.bgTheme,
         heroStyle: preset.heroStyle,
         servicesStyle: preset.servicesStyle,
+        galleryStyle: preset.galleryStyle,
+        showBeforeAfter: preset.showBeforeAfter ?? true,
+        showBio: preset.showBio ?? true,
+        showBranches: preset.showBranches ?? true,
         borderRadius: preset.borderRadius,
         fontStyle: preset.fontStyle,
         trustBadges: preset.trustBadges,
         policies: preset.policies,
+        sectionsOrder: (preset.sectionsOrder || DEFAULT_SECTIONS_ORDER) as any,
       },
     };
     onUpdateSettings(updated);
