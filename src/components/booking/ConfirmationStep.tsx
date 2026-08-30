@@ -242,7 +242,7 @@ export default function ConfirmationStep({ booking }: { booking: BookingState })
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3">
           <a
-            href={`tel:${SHOP_INFO.phone}`}
+            href={`tel:${selectedBranch?.phone || SHOP_INFO.phone}`}
             className="flex-1 py-3 px-5 rounded-xl border-2 border-[#E5DDD0] text-[#3D3D3D] font-medium text-sm hover:border-gold hover:text-gold active:scale-95 transition-all flex items-center justify-center gap-2"
           >
             <Phone className="w-4 h-4" />

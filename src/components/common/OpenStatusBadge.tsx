@@ -4,12 +4,22 @@ import { useState, useEffect } from 'react';
 import { SHOP_INFO } from '@/lib/utils';
 import { Clock } from 'lucide-react';
 
+export interface WorkingHourItem {
+  day: string;
+  open: string;
+  close: string;
+  closed: boolean;
+  branch?: string;
+}
+
 export default function OpenStatusBadge({
   className = '',
   showIcon = true,
+  workingHours,
 }: {
   className?: string;
   showIcon?: boolean;
+  workingHours?: readonly WorkingHourItem[] | WorkingHourItem[];
 }) {
   const [status, setStatus] = useState<{
     isOpen: boolean;
@@ -27,7 +37,8 @@ export default function OpenStatusBadge({
       const currentDay = now.getDay(); // 0 = Sunday, 6 = Saturday
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-      const daySchedule = SHOP_INFO.workingHours[currentDay];
+      const scheduleSource = workingHours || SHOP_INFO.workingHours;
+      const daySchedule = scheduleSource[currentDay];
 
       if (!daySchedule || daySchedule.closed || !daySchedule.open || !daySchedule.close) {
         // Find next open day
@@ -69,57 +80,58 @@ export default function OpenStatusBadge({
           text: `סגור כרגע · נפתח היום ב-${daySchedule.open}`,
         });
       } else {
-        // Closed for today
-        const nextDayIdx = (currentDay + 1) % 7;
-        const nextDay = SHOP_INFO.workingHours[nextDayIdx];
-        const nextOpenTime = nextDay && !nextDay.closed ? nextDay.open : '09:00';
-        const nextDayName = nextDayIdx === 6 ? 'ראשון' : 'מחר';
-        setStatus({
-          isOpen: false,
-          isClosingSoon: false,
-          text: `סגור כרגע · נפתח ${nextDayName} ב-${nextOpenTime}`,
-        });
+        // Closed for today, find next open day
+        let foundNext = false;
+        for (let i = 1; i <= 7; i++) {
+          const nextDayIdx = (currentDay + i) % 7;
+          const nextDay = scheduleSource[nextDayIdx];
+          if (nextDay && !nextDay.closed && nextDay.open) {
+            const dayName = i === 1 ? 'מחר' : `ביום ${nextDay.day}`;
+            setStatus({
+              isOpen: false,
+              isClosingSoon: false,
+              text: `סגור כרגע · נפתח ${dayName} ב-${nextDay.open}`,
+            });
+            foundNext = true;
+            break;
+          }
+        }
+        if (!foundNext) {
+          setStatus({
+            isOpen: false,
+            isClosingSoon: false,
+            text: 'סגור כרגע',
+          });
+        }
       }
     };
 
     calculateStatus();
-    const interval = setInterval(calculateStatus, 60000); // Re-check every minute
+    const interval = setInterval(calculateStatus, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [workingHours]);
 
   return (
     <div
-      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border transition-colors ${
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
         status.isOpen
           ? status.isClosingSoon
-            ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-            : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-          : 'bg-zinc-800/60 border-zinc-700 text-zinc-300'
+            ? 'bg-amber-500/10 text-amber-600 border border-amber-500/30'
+            : 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/30'
+          : 'bg-red-500/10 text-red-500 border border-red-500/30'
       } ${className}`}
-      role="status"
-      aria-live="polite"
     >
-      {/* Pulsating live dot */}
-      <span className="relative flex h-2 w-2">
-        {status.isOpen && (
-          <span
-            className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-              status.isClosingSoon ? 'bg-amber-400' : 'bg-emerald-400'
-            }`}
-          />
-        )}
+      {showIcon && (
         <span
-          className={`relative inline-flex rounded-full h-2 w-2 ${
+          className={`w-2 h-2 rounded-full shrink-0 ${
             status.isOpen
               ? status.isClosingSoon
-                ? 'bg-amber-500'
-                : 'bg-emerald-500'
-              : 'bg-zinc-400'
+                ? 'bg-amber-500 animate-pulse'
+                : 'bg-emerald-500 animate-pulse'
+              : 'bg-red-500'
           }`}
         />
-      </span>
-
-      {showIcon && <Clock className="w-3.5 h-3.5 opacity-80" />}
+      )}
       <span>{status.text}</span>
     </div>
   );

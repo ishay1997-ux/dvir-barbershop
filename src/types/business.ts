@@ -72,5 +72,6 @@ export interface BusinessConfig {
   websiteUrl?: string;
   avatarUrl?: string;
   experienceYears?: number;
+  workingHours?: Array<{ day: string; open: string; close: string; closed: boolean; branch?: string }>;
   layout?: BusinessLayoutConfig;
 }

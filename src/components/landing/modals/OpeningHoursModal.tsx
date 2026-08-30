@@ -64,7 +64,7 @@ export function OpeningHoursModal({
 
         {/* Schedule List */}
         <div className="space-y-2 mb-6">
-          {SHOP_INFO.workingHours.map((schedule, idx) => {
+          {(business?.workingHours || (SHOP_INFO.workingHours as unknown as Array<{ day: string; open: string; close: string; closed: boolean; branch?: string }>)).map((schedule, idx: number) => {
             const isToday = currentDayIdx === idx;
             return (
               <div

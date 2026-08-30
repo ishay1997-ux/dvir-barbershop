@@ -35,9 +35,10 @@ export default function Footer({
   const phone = business?.phone || SHOP_INFO.phone;
   const slug = business?.slug || 'dvir';
 
-  const instagram = business?.instagramHandle
+  const facebook = business?.facebookUrl || (slug === 'dvir' ? SHOP_INFO.facebook : '');
+  const instagram = business?.instagramUrl || (business?.instagramHandle
     ? (business.instagramHandle.startsWith('http') ? business.instagramHandle : `https://instagram.com/${business.instagramHandle.replace('@', '')}`)
-    : SHOP_INFO.instagram;
+    : (slug === 'dvir' ? SHOP_INFO.instagram : ''));
 
   const branches = business?.branches && business.branches.length > 0
     ? business.branches
@@ -73,26 +74,32 @@ export default function Footer({
               {business?.slogan || 'תספורות פרימיום, דירוגי פייד ופיסול זקן ברמה הגבוהה ביותר בישראל.'}
             </p>
             {/* Social */}
-            <div className="flex gap-3 mt-2">
-              <a
-                href={instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-white hover:text-white transition-all duration-200"
-              >
-                <InstagramIcon className="w-4 h-4" />
-              </a>
-              <a
-                href={SHOP_INFO.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-white hover:text-white transition-all duration-200"
-              >
-                <FacebookIcon className="w-4 h-4" />
-              </a>
-            </div>
+            {(instagram || facebook) && (
+              <div className="flex gap-3 mt-2">
+                {instagram && (
+                  <a
+                    href={instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-white hover:text-white transition-all duration-200"
+                  >
+                    <InstagramIcon className="w-4 h-4" />
+                  </a>
+                )}
+                {facebook && (
+                  <a
+                    href={facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                    className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-white hover:text-white transition-all duration-200"
+                  >
+                    <FacebookIcon className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Hours & Branches */}
