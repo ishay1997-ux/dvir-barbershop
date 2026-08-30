@@ -5,14 +5,17 @@ import {
   Palette,
   Sparkles,
   Eye,
+  EyeOff,
   Check,
   RotateCcw,
   Sliders,
   Layers,
   X,
-  ArrowLeft,
-  Sun,
-  Moon,
+  ArrowUp,
+  ArrowDown,
+  Type,
+  Square,
+  Sparkle,
 } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { SaaSOnboardingModal } from '@/components/marketing/SaaSOnboardingModal';
@@ -40,16 +43,32 @@ const bgThemePresets = [
   { id: 'luxury-light', label: 'Luxury Alabaster', icon: '✨', desc: 'קרם אלבסטר ושמפניה נעימה' },
 ];
 
+const SECTION_LABELS: Record<string, { label: string; icon: string; toggleKey?: string }> = {
+  hero: { label: 'פתיח ראשי (Hero Hub)', icon: '💈' },
+  services: { label: 'שירותים ומחירון דיגיטלי', icon: '📋' },
+  gallery: { label: 'גלריית לפני / אחרי (Slider)', icon: '✂️', toggleKey: 'showBeforeAfter' },
+  bio: { label: 'פרופיל אודות הצוות (Bio)', icon: '👤', toggleKey: 'showBio' },
+  branches: { label: 'סניפים ומפות ניווט Waze', icon: '🗺️', toggleKey: 'showBranches' },
+  reviews: { label: 'ביקורות ודירוגי לקוחות', icon: '⭐', toggleKey: 'showReviews' },
+  faqs: { label: 'שאלות ותשובות נפוצות (FAQ)', icon: '❓', toggleKey: 'showFaqs' },
+};
+
+const DEFAULT_SECTIONS_ORDER = ['hero', 'services', 'bio', 'branches', 'gallery', 'reviews', 'faqs'];
+
 export function LiveCustomizerDrawer({
   business,
   onChangeBusiness,
 }: LiveCustomizerDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'colors' | 'theme' | 'sections'>('colors');
+  const [activeTab, setActiveTab] = useState<'colors' | 'theme' | 'sections' | 'style'>('colors');
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
 
-  const initialColor = business.themeColor || '#C9A84C';
-  const initialBg = business.layout?.bgTheme || 'dark-obsidian';
+  const sectionsOrder = (business.layout?.sectionsOrder && business.layout.sectionsOrder.length > 0)
+    ? business.layout.sectionsOrder
+    : DEFAULT_SECTIONS_ORDER;
+
+  const currentRadius = business.layout?.borderRadius || 'modern-rounded';
+  const currentFont = business.layout?.fontStyle || 'urban-bold';
 
   const handleColorChange = (newColor: string) => {
     onChangeBusiness({
@@ -64,6 +83,44 @@ export function LiveCustomizerDrawer({
       layout: {
         ...(business.layout || {}),
         bgTheme: newBg,
+      },
+    });
+  };
+
+  const handleRadiusChange = (radius: 'modern-rounded' | 'sharp-luxury' | 'classic-soft') => {
+    onChangeBusiness({
+      ...business,
+      layout: {
+        ...(business.layout || {}),
+        borderRadius: radius,
+      },
+    });
+  };
+
+  const handleFontChange = (font: 'modern-sans' | 'urban-bold' | 'luxury-serif') => {
+    onChangeBusiness({
+      ...business,
+      layout: {
+        ...(business.layout || {}),
+        fontStyle: font,
+      },
+    });
+  };
+
+  const handleMoveSection = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= sectionsOrder.length) return;
+
+    const updated = [...sectionsOrder];
+    const temp = updated[index];
+    updated[index] = updated[newIndex];
+    updated[newIndex] = temp;
+
+    onChangeBusiness({
+      ...business,
+      layout: {
+        ...(business.layout || {}),
+        sectionsOrder: updated as any,
       },
     });
   };
@@ -85,6 +142,9 @@ export function LiveCustomizerDrawer({
       layout: {
         ...(business.layout || {}),
         bgTheme: 'dark-obsidian',
+        borderRadius: 'modern-rounded',
+        fontStyle: 'urban-bold',
+        sectionsOrder: DEFAULT_SECTIONS_ORDER as any,
         showBio: true,
         showBranches: true,
         showBeforeAfter: true,
@@ -96,7 +156,7 @@ export function LiveCustomizerDrawer({
 
   return (
     <>
-      {/* Floating Trigger Button on the RIGHT side to avoid overlapping accessibility widget on the left */}
+      {/* Floating Trigger Button on the RIGHT side */}
       <div className="fixed bottom-6 right-6 z-40" dir="rtl">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -122,7 +182,7 @@ export function LiveCustomizerDrawer({
       {/* Slide-Up / Floating Studio Panel on the RIGHT side */}
       {isOpen && (
         <div
-          className="live-customizer-drawer fixed bottom-22 right-6 z-50 w-full max-w-sm sm:max-w-md bg-[#0F172A] border border-slate-700 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl text-white space-y-4 text-right animate-in slide-in-from-bottom-5 duration-200"
+          className="live-customizer-drawer fixed bottom-22 right-6 z-50 w-full max-w-sm sm:max-w-md bg-[#0F172A] border border-slate-700 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl text-white space-y-4 text-right animate-in slide-in-from-bottom-5 duration-200 max-h-[85vh] overflow-y-auto"
           dir="rtl"
         >
           {/* Header */}
@@ -135,8 +195,8 @@ export function LiveCustomizerDrawer({
                 <Palette className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-xs font-black text-white">התאמה אישית בזמן אמת</h4>
-                <p className="text-[10px] text-slate-300">כל שינוי משתקף מיידית באתר הלקוחות</p>
+                <h4 className="text-xs font-black text-white">סטודיו התאמה אישית בלייב</h4>
+                <p className="text-[10px] text-slate-300">שינוי סדר סקשנים, צבעים וסגנון בזמן אמת</p>
               </div>
             </div>
 
@@ -157,15 +217,15 @@ export function LiveCustomizerDrawer({
             </div>
           </div>
 
-          {/* Sub-tabs Switcher */}
-          <div className="grid grid-cols-3 gap-1 p-1 bg-slate-800/90 rounded-xl text-xs font-bold border border-slate-700/60">
+          {/* Sub-tabs Switcher (4 tabs) */}
+          <div className="grid grid-cols-4 gap-1 p-1 bg-slate-800/90 rounded-xl text-[11px] font-bold border border-slate-700/60">
             <button
               onClick={() => setActiveTab('colors')}
               className={`py-1.5 rounded-lg transition-all cursor-pointer ${
                 activeTab === 'colors' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
-              צבעי מיתוג
+              צבעים
             </button>
             <button
               onClick={() => setActiveTab('theme')}
@@ -173,7 +233,7 @@ export function LiveCustomizerDrawer({
                 activeTab === 'theme' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
-              אווירה ורקע
+              אווירה
             </button>
             <button
               onClick={() => setActiveTab('sections')}
@@ -181,7 +241,15 @@ export function LiveCustomizerDrawer({
                 activeTab === 'sections' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
-              מודולריות
+              סקשנים
+            </button>
+            <button
+              onClick={() => setActiveTab('style')}
+              className={`py-1.5 rounded-lg transition-all cursor-pointer ${
+                activeTab === 'style' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              סגנון
             </button>
           </div>
 
@@ -267,42 +335,142 @@ export function LiveCustomizerDrawer({
             </div>
           )}
 
-          {/* Tab 3: Modular Layout Toggles */}
+          {/* Tab 3: Modular Layout & Section Reordering */}
           {activeTab === 'sections' && (
-            <div className="space-y-2">
-              {[
-                { key: 'showBeforeAfter', label: 'גלריית לפני / אחרי (Slider)', icon: '✂️' },
-                { key: 'showBio', label: 'פרופיל אודות הצוות (Bio)', icon: '👤' },
-                { key: 'showBranches', label: 'סניפים ומפות ניווט Waze', icon: '🗺️' },
-                { key: 'showReviews', label: 'ביקורות ודירוגי לקוחות', icon: '⭐' },
-                { key: 'showFaqs', label: 'שאלות ותשובות נפוצות (FAQ)', icon: '❓' },
-              ].map((item) => {
-                const isVisible = (business.layout as any)?.[item.key] !== false;
-                return (
-                  <div
-                    key={item.key}
-                    onClick={() => handleToggleSection(item.key, isVisible)}
-                    className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between text-xs cursor-pointer hover:bg-slate-800 transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>{item.icon}</span>
-                      <span className="font-bold text-slate-200">{item.label}</span>
-                    </div>
+            <div className="space-y-2.5">
+              <div className="text-[10px] text-slate-300 pb-1 flex items-center justify-between">
+                <span>גרור או סדר את סדר המקטעים בעמוד:</span>
+                <span className="text-indigo-400 font-bold">1-Click Live Reorder</span>
+              </div>
+              <div className="space-y-2">
+                {sectionsOrder.map((sectionKey, idx) => {
+                  const meta = SECTION_LABELS[sectionKey] || { label: sectionKey, icon: '📌' };
+                  const isVisible = meta.toggleKey
+                    ? (business.layout as any)?.[meta.toggleKey] !== false
+                    : true;
 
+                  return (
                     <div
-                      className={`w-9 h-5 rounded-full p-0.5 transition-colors ${
-                        isVisible ? 'bg-emerald-500' : 'bg-slate-700'
+                      key={sectionKey}
+                      className={`p-2.5 rounded-2xl border flex items-center justify-between transition-all ${
+                        isVisible
+                          ? 'bg-slate-800/70 border-slate-700/80 text-white'
+                          : 'bg-slate-900/60 border-slate-800/80 text-slate-500 opacity-60'
                       }`}
                     >
-                      <div
-                        className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                          isVisible ? '-translate-x-4' : 'translate-x-0'
-                        }`}
-                      />
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-base">{meta.icon}</span>
+                        <div className="leading-tight">
+                          <div className="text-xs font-bold">{meta.label}</div>
+                          <div className="text-[9px] text-slate-400">מיקום {idx + 1} בעמוד</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {/* Up / Down Controls */}
+                        <div className="flex items-center bg-slate-900 rounded-lg p-0.5 border border-slate-700/60">
+                          <button
+                            disabled={idx === 0}
+                            onClick={() => handleMoveSection(idx, 'up')}
+                            className="p-1 rounded text-slate-300 hover:text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                            title="הזז למעלה"
+                          >
+                            <ArrowUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            disabled={idx === sectionsOrder.length - 1}
+                            onClick={() => handleMoveSection(idx, 'down')}
+                            className="p-1 rounded text-slate-300 hover:text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                            title="הזז למטה"
+                          >
+                            <ArrowDown className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        {/* Visibility Toggle */}
+                        {meta.toggleKey && (
+                          <button
+                            onClick={() => handleToggleSection(meta.toggleKey!, isVisible)}
+                            className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                              isVisible
+                                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                                : 'bg-slate-800 border-slate-700 text-slate-500'
+                            }`}
+                            title={isVisible ? 'הסתר מקטע' : 'הצג מקטע'}
+                          >
+                            {isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Tab 4: Card Curves & Typography Moods */}
+          {activeTab === 'style' && (
+            <div className="space-y-4">
+              {/* Card Corner Radius */}
+              <div className="space-y-2">
+                <div className="text-[11px] font-bold text-slate-300">סגנון פינות וכרטיסיות:</div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[
+                    { id: 'modern-rounded', label: 'עגול מודרני', sub: '24px Soft', icon: '📱' },
+                    { id: 'sharp-luxury', label: 'חד ומדויק', sub: '8px Sharp', icon: '💎' },
+                    { id: 'classic-soft', label: 'קלאסי מעודן', sub: '16px Classic', icon: '⚖️' },
+                  ].map((r) => {
+                    const isSelected = currentRadius === r.id;
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => handleRadiusChange(r.id as any)}
+                        className={`p-2.5 rounded-xl border flex flex-col items-center text-center transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-indigo-400 bg-indigo-950/80 shadow-xs'
+                            : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <span className="text-base mb-1">{r.icon}</span>
+                        <span className="text-xs font-bold text-white">{r.label}</span>
+                        <span className="text-[9px] text-slate-400">{r.sub}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Typography Mood */}
+              <div className="space-y-2 pt-2 border-t border-slate-800">
+                <div className="text-[11px] font-bold text-slate-300">אופי גופנים וטיפוגרפיה:</div>
+                <div className="space-y-1.5">
+                  {[
+                    { id: 'urban-bold', label: 'נועז ועוצמתי (Urban Bold)', font: 'Rubik & Bold', desc: 'מושלם למספרות גברים וסטודיו' },
+                    { id: 'modern-sans', label: 'נקי והייטקי (Modern Clean)', font: 'Assistant / Heebo', desc: 'אלגנטי, קריא ורענן' },
+                    { id: 'luxury-serif', label: 'יוקרתי ומעודן (Luxury Serif)', font: 'Editorial Style', desc: 'מתאים לסלונים וקליניקות בוטיק' },
+                  ].map((f) => {
+                    const isSelected = currentFont === f.id;
+                    return (
+                      <button
+                        key={f.id}
+                        onClick={() => handleFontChange(f.id as any)}
+                        className={`w-full p-2.5 rounded-xl border flex items-center justify-between transition-all text-right cursor-pointer ${
+                          isSelected
+                            ? 'border-indigo-400 bg-indigo-950/80 shadow-xs'
+                            : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-xs font-bold text-white">{f.label}</div>
+                          <div className="text-[10px] text-slate-300">{f.desc}</div>
+                        </div>
+                        {isSelected && <Check className="w-4 h-4 text-indigo-400" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
 
@@ -316,7 +484,7 @@ export function LiveCustomizerDrawer({
               <span>אהבת את העיצוב? הקם אתר כזה בחינם 🚀</span>
             </button>
             <p className="text-[10px] text-slate-400 text-center">
-              האתר יוקם עם פלטת הצבעים וההגדרות שבחרת הרגע
+              האתר יוקם עם פלטת הצבעים, סדר הסקשנים והסגנון שבחרת
             </p>
           </div>
         </div>
@@ -331,3 +499,4 @@ export function LiveCustomizerDrawer({
     </>
   );
 }
+

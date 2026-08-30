@@ -325,133 +325,207 @@ export default function DesignStudioSettings({
         </div>
       </div>
 
-      {/* 4. Section Visibility Toggles */}
-      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm">
-        <div className="mb-5">
-          <div className="flex items-center gap-2">
-            <Layers className="w-5 h-5 text-gold" />
-            <h2 className="text-base font-black text-[#1C1C1C]">הצגה והסתרת סקשנים באתר (Section Visibility)</h2>
+      {/* 3. Card Curves & Typography Moods */}
+      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm space-y-6">
+        <div className="flex items-center gap-2">
+          <Layers className="w-5 h-5 text-gold" />
+          <h2 className="text-base font-black text-[#1C1C1C]">סגנון פינות וטיפוגרפיה (Card Style & Typography)</h2>
+        </div>
+
+        {/* Radius */}
+        <div>
+          <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
+            סגנון הפינות של הכרטיסיות והכפתורים:
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { id: 'modern-rounded', name: 'עגול מודרני ואפליקטיבי', sub: '24px Soft Curves', icon: '📱' },
+              { id: 'sharp-luxury', name: 'חד, גברי ומדויק', sub: '8px Sharp Edges', icon: '💎' },
+              { id: 'classic-soft', name: 'קלאסי מעודן ומאוזן', sub: '16px Balanced', icon: '⚖️' },
+            ].map((r) => {
+              const isSelected = (layout.borderRadius || 'modern-rounded') === r.id;
+              return (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => {
+                    const updated: ShopSettings = {
+                      ...settings,
+                      layout: {
+                        ...(settings.layout || {}),
+                        borderRadius: r.id as any,
+                      },
+                    };
+                    onUpdateSettings(updated);
+                    onNotifySave();
+                    success('סגנון הפינות עודכן', r.name);
+                  }}
+                  className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-gold bg-[#FAF7F2] shadow-sm ring-2 ring-gold/20'
+                      : 'border-[#E5DDD0] hover:border-gold/50 bg-white'
+                  }`}
+                >
+                  <span className="text-xl mb-1">{r.icon}</span>
+                  <span className="text-xs font-black text-[#1C1C1C]">{r.name}</span>
+                  <span className="text-[10px] text-[#6B6560] mt-0.5">{r.sub}</span>
+                </button>
+              );
+            })}
           </div>
-          <p className="text-xs text-[#6B6560] mt-1">
-            החלט אילו חלקים יוצגו בעמוד הבית של המספרה בהתאם לצורך
-          </p>
+        </div>
+
+        {/* Font Mood */}
+        <div className="pt-4 border-t border-[#E5DDD0]">
+          <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
+            אופי הטיפוגרפיה והגופנים באתר:
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { id: 'urban-bold', name: 'נועז ועוצמתי (Urban Bold)', sub: 'Rubik Black · מומלץ למספרות', icon: '🦁' },
+              { id: 'modern-sans', name: 'נקי והייטקי (Modern Clean)', sub: 'Assistant & Heebo · קליניקות וספא', icon: '⚡' },
+              { id: 'luxury-serif', name: 'יוקרתי ומעודן (Luxury Serif)', sub: 'Frank Ruhl · סלוני נשים ובוטיק', icon: '👑' },
+            ].map((f) => {
+              const isSelected = (layout.fontStyle || 'urban-bold') === f.id;
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => {
+                    const updated: ShopSettings = {
+                      ...settings,
+                      layout: {
+                        ...(settings.layout || {}),
+                        fontStyle: f.id as any,
+                      },
+                    };
+                    onUpdateSettings(updated);
+                    onNotifySave();
+                    success('סגנון הטיפוגרפיה עודכן', f.name);
+                  }}
+                  className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-gold bg-[#FAF7F2] shadow-sm ring-2 ring-gold/20'
+                      : 'border-[#E5DDD0] hover:border-gold/50 bg-white'
+                  }`}
+                >
+                  <span className="text-xl mb-1">{f.icon}</span>
+                  <span className="text-xs font-black text-[#1C1C1C]">{f.name}</span>
+                  <span className="text-[10px] text-[#6B6560] mt-0.5">{f.sub}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Modular Section Reordering & Visibility */}
+      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm">
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Layout className="w-5 h-5 text-gold" />
+              <h2 className="text-base font-black text-[#1C1C1C]">סדר מקטעים ומודולריות (1-Click Reorder)</h2>
+            </div>
+            <p className="text-xs text-[#6B6560] mt-1">
+              שלוט בסדר שבו המקטעים מופיעים בעמוד והפעל או כבה סקשנים לפי הצורך
+            </p>
+          </div>
         </div>
 
         <div className="space-y-3">
-          {/* Section: Before & After */}
-          <div className="flex items-center justify-between p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD0]">
-            <div>
-              <span className="font-bold text-xs sm:text-sm text-[#1C1C1C] block">
-                סליידר אינטראקטיבי "לפני ואחרי" (Before & After Transformation)
-              </span>
-              <span className="text-[11px] text-[#6B6560]">
-                סליידר משיכה המציג תספורות ועיצובי זקן לפני ואחרי הטיפול
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleToggleSection('showBeforeAfter')}
-              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all ${
-                layout.showBeforeAfter !== false
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : 'bg-zinc-200 text-zinc-600'
-              }`}
-            >
-              {layout.showBeforeAfter !== false ? 'מוצג באתר ✓' : 'מוסתר ✕'}
-            </button>
-          </div>
+          {(layout.sectionsOrder || ['hero', 'services', 'bio', 'branches', 'gallery', 'reviews', 'faqs']).map((secKey, idx, arr) => {
+            const labels: Record<string, { name: string; desc: string; icon: string; toggleKey?: keyof BusinessLayoutConfig }> = {
+              hero: { name: 'פתיח ראשי (Hero Hub)', desc: 'תמונת אווירה, לוגו, סטטוס פתיחה וכפתורי קביעת תור', icon: '💈' },
+              services: { name: 'שירותים ומחירון דיגיטלי', desc: 'רשימת השירותים, זמנים, מחירים וגלריית תמונות', icon: '📋' },
+              gallery: { name: 'גלריית לפני / אחרי (Slider)', desc: 'השוואת תמונות אינטראקטיבית עם סליידר', icon: '✂️', toggleKey: 'showBeforeAfter' },
+              bio: { name: 'פרופיל אודות הצוות (Bio)', desc: 'שנות ניסיון, פילוסופיה מקצועית ותמונת הספר', icon: '👤', toggleKey: 'showBio' },
+              branches: { name: 'סניפים ומפות ניווט Waze', desc: 'כתובות מדויקות, שעות פעילות וכפתורי הגעה', icon: '🗺️', toggleKey: 'showBranches' },
+              reviews: { name: 'המלצות וביקורות לקוחות (5.0★)', desc: 'חוות דעת של לקוחות מאומתים מ-Google', icon: '⭐', toggleKey: 'showReviews' },
+              faqs: { name: 'שאלות ותשובות נפוצות (FAQ)', desc: 'מענה על ביטולים, תשלומים, חניה ואיחורים', icon: '❓', toggleKey: 'showFaqs' },
+            };
 
-          {/* Section: Reviews & Testimonials */}
-          <div className="flex items-center justify-between p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD0]">
-            <div>
-              <span className="font-bold text-xs sm:text-sm text-[#1C1C1C] block">
-                המלצות וביקורות לקוחות Google (4.9★ Testimonials)
-              </span>
-              <span className="text-[11px] text-[#6B6560]">
-                כרטיסיות חוות דעת של לקוחות מרוצים עם דירוג כוכבים
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleToggleSection('showReviews')}
-              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all ${
-                layout.showReviews !== false
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : 'bg-zinc-200 text-zinc-600'
-              }`}
-            >
-              {layout.showReviews !== false ? 'מוצג באתר ✓' : 'מוסתר ✕'}
-            </button>
-          </div>
+            const meta = labels[secKey] || { name: secKey, desc: '', icon: '📌' };
+            const isVisible = meta.toggleKey ? layout[meta.toggleKey] !== false : true;
 
-          {/* Section: FAQs */}
-          <div className="flex items-center justify-between p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD0]">
-            <div>
-              <span className="font-bold text-xs sm:text-sm text-[#1C1C1C] block">
-                שאלות נפוצות ותשובות (FAQ Section)
-              </span>
-              <span className="text-[11px] text-[#6B6560]">
-                מענה על ביטולים, תשלומים, חניה ואיחורים ללקוחות
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleToggleSection('showFaqs')}
-              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all ${
-                layout.showFaqs !== false
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : 'bg-zinc-200 text-zinc-600'
-              }`}
-            >
-              {layout.showFaqs !== false ? 'מוצג באתר ✓' : 'מוסתר ✕'}
-            </button>
-          </div>
+            const handleMove = (direction: 'up' | 'down') => {
+              const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+              if (newIdx < 0 || newIdx >= arr.length) return;
+              const newOrder = [...arr];
+              const temp = newOrder[idx];
+              newOrder[idx] = newOrder[newIdx];
+              newOrder[newIdx] = temp;
 
-          {/* Section: Branches Navigation */}
-          <div className="flex items-center justify-between p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD0]">
-            <div>
-              <span className="font-bold text-xs sm:text-sm text-[#1C1C1C] block">
-                כרטיסיות סניפים וניווט Waze (אריאל & רחובות)
-              </span>
-              <span className="text-[11px] text-[#6B6560]">
-                הצגת כתובות מדויקות, שעות פעילות וכפתורי ניווט ישירים
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleToggleSection('showBranches')}
-              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all ${
-                layout.showBranches !== false
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : 'bg-zinc-200 text-zinc-600'
-              }`}
-            >
-              {layout.showBranches !== false ? 'מוצג באתר ✓' : 'מוסתר ✕'}
-            </button>
-          </div>
+              const updated: ShopSettings = {
+                ...settings,
+                layout: {
+                  ...(settings.layout || {}),
+                  sectionsOrder: newOrder as any,
+                },
+              };
+              onUpdateSettings(updated);
+              onNotifySave();
+              success('סדר הסקשנים עודכן', `${meta.name} הועבר למיקום ${newIdx + 1}`);
+            };
 
-          {/* Section: Bio / About */}
-          <div className="flex items-center justify-between p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD0]">
-            <div>
-              <span className="font-bold text-xs sm:text-sm text-[#1C1C1C] block">
-                אודות מאסטר ברבר והפילוסופיה (Barber Showcase)
-              </span>
-              <span className="text-[11px] text-[#6B6560]">
-                פסקת ניסיון אישי, שנות ותק וציטוט פילוסופיה מקצועית
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleToggleSection('showBio')}
-              className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition-all ${
-                layout.showBio !== false
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : 'bg-zinc-200 text-zinc-600'
-              }`}
-            >
-              {layout.showBio !== false ? 'מוצג באתר ✓' : 'מוסתר ✕'}
-            </button>
-          </div>
+            return (
+              <div
+                key={secKey}
+                className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${
+                  isVisible ? 'bg-[#FAF7F2] border-[#E5DDD0]' : 'bg-zinc-100 border-zinc-200 opacity-60'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">{meta.icon}</span>
+                  <div>
+                    <span className="font-bold text-xs sm:text-sm text-[#1C1C1C] block">
+                      {meta.name} <span className="text-[10px] text-slate-500 font-normal">(מיקום {idx + 1})</span>
+                    </span>
+                    <span className="text-[11px] text-[#6B6560]">{meta.desc}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Reorder Buttons */}
+                  <div className="flex items-center bg-white rounded-xl border border-[#E5DDD0] p-0.5 shadow-xs">
+                    <button
+                      type="button"
+                      disabled={idx === 0}
+                      onClick={() => handleMove('up')}
+                      className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-100 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                      title="הזז למעלה"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      type="button"
+                      disabled={idx === arr.length - 1}
+                      onClick={() => handleMove('down')}
+                      className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-100 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
+                      title="הזז למטה"
+                    >
+                      ▼
+                    </button>
+                  </div>
+
+                  {/* Toggle Visibility */}
+                  {meta.toggleKey && (
+                    <button
+                      type="button"
+                      onClick={() => handleToggleSection(meta.toggleKey!)}
+                      className={`text-xs px-3.5 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                        isVisible
+                          ? 'bg-emerald-500 text-white shadow-xs'
+                          : 'bg-zinc-300 text-zinc-700'
+                      }`}
+                    >
+                      {isVisible ? 'מוצג ✓' : 'מוסתר ✕'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

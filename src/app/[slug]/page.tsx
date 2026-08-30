@@ -187,9 +187,14 @@ export default function DynamicBusinessLandingPage({
 
   const defaultOrder = ['hero', 'services', 'bio', 'branches', 'gallery', 'reviews', 'faqs'];
   const activeOrder = business?.layout?.sectionsOrder || defaultOrder;
+  const borderRadius = business?.layout?.borderRadius || 'modern-rounded';
+  const fontStyle = business?.layout?.fontStyle || 'urban-bold';
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 theme-${bgTheme} ${bgTheme === 'luxury-light' ? 'theme-luxury-light' : ''}`} style={bgStyles}>
+    <div
+      className={`min-h-screen transition-colors duration-500 theme-${bgTheme} ${bgTheme === 'luxury-light' ? 'theme-luxury-light' : ''} radius-${borderRadius} font-mood-${fontStyle}`}
+      style={bgStyles}
+    >
       {/* Flagship Demo Top Ribbon */}
       {(isDvir || slug === 'demo') && (
         <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-2 px-4 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md sticky top-0 z-50 border-b border-indigo-500/30">

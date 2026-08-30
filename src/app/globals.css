@@ -1037,3 +1037,35 @@ input[type="tel"] {
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
+/* ============================================================
+   MODULAR DESIGN ENGINE (CARD CORNERS & TYPOGRAPHY MOODS)
+   ============================================================ */
+.radius-modern-rounded .rounded-3xl,
+.radius-modern-rounded .rounded-2xl {
+  border-radius: 1.5rem !important;
+}
+
+.radius-sharp-luxury .rounded-3xl,
+.radius-sharp-luxury .rounded-2xl,
+.radius-sharp-luxury .rounded-xl {
+  border-radius: 0.5rem !important;
+}
+
+.radius-classic-soft .rounded-3xl,
+.radius-classic-soft .rounded-2xl {
+  border-radius: 1rem !important;
+}
+
+.font-mood-urban-bold {
+  font-family: var(--font-rubik), 'Rubik', sans-serif !important;
+}
+
+.font-mood-luxury-serif {
+  font-family: 'Frank Ruhl Libre', serif, sans-serif !important;
+}
+
+.font-mood-modern-sans {
+  font-family: var(--font-assistant), 'Assistant', 'Heebo', sans-serif !important;
+}
+
+

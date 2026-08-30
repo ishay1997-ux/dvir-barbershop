@@ -199,6 +199,8 @@ export interface BusinessLayoutConfig {
   heroStyle?: 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
   servicesStyle?: 'split-gallery' | 'cards-grid' | 'accordion-list';
   cardStyle?: 'glass' | 'solid-dark' | 'bordered-neon';
+  borderRadius?: 'modern-rounded' | 'sharp-luxury' | 'classic-soft';
+  fontStyle?: 'modern-sans' | 'urban-bold' | 'luxury-serif';
   showBeforeAfter?: boolean;
   showReviews?: boolean;
   showFaqs?: boolean;
