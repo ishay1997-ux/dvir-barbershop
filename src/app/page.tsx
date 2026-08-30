@@ -42,7 +42,10 @@ export default function SaaSPlatformLandingPage() {
       title: 'מספרות ועיצוב שיער גברים',
       tagline: 'ניהול זמנים מדויק, תיעוד נוסחת תספורת (פייד, זקן) ויומן מלא 24/7',
       stats: '94% מילוי יומן שבועי',
+      isLive: true,
       slug: 'dvir',
+      ctaLabel: 'צפו בדמו חי (המספרה של דביר)',
+      waMsg: 'היי, ראיתי את מערכת CutWeb ואני מעוניין באתר ומערכת תורים למספרת גברים!',
       features: ['נוסחת תספורת אישית לכל לקוח ב-CRM', 'חסימת ימי מילואים/חירום בקליק', 'סנכרון בין מספר עובדים'],
     },
     salon: {
@@ -50,7 +53,10 @@ export default function SaaSPlatformLandingPage() {
       title: 'מספרות נשים וסלוני יופי',
       tagline: 'שיוך טיפולים לפי משך זמן (צבע, החלקה, גוונים) וניהול עמדות עבודה',
       stats: 'חיסכון של 4 שעות שיחות ביום',
-      slug: 'dvir',
+      isLive: false,
+      slug: 'salon',
+      ctaLabel: 'התאמת אתר ומערכת לסלון יופי 💬',
+      waMsg: 'היי, ראיתי את מערכת CutWeb ואשמח להתאים אתר ומערכת תורים לסלון עיצוב שיער נשים!',
       features: ['הגדרת זמני שהייה לטיפולים מורכבים', 'גלריית עבודות וקטלוג תמונות', 'תזכורות אוטומטיות לפני טיפול'],
     },
     beauty: {
@@ -58,7 +64,10 @@ export default function SaaSPlatformLandingPage() {
       title: 'קוסמטיקה, ציפורניים & טיפוח',
       tagline: 'הזמנת תורים נוחה, אישורי הגעה בוואטסאפ ורשימת המתנה לחורים פנויים',
       stats: '0% ביטולים ללא הודעה מוקדמת',
-      slug: 'dvir',
+      isLive: false,
+      slug: 'beauty',
+      ctaLabel: 'התאמת אתר לקוסמטיקה וציפורניים 💬',
+      waMsg: 'היי, ראיתי את מערכת CutWeb ואשמח להתאים אתר ומערכת לקוסמטיקה, לק ג\'ל וטיפוח!',
       features: ['רשימת המתנה אוטומטית (Waitlist)', 'אישורי הגעה ישירים בוואטסאפ', 'שאלון העדפות ורגישויות'],
     },
     services: {
@@ -66,7 +75,10 @@ export default function SaaSPlatformLandingPage() {
       title: 'אינסטלציה, טכנאים & שירותי בית',
       tagline: 'תיאום חלונות הגעה (לדוגמה 10:00-12:00), קבלת כתובת מדויקת והערות',
       stats: 'סדר מושלם בקריאות שירות',
-      slug: 'dvir',
+      isLive: false,
+      slug: 'services',
+      ctaLabel: 'התאמת מערכת לשירותי בית וטכנאים 💬',
+      waMsg: 'היי, ראיתי את מערכת CutWeb ואשמח להתאים מערכת תורים וחלונות הגעה לשירותי בית!',
       features: ['בחירת חלונות זמן (בוקר / צהריים / ערב)', 'איסוף כתובת והוראות הגעה בטופס', 'ניווט Waze ישיר לבית הלקוח'],
     },
     trainer: {
@@ -74,7 +86,10 @@ export default function SaaSPlatformLandingPage() {
       title: 'מאמנים אישיים, קליניקות & טיפולים',
       tagline: 'לו״ז אימונים פרטיים וסדרות טיפולים עם מעקב התקדמות אישי',
       stats: 'הכפלת לקוחות חוזרים',
-      slug: 'dvir',
+      isLive: false,
+      slug: 'trainer',
+      ctaLabel: 'התאמת מערכת לקליניקה ומאמנים 💬',
+      waMsg: 'היי, ראיתי את מערכת CutWeb ואשמח להתאים מערכת זימון תורים לקליניקה ואימונים!',
       features: ['תיאום מפגשים אישיים וסדרות', 'מעקב לקוחות ופרטי קשר מלאים', 'קישור יומן ל-Google / Apple Calendar'],
     },
   };
@@ -115,10 +130,11 @@ export default function SaaSPlatformLandingPage() {
             </Link>
             <Link
               href="/dvir"
+              target="_blank"
               className="text-xs font-black px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-md shadow-indigo-500/25 flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>צפה באתר לדוגמה</span>
+              <span>דמו חי (מספרת גברים)</span>
             </Link>
           </div>
         </div>
@@ -153,9 +169,10 @@ export default function SaaSPlatformLandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
             <Link
               href="/dvir"
+              target="_blank"
               className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
             >
-              <span>התנסו באתר לדוגמה (Live Demo)</span>
+              <span>צפו באתר לדוגמה (פיילוט מספרה)</span>
               <ArrowLeft className="w-4 h-4" />
             </Link>
 
@@ -255,13 +272,26 @@ export default function SaaSPlatformLandingPage() {
             </div>
 
             <div className="pt-4 flex items-center gap-3">
-              <Link
-                href={`/${currentInd.slug}`}
-                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 transition-colors"
-              >
-                <span>צפה באתר לדוגמה</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </Link>
+              {currentInd.isLive ? (
+                <Link
+                  href={`/${currentInd.slug}`}
+                  target="_blank"
+                  className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs hover:scale-105"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>{currentInd.ctaLabel}</span>
+                </Link>
+              ) : (
+                <a
+                  href={`https://wa.me/972587815071?text=${encodeURIComponent(currentInd.waMsg)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-emerald-600/20 hover:scale-105"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span>{currentInd.ctaLabel}</span>
+                </a>
+              )}
             </div>
           </div>
 
