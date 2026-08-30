@@ -88,7 +88,7 @@ export function PricingSection({ onOpenOnboarding }: PricingSectionProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>סאב-דומיין ייעודי (thecut.co.il/[slug])</span>
+                  <span>סאב-דומיין ייעודי (cutweb.app/[slug])</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-600 shrink-0" />

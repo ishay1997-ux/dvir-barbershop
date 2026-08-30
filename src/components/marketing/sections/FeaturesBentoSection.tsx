@@ -9,7 +9,7 @@ export function FeaturesBentoSection() {
       icon: Smartphone,
       title: 'אתר אישי מהיר וממותג',
       description:
-        'אתר לקוחות מותאם לסלולר הפועל ללא צורך בהורדת אפליקציה מחנות האפליקציות, עם כתובת ייעודית (thecut.co.il/[slug]).',
+        'אתר לקוחות מותאם לסלולר הפועל ללא צורך בהורדת אפליקציה מחנות האפליקציות, עם כתובת ייעודית (cutweb.app/[slug]).',
     },
     {
       icon: Calendar,

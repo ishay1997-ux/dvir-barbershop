@@ -146,26 +146,35 @@ export async function POST(request: Request) {
     if (industry?.includes('קוסמטיקה') || industry?.includes('ציפורניים')) {
       themeColor = '#EC4899';
       defaultServices = [
-        { name: 'מניקור לק ג׳ל משולב', price: 130, duration: 50 },
-        { name: 'טיפול פנים קלאסי עמוק', price: 280, duration: 60 },
+        { name: 'מבנה אנטומי & לק ג׳ל פרימיום', price: 160, duration: 60 },
+        { name: 'הארכת ציפורניים בפוליג׳ל', price: 250, duration: 90 },
+        { name: 'הרמת ריסים & בוטוקס', price: 220, duration: 50 },
       ];
-    } else if (industry?.includes('נשים') || industry?.includes('סלון')) {
-      themeColor = '#A855F7';
+    } else if (industry?.includes('ספא') || industry?.includes('מסאז') || industry?.includes('עיסוי')) {
+      themeColor = '#14B8A6';
       defaultServices = [
-        { name: 'גוונים / בליאז׳ פרימיום', price: 450, duration: 120 },
-        { name: 'תספורת ופאן מעוצב', price: 160, duration: 45 },
+        { name: 'עיסוי שוודי קלאסי משחרר', price: 280, duration: 60 },
+        { name: 'עיסוי רקמות עמוק לספורטאים', price: 320, duration: 60 },
+        { name: 'טיפול אבנים חמות הוליסטי', price: 360, duration: 75 },
       ];
-    } else if (industry?.includes('אינסטלציה') || industry?.includes('טכנאי')) {
-      themeColor = '#0EA5E9';
-      defaultServices = [
-        { name: 'קריאת שירות / איתור תקלה', price: 250, duration: 60 },
-        { name: 'תיקון והתקנה מקצועית', price: 350, duration: 90 },
-      ];
-    } else if (industry?.includes('מאמן') || industry?.includes('קליניקה')) {
+    } else if (industry?.includes('כושר') || industry?.includes('מאמן')) {
       themeColor = '#10B981';
       defaultServices = [
-        { name: 'אימון אישי 1-על-1', price: 220, duration: 50 },
-        { name: 'אבחון יציבה ותנועה ראשוני', price: 300, duration: 60 },
+        { name: 'אימון אישי 1-על-1 VIP', price: 200, duration: 60 },
+        { name: 'כרטיסיית 10 אימונים אישיים', price: 1800, duration: 60 },
+      ];
+    } else if (industry?.includes('קליניק') || industry?.includes('אסתטיק') || industry?.includes('רופא')) {
+      themeColor = '#0EA5E9';
+      defaultServices = [
+        { name: 'פגישת אבחון ותכנון טיפול', price: 200, duration: 30 },
+        { name: 'הזרקת בוטוקס רפואי מדויק', price: 750, duration: 30 },
+        { name: 'פיסול שפתיים חומצה היאלורונית', price: 1400, duration: 45 },
+      ];
+    } else if (industry?.includes('אינסטלציה') || industry?.includes('טכנאי') || industry?.includes('מיזוג') || industry?.includes('חשמל')) {
+      themeColor = '#F59E0B';
+      defaultServices = [
+        { name: 'ביקור ובדיקת תקלה מקיפה', price: 250, duration: 45 },
+        { name: 'מילוי גז ותיקון דליפות', price: 450, duration: 60 },
       ];
     }
 

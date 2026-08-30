@@ -30,7 +30,7 @@ export const WixStyleHeroShowcase: React.FC<WixStyleHeroShowcaseProps> = ({
   const showcaseSites = [
     {
       id: 'barber',
-      category: 'מספרת גברים & ברברשופ',
+      category: 'מספרות ועיצוב שיער גברים',
       businessName: 'המספרה של דביר',
       city: 'אריאל & רחובות',
       slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן',
@@ -54,7 +54,7 @@ export const WixStyleHeroShowcase: React.FC<WixStyleHeroShowcaseProps> = ({
     },
     {
       id: 'beauty',
-      category: 'קוסמטיקה, לק ג׳ל & טיפוח',
+      category: 'קוסמטיקה, ציפורניים & טיפוח',
       businessName: 'סטודיו שירן ביוטי & בוטיק',
       city: 'ראשון לציון',
       slogan: 'עיצוב ציפורניים במבנה אנטומי, הרמת ריסים וטיפולי פנים',
@@ -126,7 +126,7 @@ export const WixStyleHeroShowcase: React.FC<WixStyleHeroShowcaseProps> = ({
     },
     {
       id: 'clinic',
-      category: 'קליניקה אסתטית & רופאים',
+      category: 'קליניקות אסתטיקה & רופאים',
       businessName: 'קליניקת ד״ר לוי לאסתטיקה רפואית',
       city: 'תל אביב',
       slogan: 'רפואה אסתטית מתקדמת, פיסול פנים, בוטוקס וחומצה היאלורונית',
@@ -150,7 +150,7 @@ export const WixStyleHeroShowcase: React.FC<WixStyleHeroShowcaseProps> = ({
     },
     {
       id: 'services',
-      category: 'שירותי בית & מיזוג',
+      category: 'אינסטלציה, טכנאים & שירותי בית',
       businessName: 'שרון שירותי מיזוג וחשמל',
       city: 'מרכז והשרון',
       slogan: 'התקנה ותיקון מזגנים, פתרונות חשמל מתקדמים ושירות מהיר',
@@ -240,7 +240,7 @@ export const WixStyleHeroShowcase: React.FC<WixStyleHeroShowcaseProps> = ({
               dir="ltr"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-slate-200 font-bold">thecut.co.il</span>
+              <span className="text-slate-200 font-bold">cutweb.app</span>
               <span>/{current.slug}</span>
             </div>
 
