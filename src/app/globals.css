@@ -870,47 +870,103 @@ input[type="tel"] {
    LIVE CUSTOMIZER DRAWER ISOLATION (Immune to page theme rules)
    ============================================================ */
 .live-customizer-drawer,
+.live-customizer-panel,
 .theme-luxury-light .live-customizer-drawer,
+.theme-luxury-light .live-customizer-panel,
 .theme-brand-midnight .live-customizer-drawer,
-.theme-cyber-carbon .live-customizer-drawer {
-  background-color: rgba(15, 23, 42, 0.98) !important;
-  color: #FFFFFF !important;
-  border-color: rgba(51, 65, 85, 0.9) !important;
+.theme-brand-midnight .live-customizer-panel,
+.theme-cyber-carbon .live-customizer-drawer,
+.theme-cyber-carbon .live-customizer-panel {
+  background-color: #0c0d10 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
+.theme-luxury-light .live-customizer-drawer h2,
+.theme-luxury-light .live-customizer-drawer h3,
 .theme-luxury-light .live-customizer-drawer h4,
 .theme-luxury-light .live-customizer-drawer .text-white,
 .theme-luxury-light .live-customizer-drawer span.text-white,
-.theme-luxury-light .live-customizer-drawer div.text-white {
-  color: #FFFFFF !important;
+.theme-luxury-light .live-customizer-drawer div.text-white,
+.theme-luxury-light .live-customizer-panel h2,
+.theme-luxury-light .live-customizer-panel h3,
+.theme-luxury-light .live-customizer-panel h4,
+.theme-luxury-light .live-customizer-panel .text-white,
+.theme-luxury-light .live-customizer-panel span.text-white,
+.theme-luxury-light .live-customizer-panel div.text-white {
+  color: #ffffff !important;
 }
 
-.theme-luxury-light .live-customizer-drawer .text-slate-400,
-.theme-luxury-light .live-customizer-drawer .text-slate-300,
+.theme-luxury-light .live-customizer-drawer .text-zinc-100,
+.theme-luxury-light .live-customizer-drawer .text-zinc-200,
+.theme-luxury-light .live-customizer-drawer .text-slate-100,
+.theme-luxury-light .live-customizer-drawer .text-slate-200,
+.theme-luxury-light .live-customizer-panel .text-zinc-100,
+.theme-luxury-light .live-customizer-panel .text-zinc-200,
+.theme-luxury-light .live-customizer-panel .text-slate-100,
+.theme-luxury-light .live-customizer-panel .text-slate-200 {
+  color: #f4f4f5 !important;
+}
+
+.theme-luxury-light .live-customizer-drawer .text-zinc-300,
 .theme-luxury-light .live-customizer-drawer .text-zinc-400,
-.theme-luxury-light .live-customizer-drawer p {
-  color: #94a3b8 !important;
+.theme-luxury-light .live-customizer-drawer .text-slate-300,
+.theme-luxury-light .live-customizer-drawer .text-slate-400,
+.theme-luxury-light .live-customizer-drawer p,
+.theme-luxury-light .live-customizer-panel .text-zinc-300,
+.theme-luxury-light .live-customizer-panel .text-zinc-400,
+.theme-luxury-light .live-customizer-panel .text-slate-300,
+.theme-luxury-light .live-customizer-panel .text-slate-400,
+.theme-luxury-light .live-customizer-panel p {
+  color: #a1a1aa !important;
 }
 
-.theme-luxury-light .live-customizer-drawer .text-slate-200 {
-  color: #e2e8f0 !important;
+.theme-luxury-light .live-customizer-drawer .text-zinc-500,
+.theme-luxury-light .live-customizer-drawer .text-slate-500,
+.theme-luxury-light .live-customizer-panel .text-zinc-500,
+.theme-luxury-light .live-customizer-panel .text-slate-500 {
+  color: #71717a !important;
 }
 
-.theme-luxury-light .live-customizer-drawer .bg-slate-800\/80,
-.theme-luxury-light .live-customizer-drawer .bg-slate-800\/60,
-.theme-luxury-light .live-customizer-drawer .bg-slate-800\/50,
-.theme-luxury-light .live-customizer-drawer .bg-slate-800,
-.theme-luxury-light .live-customizer-drawer .bg-slate-800\/70,
-.theme-luxury-light .live-customizer-drawer .bg-slate-800\/90 {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
+.theme-luxury-light .live-customizer-drawer .bg-zinc-950,
+.theme-luxury-light .live-customizer-panel .bg-zinc-950 {
+  background-color: #09090b !important;
+  color: #ffffff !important;
 }
 
-.theme-luxury-light .live-customizer-drawer .border-slate-800,
-.theme-luxury-light .live-customizer-drawer .border-slate-700,
-.theme-luxury-light .live-customizer-drawer .border-slate-700\/80,
-.theme-luxury-light .live-customizer-drawer .border-slate-700\/60 {
-  border-color: rgba(51, 65, 85, 0.8) !important;
+.theme-luxury-light .live-customizer-drawer .bg-zinc-900,
+.theme-luxury-light .live-customizer-drawer .bg-zinc-900\/90,
+.theme-luxury-light .live-customizer-drawer .bg-zinc-900\/80,
+.theme-luxury-light .live-customizer-drawer .bg-zinc-900\/60,
+.theme-luxury-light .live-customizer-drawer .bg-zinc-900\/50,
+.theme-luxury-light .live-customizer-panel .bg-zinc-900,
+.theme-luxury-light .live-customizer-panel .bg-zinc-900\/90,
+.theme-luxury-light .live-customizer-panel .bg-zinc-900\/80,
+.theme-luxury-light .live-customizer-panel .bg-zinc-900\/60,
+.theme-luxury-light .live-customizer-panel .bg-zinc-900\/50 {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+}
+
+.theme-luxury-light .live-customizer-drawer .bg-zinc-800,
+.theme-luxury-light .live-customizer-drawer .bg-zinc-800\/90,
+.theme-luxury-light .live-customizer-drawer .bg-zinc-800\/80,
+.theme-luxury-light .live-customizer-panel .bg-zinc-800,
+.theme-luxury-light .live-customizer-panel .bg-zinc-800\/90,
+.theme-luxury-light .live-customizer-panel .bg-zinc-800\/80 {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+}
+
+.theme-luxury-light .live-customizer-drawer .border-white\/10,
+.theme-luxury-light .live-customizer-drawer .border-white\/20,
+.theme-luxury-light .live-customizer-drawer .border-white\/30,
+.theme-luxury-light .live-customizer-drawer .border-white\/5,
+.theme-luxury-light .live-customizer-panel .border-white\/10,
+.theme-luxury-light .live-customizer-panel .border-white\/20,
+.theme-luxury-light .live-customizer-panel .border-white\/30,
+.theme-luxury-light .live-customizer-panel .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* ============================================================

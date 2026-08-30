@@ -135,7 +135,7 @@ export function LiveCustomizerDrawer({
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed top-0 left-0 bottom-0 w-full max-w-sm sm:max-w-md bg-zinc-950 text-white z-50 shadow-2xl border-r border-white/10 flex flex-col"
+              className="fixed top-0 left-0 bottom-0 w-full max-w-sm sm:max-w-md bg-zinc-950 text-white z-50 shadow-2xl border-r border-white/10 flex flex-col live-customizer-drawer live-customizer-panel"
               dir="rtl"
             >
               {/* Drawer Header */}
