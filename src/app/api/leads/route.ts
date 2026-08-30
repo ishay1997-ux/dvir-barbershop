@@ -1,6 +1,17 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  serverTimestamp,
+} from 'firebase/firestore';
 
 export interface LeadPayload {
   id: string;
@@ -44,7 +55,7 @@ const memoryLeads: LeadPayload[] = [
   },
 ];
 
-// 1. CREATE LEAD (POST) - Public from marketing website
+// 1. CREATE LEAD / REGISTER WORKSPACE (POST) - Public from marketing website
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -55,6 +66,50 @@ export async function POST(request: Request) {
         { error: 'נא למלא את כל שדות החובה (שם העסק, שם איש הקשר וטלפון נייד)' },
         { status: 400 }
       );
+    }
+
+    // 🔒 1 WORKSPACE PER USER CHECK: Verify if this email/phone already has an active business
+    if (isFirebaseConfigured && db) {
+      try {
+        if (email && email.includes('@')) {
+          const qEmail = query(
+            collection(db, 'businesses'),
+            where('email', '==', email.trim().toLowerCase())
+          );
+          const snapEmail = await getDocs(qEmail);
+          if (!snapEmail.empty) {
+            const existingBiz = snapEmail.docs[0].data() as any;
+            return NextResponse.json({
+              success: true,
+              alreadyExists: true,
+              message: `כבר קיים עסק רשום לחשבון זה (${existingBiz.name}). העברנו אותך למערכת הניהול.`,
+              slug: existingBiz.slug,
+              businessName: existingBiz.name,
+              workspaceUrl: `/admin?slug=${existingBiz.slug}`,
+              bookingUrl: `/${existingBiz.slug}`,
+            });
+          }
+        }
+
+        if (phone) {
+          const qPhone = query(collection(db, 'businesses'), where('phone', '==', phone.trim()));
+          const snapPhone = await getDocs(qPhone);
+          if (!snapPhone.empty) {
+            const existingBiz = snapPhone.docs[0].data() as any;
+            return NextResponse.json({
+              success: true,
+              alreadyExists: true,
+              message: `כבר קיים עסק רשום למספר טלפון זה (${existingBiz.name}).`,
+              slug: existingBiz.slug,
+              businessName: existingBiz.name,
+              workspaceUrl: `/admin?slug=${existingBiz.slug}`,
+              bookingUrl: `/${existingBiz.slug}`,
+            });
+          }
+        }
+      } catch (checkErr) {
+        console.warn('Check existing business error:', checkErr);
+      }
     }
 
     const leadId = `lead-${Date.now()}`;

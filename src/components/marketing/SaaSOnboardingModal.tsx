@@ -101,6 +101,7 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
     workspaceUrl: string;
     bookingUrl: string;
   } | null>(null);
+  const [isExistingUser, setIsExistingUser] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,10 +136,16 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
       }
 
       const data = await res.json();
+      if (data.alreadyExists) {
+        setIsExistingUser(true);
+      } else {
+        setIsExistingUser(false);
+      }
+
       if (data.slug) {
         setCreatedWorkspace({
           slug: data.slug,
-          workspaceUrl: data.workspaceUrl || `/admin`,
+          workspaceUrl: data.workspaceUrl || `/admin?slug=${data.slug}`,
           bookingUrl: data.bookingUrl || `/${data.slug}`,
         });
       }
@@ -506,10 +513,14 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
 
               <div className="space-y-1">
                 <h4 className="text-lg font-black text-slate-900">
-                  מעולה {ownerName}! העסק "{businessName}" הוקם בהצלחה! 🚀
+                  {isExistingUser
+                    ? `ברוך שובך ${ownerName}! העסק שלך כבר פעיל במערכת ✨`
+                    : `מעולה ${ownerName}! העסק "${businessName}" הוקם בהצלחה! 🚀`}
                 </h4>
                 <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-                  המרחב הדיגיטלי ואתר התורים שלך נוצרו במערכת CutWeb OS. כעת באפשרותך לגשת ישירות לדאשבורד הניהול או לצפות באתר הלקוחות שלך.
+                  {isExistingUser
+                    ? `זיהינו חשבון עסק קיים תחת הפרטים שלך. העברנו אותך ישירות לניהול המערכת והיומן שלך.`
+                    : `המרחב הדיגיטלי ואתר התורים שלך נוצרו במערכת CutWeb OS. כעת באפשרותך לגשת ישירות לדאשבורד הניהול או לצפות באתר הלקוחות שלך.`}
                 </p>
               </div>
 
