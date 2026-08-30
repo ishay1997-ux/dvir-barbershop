@@ -15,6 +15,7 @@ import { Scissors, Phone, MessageCircle, Calendar, Sparkles } from 'lucide-react
 import { BusinessConfig } from '@/types/business';
 import { getBusinessBySlug } from '@/lib/business-service';
 import { DVIR_FLAGSHIP_CONFIG } from '@/config/dvir.config';
+import { LiveCustomizerDrawer } from '@/components/landing/LiveCustomizerDrawer';
 
 export default function DynamicBusinessLandingPage({
   params,
@@ -249,6 +250,14 @@ export default function DynamicBusinessLandingPage({
           </Link>
         </div>
       </div>
+
+      {/* Real-time Interactive Customizer Studio for Live Demo & Preview */}
+      {business && (
+        <LiveCustomizerDrawer
+          business={business}
+          onChangeBusiness={(updated) => setBusiness(updated)}
+        />
+      )}
     </div>
   );
 }
