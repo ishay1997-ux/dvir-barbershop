@@ -13,6 +13,7 @@ import {
   Building2,
   Copy,
   Download,
+  MessageCircle,
 } from 'lucide-react';
 import type { Business } from './types';
 
@@ -282,6 +283,18 @@ export const BusinessesTab: React.FC<BusinessesTabProps> = ({
                   >
                     <Key className="w-3.5 h-3.5" /> כניסה כמנהל
                   </button>
+
+                  <a
+                    href={`https://wa.me/${(biz.phone || '').replace(/\D/g, '').replace(/^0/, '972')}?text=${encodeURIComponent(
+                      `היי ${biz.ownerName || 'יקר/ה'}! 🎉\nהאתר והמערכת שלך עבור "${biz.name}" מוכנים באוויר!\n\n🌐 קישור לאתר הלקוחות להזמנת תורים:\nhttps://thecut.co.il/${biz.slug}\n\n🔐 קישור לפאנל הניהול והיומן שלך:\nhttps://thecut.co.il/admin/login\n\nבהצלחה רבה! 🚀`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] border border-[#25D366]/40 transition-colors cursor-pointer"
+                    title={`שלח קישורי אתר וניהול ל-${biz.ownerName || biz.name} ב-WhatsApp`}
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                  </a>
 
                   <button
                     onClick={() => {

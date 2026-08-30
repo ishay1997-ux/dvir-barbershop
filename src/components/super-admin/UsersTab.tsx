@@ -80,55 +80,7 @@ export const UsersTab: React.FC<UsersTabProps> = ({
         </button>
       </div>
 
-      {/* Quick Provision & WhatsApp Invite Card for Dvir */}
-      <div
-        className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
-          adminTheme === 'light'
-            ? 'bg-amber-50 border-amber-300 text-amber-950'
-            : 'bg-gold/10 border-gold/30 text-white'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gold text-black flex items-center justify-center font-black shrink-0">
-            ✂️
-          </div>
-          <div>
-            <h4 className="font-black text-xs sm:text-sm">
-              גישה ישירה ומאובטחת לדביר (dvirattias10@gmail.com)
-            </h4>
-            <p className="text-[11px] opacity-80">
-              דביר מוגדר מראש ומורשה להתחבר עם חשבון Google שלו בדף{' '}
-              <code className="font-mono font-bold">/admin/login</code>
-            </p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
-            type="button"
-            onClick={() => {
-              onChangeEmail('dvirattias10@gmail.com');
-              onChangeDisplayName('דביר אטיאס');
-              onChangeRole('business_admin');
-              onChangeBusinessSlugs('dvir');
-            }}
-            className="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-xs font-bold transition-colors cursor-pointer text-center"
-          >
-            מלא בטופס
-          </button>
-          <a
-            href={`https://wa.me/972587815071?text=${encodeURIComponent(
-              `היי דביר אח יקר! 🔥\nהאתר של המספרה שלך באוויר בקישור:\nhttps://thecut-reg-in.vercel.app/dvir\n\nוכדי לנהל את היומן, התורים והמחירון שלך, היכנס מכאן באמצעות חשבון ה-Google שלך:\nhttps://thecut-reg-in.vercel.app/admin/login\n(חשבון Google שלך כבר מוגדר כמנהל!)`
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-md text-center"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>שלח הזמנה לדביר ב-WhatsApp 💬</span>
-          </a>
-        </div>
-      </div>
 
       {/* Add User Card */}
       <div

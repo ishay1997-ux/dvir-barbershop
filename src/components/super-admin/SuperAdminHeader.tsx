@@ -94,7 +94,7 @@ export const SuperAdminHeader: React.FC<SuperAdminHeaderProps> = ({
             }`}
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">לאתר הראשי</span>
+            <span className="hidden sm:inline">אתר שיווק ראשי</span>
           </Link>
         </div>
       </div>
