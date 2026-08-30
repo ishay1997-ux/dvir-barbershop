@@ -1,7 +1,17 @@
 'use client';
 
 import React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import {
+  ShieldCheck,
+  Sparkles,
+  ArrowRight,
+  Lock,
+  Zap,
+  BarChart3,
+  CheckCircle2,
+  Building2,
+} from 'lucide-react';
+import Link from 'next/link';
 
 interface SuperAdminLoginScreenProps {
   adminTheme: 'dark' | 'light';
@@ -16,57 +26,100 @@ export const SuperAdminLoginScreen: React.FC<SuperAdminLoginScreenProps> = ({
 }) => {
   return (
     <div
-      className={`min-h-screen flex items-center justify-center p-4 transition-colors ${
-        adminTheme === 'light' ? 'bg-[#FAFAFC] text-slate-900' : 'bg-[#121212] text-white'
-      }`}
+      className="min-h-screen flex flex-col justify-between p-4 sm:p-8 bg-[#F8FAFC] text-slate-900 relative overflow-hidden font-sans selection:bg-indigo-500 selection:text-white"
       dir="rtl"
     >
-      <div
-        className={`max-w-md w-full rounded-3xl p-8 sm:p-10 shadow-2xl border transition-all text-center ${
-          adminTheme === 'light'
-            ? 'bg-white border-slate-200/90 shadow-xl shadow-slate-200/50'
-            : 'bg-[#1C1C1C] border-white/10 shadow-black/60'
-        }`}
-      >
-        <div
-          className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm ${
-            adminTheme === 'light'
-              ? 'bg-indigo-50 border border-indigo-200/80 text-indigo-600'
-              : 'bg-indigo-500/10 border border-indigo-500/30 text-indigo-400'
-          }`}
-        >
-          <ShieldCheck className="w-8 h-8" />
-        </div>
+      {/* Dynamic Ambient Background Glows */}
+      <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-200/50 rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute top-1/2 -left-32 w-96 h-96 bg-amber-100/60 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 right-1/3 w-96 h-96 bg-sky-200/40 rounded-full blur-3xl pointer-events-none" />
 
-        <h1
-          className={`text-2xl font-black mb-1.5 tracking-tight ${
-            adminTheme === 'light' ? 'text-slate-900' : 'text-white'
-          }`}
+      {/* Top Bar Navigation */}
+      <header className="relative z-10 w-full max-w-5xl mx-auto flex items-center justify-between py-2">
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 group transition-transform hover:scale-102"
         >
-          CutWeb <span className="text-indigo-600">· Super Admin</span>
-        </h1>
-        <p
-          className={`text-xs mb-8 ${
-            adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'
-          }`}
-        >
-          פורטל ניהול-על רב-עסקי (Multi-Tenant Master Panel)
-        </p>
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-700 text-white flex items-center justify-center font-black shadow-md shadow-indigo-600/20 text-lg">
+            C
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-black text-base text-slate-900 tracking-tight">CutWeb</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80">
+                Super Admin
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 font-sans">פורטל ניהול-על רב-עסקי</p>
+          </div>
+        </Link>
 
-        <div className="space-y-3">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/80 hover:bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80 shadow-xs hover:shadow-sm text-xs font-bold transition-all"
+        >
+          <span>חזרה לאתר הראשי</span>
+          <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+        </Link>
+      </header>
+
+      {/* Main Center Card */}
+      <main className="relative z-10 w-full max-w-md mx-auto my-auto py-8">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-2xl shadow-indigo-100/60 border border-slate-200/90 text-center relative transition-all">
+          
+          {/* Welcoming Top Badge */}
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-xs font-bold mb-6 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+            <span>מרכז השליטה והניהול הגלובלי</span>
+          </div>
+
+          {/* Master Icon */}
+          <div className="w-18 h-18 rounded-3xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-indigo-700 text-white flex items-center justify-center mx-auto mb-5 shadow-xl shadow-indigo-600/25 ring-8 ring-indigo-50 transform hover:scale-105 transition-transform">
+            <ShieldCheck className="w-9 h-9 text-white" />
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2">
+            ברוכים הבאים ל-CutWeb OS
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-600 mb-6 font-sans leading-relaxed">
+            שלום! אנא התחבר עם חשבון ה-Google המורשה שלך כדי לגשת לניהול העסקים, הלידים ודיווחי המערכת.
+          </p>
+
+          {/* Friendly Feature Highlights */}
+          <div className="grid grid-cols-3 gap-2 mb-8 bg-slate-50/80 p-3 rounded-2xl border border-slate-200/70">
+            <div className="flex flex-col items-center text-center p-1.5">
+              <div className="w-7 h-7 rounded-xl bg-indigo-100/80 text-indigo-700 flex items-center justify-center mb-1 shadow-xs">
+                <Building2 className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-[10px] font-bold text-slate-700 leading-tight">כל העסקים</span>
+            </div>
+
+            <div className="flex flex-col items-center text-center p-1.5">
+              <div className="w-7 h-7 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center mb-1 shadow-xs">
+                <Zap className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-[10px] font-bold text-slate-700 leading-tight">זמן אמת</span>
+            </div>
+
+            <div className="flex flex-col items-center text-center p-1.5">
+              <div className="w-7 h-7 rounded-xl bg-amber-100/80 text-amber-700 flex items-center justify-center mb-1 shadow-xs">
+                <BarChart3 className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-[10px] font-bold text-slate-700 leading-tight">בקרת-על</span>
+            </div>
+          </div>
+
+          {/* Google Login Button */}
           <button
             onClick={onGoogleLogin}
             disabled={googleLoading}
-            className={`w-full py-3.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-3 transition-all cursor-pointer shadow-sm border ${
-              adminTheme === 'light'
-                ? 'bg-white hover:bg-slate-50 text-slate-800 border-slate-300 shadow-slate-100 hover:border-slate-400'
-                : 'bg-white hover:bg-gray-100 text-black border-transparent shadow-lg'
-            } disabled:opacity-50`}
+            className="w-full py-4 px-5 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 hover:border-indigo-400 shadow-md shadow-slate-200/60 hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 group transform active:scale-98"
           >
             {googleLoading ? (
-              <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin" />
             ) : (
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -85,14 +138,27 @@ export const SuperAdminLoginScreen: React.FC<SuperAdminLoginScreenProps> = ({
                 />
               </svg>
             )}
-            <span>התחברות עם חשבון Google מורשה</span>
+            <span>התחברות מהירה עם חשבון Google מורשה</span>
           </button>
-        </div>
 
-        <div className="mt-8 pt-5 border-t border-slate-200/80 text-[10px] text-slate-400">
-          גישה מאובטחת למורשים בלבד · CutWeb Platform v2.2
+          {/* Trust Guarantee Note */}
+          <div className="mt-6 flex items-center justify-center gap-2 text-[11px] text-slate-500 font-sans">
+            <Lock className="w-3 h-3 text-slate-400" />
+            <span>חיבור מאובטח בתקן SSL/TLS · גישה מוגבלת למנהלים</span>
+          </div>
         </div>
-      </div>
+      </main>
+
+      {/* Modern Footer */}
+      <footer className="relative z-10 w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 py-4 border-t border-slate-200/60 text-xs text-slate-400 text-center sm:text-right font-sans">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>מערכת הענן ושרתי ה-API פעילים ותקינים</span>
+        </div>
+        <div>
+          CutWeb Platform v2.2 · כל הזכויות שמורות
+        </div>
+      </footer>
     </div>
   );
 };
