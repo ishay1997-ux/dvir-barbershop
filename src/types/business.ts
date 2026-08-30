@@ -157,6 +157,7 @@ export interface BusinessConfig {
   createdAt?: string;
   heroImages?: string[];
   galleryImages?: string[];
+  transformations?: any[];
   services: ServiceItem[];
   branches: BranchItem[];
   staff?: StaffMember[];

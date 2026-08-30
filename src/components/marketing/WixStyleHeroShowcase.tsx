@@ -55,97 +55,121 @@ export const WixStyleHeroShowcase: React.FC<WixStyleHeroShowcaseProps> = ({
     {
       id: 'beauty',
       category: 'קוסמטיקה, לק ג׳ל & טיפוח',
-      businessName: 'סטודיו מיה לקוסמטיקה',
+      businessName: 'סטודיו שירן ביוטי & בוטיק',
       city: 'ראשון לציון',
-      slogan: 'טיפולי פנים מתקדמים, מניקור לק ג׳ל ועיצוב גבות',
+      slogan: 'עיצוב ציפורניים במבנה אנטומי, הרמת ריסים וטיפולי פנים',
       themeColor: '#EC4899',
       bgGradient: 'from-pink-950/20 via-zinc-900 to-black',
       textColor: 'text-pink-400',
-      badge: 'עיצוב מותאם קוסמטיקה ✨',
+      badge: 'אתר הדגמה חי ✨',
       slug: 'beauty',
-      isLive: false,
+      isLive: true,
       services: [
-        { name: 'מניקור לק ג׳ל משולב', price: '130 ₪', time: '50 דק׳' },
-        { name: 'טיפול פנים קלאסי עמוק', price: '280 ₪', time: '60 דק׳' },
-        { name: 'עיצוב והרמת גבות', price: '90 ₪', time: '30 דק׳' },
+        { name: 'מבנה אנטומי & לק ג׳ל פרימיום', price: '160 ₪', time: '60 דק׳' },
+        { name: 'הארכת ציפורניים בפוליג׳ל', price: '250 ₪', time: '90 דק׳' },
+        { name: 'הרמת ריסים & בוטוקס', price: '220 ₪', time: '50 דק׳' },
       ],
       recentBooking: {
         client: 'נועה שחר',
-        service: 'מניקור לק ג׳ל',
+        service: 'מבנה אנטומי & לק ג׳ל',
         time: 'מחר בשעה 10:00',
         status: 'אושר בוואטסאפ ✓',
       },
     },
     {
-      id: 'salon',
-      category: 'מספרת נשים & סלון יופי',
-      businessName: 'סלון אלונה לעיצוב שיער',
-      city: 'תל אביב - יפו',
-      slogan: 'גוונים, בליאז׳, החלקות אורגניות ותסרוקות ערב',
-      themeColor: '#A855F7',
-      bgGradient: 'from-purple-950/20 via-zinc-900 to-black',
-      textColor: 'text-purple-400',
-      badge: 'ניהול זמני שהייה 💇‍♀️',
-      slug: 'salon',
-      isLive: false,
+      id: 'spa',
+      category: 'ספא, טיפולי גוף ומסאז׳',
+      businessName: 'ספא לוטוס – בית למנוחה ומרגוע',
+      city: 'רמת השרון',
+      slogan: 'עיסויים מקצועיים, שחרור שרירים עמוק ופינוק הוליסטי',
+      themeColor: '#14B8A6',
+      bgGradient: 'from-teal-950/20 via-zinc-900 to-black',
+      textColor: 'text-teal-400',
+      badge: 'אתר הדגמה חי 🌿',
+      slug: 'spa',
+      isLive: true,
       services: [
-        { name: 'גוונים / בליאז׳ פרימיום', price: '450 ₪', time: '120 דק׳' },
-        { name: 'החלקה אורגנית משקמת', price: '600 ₪', time: '150 דק׳' },
-        { name: 'תספורת ופאן מעוצב', price: '160 ₪', time: '45 דק׳' },
+        { name: 'עיסוי שוודי קלאסי משחרר', price: '280 ₪', time: '60 דק׳' },
+        { name: 'עיסוי רקמות עמוק לספורטאים', price: '320 ₪', time: '60 דק׳' },
+        { name: 'טיפול אבנים חמות הוליסטי', price: '360 ₪', time: '75 דק׳' },
       ],
       recentBooking: {
-        client: 'מאיה רוזן',
-        service: 'בליאז׳ + תספורת',
-        time: 'יום ג׳ בשעה 14:00',
+        client: 'דניאל כהן',
+        service: 'עיסוי רקמות עמוק',
+        time: 'יום ד׳ בשעה 16:00',
         status: 'אושר בוואטסאפ ✓',
       },
     },
     {
-      id: 'services',
-      category: 'אינסטלציה & שירותי בית',
-      businessName: 'דניאל מערכות מיזוג ואינסטלציה',
-      city: 'מרכז והשרון',
-      slogan: 'תיקון מזגנים, איתור נזילות וקריאות שירות מהירות',
-      themeColor: '#0EA5E9',
-      bgGradient: 'from-sky-950/20 via-zinc-900 to-black',
-      textColor: 'text-sky-400',
-      badge: 'חלונות הגעה ו-Waze 🔧',
-      slug: 'services',
-      isLive: false,
-      services: [
-        { name: 'בדיקת ותיקון מזגן', price: '250 ₪', time: 'חלון שעתיים' },
-        { name: 'פתיחת סתימה ואיתור נזילה', price: '350 ₪', time: 'חלון שעתיים' },
-        { name: 'התקנת נקודת מים / סיפון', price: '280 ₪', time: 'חלון שעה' },
-      ],
-      recentBooking: {
-        client: 'יוסי כרמי',
-        service: 'תיקון מזגן (חלון 10:00-12:00)',
-        time: 'היום • שדרות רוטשילד',
-        status: 'ניווט Waze מוכן ✓',
-      },
-    },
-    {
       id: 'trainer',
-      category: 'אימונים אישיים & קליניקה',
-      businessName: 'Peak Performance קליניקה',
+      category: 'אימונים אישיים & כושר',
+      businessName: 'סטודיו אופק – אימונים אישיים',
       city: 'הרצליה פיתוח',
-      slogan: 'אימונים פונקציונליים 1-על-1 ושיקום תנועתי',
+      slogan: 'אימוני כושר אישיים, חיטוב והעלאת מסת שריר',
       themeColor: '#10B981',
       bgGradient: 'from-emerald-950/20 via-zinc-900 to-black',
       textColor: 'text-emerald-400',
-      badge: 'לו״ז אימונים אישי 🏋️',
+      badge: 'אתר הדגמה חי 🏋️',
       slug: 'trainer',
-      isLive: false,
+      isLive: true,
       services: [
-        { name: 'אימון אישי 1-על-1', price: '220 ₪', time: '50 דק׳' },
-        { name: 'אבחון יציבה ותנועה ראשוני', price: '300 ₪', time: '60 דק׳' },
-        { name: 'כרטיסיית 10 אימונים', price: '1,900 ₪', time: 'חבילה' },
+        { name: 'אימון אישי 1-על-1 VIP', price: '200 ₪', time: '60 דק׳' },
+        { name: 'כרטיסיית 10 אימונים אישיים', price: '1,800 ₪', time: 'חבילה' },
+        { name: 'אימון זוגי / חברים', price: '280 ₪', time: '60 דק׳' },
       ],
       recentBooking: {
         client: 'רועי ברק',
         service: 'אימון אישי 1-על-1',
         time: 'מחר ב-08:00',
         status: 'אושר ביומן ✓',
+      },
+    },
+    {
+      id: 'clinic',
+      category: 'קליניקה אסתטית & רופאים',
+      businessName: 'קליניקת ד״ר לוי לאסתטיקה רפואית',
+      city: 'תל אביב',
+      slogan: 'רפואה אסתטית מתקדמת, פיסול פנים, בוטוקס וחומצה היאלורונית',
+      themeColor: '#0EA5E9',
+      bgGradient: 'from-sky-950/20 via-zinc-900 to-black',
+      textColor: 'text-sky-400',
+      badge: 'אתר הדגמה חי 🩺',
+      slug: 'clinic',
+      isLive: true,
+      services: [
+        { name: 'פגישת אבחון ותכנון טיפול', price: '200 ₪', time: '30 דק׳' },
+        { name: 'הזרקת בוטוקס רפואי מדויק', price: '750 ₪', time: '30 דק׳' },
+        { name: 'פיסול שפתיים חומצה היאלורונית', price: '1,400 ₪', time: '45 דק׳' },
+      ],
+      recentBooking: {
+        client: 'מיכל אברהם',
+        service: 'פיסול שפתיים פרימיום',
+        time: 'היום ב-13:30',
+        status: 'אושר בוואטסאפ ✓',
+      },
+    },
+    {
+      id: 'services',
+      category: 'שירותי בית & מיזוג',
+      businessName: 'שרון שירותי מיזוג וחשמל',
+      city: 'מרכז והשרון',
+      slogan: 'התקנה ותיקון מזגנים, פתרונות חשמל מתקדמים ושירות מהיר',
+      themeColor: '#F59E0B',
+      bgGradient: 'from-amber-950/20 via-zinc-900 to-black',
+      textColor: 'text-amber-400',
+      badge: 'חלונות הגעה ו-Waze 🔧',
+      slug: 'services',
+      isLive: true,
+      services: [
+        { name: 'ביקור ובדיקת תקלה מקיפה', price: '250 ₪', time: 'חלון 45 דק׳' },
+        { name: 'מילוי גז ותיקון דליפות', price: '450 ₪', time: 'חלון שעה' },
+        { name: 'ניקוי עמוק וחיטוי בקטריאלי', price: '380 ₪', time: 'חלון שעה' },
+      ],
+      recentBooking: {
+        client: 'יוסי כרמי',
+        service: 'בדיקת תקלה במזגן',
+        time: 'היום • חלון 10:00-12:00',
+        status: 'ניווט Waze מוכן ✓',
       },
     },
   ];
@@ -364,27 +388,25 @@ export const WixStyleHeroShowcase: React.FC<WixStyleHeroShowcaseProps> = ({
                 </div>
 
                 {/* Action CTA for this archetype */}
-                <div className="pt-2 flex items-center gap-2">
-                  {current.isLive ? (
-                    <Link
-                      href={`/${current.slug}`}
-                      target="_blank"
-                      className="flex-1 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-md"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      <span>צפה באתר לדוגמה החי</span>
-                    </Link>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => onOpenOnboarding('pro', current.category)}
-                      className="flex-1 py-2.5 rounded-xl text-black font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-md hover:scale-[1.02] cursor-pointer"
-                      style={{ backgroundColor: current.themeColor }}
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>הקמת אתר כזה לעסק שלך</span>
-                    </button>
-                  )}
+                <div className="pt-2 flex flex-col sm:flex-row items-center gap-2">
+                  <Link
+                    href={`/${current.slug}`}
+                    target="_blank"
+                    className="flex-1 w-full py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-md hover:scale-[1.02]"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>צפה באתר לדוגמה החי ↗</span>
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => onOpenOnboarding('pro', current.category)}
+                    className="flex-1 w-full py-2.5 rounded-xl font-black text-xs text-slate-950 flex items-center justify-center gap-1.5 transition-all shadow-md hover:scale-[1.02] cursor-pointer"
+                    style={{ backgroundColor: current.themeColor }}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>הקמת אתר כזה ב-60 שניות</span>
+                  </button>
                 </div>
               </div>
             </div>

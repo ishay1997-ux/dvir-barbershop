@@ -16,48 +16,58 @@ const industryData = {
     stats: '94% מילוי יומן שבועי',
     isLive: true,
     slug: 'dvir',
-    ctaLabel: 'צפו בדמו חי (המספרה של דביר)',
+    ctaLabel: 'צפו באתר דמו חי (המספרה של דביר) ↗',
     features: ['נוסחת תספורת אישית לכל לקוח ב-CRM', 'חסימת ימי מילואים/חירום בקליק', 'סנכרון בין מספר עובדים'],
-  },
-  salon: {
-    icon: '💇‍♀️',
-    title: 'מספרות נשים וסלוני יופי',
-    tagline: 'שיוך טיפולים לפי משך זמן (צבע, החלקה, גוונים) וניהול עמדות עבודה',
-    stats: 'חיסכון של 4 שעות שיחות ביום',
-    isLive: false,
-    slug: 'salon',
-    ctaLabel: 'התאמת אתר ומערכת לסלון יופי 💬',
-    features: ['הגדרת זמני שהייה לטיפולים מורכבים', 'גלריית עבודות וקטלוג תמונות', 'תזכורות אוטומטיות לפני טיפול'],
   },
   beauty: {
     icon: '💅',
     title: 'קוסמטיקה, ציפורניים & טיפוח',
     tagline: 'הזמנת תורים נוחה, אישורי הגעה בוואטסאפ ורשימת המתנה לחורים פנויים',
     stats: '0% ביטולים ללא הודעה מוקדמת',
-    isLive: false,
+    isLive: true,
     slug: 'beauty',
-    ctaLabel: 'התאמת אתר לקוסמטיקה וציפורניים 💬',
+    ctaLabel: 'צפו באתר דמו חי (סטודיו שירן ביוטי) ↗',
     features: ['רשימת המתנה אוטומטית (Waitlist)', 'אישורי הגעה ישירים בוואטסאפ', 'שאלון העדפות ורגישויות'],
+  },
+  spa: {
+    icon: '🌿',
+    title: 'ספא, טיפולי גוף ומסאז׳',
+    tagline: 'קרוסלת אווירה מרגיעה, שחרור שרירים עמוק ופינוק הוליסטי מושלם',
+    stats: 'חיסכון של 4 שעות שיחות ביום',
+    isLive: true,
+    slug: 'spa',
+    ctaLabel: 'צפו באתר דמו חי (ספא לוטוס) ↗',
+    features: ['קרוסלת חדרים ואווירה מרגיעה', 'מחירון טיפולים וזמני שהייה', 'תיאום חבילות זוגיות ופינוק'],
+  },
+  trainer: {
+    icon: '🏋️',
+    title: 'מאמנים אישיים & כושר',
+    tagline: 'לו״ז אימונים פרטיים וסדרות טיפולים עם מעקב התקדמות אישי',
+    stats: 'הכפלת לקוחות חוזרים',
+    isLive: true,
+    slug: 'trainer',
+    ctaLabel: 'צפו באתר דמו חי (סטודיו אופק כושר) ↗',
+    features: ['תיאום מפגשים אישיים וסדרות', 'מעקב לקוחות ופרטי קשר מלאים', 'קישור יומן ל-Google / Apple Calendar'],
+  },
+  clinic: {
+    icon: '🩺',
+    title: 'קליניקות אסתטיקה & רופאים',
+    tagline: 'מראה כחול-ספיר יוקרתי, תוצאות הזרקות וטיפולי פנים רפואיים',
+    stats: '100% שקיפות ודיסקרטיות',
+    isLive: true,
+    slug: 'clinic',
+    ctaLabel: 'צפו באתר דמו חי (ד״ר לוי קליניקה) ↗',
+    features: ['הסכמי טיפול והנחיות מראש', 'סליידר מהפכים לפני/אחרי רפואי', 'ניהול יומן מרובה חדרים'],
   },
   services: {
     icon: '🔧',
     title: 'אינסטלציה, טכנאים & שירותי בית',
     tagline: 'תיאום חלונות הגעה (לדוגמה 10:00-12:00), קבלת כתובת מדויקת והערות',
     stats: 'סדר מושלם בקריאות שירות',
-    isLive: false,
+    isLive: true,
     slug: 'services',
-    ctaLabel: 'התאמת מערכת לשירותי בית וטכנאים 💬',
+    ctaLabel: 'צפו באתר דמו חי (שרון מיזוג וחשמל) ↗',
     features: ['בחירת חלונות זמן (בוקר / צהריים / ערב)', 'איסוף כתובת והוראות הגעה בטופס', 'ניווט Waze ישיר לבית הלקוח'],
-  },
-  trainer: {
-    icon: '🏋️',
-    title: 'מאמנים אישיים, קליניקות & טיפולים',
-    tagline: 'לו״ז אימונים פרטיים וסדרות טיפולים עם מעקב התקדמות אישי',
-    stats: 'הכפלת לקוחות חוזרים',
-    isLive: false,
-    slug: 'trainer',
-    ctaLabel: 'התאמת מערכת לקליניקה ומאמנים 💬',
-    features: ['תיאום מפגשים אישיים וסדרות', 'מעקב לקוחות ופרטי קשר מלאים', 'קישור יומן ל-Google / Apple Calendar'],
   },
 };
 
@@ -77,7 +87,7 @@ export function SolutionsSection({ onOpenOnboarding }: SolutionsSectionProps) {
           בנוי בדיוק לפי הצרכים של המקצוע שלכם
         </h2>
         <p className="text-xs sm:text-sm text-slate-500">
-          בחרו את ענף הפעילות שלכם וגלו כיצד CutWeb מותאם אליכם
+          בחרו את ענף הפעילות שלכם וגלו כיצד CutWeb מותאם אליכם עם אתרי הדגמה חיים
         </p>
       </div>
 
@@ -86,10 +96,11 @@ export function SolutionsSection({ onOpenOnboarding }: SolutionsSectionProps) {
         {(
           [
             ['barber', '💈 מספרות גברים'],
-            ['salon', '💇‍♀️ סלוני יופי'],
             ['beauty', '💅 קוסמטיקה & ציפורניים'],
-            ['services', '🔧 אינסטלציה & שירותי בית'],
-            ['trainer', '🏋️ מאמנים & קליניקות'],
+            ['spa', '🌿 ספא ומסאז׳ים'],
+            ['trainer', '🏋️ מאמנים & כושר'],
+            ['clinic', '🩺 קליניקות אסתטיקה'],
+            ['services', '🔧 אינסטלציה & מיזוג'],
           ] as const
         ).map(([key, label]) => (
           <button
@@ -129,38 +140,36 @@ export function SolutionsSection({ onOpenOnboarding }: SolutionsSectionProps) {
             ))}
           </div>
 
-          <div className="pt-4 flex items-center gap-3">
-            {currentInd.isLive ? (
-              <Link
-                href={`/${currentInd.slug}`}
-                target="_blank"
-                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs hover:scale-105"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>{currentInd.ctaLabel}</span>
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={() => onOpenOnboarding('pro', currentInd.title)}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/20 hover:scale-105 cursor-pointer"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{currentInd.ctaLabel}</span>
-              </button>
-            )}
+          <div className="pt-4 flex flex-col sm:flex-row items-center gap-3">
+            <Link
+              href={`/${currentInd.slug}`}
+              target="_blank"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-md hover:scale-105"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>{currentInd.ctaLabel}</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => onOpenOnboarding('pro', currentInd.title)}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-indigo-600/20 hover:scale-105 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>התחלת התאמה ב-60 שניות</span>
+            </button>
           </div>
         </div>
 
         <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/80 space-y-4 text-center">
           <div className="text-4xl">{currentInd.icon}</div>
           <div className="text-2xl font-black text-indigo-600">{currentInd.stats}</div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 font-sans">
             מערכת התורים מפנה לכם שעות יקרות של מענה טלפוני וממלאת את היומן באופן עצמאי.
           </p>
           <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px] font-bold text-slate-600">
-            <span>📱 ממשק נייד ללקוחות</span>
-            <span>⚡ סנכרון ענן חי</span>
+            <span>📱 אתר לקוחות מותאם נייד</span>
+            <span>⚡ יומן ניהול אוטונומי</span>
           </div>
         </div>
       </div>

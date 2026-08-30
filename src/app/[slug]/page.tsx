@@ -30,6 +30,31 @@ export default function DynamicBusinessLandingPage({
   const slug = resolvedParams.slug.toLowerCase().trim();
 
   const isDvir = slug === 'dvir' || slug === 'thecut';
+  const isFlagshipDemo = isDvir || slug === 'demo' || [
+    'beauty',
+    'nails',
+    'cosmetics',
+    'nails-beauty',
+    'spa',
+    'massage',
+    'spa-massage',
+    'trainer',
+    'fitness',
+    'fitness-trainer',
+    'clinic',
+    'aesthetics',
+    'clinics-aesthetics',
+    'services',
+    'tech',
+    'home-technician',
+    'plumber',
+    'ac',
+    'tattoo',
+    'tattoo-piercing',
+    'barber',
+    'barbershop',
+  ].includes(slug);
+
   const [business, setBusiness] = useState<BusinessConfig | null>(isDvir ? DVIR_FLAGSHIP_CONFIG : null);
   const [loading, setLoading] = useState(!isDvir);
   const [notFound, setNotFound] = useState(false);
@@ -57,12 +82,12 @@ export default function DynamicBusinessLandingPage({
     return (
       <div className="min-h-screen bg-[#141414] text-white flex flex-col items-center justify-center p-4 font-sans" dir="rtl">
         <div className="w-12 h-12 border-3 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin mb-3" />
-        <p className="text-xs text-[#9E9891] font-bold">טוען את המספרה...</p>
+        <p className="text-xs text-zinc-400 font-bold">טוען את אתר ההדגמה...</p>
       </div>
     );
   }
 
-  if (notFound && slug !== 'dvir' && slug !== 'thecut') {
+  if (notFound && !isFlagshipDemo) {
     return (
       <div className="min-h-screen bg-[#0E131F] text-white flex items-center justify-center p-4 font-sans" dir="rtl">
         <div className="max-w-lg w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-8 text-center space-y-6 shadow-2xl backdrop-blur-xl">
@@ -232,7 +257,7 @@ export default function DynamicBusinessLandingPage({
       )}
 
       {/* Flagship Demo Top Ribbon */}
-      {(isDvir || slug === 'demo') && (
+      {isFlagshipDemo && (
         <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-2 px-4 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md sticky top-0 z-50 border-b border-indigo-500/30">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />

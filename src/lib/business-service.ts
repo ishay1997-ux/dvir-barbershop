@@ -1,8 +1,114 @@
 import { BusinessConfig } from '@/types/business';
 import { DVIR_FLAGSHIP_CONFIG } from '@/config/dvir.config';
 import { generateTailoredBusinessConfig } from '@/lib/archetypes';
+import { INDUSTRY_PRESETS, IndustryPreset } from '@/lib/industry-presets';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+
+export function presetToBusinessConfig(preset: IndustryPreset, slug: string): BusinessConfig {
+  return {
+    id: `biz-${preset.id}`,
+    name: preset.shopName,
+    slug: slug,
+    ownerName: preset.ownerName,
+    phone: '054-888-9999',
+    city:
+      preset.id === 'barbershop'
+        ? 'אריאל & רחובות'
+        : preset.id === 'nails-beauty'
+        ? 'ראשון לציון'
+        : preset.id === 'home-technician'
+        ? 'מרכז והשרון'
+        : preset.id === 'fitness-trainer'
+        ? 'הרצליה פיתוח'
+        : preset.id === 'spa-massage'
+        ? 'רמת השרון'
+        : preset.id === 'clinics-aesthetics'
+        ? 'תל אביב'
+        : 'תל אביב',
+    slogan: preset.slogan,
+    announcement: preset.announcement,
+    themeColor: preset.themeColor,
+    branchesCount: preset.showBranches ? 2 : 1,
+    status: 'active',
+    plan: 'pro',
+    experienceYears: 7,
+    instagramHandle: preset.id,
+    whatsappNumber: '0548889999',
+    category: (preset.id === 'barbershop' ? 'barber' : preset.id === 'nails-beauty' ? 'beauty_salon' : preset.id === 'spa-massage' ? 'clinic_therapist' : preset.id === 'fitness-trainer' ? 'private_instructor' : preset.id === 'home-technician' ? 'home_technician' : 'barber') as any,
+    services: preset.services,
+    transformations: preset.transformations,
+    branches: [
+      {
+        id: 'branch-1',
+        name: 'סניף מרכזי',
+        address: 'רחוב הרצל 45, מרכז העיר',
+        phone: '054-888-9999',
+        wazeLink: 'https://waze.com/ul?q=herzel+45',
+        hours: 'א׳-ה׳: 09:00-20:00, ו׳: 08:30-14:30',
+      },
+    ],
+    testimonials: [
+      {
+        id: 't-1',
+        name: 'עומר לוי',
+        comment: 'שירות מדהים, מקצועיות ללא פשרות וזמינות תורים מושלמת!',
+        rating: 5,
+        timeAgo: 'לפני 3 ימים',
+        serviceUsed: preset.services[0]?.name,
+      },
+      {
+        id: 't-2',
+        name: 'מאיה דניאל',
+        comment: 'האתר והחוויה כולה ברמה בינלאומית, פשוט תענוג להזמין תור.',
+        rating: 5,
+        timeAgo: 'לפני שבוע',
+        serviceUsed: preset.services[1]?.name || preset.services[0]?.name,
+      },
+      {
+        id: 't-3',
+        name: 'יוסי כהן',
+        comment: 'מדויק על הדקה, בלי לחכות בתור. ממליץ בחום לכולם!',
+        rating: 5,
+        timeAgo: 'לפני שבועיים',
+        serviceUsed: preset.services[0]?.name,
+      },
+    ],
+    faqs: preset.faqs,
+    layout: {
+      bgTheme: preset.bgTheme,
+      heroStyle: preset.heroStyle,
+      servicesStyle: preset.servicesStyle,
+      cardStyle: 'glass',
+      cardRadius: preset.cardRadius || 'smooth',
+      galleryStyle: preset.galleryStyle,
+      typographyMood: preset.typographyMood || 'modern-clean',
+      borderRadius: preset.borderRadius || 'modern-rounded',
+      fontStyle: preset.fontStyle || 'urban-bold',
+      showBeforeAfter: preset.showBeforeAfter !== false,
+      showReviews: true,
+      showFaqs: true,
+      showBranches: preset.showBranches !== false,
+      showBio: preset.showBio !== false,
+      showTrustBadges: true,
+      showPolicies: true,
+      sectionsOrder: preset.sectionsOrder || [
+        'hero',
+        'announcement',
+        'trust-badges',
+        'services',
+        'gallery',
+        'bio',
+        'policies',
+        'branches',
+        'reviews',
+        'faqs',
+      ],
+      trustBadges: preset.trustBadges,
+      sectionTitles: preset.sectionTitles,
+    },
+  };
+}
 
 /**
  * Resolves a full, rich business configuration for any slug.
@@ -11,15 +117,52 @@ import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firesto
 export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
   const cleanSlug = (slug || 'dvir').trim().toLowerCase();
 
-  // 0. Instant Local Storage Overlay for Admin Real-Time Preview
-  let localStoreOverlay: any = null;
-  if (typeof window !== 'undefined' && (cleanSlug === 'dvir' || cleanSlug === 'thecut')) {
-    try {
-      const stored = localStorage.getItem('thecut_settings');
-      if (stored) {
-        localStoreOverlay = JSON.parse(stored);
-      }
-    } catch (_) {}
+  // 0. Check for Known Flagship Demos and Industry Presets
+  if (cleanSlug === 'dvir' || cleanSlug === 'thecut') {
+    let localStoreOverlay: any = null;
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('thecut_settings');
+        if (stored) {
+          localStoreOverlay = JSON.parse(stored);
+        }
+      } catch (_) {}
+    }
+    return localStoreOverlay ? mergeWithDefaults(localStoreOverlay, DVIR_FLAGSHIP_CONFIG) : DVIR_FLAGSHIP_CONFIG;
+  }
+
+  // Check Niche Aliases
+  const presetMap: Record<string, string> = {
+    beauty: 'nails-beauty',
+    nails: 'nails-beauty',
+    cosmetics: 'nails-beauty',
+    'nails-beauty': 'nails-beauty',
+    spa: 'spa-massage',
+    massage: 'spa-massage',
+    'spa-massage': 'spa-massage',
+    trainer: 'fitness-trainer',
+    fitness: 'fitness-trainer',
+    'fitness-trainer': 'fitness-trainer',
+    clinic: 'clinics-aesthetics',
+    aesthetics: 'clinics-aesthetics',
+    'clinics-aesthetics': 'clinics-aesthetics',
+    services: 'home-technician',
+    tech: 'home-technician',
+    'home-technician': 'home-technician',
+    plumber: 'home-technician',
+    ac: 'home-technician',
+    tattoo: 'tattoo-piercing',
+    'tattoo-piercing': 'tattoo-piercing',
+    barber: 'barbershop',
+    barbershop: 'barbershop',
+  };
+
+  if (presetMap[cleanSlug]) {
+    const targetPresetId = presetMap[cleanSlug];
+    const foundPreset = INDUSTRY_PRESETS.find((p) => p.id === targetPresetId);
+    if (foundPreset) {
+      return presetToBusinessConfig(foundPreset, cleanSlug);
+    }
   }
 
   // 1. Direct Firestore fetch on Client (Zero-delay, bypasses serverless cache/network blips)
@@ -29,16 +172,14 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
       const directDocRef = doc(db, 'businesses', `biz-${cleanSlug}`);
       const directSnap = await getDoc(directDocRef);
       if (directSnap.exists()) {
-        const merged = mergeWithDefaults(directSnap.data() as Partial<BusinessConfig>, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
-        return localStoreOverlay ? mergeWithDefaults(localStoreOverlay, merged) : merged;
+        return mergeWithDefaults(directSnap.data() as Partial<BusinessConfig>);
       }
 
       // Query by slug field
       const q = query(collection(db, 'businesses'), where('slug', '==', cleanSlug));
       const qSnap = await getDocs(q);
       if (!qSnap.empty) {
-        const merged = mergeWithDefaults(qSnap.docs[0].data() as Partial<BusinessConfig>, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
-        return localStoreOverlay ? mergeWithDefaults(localStoreOverlay, merged) : merged;
+        return mergeWithDefaults(qSnap.docs[0].data() as Partial<BusinessConfig>);
       }
     } catch (dbErr) {
       console.warn('Direct Firestore client read fallback:', dbErr);
@@ -53,18 +194,14 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
     if (res.ok) {
       const data = await res.json();
       if (data.business) {
-        return mergeWithDefaults(data.business, cleanSlug === 'dvir' || cleanSlug === 'thecut' ? DVIR_FLAGSHIP_CONFIG : undefined);
+        return mergeWithDefaults(data.business);
       }
     }
   } catch (err) {
     console.error('Failed to fetch business by slug via API:', err);
   }
 
-  // 3. Default fallbacks if network fails
-  if (cleanSlug === 'dvir' || cleanSlug === 'thecut') {
-    return DVIR_FLAGSHIP_CONFIG;
-  }
-
+  // 3. Default fallback if not found
   return generateTailoredBusinessConfig({
     name: cleanSlug.charAt(0).toUpperCase() + cleanSlug.slice(1),
     slug: cleanSlug,
