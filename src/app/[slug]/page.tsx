@@ -11,6 +11,10 @@ import BranchNavigationSection from '@/components/landing/BranchNavigationSectio
 import BeforeAfterSection from '@/components/landing/BeforeAfterSection';
 import ReviewsSection from '@/components/landing/ReviewsSection';
 import FaqSection from '@/components/landing/FaqSection';
+import TrustBadgesSection from '@/components/landing/TrustBadgesSection';
+import BookingPoliciesSection from '@/components/landing/BookingPoliciesSection';
+import TopAnnouncementBanner from '@/components/common/TopAnnouncementBanner';
+import MobileStickyBar from '@/components/layout/MobileStickyBar';
 import { Scissors, Phone, MessageCircle, Calendar, Sparkles } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { getBusinessBySlug } from '@/lib/business-service';
@@ -164,6 +168,12 @@ export default function DynamicBusinessLandingPage({
   const sectionMap: Record<string, React.ReactNode> = {
     hero: <BarbershopHeroHub business={business || undefined} />,
     services: <PriceListAndGallerySection business={business || undefined} />,
+    'trust-badges': business?.layout?.showTrustBadges !== false ? (
+      <TrustBadgesSection business={business || undefined} />
+    ) : null,
+    policies: business?.layout?.showPolicies !== false ? (
+      <BookingPoliciesSection business={business || undefined} />
+    ) : null,
     bio: business?.layout?.showBio !== false ? (
       <div id="about">
         <BarberShowcase business={business || undefined} />
@@ -185,7 +195,7 @@ export default function DynamicBusinessLandingPage({
     ) : null,
   };
 
-  const defaultOrder = ['hero', 'services', 'bio', 'branches', 'gallery', 'reviews', 'faqs'];
+  const defaultOrder = ['hero', 'trust-badges', 'services', 'bio', 'policies', 'branches', 'gallery', 'reviews', 'faqs'];
   const activeOrder = business?.layout?.sectionsOrder || defaultOrder;
   const borderRadius = business?.layout?.borderRadius || 'modern-rounded';
   const fontStyle = business?.layout?.fontStyle || 'urban-bold';
@@ -195,6 +205,15 @@ export default function DynamicBusinessLandingPage({
       className={`min-h-screen transition-colors duration-500 theme-${bgTheme} ${bgTheme === 'luxury-light' ? 'theme-luxury-light' : ''} radius-${borderRadius} font-mood-${fontStyle}`}
       style={bgStyles}
     >
+      {/* Top Announcement Banner (If enabled & text exists) */}
+      {business?.layout?.showAnnouncement !== false && business?.announcement && (
+        <TopAnnouncementBanner
+          announcement={business.announcement}
+          themeColor={themeColor}
+          link={business.layout?.announcementLink}
+        />
+      )}
+
       {/* Flagship Demo Top Ribbon */}
       {(isDvir || slug === 'demo') && (
         <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-2 px-4 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md sticky top-0 z-50 border-b border-indigo-500/30">
@@ -206,7 +225,7 @@ export default function DynamicBusinessLandingPage({
             href="/admin?demo=true"
             className="py-1 px-3.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[11px] transition-transform hover:scale-105 shadow-xs flex items-center gap-1.5"
           >
-            <Sparkles className="w-3 h-3 text-amber-300" />
+            <Sparkles className="w-3 text-amber-300" />
             <span>כניסה לדאשבורד הניהול של העסק ↗</span>
           </Link>
         </div>
@@ -225,37 +244,7 @@ export default function DynamicBusinessLandingPage({
       <Footer business={business || undefined} />
 
       {/* Sticky Mobile Floating Booking Bar */}
-      <div className={`fixed bottom-0 inset-x-0 z-40 md:hidden backdrop-blur-md border-t p-3 px-4 flex items-center justify-between gap-3 shadow-2xl transition-colors ${
-        bgTheme === 'luxury-light'
-          ? 'bg-white/95 border-slate-200 text-slate-900'
-          : 'bg-[#181818]/95 border-white/10 text-white'
-      }`} dir="rtl">
-        <div className="text-right">
-          <div className={`text-[11px] font-bold ${bgTheme === 'luxury-light' ? 'text-slate-500' : 'text-zinc-400'}`}>מוכנים למהפך?</div>
-          <div className={`text-xs font-black ${bgTheme === 'luxury-light' ? 'text-slate-900' : 'text-white'}`}>{business?.name || 'המספרה של דביר'}</div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <a
-            href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`היי ${business?.ownerName || 'דביר'}, רציתי לקבוע תור`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-10 h-10 rounded-2xl bg-[#25D366]/20 border border-[#25D366]/40 text-[#25D366] flex items-center justify-center shadow-md active:scale-95 transition-transform"
-            aria-label="וואטסאפ מהיר"
-          >
-            <MessageCircle className="w-5 h-5" />
-          </a>
-
-          <Link
-            href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
-            className="py-2.5 px-5 rounded-2xl text-[#1C1C1C] font-black text-xs flex items-center gap-1.5 shadow-lg active:scale-95 transition-all"
-            style={{ backgroundColor: themeColor }}
-          >
-            <Calendar className="w-4 h-4" />
-            <span>קבע תור מהיר</span>
-          </Link>
-        </div>
-      </div>
+      <MobileStickyBar business={business || undefined} />
 
       {/* Real-time Interactive Customizer Studio for Live Demo & Preview */}
       {business && (

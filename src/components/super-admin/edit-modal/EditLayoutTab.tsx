@@ -223,6 +223,156 @@ export const EditLayoutTab: React.FC<EditLayoutTabProps> = ({
         </div>
       </div>
 
+      {/* Services Layout Selector */}
+      <div>
+        <label
+          className={`block font-bold mb-2 ${
+            adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'
+          }`}
+        >
+          📋 סגנון תצוגת מחירון ושירותים (Services Layout):
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: 'split-gallery', name: 'Split Visuals', sub: 'תמונות + מחירון', icon: '📋' },
+            { id: 'cards-grid', name: 'Cards Grid', sub: 'כרטיסים רחבים', icon: '🗂️' },
+            { id: 'compact-menu', name: 'Digital Menu', sub: 'תפריט מהיר', icon: '📑' },
+          ].map((s) => {
+            const isSelected = (editingBiz.layout?.servicesStyle || 'split-gallery') === s.id;
+            return (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => {
+                  setEditingBiz({
+                    ...editingBiz,
+                    layout: {
+                      ...(editingBiz.layout || {}),
+                      servicesStyle: s.id as any,
+                    },
+                  });
+                }}
+                className={`p-2.5 rounded-xl border flex flex-col items-center text-center cursor-pointer transition-all ${
+                  isSelected
+                    ? 'border-[#C9A84C] bg-amber-500/10 shadow-xs ring-1 ring-[#C9A84C]'
+                    : adminTheme === 'light'
+                    ? 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800'
+                    : 'border-white/10 bg-[#141414] hover:bg-white/5 opacity-80'
+                }`}
+              >
+                <span className="text-xl mb-1">{s.icon}</span>
+                <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                  {s.name}
+                </span>
+                <span className={`text-[10px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                  {s.sub}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Gallery Archetype Selector */}
+      <div>
+        <label
+          className={`block font-bold mb-2 ${
+            adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'
+          }`}
+        >
+          📸 סגנון הגלריה והעבודות (Gallery Archetype):
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: 'before-after-slider', name: 'סליידר לפני/אחרי', sub: 'השוואת עבודות', icon: '✂️' },
+            { id: 'instagram-masonry', name: 'Insta Grid', sub: 'רשת תמונות וזום', icon: '📸' },
+            { id: 'ambient-carousel', name: 'Ambient Slider', sub: 'קרוסלת אווירה', icon: '🌿' },
+          ].map((g) => {
+            const isSelected = (editingBiz.layout?.galleryStyle || 'before-after-slider') === g.id;
+            return (
+              <button
+                key={g.id}
+                type="button"
+                onClick={() => {
+                  setEditingBiz({
+                    ...editingBiz,
+                    layout: {
+                      ...(editingBiz.layout || {}),
+                      galleryStyle: g.id as any,
+                    },
+                  });
+                }}
+                className={`p-2.5 rounded-xl border flex flex-col items-center text-center cursor-pointer transition-all ${
+                  isSelected
+                    ? 'border-[#C9A84C] bg-amber-500/10 shadow-xs ring-1 ring-[#C9A84C]'
+                    : adminTheme === 'light'
+                    ? 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800'
+                    : 'border-white/10 bg-[#141414] hover:bg-white/5 opacity-80'
+                }`}
+              >
+                <span className="text-xl mb-1">{g.icon}</span>
+                <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                  {g.name}
+                </span>
+                <span className={`text-[10px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                  {g.sub}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Mobile Sticky Bar Selector */}
+      <div>
+        <label
+          className={`block font-bold mb-2 ${
+            adminTheme === 'light' ? 'text-slate-700' : 'text-zinc-300'
+          }`}
+        >
+          📱 סרגל צף תחתון במובייל (Mobile Sticky Bar):
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: 'dual-action', name: 'Dual Action', sub: 'תור + וואטסאפ', icon: '📱' },
+            { id: 'triple-action', name: 'Triple Action', sub: 'תור + חיוג + Waze', icon: '⚡' },
+            { id: 'minimal-pill', name: 'Minimal Pill', sub: 'גלולה זוהרת', icon: '👑' },
+          ].map((m) => {
+            const isSelected = (editingBiz.layout?.mobileStickyStyle || 'dual-action') === m.id;
+            return (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => {
+                  setEditingBiz({
+                    ...editingBiz,
+                    layout: {
+                      ...(editingBiz.layout || {}),
+                      mobileStickyStyle: m.id as any,
+                    },
+                  });
+                }}
+                className={`p-2.5 rounded-xl border flex flex-col items-center text-center cursor-pointer transition-all ${
+                  isSelected
+                    ? 'border-[#C9A84C] bg-amber-500/10 shadow-xs ring-1 ring-[#C9A84C]'
+                    : adminTheme === 'light'
+                    ? 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800'
+                    : 'border-white/10 bg-[#141414] hover:bg-white/5 opacity-80'
+                }`}
+              >
+                <span className="text-xl mb-1">{m.icon}</span>
+                <span className={`text-xs font-bold ${adminTheme === 'light' ? 'text-slate-900' : 'text-white'}`}>
+                  {m.name}
+                </span>
+                <span className={`text-[10px] ${adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'}`}>
+                  {m.sub}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Card Radius & Typography Moods */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Radius */}

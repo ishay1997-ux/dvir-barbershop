@@ -26,7 +26,7 @@ interface VisualPuckPageBuilderProps {
   onChangeLayout: (newLayout: BusinessLayoutConfig) => void;
 }
 
-type SectionKey = 'hero' | 'services' | 'gallery' | 'bio' | 'reviews' | 'faqs' | 'branches';
+type SectionKey = 'hero' | 'announcement' | 'trust-badges' | 'services' | 'gallery' | 'bio' | 'policies' | 'branches' | 'reviews' | 'faqs';
 
 interface SectionDefinition {
   id: SectionKey;
@@ -38,9 +38,12 @@ interface SectionDefinition {
 
 const SECTION_DEFS: SectionDefinition[] = [
   { id: 'hero', label: 'סקשן הירו ראשי (Hero Banner)', desc: 'כותרת ראשית, סלוגן וכפתור זימון תור', icon: '👑', canToggle: false },
+  { id: 'announcement', label: 'פס הודעות עליון (Announcement)', desc: 'מבצעים והודעות חשובות בראש הדף', icon: '📢', canToggle: true },
+  { id: 'trust-badges', label: 'תווי אמון ואיכות (Trust Badges)', desc: 'באדג׳ים של ביטחון, סטריליות ושירות', icon: '🛡️', canToggle: true },
   { id: 'services', label: 'מחירון ושירותים (Services)', desc: 'רשימת השירותים, מחירים ומשכי זמן', icon: '✂️', canToggle: false },
   { id: 'gallery', label: 'גלריית עבודות ואינסטגרם (Gallery)', desc: 'תמונות ומהפכי תספורת', icon: '🖼️', canToggle: true },
   { id: 'bio', label: 'אודות והסטנדרטים (Bio & Story)', desc: 'סיפור העסק, שנות ניסיון והפילוסופיה', icon: '📖', canToggle: true },
+  { id: 'policies', label: 'מדיניות ותקנון (Shop Policies)', desc: 'נהלי ביטול, זמני הגעה ואמצעי תשלום', icon: '🤝', canToggle: true },
   { id: 'reviews', label: 'המלצות וביקורות (Google Reviews)', desc: 'חוות דעת 5.0★ של לקוחות', icon: '⭐', canToggle: true },
   { id: 'faqs', label: 'שאלות נפוצות (FAQ Accordion)', desc: 'אקורדיון מענה לשאלות חוזרות', icon: '❓', canToggle: true },
   { id: 'branches', label: 'סניפים וניווט Waze (Branches)', desc: 'מיקום על מפה, שעות פעילות ודרכי הגעה', icon: '📍', canToggle: true },

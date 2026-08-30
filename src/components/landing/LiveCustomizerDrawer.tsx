@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { SaaSOnboardingModal } from '@/components/marketing/SaaSOnboardingModal';
+import { INDUSTRY_PRESETS, IndustryPreset } from '@/lib/industry-presets';
 
 interface LiveCustomizerDrawerProps {
   business: BusinessConfig;
@@ -47,22 +48,24 @@ const bgThemePresets = [
 
 const SECTION_LABELS: Record<string, { label: string; icon: string; toggleKey?: string }> = {
   hero: { label: 'פתיח ראשי (Hero Hub)', icon: '💈' },
+  'trust-badges': { label: 'תווי איכות וביטחון', icon: '🛡️', toggleKey: 'showTrustBadges' },
   services: { label: 'שירותים ומחירון דיגיטלי', icon: '📋' },
-  gallery: { label: 'גלריית לפני / אחרי (Slider)', icon: '✂️', toggleKey: 'showBeforeAfter' },
   bio: { label: 'פרופיל אודות הצוות (Bio)', icon: '👤', toggleKey: 'showBio' },
+  policies: { label: 'מדיניות הגעה וביטולים', icon: '🤝', toggleKey: 'showPolicies' },
   branches: { label: 'סניפים ומפות ניווט Waze', icon: '🗺️', toggleKey: 'showBranches' },
+  gallery: { label: 'גלריית לפני / אחרי (Slider)', icon: '✂️', toggleKey: 'showBeforeAfter' },
   reviews: { label: 'ביקורות ודירוגי לקוחות', icon: '⭐', toggleKey: 'showReviews' },
   faqs: { label: 'שאלות ותשובות נפוצות (FAQ)', icon: '❓', toggleKey: 'showFaqs' },
 };
 
-const DEFAULT_SECTIONS_ORDER = ['hero', 'services', 'bio', 'branches', 'gallery', 'reviews', 'faqs'];
+const DEFAULT_SECTIONS_ORDER = ['hero', 'trust-badges', 'services', 'bio', 'policies', 'branches', 'gallery', 'reviews', 'faqs'];
 
 export function LiveCustomizerDrawer({
   business,
   onChangeBusiness,
 }: LiveCustomizerDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'colors' | 'theme' | 'sections' | 'style'>('colors');
+  const [activeTab, setActiveTab] = useState<'niches' | 'colors' | 'theme' | 'sections' | 'style'>('niches');
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
 
   const sectionsOrder = (business.layout?.sectionsOrder && business.layout.sectionsOrder.length > 0)
@@ -85,6 +88,29 @@ export function LiveCustomizerDrawer({
       layout: {
         ...(business.layout || {}),
         bgTheme: newBg,
+      },
+    });
+  };
+
+  const handleApplyPreset = (preset: IndustryPreset) => {
+    onChangeBusiness({
+      ...business,
+      name: preset.shopName,
+      ownerName: preset.ownerName,
+      slogan: preset.slogan,
+      announcement: preset.announcement,
+      themeColor: preset.themeColor,
+      services: preset.services,
+      faqs: preset.faqs,
+      layout: {
+        ...(business.layout || {}),
+        bgTheme: preset.bgTheme,
+        heroStyle: preset.heroStyle,
+        servicesStyle: preset.servicesStyle,
+        borderRadius: preset.borderRadius,
+        fontStyle: preset.fontStyle,
+        trustBadges: preset.trustBadges,
+        policies: preset.policies,
       },
     });
   };
@@ -144,9 +170,12 @@ export function LiveCustomizerDrawer({
       layout: {
         ...(business.layout || {}),
         bgTheme: 'dark-obsidian',
+        heroStyle: 'hub-monogram',
+        servicesStyle: 'split-gallery',
         borderRadius: 'modern-rounded',
         fontStyle: 'urban-bold',
         sectionsOrder: DEFAULT_SECTIONS_ORDER as any,
+        sectionTitles: {},
         showBio: true,
         showBranches: true,
         showBeforeAfter: true,
@@ -158,25 +187,23 @@ export function LiveCustomizerDrawer({
 
   return (
     <>
-      {/* Floating Trigger Button on the RIGHT side */}
-      <div className="fixed bottom-6 right-6 z-40" dir="rtl">
+      {/* Floating Trigger Button on the RIGHT side to avoid overlapping accessibility */}
+      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="py-3 px-5 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white font-black text-xs flex items-center gap-2.5 shadow-2xl border border-white/20 backdrop-blur-lg hover:scale-105 transition-all cursor-pointer group"
-          style={{
-            boxShadow: `0 10px 30px -5px ${business.themeColor || '#C9A84C'}40`,
-          }}
+          className="group px-4 py-3 rounded-full bg-[#0F172A] hover:bg-slate-800 text-white font-black text-xs shadow-2xl border border-slate-700/80 flex items-center gap-2.5 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-xl"
+          style={{ borderColor: `${business.themeColor || '#C9A84C'}80` }}
         >
           <div
-            className="w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0 group-hover:rotate-45 transition-transform"
+            className="w-4 h-4 rounded-full shadow-inner animate-pulse shrink-0"
             style={{ backgroundColor: business.themeColor || '#C9A84C' }}
-          >
-            <Palette className="w-3 h-3 text-slate-950" />
-          </div>
-          <span>סטודיו עיצוב חי</span>
-          <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full text-indigo-300 font-bold flex items-center gap-1">
-            <Sparkles className="w-2.5 h-2.5" />
-            Live
+          />
+          <span className="flex items-center gap-1.5">
+            <Sliders className="w-3.5 h-3.5 text-indigo-400" />
+            <span>התאמה אישית בלייב</span>
+          </span>
+          <span className="bg-indigo-600/30 text-indigo-300 text-[10px] px-2 py-0.5 rounded-full font-bold">
+            1-Click Live
           </span>
         </button>
       </div>
@@ -198,7 +225,7 @@ export function LiveCustomizerDrawer({
               </div>
               <div>
                 <h4 className="text-xs font-black text-white">סטודיו התאמה אישית בלייב</h4>
-                <p className="text-[10px] text-slate-300">שינוי סדר סקשנים, צבעים וסגנון בזמן אמת</p>
+                <p className="text-[10px] text-slate-300">החלפת ענפים ב-1-Click, צבעים, סדר סקשנים וסגנון</p>
               </div>
             </div>
 
@@ -219,15 +246,23 @@ export function LiveCustomizerDrawer({
             </div>
           </div>
 
-          {/* Sub-tabs Switcher (4 tabs) */}
-          <div className="grid grid-cols-4 gap-1 p-1 bg-slate-800/90 rounded-xl text-[11px] font-bold border border-slate-700/60">
+          {/* Sub-tabs Switcher (5 tabs) */}
+          <div className="grid grid-cols-5 gap-1 p-1 bg-slate-800/90 rounded-xl text-[10px] font-bold border border-slate-700/60 text-center">
+            <button
+              onClick={() => setActiveTab('niches')}
+              className={`py-1.5 rounded-lg transition-all cursor-pointer ${
+                activeTab === 'niches' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              ענפים 🎯
+            </button>
             <button
               onClick={() => setActiveTab('colors')}
               className={`py-1.5 rounded-lg transition-all cursor-pointer ${
                 activeTab === 'colors' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
-              צבעים
+              צבעים 🎨
             </button>
             <button
               onClick={() => setActiveTab('theme')}
@@ -235,7 +270,7 @@ export function LiveCustomizerDrawer({
                 activeTab === 'theme' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
-              אווירה
+              אווירה 🌌
             </button>
             <button
               onClick={() => setActiveTab('sections')}
@@ -243,7 +278,7 @@ export function LiveCustomizerDrawer({
                 activeTab === 'sections' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
-              סקשנים
+              סקשנים 🔀
             </button>
             <button
               onClick={() => setActiveTab('style')}
@@ -561,7 +596,121 @@ export function LiveCustomizerDrawer({
                 </div>
               </div>
 
-              {/* 2. Card Corner Radius */}
+              {/* 2. Services Layout Style */}
+              <div className="space-y-2 pt-2 border-t border-slate-800">
+                <div className="text-[11px] font-bold text-slate-300">סגנון תצוגת מחירון ושירותים:</div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[
+                    { id: 'split-gallery', label: 'Split Visuals', sub: 'מחירון + תמונות', icon: '📋' },
+                    { id: 'cards-grid', label: 'Cards Grid', sub: 'כרטיסיות רחבות', icon: '🗂️' },
+                    { id: 'compact-menu', label: 'Digital Menu', sub: 'תפריט מהיר', icon: '📑' },
+                  ].map((s) => {
+                    const isSelected = (business.layout?.servicesStyle || 'split-gallery') === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => {
+                          onChangeBusiness({
+                            ...business,
+                            layout: {
+                              ...(business.layout || {}),
+                              servicesStyle: s.id as any,
+                            },
+                          });
+                        }}
+                        className={`p-2.5 rounded-xl border flex flex-col items-center text-center transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-indigo-400 bg-indigo-950/80 shadow-xs'
+                            : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <span className="text-base mb-1">{s.icon}</span>
+                        <span className="text-xs font-bold text-white">{s.label}</span>
+                        <span className="text-[9px] text-slate-400">{s.sub}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3. Gallery Archetype Style */}
+              <div className="space-y-2 pt-2 border-t border-slate-800">
+                <div className="text-[11px] font-bold text-slate-300">סגנון גלריה ותוצאות:</div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[
+                    { id: 'before-after-slider', label: 'Before / After', sub: 'סליידר השוואה', icon: '✂️' },
+                    { id: 'instagram-masonry', label: 'Insta Grid', sub: 'רשת עבודות', icon: '📸' },
+                    { id: 'ambient-carousel', label: 'Ambient Carousel', sub: 'סליידר אווירה', icon: '🌿' },
+                  ].map((g) => {
+                    const isSelected = (business.layout?.galleryStyle || 'before-after-slider') === g.id;
+                    return (
+                      <button
+                        key={g.id}
+                        type="button"
+                        onClick={() => {
+                          onChangeBusiness({
+                            ...business,
+                            layout: {
+                              ...(business.layout || {}),
+                              galleryStyle: g.id as any,
+                            },
+                          });
+                        }}
+                        className={`p-2.5 rounded-xl border flex flex-col items-center text-center transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-indigo-400 bg-indigo-950/80 shadow-xs'
+                            : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <span className="text-base mb-1">{g.icon}</span>
+                        <span className="text-xs font-bold text-white">{g.label}</span>
+                        <span className="text-[9px] text-slate-400">{g.sub}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 4. Mobile Sticky Action Bar */}
+              <div className="space-y-2 pt-2 border-t border-slate-800">
+                <div className="text-[11px] font-bold text-slate-300">סרגל צף תחתון במובייל:</div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[
+                    { id: 'dual-action', label: 'תור + וואטסאפ', sub: 'קלאסי פרימיום', icon: '📱' },
+                    { id: 'triple-action', label: 'תור + חיוג + Waze', sub: '3 פעולות מהירות', icon: '⚡' },
+                    { id: 'minimal-pill', label: 'גלולת VIP זוהרת', sub: 'מינימליסטי נקי', icon: '👑' },
+                  ].map((m) => {
+                    const isSelected = (business.layout?.mobileStickyStyle || 'dual-action') === m.id;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => {
+                          onChangeBusiness({
+                            ...business,
+                            layout: {
+                              ...(business.layout || {}),
+                              mobileStickyStyle: m.id as any,
+                            },
+                          });
+                        }}
+                        className={`p-2.5 rounded-xl border flex flex-col items-center text-center transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-indigo-400 bg-indigo-950/80 shadow-xs'
+                            : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <span className="text-base mb-1">{m.icon}</span>
+                        <span className="text-xs font-bold text-white">{m.label}</span>
+                        <span className="text-[9px] text-slate-400">{m.sub}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 5. Card Corner Radius */}
               <div className="space-y-2 pt-2 border-t border-slate-800">
                 <div className="text-[11px] font-bold text-slate-300">סגנון פינות וכרטיסיות:</div>
                 <div className="grid grid-cols-3 gap-1.5">
@@ -590,7 +739,7 @@ export function LiveCustomizerDrawer({
                 </div>
               </div>
 
-              {/* 3. Typography Mood */}
+              {/* 6. Typography Mood */}
               <div className="space-y-2 pt-2 border-t border-slate-800">
                 <div className="text-[11px] font-bold text-slate-300">אופי גופנים וטיפוגרפיה:</div>
                 <div className="space-y-1.5">

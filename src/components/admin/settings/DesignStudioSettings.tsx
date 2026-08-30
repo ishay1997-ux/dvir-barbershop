@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, Reorder } from 'framer-motion';
 import {
   Palette,
@@ -14,9 +14,18 @@ import {
   Sun,
   Moon,
   GripVertical,
+  Megaphone,
+  ShieldCheck,
+  Smartphone,
+  Image as ImageIcon,
+  HeartHandshake,
+  Target,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 import { useToast } from '@/components/common/ToastProvider';
 import type { ShopSettings, BusinessLayoutConfig } from '@/lib/types';
+import { INDUSTRY_PRESETS, IndustryPreset } from '@/lib/industry-presets';
 
 interface DesignStudioSettingsProps {
   settings: ShopSettings;
@@ -110,6 +119,8 @@ export default function DesignStudioSettings({
     onNotifySave();
   };
 
+  const [newBadgeText, setNewBadgeText] = useState('');
+
   const handleToggleSection = (key: keyof BusinessLayoutConfig) => {
     const currentVal = layout[key] !== false;
     const updatedLayout: BusinessLayoutConfig = {
@@ -119,6 +130,60 @@ export default function DesignStudioSettings({
     const updated: ShopSettings = {
       ...settings,
       layout: updatedLayout,
+    };
+    onUpdateSettings(updated);
+    onNotifySave();
+  };
+
+  const handleApplyIndustryPreset = (preset: IndustryPreset) => {
+    const updated: ShopSettings = {
+      ...settings,
+      shopName: preset.shopName,
+      ownerName: preset.ownerName,
+      slogan: preset.slogan,
+      themeColor: preset.themeColor,
+      bgTheme: preset.bgTheme,
+      announcement: preset.announcement,
+      layout: {
+        ...(settings.layout || {}),
+        bgTheme: preset.bgTheme,
+        heroStyle: preset.heroStyle,
+        servicesStyle: preset.servicesStyle,
+        borderRadius: preset.borderRadius,
+        fontStyle: preset.fontStyle,
+        trustBadges: preset.trustBadges,
+        policies: preset.policies,
+      },
+    };
+    onUpdateSettings(updated);
+    onNotifySave();
+    success('תבנית ענף הוחלה בהצלחה!', `העסק הותאם לענף: ${preset.name}`);
+  };
+
+  const handleAddTrustBadge = () => {
+    if (!newBadgeText.trim()) return;
+    const currentBadges = layout.trustBadges || [];
+    const updated: ShopSettings = {
+      ...settings,
+      layout: {
+        ...(settings.layout || {}),
+        trustBadges: [...currentBadges, newBadgeText.trim()],
+      },
+    };
+    onUpdateSettings(updated);
+    onNotifySave();
+    setNewBadgeText('');
+    success('תג איכות נוסף', newBadgeText.trim());
+  };
+
+  const handleRemoveTrustBadge = (index: number) => {
+    const currentBadges = layout.trustBadges || [];
+    const updated: ShopSettings = {
+      ...settings,
+      layout: {
+        ...(settings.layout || {}),
+        trustBadges: currentBadges.filter((_, i) => i !== index),
+      },
     };
     onUpdateSettings(updated);
     onNotifySave();
@@ -195,6 +260,74 @@ export default function DesignStudioSettings({
               4.9 ★ Google Reviews
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 0. 1-Click Industry Archetype Switcher */}
+      <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 rounded-3xl border border-indigo-500/40 p-6 shadow-xl text-white space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-amber-400" />
+              <h2 className="text-base font-black text-white">תבניות ענף מוכנות ב-1-Click (Industry Switcher)</h2>
+            </div>
+            <p className="text-xs text-slate-300 mt-1">
+              בלחיצה אחת, התאם את כל האתר, הצבעים, המחירון, תווי האמון והסגנון לתחום העיסוק שלך
+            </p>
+          </div>
+          <span className="text-[11px] font-black px-3 py-1 rounded-full bg-amber-400 text-slate-950 self-start sm:self-auto">
+            7 תבניות מקצועיות 🚀
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pt-2">
+          {INDUSTRY_PRESETS.map((preset) => {
+            const isCurrent = settings.themeColor === preset.themeColor && currentTheme === preset.bgTheme;
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => handleApplyIndustryPreset(preset)}
+                className={`p-3.5 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between group ${
+                  isCurrent
+                    ? 'border-amber-400 bg-slate-800/90 shadow-md ring-2 ring-amber-400/40'
+                    : 'border-slate-700 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-xl shrink-0 border border-white/10"
+                      style={{ backgroundColor: `${preset.themeColor}25` }}
+                    >
+                      {preset.icon}
+                    </div>
+                    <span
+                      className="text-[9px] px-2 py-0.5 rounded-md font-bold text-slate-950"
+                      style={{ backgroundColor: preset.themeColor }}
+                    >
+                      {preset.categoryName}
+                    </span>
+                  </div>
+
+                  <h3 className="text-xs font-black text-white group-hover:text-amber-300 transition-colors">
+                    {preset.name}
+                  </h3>
+                  <p className="text-[10px] text-slate-300 mt-1 leading-relaxed line-clamp-2">
+                    {preset.description}
+                  </p>
+                </div>
+
+                <div className="pt-3 mt-3 border-t border-slate-700/60 flex items-center justify-between text-[10px] text-slate-400">
+                  <span className="font-bold text-amber-400 group-hover:underline">החל תבנית זו ←</span>
+                  <div
+                    className="w-3 h-3 rounded-full border border-white/30"
+                    style={{ backgroundColor: preset.themeColor }}
+                  />
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -377,7 +510,136 @@ export default function DesignStudioSettings({
           </div>
         </div>
 
-        {/* 2. Radius */}
+        {/* 2. Services Layout Archetype */}
+        <div className="pt-4 border-t border-[#E5DDD0]">
+          <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
+            סגנון תצוגת מחירון ושירותים (Services Layout):
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { id: 'split-gallery', name: 'Split Visuals (תמונות + מחירון)', sub: 'תמונות מתחלפות ומחירון מפורט', icon: '📋' },
+              { id: 'cards-grid', name: 'Cards Grid (כרטיסיות רחבות)', sub: 'כרטיסים מודרניים עם באדג׳ זמן ומחיר', icon: '🗂️' },
+              { id: 'compact-menu', name: 'Digital Menu (תפריט מהיר)', sub: 'רשימה קומפקטית נקייה ומהירה להזמנה', icon: '📑' },
+            ].map((s) => {
+              const isSelected = (layout.servicesStyle || 'split-gallery') === s.id;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => {
+                    const updated: ShopSettings = {
+                      ...settings,
+                      layout: {
+                        ...(settings.layout || {}),
+                        servicesStyle: s.id as any,
+                      },
+                    };
+                    onUpdateSettings(updated);
+                    onNotifySave();
+                    success('סגנון המחירון עודכן', s.name);
+                  }}
+                  className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-gold bg-[#FAF7F2] shadow-sm ring-2 ring-gold/20'
+                      : 'border-[#E5DDD0] hover:border-gold/50 bg-white'
+                  }`}
+                >
+                  <span className="text-xl mb-1">{s.icon}</span>
+                  <span className="text-xs font-black text-[#1C1C1C]">{s.name}</span>
+                  <span className="text-[10px] text-[#6B6560] mt-0.5">{s.sub}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 3. Gallery Archetype */}
+        <div className="pt-4 border-t border-[#E5DDD0]">
+          <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
+            סגנון הגלריה והעבודות (Gallery Archetype):
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { id: 'before-after-slider', name: 'סליידר לפני / אחרי', sub: 'השוואת עבודות אינטראקטיבית עם ידית גרירה', icon: '✂️' },
+              { id: 'instagram-masonry', name: 'רשת עבודות אינסטגרם (Grid)', sub: 'פיד תמונות מודרני עם זום ותגיות', icon: '📸' },
+              { id: 'ambient-carousel', name: 'קרוסלת אווירה וחדרים', sub: 'סליידר אווירה רחב ומרגיע (מושלם לספא)', icon: '🌿' },
+            ].map((g) => {
+              const isSelected = (layout.galleryStyle || 'before-after-slider') === g.id;
+              return (
+                <button
+                  key={g.id}
+                  type="button"
+                  onClick={() => {
+                    const updated: ShopSettings = {
+                      ...settings,
+                      layout: {
+                        ...(settings.layout || {}),
+                        galleryStyle: g.id as any,
+                      },
+                    };
+                    onUpdateSettings(updated);
+                    onNotifySave();
+                    success('סגנון הגלריה עודכן', g.name);
+                  }}
+                  className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-gold bg-[#FAF7F2] shadow-sm ring-2 ring-gold/20'
+                      : 'border-[#E5DDD0] hover:border-gold/50 bg-white'
+                  }`}
+                >
+                  <span className="text-xl mb-1">{g.icon}</span>
+                  <span className="text-xs font-black text-[#1C1C1C]">{g.name}</span>
+                  <span className="text-[10px] text-[#6B6560] mt-0.5">{g.sub}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 4. Mobile Sticky Action Bar */}
+        <div className="pt-4 border-t border-[#E5DDD0]">
+          <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
+            סרגל צף תחתון במובייל (Mobile Sticky Action Bar):
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { id: 'dual-action', name: 'תור + וואטסאפ (Dual Action)', sub: 'השילוב המנצח לרוב העסקים', icon: '📱' },
+              { id: 'triple-action', name: 'תור + חיוג + Waze', sub: '3 פעולות מהירות בטאץ׳ אחד', icon: '⚡' },
+              { id: 'minimal-pill', name: 'גלולת VIP זוהרת', sub: 'כפתור צף מינימליסטי ויוקרתי', icon: '👑' },
+            ].map((m) => {
+              const isSelected = (layout.mobileStickyStyle || 'dual-action') === m.id;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    const updated: ShopSettings = {
+                      ...settings,
+                      layout: {
+                        ...(settings.layout || {}),
+                        mobileStickyStyle: m.id as any,
+                      },
+                    };
+                    onUpdateSettings(updated);
+                    onNotifySave();
+                    success('סרגל המובייל עודכן', m.name);
+                  }}
+                  className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-gold bg-[#FAF7F2] shadow-sm ring-2 ring-gold/20'
+                      : 'border-[#E5DDD0] hover:border-gold/50 bg-white'
+                  }`}
+                >
+                  <span className="text-xl mb-1">{m.icon}</span>
+                  <span className="text-xs font-black text-[#1C1C1C]">{m.name}</span>
+                  <span className="text-[10px] text-[#6B6560] mt-0.5">{m.sub}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 5. Radius */}
         <div className="pt-4 border-t border-[#E5DDD0]">
           <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
             סגנון הפינות של הכרטיסיות והכפתורים:
@@ -420,7 +682,7 @@ export default function DesignStudioSettings({
           </div>
         </div>
 
-        {/* 3. Font Mood */}
+        {/* 6. Font Mood */}
         <div className="pt-4 border-t border-[#E5DDD0]">
           <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
             אופי הטיפוגרפיה והגופנים באתר:
@@ -709,6 +971,279 @@ export default function DesignStudioSettings({
                 className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
               />
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Top Announcement Ribbon & Promotions */}
+      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Megaphone className="w-5 h-5 text-amber-500" />
+              <h2 className="text-base font-black text-[#1C1C1C]">פס הודעות ומבצעים עליון (Top Announcement Banner)</h2>
+            </div>
+            <p className="text-xs text-[#6B6560] mt-1">
+              הצג התראה או מבצע קורץ בראש העמוד לכל המבקרים (למשל: הנחות חג, שעות מיוחדות)
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              const isShowing = layout.showAnnouncement !== false && Boolean(settings.announcement);
+              const updated: ShopSettings = {
+                ...settings,
+                layout: {
+                  ...(settings.layout || {}),
+                  showAnnouncement: !isShowing,
+                },
+              };
+              onUpdateSettings(updated);
+              onNotifySave();
+            }}
+            className={`text-xs px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+              layout.showAnnouncement !== false && settings.announcement
+                ? 'bg-amber-500 text-slate-950 shadow-xs'
+                : 'bg-zinc-200 text-zinc-600'
+            }`}
+          >
+            {layout.showAnnouncement !== false && settings.announcement ? 'פעיל ✓' : 'כבוי ✕'}
+          </button>
+        </div>
+
+        <div className="space-y-3 pt-2">
+          <div>
+            <label className="block text-xs font-bold text-[#1C1C1C] mb-1">תוכן ההודעה / המבצע:</label>
+            <input
+              type="text"
+              placeholder="לדוגמה: 🎁 מבצע פתיחה: 15% הנחה על כל הטיפולים בימי ראשון ושני!"
+              value={settings.announcement || ''}
+              onChange={(e) => {
+                const updated: ShopSettings = {
+                  ...settings,
+                  announcement: e.target.value,
+                  layout: {
+                    ...(settings.layout || {}),
+                    showAnnouncement: true,
+                  },
+                };
+                onUpdateSettings(updated);
+              }}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-[#1C1C1C] mb-1">קישור לחיץ אופציונלי (URL או #services):</label>
+            <input
+              type="text"
+              placeholder="לדוגמה: #services או /booking"
+              value={layout.announcementLink || ''}
+              onChange={(e) => {
+                const updated: ShopSettings = {
+                  ...settings,
+                  layout: {
+                    ...(settings.layout || {}),
+                    announcementLink: e.target.value,
+                  },
+                };
+                onUpdateSettings(updated);
+              }}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 6. Trust Badges & Highlights */}
+      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+              <h2 className="text-base font-black text-[#1C1C1C]">תווי אמון ואיכות (Trust Badges & Highlights)</h2>
+            </div>
+            <p className="text-xs text-[#6B6560] mt-1">
+              תגים בולטים המעניקים ביטחון ללקוחות חדשים (למשל: חיטוי וסטריליזציה, חניה חינם, ניסיון מעל 8 שנים)
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              const current = layout.showTrustBadges !== false;
+              const updated: ShopSettings = {
+                ...settings,
+                layout: {
+                  ...(settings.layout || {}),
+                  showTrustBadges: !current,
+                },
+              };
+              onUpdateSettings(updated);
+              onNotifySave();
+            }}
+            className={`text-xs px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+              layout.showTrustBadges !== false
+                ? 'bg-emerald-500 text-white shadow-xs'
+                : 'bg-zinc-200 text-zinc-600'
+            }`}
+          >
+            {layout.showTrustBadges !== false ? 'מוצג ✓' : 'מוסתר ✕'}
+          </button>
+        </div>
+
+        {/* Existing Badges List */}
+        <div className="flex flex-wrap gap-2 pt-2">
+          {(layout.trustBadges || ['חומרי פרימיום בלבד', 'חיטוי וסטריליזציה', 'חניה צמודה חינם', 'חוויית VIP']).map((badge, idx) => (
+            <div
+              key={idx}
+              className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold flex items-center gap-2 shadow-2xs"
+            >
+              <span>✓ {badge}</span>
+              <button
+                type="button"
+                onClick={() => handleRemoveTrustBadge(idx)}
+                className="text-emerald-500 hover:text-rose-600 p-0.5 rounded-md hover:bg-emerald-100 cursor-pointer"
+                title="הסר תג זה"
+              >
+                <Trash2 className="w-3 h-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Add Badge Input */}
+        <div className="flex items-center gap-2 pt-2">
+          <input
+            type="text"
+            placeholder="הקלד תג איכות חדש (למשל: קפה אספרסו מפנק חופשי)..."
+            value={newBadgeText}
+            onChange={(e) => setNewBadgeText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddTrustBadge();
+              }
+            }}
+            className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+          />
+          <button
+            type="button"
+            onClick={handleAddTrustBadge}
+            className="px-4 py-2.5 rounded-xl bg-[#1C1C1C] hover:bg-black text-white text-xs font-black flex items-center gap-1.5 cursor-pointer shadow-xs"
+          >
+            <Plus className="w-4 h-4" />
+            <span>הוסף תג</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 7. Shop Policies & Booking Rules */}
+      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <HeartHandshake className="w-5 h-5 text-indigo-500" />
+              <h2 className="text-base font-black text-[#1C1C1C]">מדיניות קביעת תורים והגעה (Shop Policies)</h2>
+            </div>
+            <p className="text-xs text-[#6B6560] mt-1">
+              הגדר ללקוחות מראש את נוהל הביטולים, זמני ההגעה ואמצעי התשלום למניעת אי-הבנות
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              const current = layout.showPolicies !== false;
+              const updated: ShopSettings = {
+                ...settings,
+                layout: {
+                  ...(settings.layout || {}),
+                  showPolicies: !current,
+                },
+              };
+              onUpdateSettings(updated);
+              onNotifySave();
+            }}
+            className={`text-xs px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+              layout.showPolicies !== false
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-zinc-200 text-zinc-600'
+            }`}
+          >
+            {layout.showPolicies !== false ? 'מוצג ✓' : 'מוסתר ✕'}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          <div>
+            <label className="block text-xs font-bold text-[#1C1C1C] mb-1">הודעה מראש לביטול / שינוי תור:</label>
+            <input
+              type="text"
+              placeholder="לדוגמה: ביטול עד 3 שעות מראש"
+              value={layout.policies?.cancellationNotice || ''}
+              onChange={(e) => {
+                const updated: ShopSettings = {
+                  ...settings,
+                  layout: {
+                    ...(settings.layout || {}),
+                    policies: {
+                      ...(settings.layout?.policies || {}),
+                      cancellationNotice: e.target.value,
+                    },
+                  },
+                };
+                onUpdateSettings(updated);
+              }}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-[#1C1C1C] mb-1">זמן הגעה מומלץ לפני הטיפול:</label>
+            <input
+              type="text"
+              placeholder="לדוגמה: נא להגיע 5 דקות לפני"
+              value={layout.policies?.arrivalTime || ''}
+              onChange={(e) => {
+                const updated: ShopSettings = {
+                  ...settings,
+                  layout: {
+                    ...(settings.layout || {}),
+                    policies: {
+                      ...(settings.layout?.policies || {}),
+                      arrivalTime: e.target.value,
+                    },
+                  },
+                };
+                onUpdateSettings(updated);
+              }}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-[#1C1C1C] mb-1">אמצעי תשלום מקובלים:</label>
+            <input
+              type="text"
+              placeholder="לדוגמה: Bit / PayBox / אשראי / מזומן"
+              value={layout.policies?.paymentMethods || ''}
+              onChange={(e) => {
+                const updated: ShopSettings = {
+                  ...settings,
+                  layout: {
+                    ...(settings.layout || {}),
+                    policies: {
+                      ...(settings.layout?.policies || {}),
+                      paymentMethods: e.target.value,
+                    },
+                  },
+                };
+                onUpdateSettings(updated);
+              }}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+            />
           </div>
         </div>
       </div>

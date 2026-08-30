@@ -56,6 +56,7 @@ export interface BranchItem {
   address: string;
   phone?: string;
   wazeLink?: string;
+  wazeUrl?: string;
   googleMapsLink?: string;
   hours?: string;
 }
@@ -70,6 +71,7 @@ export interface TestimonialItem {
 }
 
 export interface FaqItem {
+  id?: string;
   question: string;
   answer: string;
 }
@@ -77,7 +79,9 @@ export interface FaqItem {
 export interface BusinessLayoutConfig {
   bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
   heroStyle?: 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
-  servicesStyle?: 'split-gallery' | 'cards-grid' | 'accordion-list';
+  servicesStyle?: 'split-gallery' | 'cards-grid' | 'compact-menu' | 'accordion-list';
+  galleryStyle?: 'before-after-slider' | 'instagram-masonry' | 'ambient-carousel';
+  mobileStickyStyle?: 'dual-action' | 'triple-action' | 'minimal-pill';
   cardStyle?: 'glass' | 'solid-dark' | 'bordered-neon';
   borderRadius?: 'modern-rounded' | 'sharp-luxury' | 'classic-soft';
   fontStyle?: 'modern-sans' | 'urban-bold' | 'luxury-serif';
@@ -86,7 +90,18 @@ export interface BusinessLayoutConfig {
   showFaqs?: boolean;
   showBranches?: boolean;
   showBio?: boolean;
-  sectionsOrder?: Array<'hero' | 'services' | 'gallery' | 'bio' | 'reviews' | 'faqs' | 'branches'>;
+  showTrustBadges?: boolean;
+  trustBadges?: string[];
+  showAnnouncement?: boolean;
+  announcementLink?: string;
+  showPolicies?: boolean;
+  policies?: {
+    cancellationNotice?: string;
+    arrivalTime?: string;
+    paymentMethods?: string;
+    customNote?: string;
+  };
+  sectionsOrder?: Array<'hero' | 'announcement' | 'trust-badges' | 'services' | 'gallery' | 'bio' | 'policies' | 'branches' | 'reviews' | 'faqs'>;
   sectionTitles?: {
     services?: string;
     servicesSubtitle?: string;
@@ -95,6 +110,8 @@ export interface BusinessLayoutConfig {
     branches?: string;
     reviews?: string;
     faqs?: string;
+    trustBadges?: string;
+    policies?: string;
   };
 }
 
@@ -106,6 +123,7 @@ export interface BusinessConfig {
   ownerName: string;
   phone: string;
   city: string;
+  address?: string;
   slogan?: string;
   announcement?: string;
   themeColor?: string;
