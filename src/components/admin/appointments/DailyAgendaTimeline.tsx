@@ -6,6 +6,7 @@ import { he } from 'date-fns/locale';
 import { Calendar, Scissors, Phone } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { createAppointmentReminderUrl } from '@/lib/whatsapp';
+import { useShopStore } from '@/lib/store';
 import type { AdminAppointment } from './types';
 
 interface DailyAgendaTimelineProps {
@@ -21,6 +22,7 @@ export const DailyAgendaTimeline: React.FC<DailyAgendaTimelineProps> = ({
   onOpenFormula,
   onStatusChange,
 }) => {
+  const { settings } = useShopStore();
   const totalRevenue = dayAppointments.reduce((sum, a) => sum + a.price, 0);
 
   return (
@@ -48,6 +50,8 @@ export const DailyAgendaTimeline: React.FC<DailyAgendaTimelineProps> = ({
               customerName: app.customerName,
               time: app.time,
               serviceName: app.service,
+              businessName: settings.shopName || 'המספרה',
+              barberName: settings.ownerName || 'דביר',
             });
 
             return (

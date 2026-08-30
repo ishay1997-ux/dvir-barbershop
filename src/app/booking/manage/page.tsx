@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useShopStore } from '@/lib/store';
 import { formatPrice, SHOP_INFO } from '@/lib/utils';
+import { createAppointmentCancellationUrl } from '@/lib/whatsapp';
 import { useToast } from '@/components/common/ToastProvider';
 import Link from 'next/link';
 
@@ -305,12 +306,19 @@ function ManageBookingContent() {
                   </Link>
                   {appointments.some((a) => a.status === 'cancelled' || cancelledSuccessMap[a.id]) && (
                     <a
-                      href={`https://wa.me/972521234567?text=${encodeURIComponent('היי דביר, ביטלתי את התור שקבעתי.')}`}
+                      href={createAppointmentCancellationUrl({
+                        ownerPhone: SHOP_INFO.phone,
+                        customerName: phone ? `לקוח ${phone}` : 'הלקוח',
+                        dateStr: 'המועד שנקבע',
+                        time: '',
+                        businessName: settings.shopName || SHOP_INFO.name,
+                        ownerName: settings.ownerName || 'הספר',
+                      })}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-emerald-400 text-xs font-bold"
                     >
-                      <MessageCircle className="w-4 h-4" /> עדכן את דביר בוואטסאפ
+                      <MessageCircle className="w-4 h-4" /> עדכן את {settings.ownerName || 'הספר'} בוואטסאפ
                     </a>
                   )}
                 </div>

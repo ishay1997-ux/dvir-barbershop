@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { AlertTriangle, MessageCircle } from 'lucide-react';
 import { createEmergencyRescheduleUrl } from '@/lib/whatsapp';
+import { useShopStore } from '@/lib/store';
 import type { AdminAppointment } from './types';
 
 interface EmergencyClosureModalProps {
@@ -26,6 +27,7 @@ export const EmergencyClosureModal: React.FC<EmergencyClosureModalProps> = ({
   onExecute,
   onClose,
 }) => {
+  const { settings } = useShopStore();
   if (!isOpen) return null;
 
   return (
@@ -82,7 +84,7 @@ export const EmergencyClosureModal: React.FC<EmergencyClosureModalProps> = ({
                     customerName: app.customerName,
                     dateStr: 'היום',
                     time: app.time,
-                    businessName: 'המספרה של דביר',
+                    businessName: settings.shopName || 'המספרה',
                     reason: emergencyReason,
                   });
 

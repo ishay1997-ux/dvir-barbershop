@@ -3,6 +3,7 @@
 import React from 'react';
 import { Bell, MessageCircle, Trash2 } from 'lucide-react';
 import { createWaitlistAlertUrl } from '@/lib/whatsapp';
+import { useShopStore } from '@/lib/store';
 import type { WaitlistEntry } from '@/lib/types';
 
 interface WaitlistManagerProps {
@@ -16,6 +17,7 @@ export const WaitlistManager: React.FC<WaitlistManagerProps> = ({
   onUpdateStatus,
   onRemove,
 }) => {
+  const { settings } = useShopStore();
   const waitingCount = waitlist.filter((w) => w.status === 'waiting').length;
 
   return (
@@ -35,18 +37,14 @@ export const WaitlistManager: React.FC<WaitlistManagerProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-800 font-black text-xs">
-            {waitingCount} לקוחות ממתינים לתור
-          </span>
-        </div>
+        <span className="self-start sm:self-auto text-xs font-bold px-3.5 py-1.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/30">
+          {waitingCount} ממתינים כרגע
+        </span>
       </div>
 
       {waitlist.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-[#E5DDD0] p-12 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-[#FAF7F2] text-[#9E9891] flex items-center justify-center mx-auto mb-3">
-            <Bell className="w-7 h-7" />
-          </div>
+        <div className="bg-white rounded-3xl border border-[#E5DDD0] p-12 text-center shadow-sm">
+          <Bell className="w-12 h-12 text-[#9E9891]/40 mx-auto mb-3" />
           <h3 className="font-bold text-base text-[#1C1C1C]">רשימת ההמתנה ריקה כרגע</h3>
           <p className="text-xs text-[#6B6560] mt-1 max-w-sm mx-auto">
             כאשר לקוחות ייכנסו לאתר בימים מלאים וירשמו להמתנה, הם יופיעו כאן מיידית.
@@ -70,7 +68,7 @@ export const WaitlistManager: React.FC<WaitlistManagerProps> = ({
               dateStr: item.date,
               timeSlot: rangeLabel,
               serviceName: item.serviceName || 'תספורת גברים',
-              businessName: item.branchName || 'המספרה של דביר',
+              businessName: settings.shopName || item.branchName || 'המספרה',
             });
 
             return (

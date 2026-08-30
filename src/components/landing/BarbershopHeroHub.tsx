@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { SHOP_INFO } from '@/lib/utils';
+import { createCustomerInquiryUrl } from '@/lib/whatsapp';
 import { INITIAL_BRANCHES } from '@/lib/store';
 import { BusinessConfig } from '@/types/business';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
@@ -81,9 +82,11 @@ export default function BarbershopHeroHub({
   const facebook = business?.facebookUrl || '';
   const tiktok = business?.tiktokUrl || '';
   const website = business?.websiteUrl || (slug === 'dvir' || slug === 'thecut' ? '/' : `/${slug}`);
-  const whatsapp = business?.whatsappNumber
-    ? `https://wa.me/${business.whatsappNumber.replace(/\D/g, '').replace(/^0/, '972')}?text=${encodeURIComponent(`היי ${ownerName}, רציתי לשאול לגבי תור ב-${bizName}`)}`
-    : `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`היי ${ownerName}, רציתי לשאול לגבי תור ב-${bizName}`)}`;
+  const whatsapp = createCustomerInquiryUrl({
+    ownerPhone: business?.whatsappNumber || cleanPhone,
+    ownerName,
+    businessName: bizName,
+  });
 
   const defaultWaze = business?.wazeUrl || (business?.branches && business.branches[0]?.wazeLink) || '';
 

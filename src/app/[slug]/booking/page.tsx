@@ -18,6 +18,7 @@ import {
   Share2,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import { createAppointmentConfirmationUrl } from '@/lib/whatsapp';
 import { format, addDays, startOfToday } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { useToast } from '@/components/common/ToastProvider';
@@ -240,7 +241,15 @@ export default function DynamicBusinessBookingPage({
 
               <div className="space-y-2 pt-2">
                 <a
-                  href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`היי ${business.ownerName}, קבעתי תור ל-${bookedAppointment.service} ב-${business.name} בתאריך ${bookedAppointment.date} בשעה ${bookedAppointment.time}. שם: ${bookedAppointment.customerName}`)}`}
+                  href={createAppointmentConfirmationUrl({
+                    targetPhone: business.whatsappNumber || business.phone,
+                    ownerName: business.ownerName,
+                    businessName: business.name,
+                    serviceName: bookedAppointment.service,
+                    dateStr: bookedAppointment.date,
+                    time: bookedAppointment.time,
+                    customerName: bookedAppointment.customerName,
+                  })}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-sm"
