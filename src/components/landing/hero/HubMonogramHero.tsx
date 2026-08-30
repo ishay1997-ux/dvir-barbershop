@@ -13,6 +13,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
+import { getThemeTokens } from '@/lib/theme-tokens';
 import {
   HeroSharedProps,
   InstagramIcon,
@@ -40,9 +41,11 @@ export function HubMonogramHero({
   onOpenShare,
 }: HeroSharedProps) {
   const heroBg = (business?.heroImages && business.heroImages[0]) || industryMeta.heroImage;
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   return (
-    <section className="relative w-full bg-[#141414] text-white pt-2 pb-8 overflow-hidden" dir="rtl">
+    <section className={`relative w-full transition-colors duration-500 pt-2 pb-8 overflow-hidden ${t.isLight ? 'text-slate-900' : 'text-white'}`} dir="rtl">
       <div className="relative w-full h-[240px] sm:h-[300px] md:h-[340px] bg-zinc-900 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
@@ -50,7 +53,7 @@ export function HubMonogramHero({
             backgroundImage: `url('${heroBg}')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/70 to-black/60" />
+        <div className={`absolute inset-0 ${t.isLight ? 'bg-gradient-to-t from-black/80 via-black/50 to-black/30' : 'bg-gradient-to-t from-[#141414] via-[#141414]/70 to-black/60'}`} />
         <div
           className="absolute inset-0"
           style={{
@@ -221,30 +224,31 @@ export function HubMonogramHero({
           <Link
             href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
             id="action-pill-book"
-            className="py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-xs sm:text-sm text-center shadow-lg hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-emerald-400/30 cursor-pointer"
+            className="py-3 px-4 rounded-2xl text-slate-950 font-black text-xs sm:text-sm text-center shadow-lg active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-white/20 cursor-pointer"
+            style={{ backgroundColor: themeColor }}
           >
             <span className="text-sm">{industryMeta.actionIcon}</span> {industryMeta.actionLabel}
           </Link>
           <button
             onClick={onOpenMyAppointments}
             id="action-pill-my-appointments"
-            className="py-3 px-4 rounded-2xl bg-[#222222] hover:bg-[#2A2A2A] text-white font-bold text-xs sm:text-sm text-center border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            className={`py-3 px-4 rounded-2xl ${t.cardBg} font-bold text-xs sm:text-sm text-center shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer ${t.textPrimary}`}
           >
             <Calendar className="w-4 h-4" style={{ color: themeColor }} /> התורים שלי
           </button>
           <button
             onClick={onOpenHours}
             id="action-pill-hours"
-            className="py-3 px-4 rounded-2xl bg-[#222222] hover:bg-[#2A2A2A] text-white font-bold text-xs sm:text-sm text-center border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            className={`py-3 px-4 rounded-2xl ${t.cardBg} font-bold text-xs sm:text-sm text-center shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer ${t.textPrimary}`}
           >
-            <Clock className="w-4 h-4 text-[#33CCFF]" /> שעות פתיחה
+            <Clock className="w-4 h-4" style={{ color: themeColor }} /> שעות פתיחה
           </button>
           <a
             href="#about"
             id="action-pill-about"
-            className="py-3 px-4 rounded-2xl bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-300 font-bold text-xs sm:text-sm text-center border border-emerald-500/30 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            className={`py-3 px-4 rounded-2xl ${t.cardBg} font-bold text-xs sm:text-sm text-center shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer ${t.textPrimary}`}
           >
-            <Heart className="w-4 h-4 text-emerald-400" /> קצת עלינו
+            <Heart className="w-4 h-4" style={{ color: themeColor }} /> קצת עלינו
           </a>
         </div>
       </div>

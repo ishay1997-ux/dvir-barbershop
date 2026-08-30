@@ -7,7 +7,7 @@ import { BusinessConfig } from '@/types/business';
 
 interface ColorsThemeTabProps {
   business?: Partial<BusinessConfig>;
-  onThemeChange: (themeId: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon' | 'lavender-mist' | 'botanical-sage') => void;
+  onThemeChange: (themeId: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon' | 'lavender-mist' | 'botanical-sage', defaultColor?: string) => void;
   onColorChange: (color: string) => void;
 }
 
@@ -85,7 +85,7 @@ export function ColorsThemeTab({
               <button
                 key={theme.id}
                 type="button"
-                onClick={() => onThemeChange(theme.id as any)}
+                onClick={() => onThemeChange(theme.id as any, theme.accentPreview)}
                 className={`p-3.5 rounded-2xl border text-right transition-all flex flex-col justify-between cursor-pointer group ${
                   isSelected
                     ? 'border-amber-400 bg-zinc-900 shadow-md ring-2 ring-amber-400/40'

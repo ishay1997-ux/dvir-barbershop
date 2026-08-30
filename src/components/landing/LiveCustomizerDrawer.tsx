@@ -233,9 +233,10 @@ export function LiveCustomizerDrawer({
                 {activeTab === 'colors' && (
                   <ColorsThemeTab
                     business={business}
-                    onThemeChange={(t) =>
+                    onThemeChange={(t, defaultColor) =>
                       onChangeBusiness({
                         ...business,
+                        themeColor: defaultColor || business.themeColor,
                         layout: { ...business.layout, bgTheme: t },
                       })
                     }

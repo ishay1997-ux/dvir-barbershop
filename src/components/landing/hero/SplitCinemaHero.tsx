@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 import { HeroSharedProps } from './hero-types';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 export function SplitCinemaHero({
   business,
@@ -28,9 +29,11 @@ export function SplitCinemaHero({
   onOpenShare,
 }: HeroSharedProps) {
   const heroBg = (business?.heroImages && business.heroImages[0]) || industryMeta.heroImage;
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   return (
-    <section className="relative w-full bg-[#121214] text-white py-10 sm:py-16 overflow-hidden" dir="rtl">
+    <section className={`relative w-full transition-colors duration-500 py-10 sm:py-16 overflow-hidden ${t.isLight ? 'text-slate-900' : 'text-white'}`} dir="rtl">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-6xl mx-auto">
           <div className="lg:col-span-7 space-y-5 text-right">
@@ -46,14 +49,14 @@ export function SplitCinemaHero({
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>{industryMeta.vipBadge}</span>
               </span>
-              <OpenStatusBadge className="bg-[#1C1C1E] border border-white/10" />
+              <OpenStatusBadge className={t.cardSubtleBg} />
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight">
+            <h1 className={`text-3xl sm:text-5xl font-black leading-tight ${t.textPrimary}`}>
               {bizName}
             </h1>
 
-            <p className="text-sm sm:text-base text-zinc-300 leading-relaxed font-sans max-w-xl">
+            <p className={`text-sm sm:text-base leading-relaxed font-sans max-w-xl ${t.textSecondary}`}>
               {business?.slogan || 'שירות פרימיום, יחס אישי ומקצועיות ברמה הגבוהה ביותר בישראל.'}
             </p>
 
@@ -68,32 +71,33 @@ export function SplitCinemaHero({
               </span>
             </div>
 
-            <div className="bg-[#1C1C20] rounded-3xl border border-white/10 p-5 shadow-2xl space-y-4 max-w-lg">
+            <div className={`${t.cardBg} rounded-3xl p-5 shadow-2xl space-y-4 max-w-lg`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold text-zinc-400 block">קבע תור מהיר אונליין</span>
-                  <span className="text-sm font-black text-white">בחר שירות, שעה והבטח מקום</span>
+                  <span className={`text-xs font-bold block ${t.textMuted}`}>קבע תור מהיר אונליין</span>
+                  <span className={`text-sm font-black ${t.textPrimary}`}>בחר שירות, שעה והבטח מקום</span>
                 </div>
                 <Link
                   href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
-                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-3 rounded-2xl text-slate-950 font-black text-sm shadow-xl active:scale-95 transition-all flex items-center gap-2 cursor-pointer border border-white/20"
+                  style={{ backgroundColor: themeColor }}
                 >
                   <span className="text-sm">{industryMeta.actionIcon}</span> {industryMeta.actionLabel}
                 </Link>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-white/10">
+              <div className={`grid grid-cols-2 gap-2 pt-3 border-t ${t.borderColor}`}>
                 <button
                   onClick={onOpenMyAppointments}
-                  className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className={`py-2 px-3 rounded-xl ${t.buttonSecondaryBg} text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer`}
                 >
                   <Calendar className="w-3.5 h-3.5" style={{ color: themeColor }} /> התורים שלי
                 </button>
                 <button
                   onClick={onOpenHours}
-                  className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className={`py-2 px-3 rounded-xl ${t.buttonSecondaryBg} text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer`}
                 >
-                  <Clock className="w-3.5 h-3.5 text-[#33CCFF]" /> שעות פתיחה
+                  <Clock className="w-3.5 h-3.5" style={{ color: themeColor }} /> שעות פתיחה
                 </button>
               </div>
             </div>
@@ -101,14 +105,14 @@ export function SplitCinemaHero({
             <div className="flex items-center gap-2 pt-2">
               <button
                 onClick={onOpenShare}
-                className="p-2.5 rounded-xl bg-[#1C1C20] border border-white/10 hover:bg-[#25252A] text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                className={`p-2.5 rounded-xl ${t.cardBg} text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${t.textPrimary}`}
               >
                 <Share2 className="w-4 h-4" style={{ color: themeColor }} /> שתף
               </button>
               {phone && (
                 <a
                   href={`tel:${phone}`}
-                  className="p-2.5 rounded-xl bg-[#1C1C20] border border-white/10 hover:bg-[#25252A] text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                  className={`p-2.5 rounded-xl ${t.cardBg} text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${t.textPrimary}`}
                   dir="ltr"
                 >
                   <Phone className="w-4 h-4 text-emerald-400" /> {phone}

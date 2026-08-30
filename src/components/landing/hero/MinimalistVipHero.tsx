@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 import { HeroSharedProps, InstagramIcon } from './hero-types';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 export function MinimalistVipHero({
   business,
@@ -27,8 +28,11 @@ export function MinimalistVipHero({
   onOpenMyAppointments,
   onOpenShare,
 }: HeroSharedProps) {
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
+
   return (
-    <section className="relative w-full bg-[#0D0D0E] text-white py-16 sm:py-24 overflow-hidden text-center" dir="rtl">
+    <section className={`relative w-full transition-colors duration-500 py-16 sm:py-24 overflow-hidden text-center ${t.isLight ? 'text-slate-900' : 'text-white'}`} dir="rtl">
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] rounded-full blur-3xl pointer-events-none opacity-20"
         style={{ backgroundColor: themeColor }}
@@ -49,17 +53,17 @@ export function MinimalistVipHero({
           </span>
         </div>
 
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-4">
+        <h1 className={`text-4xl sm:text-6xl md:text-7xl font-black tracking-tight mb-4 ${t.textPrimary}`}>
           {bizName}
         </h1>
 
-        <p className="text-base sm:text-xl text-zinc-300 font-sans max-w-2xl mx-auto mb-6 leading-relaxed">
+        <p className={`text-base sm:text-xl font-sans max-w-2xl mx-auto mb-6 leading-relaxed ${t.textSecondary}`}>
           {business?.slogan || 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר.'}
         </p>
 
         <div className="flex items-center justify-center gap-3 flex-wrap mb-8">
-          <OpenStatusBadge className="bg-[#18181B] border border-white/10" />
-          <div className="px-3.5 py-1.5 rounded-full bg-[#18181B] border border-white/10 text-xs font-bold text-amber-400 flex items-center gap-1.5 shadow-sm">
+          <OpenStatusBadge className={t.cardSubtleBg} />
+          <div className={`px-3.5 py-1.5 rounded-full ${t.cardSubtleBg} text-xs font-bold text-amber-400 flex items-center gap-1.5 shadow-sm`}>
             ★ 5.0 דירוג Google Reviews (420+ לקוחות מרוצים)
           </div>
         </div>
@@ -67,21 +71,22 @@ export function MinimalistVipHero({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto mb-8">
           <Link
             href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
-            className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-base shadow-2xl shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-8 py-4 rounded-2xl text-slate-950 font-black text-base shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-2 border border-white/20"
+            style={{ backgroundColor: themeColor }}
           >
             <Scissors className="w-5 h-5" /> קבע תור עכשיו
           </Link>
           <button
             onClick={onOpenMyAppointments}
-            className="w-full sm:w-auto px-6 py-4 rounded-2xl bg-[#1C1C20] hover:bg-[#25252A] text-white font-bold text-sm border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+            className={`w-full sm:w-auto px-6 py-4 rounded-2xl ${t.buttonSecondaryBg} font-bold text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer`}
           >
             <Calendar className="w-4 h-4" style={{ color: themeColor }} /> התורים שלי
           </button>
           <button
             onClick={onOpenHours}
-            className="w-full sm:w-auto px-5 py-4 rounded-2xl bg-[#1C1C20] hover:bg-[#25252A] text-white font-bold text-sm border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+            className={`w-full sm:w-auto px-5 py-4 rounded-2xl ${t.buttonSecondaryBg} font-bold text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer`}
           >
-            <Clock className="w-4 h-4 text-[#33CCFF]" /> שעות פתיחה
+            <Clock className="w-4 h-4" style={{ color: themeColor }} /> שעות פתיחה
           </button>
         </div>
 

@@ -150,61 +150,63 @@ export default function DynamicBusinessLandingPage({
     switch (bgTheme) {
       case 'lavender-mist':
         return {
-          backgroundColor: '#FBF9FE',
+          backgroundColor: '#FAF7FD',
           backgroundImage: `
-            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}22, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 100% 40%, #DDD6FE30, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 0% 80%, #C4B5FD25, transparent 70%),
-            linear-gradient(to bottom, #FBF9FE, #F5EFFB 100%)
+            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}25, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, #DDD6FE35, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, #C4B5FD30, transparent 70%),
+            linear-gradient(to bottom, #FAF7FD, #F3ECFA 100%)
           `,
         };
       case 'botanical-sage':
         return {
-          backgroundColor: '#F6FAF7',
+          backgroundColor: '#F4FAF6',
           backgroundImage: `
-            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}20, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 100% 40%, #A7F3D028, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 0% 80%, #6EE7B722, transparent 70%),
-            linear-gradient(to bottom, #F6FAF7, #EDF6F0 100%)
+            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}25, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, #A7F3D035, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, #6EE7B728, transparent 70%),
+            linear-gradient(to bottom, #F4FAF6, #EBF5EF 100%)
           `,
         };
       case 'brand-midnight':
         return {
-          backgroundColor: '#080c10',
+          backgroundColor: '#070D1A',
           backgroundImage: `
-            radial-gradient(ellipse 90% 60% at 50% 0%, ${themeColor}38, transparent 75%),
-            radial-gradient(ellipse 70% 50% at 100% 40%, ${themeColor}22, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 0% 80%, ${themeColor}22, transparent 70%),
-            linear-gradient(to bottom, transparent, #05070a 95%)
+            radial-gradient(ellipse 90% 60% at 50% 0%, ${themeColor}40, transparent 75%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, #1E3A8A30, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, #1E3A8A25, transparent 70%),
+            linear-gradient(to bottom, #070D1A, #04070E 100%)
           `,
         };
       case 'luxury-light':
         return {
           backgroundColor: '#FAF7F2',
           backgroundImage: `
-            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}18, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 100% 40%, ${themeColor}10, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 0% 80%, ${themeColor}10, transparent 70%),
-            linear-gradient(to bottom, #FAF7F2, #F4EFE6 100%)
+            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}22, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, #FDE68A20, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, #FCD34D15, transparent 70%),
+            linear-gradient(to bottom, #FAF7F2, #F3EDE2 100%)
           `,
         };
       case 'cyber-carbon':
         return {
-          backgroundColor: '#09090B',
+          backgroundColor: '#060709',
           backgroundImage: `
-            radial-gradient(circle at 50% 20%, ${themeColor}30, transparent 65%),
-            radial-gradient(circle at 100% 80%, ${themeColor}18, transparent 50%),
-            radial-gradient(circle at 0% 50%, ${themeColor}18, transparent 50%)
+            radial-gradient(circle at 50% 15%, ${themeColor}35, transparent 65%),
+            radial-gradient(circle at 100% 80%, ${themeColor}20, transparent 50%),
+            radial-gradient(circle at 0% 50%, ${themeColor}20, transparent 50%),
+            linear-gradient(to bottom, #060709, #0A0D12 100%)
           `,
         };
       case 'dark-obsidian':
       default:
         return {
-          backgroundColor: '#121212',
+          backgroundColor: '#0D0D11',
           backgroundImage: `
-            radial-gradient(ellipse 80% 50% at 50% 0%, ${themeColor}1A, transparent 70%),
-            radial-gradient(ellipse 60% 40% at 100% 30%, ${themeColor}10, transparent 70%),
-            radial-gradient(ellipse 60% 40% at 0% 70%, ${themeColor}10, transparent 70%)
+            radial-gradient(ellipse 80% 50% at 50% 0%, ${themeColor}22, transparent 70%),
+            radial-gradient(ellipse 60% 40% at 100% 30%, ${themeColor}15, transparent 70%),
+            radial-gradient(ellipse 60% 40% at 0% 70%, ${themeColor}15, transparent 70%),
+            linear-gradient(to bottom, #0D0D11, #131318 100%)
           `,
         };
     }
