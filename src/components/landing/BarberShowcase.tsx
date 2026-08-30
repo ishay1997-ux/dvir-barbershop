@@ -57,7 +57,7 @@ export default function BarberShowcase({
             id="barbers-heading"
             className="text-3xl sm:text-4xl font-black text-white mt-1 mb-3"
           >
-            הכירו את {ownerName}
+            {business?.layout?.sectionTitles?.bio || `הכירו את ${ownerName}`}
           </h2>
           <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: themeColor }} />
           <p className="text-zinc-300 mt-4 max-w-lg mx-auto text-xs sm:text-sm leading-relaxed font-sans">

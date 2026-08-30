@@ -87,6 +87,15 @@ export interface BusinessLayoutConfig {
   showBranches?: boolean;
   showBio?: boolean;
   sectionsOrder?: Array<'hero' | 'services' | 'gallery' | 'bio' | 'reviews' | 'faqs' | 'branches'>;
+  sectionTitles?: {
+    services?: string;
+    servicesSubtitle?: string;
+    gallery?: string;
+    bio?: string;
+    branches?: string;
+    reviews?: string;
+    faqs?: string;
+  };
 }
 
 export interface BusinessConfig {

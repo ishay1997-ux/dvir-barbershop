@@ -337,9 +337,9 @@ export function LiveCustomizerDrawer({
 
           {/* Tab 3: Modular Layout & Section Reordering */}
           {activeTab === 'sections' && (
-            <div className="space-y-2.5">
+            <div className="space-y-4">
               <div className="text-[10px] text-slate-300 pb-1 flex items-center justify-between">
-                <span>גרור או סדר את סדר המקטעים בעמוד:</span>
+                <span>סדר את סדר המקטעים בעמוד:</span>
                 <span className="text-indigo-400 font-bold">1-Click Live Reorder</span>
               </div>
               <div className="space-y-2">
@@ -406,14 +406,124 @@ export function LiveCustomizerDrawer({
                   );
                 })}
               </div>
+
+              {/* Custom Headline Overrides */}
+              <div className="pt-3 border-t border-slate-800 space-y-2">
+                <div className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                  <Type className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>עריכת כותרות סקשנים בהתאמה אישית:</span>
+                </div>
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-[10px] text-slate-400 block mb-1">כותרת סקשן שירותים:</label>
+                    <input
+                      type="text"
+                      placeholder="השירותים והעבודות שלנו..."
+                      value={business.layout?.sectionTitles?.services || ''}
+                      onChange={(e) => {
+                        onChangeBusiness({
+                          ...business,
+                          layout: {
+                            ...(business.layout || {}),
+                            sectionTitles: {
+                              ...(business.layout?.sectionTitles || {}),
+                              services: e.target.value,
+                            },
+                          },
+                        });
+                      }}
+                      className="w-full px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-white placeholder:text-slate-500 outline-none focus:border-indigo-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-slate-400 block mb-1">כותרת סקשן ביקורות:</label>
+                    <input
+                      type="text"
+                      placeholder="מה אומרים הלקוחות..."
+                      value={business.layout?.sectionTitles?.reviews || ''}
+                      onChange={(e) => {
+                        onChangeBusiness({
+                          ...business,
+                          layout: {
+                            ...(business.layout || {}),
+                            sectionTitles: {
+                              ...(business.layout?.sectionTitles || {}),
+                              reviews: e.target.value,
+                            },
+                          },
+                        });
+                      }}
+                      className="w-full px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-white placeholder:text-slate-500 outline-none focus:border-indigo-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-slate-400 block mb-1">כותרת סקשן סניפים:</label>
+                    <input
+                      type="text"
+                      placeholder="איפה אנחנו נמצאים?..."
+                      value={business.layout?.sectionTitles?.branches || ''}
+                      onChange={(e) => {
+                        onChangeBusiness({
+                          ...business,
+                          layout: {
+                            ...(business.layout || {}),
+                            sectionTitles: {
+                              ...(business.layout?.sectionTitles || {}),
+                              branches: e.target.value,
+                            },
+                          },
+                        });
+                      }}
+                      className="w-full px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-white placeholder:text-slate-500 outline-none focus:border-indigo-400"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* Tab 4: Card Curves & Typography Moods */}
+          {/* Tab 4: Hero Layout, Card Curves & Typography Moods */}
           {activeTab === 'style' && (
             <div className="space-y-4">
-              {/* Card Corner Radius */}
+              {/* 1. Hero Layout Style */}
               <div className="space-y-2">
+                <div className="text-[11px] font-bold text-slate-300">סגנון פתיח ראשי (Hero Layout):</div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[
+                    { id: 'hub-monogram', label: 'Panoramic Hub', sub: 'פנורמי + לוגו', icon: '💈' },
+                    { id: 'split-cinema', label: 'Split Cinema', sub: 'תמונה + זימון', icon: '🎬' },
+                    { id: 'minimalist-vip', label: 'Minimal VIP', sub: 'יוקרתי ממורכז', icon: '👑' },
+                  ].map((h) => {
+                    const isSelected = (business.layout?.heroStyle || 'hub-monogram') === h.id;
+                    return (
+                      <button
+                        key={h.id}
+                        onClick={() => {
+                          onChangeBusiness({
+                            ...business,
+                            layout: {
+                              ...(business.layout || {}),
+                              heroStyle: h.id as any,
+                            },
+                          });
+                        }}
+                        className={`p-2.5 rounded-xl border flex flex-col items-center text-center transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-indigo-400 bg-indigo-950/80 shadow-xs'
+                            : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <span className="text-base mb-1">{h.icon}</span>
+                        <span className="text-xs font-bold text-white">{h.label}</span>
+                        <span className="text-[9px] text-slate-400">{h.sub}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Card Corner Radius */}
+              <div className="space-y-2 pt-2 border-t border-slate-800">
                 <div className="text-[11px] font-bold text-slate-300">סגנון פינות וכרטיסיות:</div>
                 <div className="grid grid-cols-3 gap-1.5">
                   {[
@@ -441,7 +551,7 @@ export function LiveCustomizerDrawer({
                 </div>
               </div>
 
-              {/* Typography Mood */}
+              {/* 3. Typography Mood */}
               <div className="space-y-2 pt-2 border-t border-slate-800">
                 <div className="text-[11px] font-bold text-slate-300">אופי גופנים וטיפוגרפיה:</div>
                 <div className="space-y-1.5">

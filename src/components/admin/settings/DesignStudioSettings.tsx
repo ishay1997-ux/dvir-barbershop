@@ -325,15 +325,58 @@ export default function DesignStudioSettings({
         </div>
       </div>
 
-      {/* 3. Card Curves & Typography Moods */}
+      {/* 3. Hero Style, Card Curves & Typography Moods */}
       <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm space-y-6">
         <div className="flex items-center gap-2">
           <Layers className="w-5 h-5 text-gold" />
-          <h2 className="text-base font-black text-[#1C1C1C]">סגנון פינות וטיפוגרפיה (Card Style & Typography)</h2>
+          <h2 className="text-base font-black text-[#1C1C1C]">סגנון פתיח, פינות וטיפוגרפיה (Layout Style & Typography)</h2>
         </div>
 
-        {/* Radius */}
+        {/* 1. Hero Layout Style */}
         <div>
+          <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
+            סגנון הפתיח הראשי של האתר (Hero Archetype):
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { id: 'hub-monogram', name: 'Panoramic Hero Hub', sub: 'פנורמי מלא + לוגו מונוגרם עגול', icon: '💈' },
+              { id: 'split-cinema', name: 'Split Screen Showcase', sub: 'תצוגה מפוצלת + כרטיס זימון מיידי', icon: '🎬' },
+              { id: 'minimalist-vip', name: 'Minimalist VIP', sub: 'יוקרתי ממורכז + כפתור CTA ענק', icon: '👑' },
+            ].map((h) => {
+              const isSelected = (layout.heroStyle || 'hub-monogram') === h.id;
+              return (
+                <button
+                  key={h.id}
+                  type="button"
+                  onClick={() => {
+                    const updated: ShopSettings = {
+                      ...settings,
+                      layout: {
+                        ...(settings.layout || {}),
+                        heroStyle: h.id as any,
+                      },
+                    };
+                    onUpdateSettings(updated);
+                    onNotifySave();
+                    success('סגנון הפתיח עודכן', h.name);
+                  }}
+                  className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-gold bg-[#FAF7F2] shadow-sm ring-2 ring-gold/20'
+                      : 'border-[#E5DDD0] hover:border-gold/50 bg-white'
+                  }`}
+                >
+                  <span className="text-xl mb-1">{h.icon}</span>
+                  <span className="text-xs font-black text-[#1C1C1C]">{h.name}</span>
+                  <span className="text-[10px] text-[#6B6560] mt-0.5">{h.sub}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 2. Radius */}
+        <div className="pt-4 border-t border-[#E5DDD0]">
           <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
             סגנון הפינות של הכרטיסיות והכפתורים:
           </label>
@@ -375,7 +418,7 @@ export default function DesignStudioSettings({
           </div>
         </div>
 
-        {/* Font Mood */}
+        {/* 3. Font Mood */}
         <div className="pt-4 border-t border-[#E5DDD0]">
           <label className="block text-xs font-bold text-[#1C1C1C] mb-2.5">
             אופי הטיפוגרפיה והגופנים באתר:
@@ -419,9 +462,9 @@ export default function DesignStudioSettings({
         </div>
       </div>
 
-      {/* 4. Modular Section Reordering & Visibility */}
-      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm">
-        <div className="mb-5 flex items-center justify-between">
+      {/* 4. Modular Section Reordering, Visibility & Custom Headlines */}
+      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm space-y-6">
+        <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
               <Layout className="w-5 h-5 text-gold" />
@@ -486,7 +529,6 @@ export default function DesignStudioSettings({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {/* Reorder Buttons */}
                   <div className="flex items-center bg-white rounded-xl border border-[#E5DDD0] p-0.5 shadow-xs">
                     <button
                       type="button"
@@ -508,7 +550,6 @@ export default function DesignStudioSettings({
                     </button>
                   </div>
 
-                  {/* Toggle Visibility */}
                   {meta.toggleKey && (
                     <button
                       type="button"
@@ -526,6 +567,112 @@ export default function DesignStudioSettings({
               </div>
             );
           })}
+        </div>
+
+        {/* 5. Custom Headlines inputs */}
+        <div className="pt-5 border-t border-[#E5DDD0] space-y-4">
+          <div>
+            <span className="font-black text-xs sm:text-sm text-[#1C1C1C] block">
+              עריכת כותרות סקשנים בהתאמה אישית (Custom Section Headlines)
+            </span>
+            <span className="text-[11px] text-[#6B6560]">
+              התאם אישית את ניסוח הכותרות שמופיעות ללקוחות בכל חלק בעמוד
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-[#1C1C1C] mb-1">כותרת סקשן שירותים ומחירון:</label>
+              <input
+                type="text"
+                placeholder="לדוגמה: התפריט והטיפולים שלנו"
+                value={layout.sectionTitles?.services || ''}
+                onChange={(e) => {
+                  const updated: ShopSettings = {
+                    ...settings,
+                    layout: {
+                      ...(settings.layout || {}),
+                      sectionTitles: {
+                        ...(settings.layout?.sectionTitles || {}),
+                        services: e.target.value,
+                      },
+                    },
+                  };
+                  onUpdateSettings(updated);
+                }}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#1C1C1C] mb-1">כותרת סקשן ביקורות לקוחות:</label>
+              <input
+                type="text"
+                placeholder="לדוגמה: מה אומרים הלקוחות הקבועים"
+                value={layout.sectionTitles?.reviews || ''}
+                onChange={(e) => {
+                  const updated: ShopSettings = {
+                    ...settings,
+                    layout: {
+                      ...(settings.layout || {}),
+                      sectionTitles: {
+                        ...(settings.layout?.sectionTitles || {}),
+                        reviews: e.target.value,
+                      },
+                    },
+                  };
+                  onUpdateSettings(updated);
+                }}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#1C1C1C] mb-1">כותרת סקשן סניפים וניווט:</label>
+              <input
+                type="text"
+                placeholder="לדוגמה: איפה נפגשים?"
+                value={layout.sectionTitles?.branches || ''}
+                onChange={(e) => {
+                  const updated: ShopSettings = {
+                    ...settings,
+                    layout: {
+                      ...(settings.layout || {}),
+                      sectionTitles: {
+                        ...(settings.layout?.sectionTitles || {}),
+                        branches: e.target.value,
+                      },
+                    },
+                  };
+                  onUpdateSettings(updated);
+                }}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#1C1C1C] mb-1">כותרת סקשן שאלות ותשובות:</label>
+              <input
+                type="text"
+                placeholder="לדוגמה: שאלות נפוצות ותשובות"
+                value={layout.sectionTitles?.faqs || ''}
+                onChange={(e) => {
+                  const updated: ShopSettings = {
+                    ...settings,
+                    layout: {
+                      ...(settings.layout || {}),
+                      sectionTitles: {
+                        ...(settings.layout?.sectionTitles || {}),
+                        faqs: e.target.value,
+                      },
+                    },
+                  };
+                  onUpdateSettings(updated);
+                }}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] text-xs font-bold text-[#1C1C1C] focus:border-gold outline-none"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

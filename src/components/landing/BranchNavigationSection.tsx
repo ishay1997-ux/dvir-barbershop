@@ -52,7 +52,7 @@ export default function BranchNavigationSection({
             <span>סניפים ודרכי הגעה</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white">
-            איפה אנחנו נמצאים?
+            {business?.layout?.sectionTitles?.branches || 'איפה אנחנו נמצאים?'}
           </h2>
           <p className="text-xs sm:text-sm text-[#9E9891] mt-1.5 font-sans">
             {bizName} – הגעה נוחה, חניה צמודה ומיקום מרכזי

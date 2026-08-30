@@ -117,310 +117,440 @@ export default function BarbershopHeroHub({
     }
   };
 
+  const heroStyle = business?.layout?.heroStyle || 'hub-monogram';
+
   return (
     <>
-      <section className="relative w-full bg-[#141414] text-white pt-2 pb-8 overflow-hidden" dir="rtl">
-        {/* ============================================================ */}
-        {/* 1. TOP HERO COVER BANNER                                     */}
-        {/* ============================================================ */}
-        <div className="relative w-full h-[240px] sm:h-[300px] md:h-[340px] bg-zinc-900 overflow-hidden">
-          {/* Cover Background Image with Warm Ambient Lighting */}
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1600&q=80')`,
-            }}
-          />
-          {/* Subtle Dark + Brand Theme Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/70 to-black/60" />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `radial-gradient(ellipse at center, ${themeColor}25 0%, transparent 70%)`,
-            }}
-          />
+      {heroStyle === 'hub-monogram' && (
+        <section className="relative w-full bg-[#141414] text-white pt-2 pb-8 overflow-hidden" dir="rtl">
+          <div className="relative w-full h-[240px] sm:h-[300px] md:h-[340px] bg-zinc-900 overflow-hidden">
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
+              style={{
+                backgroundImage: `url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1600&q=80')`,
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/70 to-black/60" />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `radial-gradient(ellipse at center, ${themeColor}25 0%, transparent 70%)`,
+              }}
+            />
 
-          {/* Top Header Controls (Share & Call Buttons) */}
-          <div className="relative z-10 container mx-auto px-4 pt-4 flex items-center justify-between">
-            {/* Share Circle Button */}
-            <button
-              onClick={handleShareClick}
-              className="w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
-              aria-label="שתף מספרה"
-              title="שתף קישור למספרה"
-            >
-              <Share2 className="w-4 h-4" style={{ color: themeColor }} />
-            </button>
+            <div className="relative z-10 container mx-auto px-4 pt-4 flex items-center justify-between">
+              <button
+                onClick={handleShareClick}
+                className="w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                aria-label="שתף מספרה"
+                title="שתף קישור למספרה"
+              >
+                <Share2 className="w-4 h-4" style={{ color: themeColor }} />
+              </button>
 
-            {/* Quick Phone Call Button */}
-            <a
-              href={`tel:${phone}`}
-              className="w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
-              aria-label="התקשר למספרה"
-              title={`חייג ל-${ownerName} (${phone})`}
-            >
-              <Phone className="w-4 h-4" style={{ color: themeColor }} />
-            </a>
-          </div>
-
-          {/* Banner Main Title Text */}
-          <div className="relative z-10 container mx-auto px-4 text-center mt-6 sm:mt-8 flex flex-col items-center">
-            <motion.h1
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight drop-shadow-md"
-            >
-              {bizName}
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.15 }}
-              className="text-xs sm:text-sm text-[#E0E0E0] mt-1.5 font-medium flex items-center justify-center gap-2 drop-shadow-sm"
-            >
-              <span>מספרת בוטיק</span>
-              <span>·</span>
-              <span>{business?.city || 'ישראל'}</span>
-              <span>·</span>
               <a
                 href={`tel:${phone}`}
-                className="hover:underline transition-colors inline-flex items-center gap-1 font-bold text-white"
-                style={{ color: themeColor }}
-                dir="ltr"
+                className="w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 text-white flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                aria-label="התקשר למספרה"
+                title={`חייג ל-${ownerName} (${phone})`}
               >
-                📞 {phone}
+                <Phone className="w-4 h-4" style={{ color: themeColor }} />
               </a>
-            </motion.p>
-          </div>
-        </div>
-
-        {/* ============================================================ */}
-        {/* 2. OVERLAPPING CENTRAL MONOGRAM LOGO & 6 SOCIAL CIRCLES     */}
-        {/* ============================================================ */}
-        <div className="relative z-20 container mx-auto px-4 -mt-14 sm:-mt-16 flex flex-col items-center">
-          {/* Central Circular Monogram Badge */}
-          <div
-            className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#1C1C1C] p-1.5 shadow-2xl border-2 flex items-center justify-center"
-            style={{ borderColor: themeColor }}
-          >
-            <div className="w-full h-full rounded-full bg-gradient-to-b from-[#2A2A2A] to-[#141414] flex flex-col items-center justify-center border border-white/10 text-center">
-              <Scissors className="w-6 h-6 sm:w-7 sm:h-7 mb-0.5" style={{ color: themeColor }} />
-              <span className="font-black text-xs sm:text-sm tracking-widest text-white uppercase truncate max-w-[80px]">
-                {ownerName}
-              </span>
-              <span className="text-[9px] text-[#9E9891] tracking-wider uppercase font-semibold">
-                Barbershop
-              </span>
             </div>
 
-            {/* Glowing Accent Ring */}
-            <div
-              className="absolute inset-0 rounded-full border animate-pulse pointer-events-none"
-              style={{ borderColor: `${themeColor}40` }}
-            />
+            <div className="relative z-10 container mx-auto px-4 text-center mt-6 sm:mt-8 flex flex-col items-center">
+              <motion.h1
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight drop-shadow-md"
+              >
+                {bizName}
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.15 }}
+                className="text-xs sm:text-sm text-[#E0E0E0] mt-1.5 font-medium flex items-center justify-center gap-2 drop-shadow-sm"
+              >
+                <span>מספרת בוטיק</span>
+                <span>·</span>
+                <span>{business?.city || 'ישראל'}</span>
+                <span>·</span>
+                <a
+                  href={`tel:${phone}`}
+                  className="hover:underline transition-colors inline-flex items-center gap-1 font-bold text-white"
+                  style={{ color: themeColor }}
+                  dir="ltr"
+                >
+                  📞 {phone}
+                </a>
+              </motion.p>
+            </div>
           </div>
 
-          {/* Action & Social Circle Buttons Bar (RTL Order: Website, Waze, WhatsApp, TikTok, Instagram, Facebook) */}
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mt-4 flex-wrap" dir="rtl">
-            {/* 1. Website / Home (🌐) */}
-            {website ? (
-              <Link
-                href={website}
-                className="w-10 h-10 rounded-full bg-[#242424] hover:bg-[#2F2F2F] border border-white/15 text-white flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
-                title="עמוד האתר"
-              >
-                <Globe className="w-4 h-4 text-zinc-200" />
-              </Link>
-            ) : (
-              <div
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-zinc-600 flex items-center justify-center opacity-40 cursor-not-allowed"
-                title="לא הוגדר קישור לאתר"
-              >
-                <Globe className="w-4 h-4 text-zinc-600" />
+          <div className="relative z-20 container mx-auto px-4 -mt-14 sm:-mt-16 flex flex-col items-center">
+            <div
+              className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#1C1C1C] p-1.5 shadow-2xl border-2 flex items-center justify-center"
+              style={{ borderColor: themeColor }}
+            >
+              <div className="w-full h-full rounded-full bg-gradient-to-b from-[#2A2A2A] to-[#141414] flex flex-col items-center justify-center border border-white/10 text-center">
+                <Scissors className="w-6 h-6 sm:w-7 sm:h-7 mb-0.5" style={{ color: themeColor }} />
+                <span className="font-black text-xs sm:text-sm tracking-widest text-white uppercase truncate max-w-[80px]">
+                  {ownerName}
+                </span>
+                <span className="text-[9px] text-[#9E9891] tracking-wider uppercase font-semibold">
+                  Barbershop
+                </span>
               </div>
-            )}
 
-            {/* 2. Waze Navigation (🚗) */}
-            {branches.length > 1 ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsWazeBranchOpen(!isWazeBranchOpen)}
+              <div
+                className="absolute inset-0 rounded-full border animate-pulse pointer-events-none"
+                style={{ borderColor: `${themeColor}40` }}
+              />
+            </div>
+
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mt-4 flex-wrap" dir="rtl">
+              {website ? (
+                <Link
+                  href={website}
+                  className="w-10 h-10 rounded-full bg-[#242424] hover:bg-[#2F2F2F] border border-white/15 text-white flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  title="עמוד האתר"
+                >
+                  <Globe className="w-4 h-4 text-zinc-200" />
+                </Link>
+              ) : null}
+
+              {defaultWaze ? (
+                <a
+                  href={defaultWaze}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#33CCFF]/15 hover:bg-[#33CCFF]/25 border border-[#33CCFF]/40 text-[#33CCFF] flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
                   title="נווט עם Waze"
                 >
                   <WazeIcon className="w-4 h-4 text-[#33CCFF]" />
-                </button>
+                </a>
+              ) : null}
 
-                {isWazeBranchOpen && (
-                  <div className="absolute top-full right-0 mt-2 bg-[#222222] border border-[#33CCFF]/30 rounded-2xl p-2 shadow-2xl z-30 min-w-[220px] space-y-1 text-right">
-                    <div className="text-[11px] font-bold text-zinc-400 px-2 py-1 border-b border-white/10">
-                      בחר סניף לניווט ב-Waze:
+              {whatsapp ? (
+                <a
+                  href={whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-[#25D366] flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  title="וואטסאפ לבירורים וקביעת תור"
+                >
+                  <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                </a>
+              ) : null}
+
+              {tiktok ? (
+                <a
+                  href={tiktok.startsWith('http') ? tiktok : `https://tiktok.com/@${tiktok.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  title="טיקטוק"
+                >
+                  <TikTokIcon className="w-4 h-4 text-white" />
+                </a>
+              ) : null}
+
+              {instagram ? (
+                <a
+                  href={instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500/20 via-rose-500/20 to-purple-500/20 hover:from-amber-500/30 hover:via-rose-500/30 hover:to-purple-500/30 border border-rose-500/30 text-rose-400 flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  title="אינסטגרם"
+                >
+                  <InstagramIcon className="w-4 h-4 text-rose-400" />
+                </a>
+              ) : null}
+
+              {facebook ? (
+                <a
+                  href={facebook.startsWith('http') ? facebook : `https://facebook.com/${facebook}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-[#1877F2]/15 hover:bg-[#1877F2]/25 border border-[#1877F2]/40 text-[#1877F2] flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  title="פייסבוק"
+                >
+                  <FacebookIcon className="w-4 h-4 text-[#1877F2]" />
+                </a>
+              ) : null}
+            </div>
+
+            <div className="mt-3.5 flex items-center justify-center">
+              <OpenStatusBadge className="shadow-md bg-[#1E1E1E]" />
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 w-full max-w-2xl mt-5">
+              <Link
+                href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+                id="action-pill-book"
+                className="py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-xs sm:text-sm text-center shadow-lg hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-emerald-400/30 cursor-pointer"
+              >
+                <Scissors className="w-4 h-4" /> קביעת תור
+              </Link>
+              <button
+                onClick={() => setIsMyAppointmentsOpen(true)}
+                id="action-pill-my-appointments"
+                className="py-3 px-4 rounded-2xl bg-[#222222] hover:bg-[#2A2A2A] text-white font-bold text-xs sm:text-sm text-center border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Calendar className="w-4 h-4" style={{ color: themeColor }} /> התורים שלי
+              </button>
+              <button
+                onClick={() => setIsHoursOpen(true)}
+                id="action-pill-hours"
+                className="py-3 px-4 rounded-2xl bg-[#222222] hover:bg-[#2A2A2A] text-white font-bold text-xs sm:text-sm text-center border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Clock className="w-4 h-4 text-[#33CCFF]" /> שעות פתיחה
+              </button>
+              <a
+                href="#about"
+                id="action-pill-about"
+                className="py-3 px-4 rounded-2xl bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-300 font-bold text-xs sm:text-sm text-center border border-emerald-500/30 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Heart className="w-4 h-4 text-emerald-400" /> קצת עלינו
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {heroStyle === 'split-cinema' && (
+        <section className="relative w-full bg-[#121214] text-white py-10 sm:py-16 overflow-hidden" dir="rtl">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-6xl mx-auto">
+              <div className="lg:col-span-7 space-y-5 text-right">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="px-3.5 py-1 rounded-full text-xs font-black border flex items-center gap-1.5"
+                    style={{
+                      borderColor: `${themeColor}50`,
+                      backgroundColor: `${themeColor}15`,
+                      color: themeColor,
+                    }}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>חוויית תספורת פרימיום</span>
+                  </span>
+                  <OpenStatusBadge className="bg-[#1C1C1E] border border-white/10" />
+                </div>
+
+                <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight">
+                  {bizName}
+                </h1>
+
+                <p className="text-sm sm:text-base text-zinc-300 leading-relaxed font-sans max-w-xl">
+                  {business?.slogan || 'עיצוב שיער גברים, דירוגים כירורגיים ופיסול זקן ברמה הגבוהה ביותר בישראל.'}
+                </p>
+
+                <div className="flex items-center gap-4 text-xs font-bold text-zinc-300 py-1">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4" style={{ color: themeColor }} />
+                    {business?.city || 'אריאל & רחובות'}
+                  </span>
+                  <span>·</span>
+                  <span className="text-amber-400 font-black flex items-center gap-1">
+                    ★ 5.0 (420+ ביקורות Google)
+                  </span>
+                </div>
+
+                <div className="bg-[#1C1C20] rounded-3xl border border-white/10 p-5 shadow-2xl space-y-4 max-w-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-bold text-zinc-400 block">קבע תור מהיר אונליין</span>
+                      <span className="text-sm font-black text-white">בחר שירות, שעה והבטח מקום</span>
                     </div>
-                    {branches.map((b, idx) => (
-                      <a
-                        key={idx}
-                        href={b.wazeLink || `https://waze.com/ul?q=${encodeURIComponent(b.address || b.name)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => setIsWazeBranchOpen(false)}
-                        className="block px-3 py-2 rounded-xl text-xs font-bold text-white hover:bg-white/10 transition-colors"
-                      >
-                        🚗 {b.name}
-                      </a>
-                    ))}
+                    <Link
+                      href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+                      className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2"
+                    >
+                      <Scissors className="w-4 h-4" /> הזמן עכשיו
+                    </Link>
                   </div>
-                )}
-              </div>
-            ) : defaultWaze || branches[0]?.wazeLink ? (
-              <a
-                href={defaultWaze || branches[0]?.wazeLink || `https://waze.com/ul?q=${encodeURIComponent(business?.city || bizName)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#33CCFF]/15 hover:bg-[#33CCFF]/25 border border-[#33CCFF]/40 text-[#33CCFF] flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
-                title="נווט עם Waze"
-              >
-                <WazeIcon className="w-4 h-4 text-[#33CCFF]" />
-              </a>
-            ) : (
-              <div
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-zinc-600 flex items-center justify-center opacity-40 cursor-not-allowed"
-                title="לא הוגדר קישור ל-Waze"
-              >
-                <WazeIcon className="w-4 h-4 text-zinc-600" />
-              </div>
-            )}
 
-            {/* 3. WhatsApp Chat (💬) */}
-            {whatsapp ? (
-              <a
-                href={whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-[#25D366] flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
-                title={`וואטסאפ מהיר עם ${ownerName}`}
-              >
-                <MessageCircle className="w-4 h-4 text-[#25D366]" />
-              </a>
-            ) : (
-              <div
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-zinc-600 flex items-center justify-center opacity-40 cursor-not-allowed"
-                title="לא הוגדר מספר וואטסאפ"
-              >
-                <MessageCircle className="w-4 h-4 text-zinc-600" />
-              </div>
-            )}
+                  <div className="grid grid-cols-2 gap-2 pt-3 border-t border-white/10">
+                    <button
+                      onClick={() => setIsMyAppointmentsOpen(true)}
+                      className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <Calendar className="w-3.5 h-3.5" style={{ color: themeColor }} /> התורים שלי
+                    </button>
+                    <button
+                      onClick={() => setIsHoursOpen(true)}
+                      className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <Clock className="w-3.5 h-3.5 text-[#33CCFF]" /> שעות פתיחה
+                    </button>
+                  </div>
+                </div>
 
-            {/* 4. TikTok Profile (🎵) */}
-            {tiktok ? (
-              <a
-                href={tiktok.startsWith('http') ? tiktok : `https://tiktok.com/@${tiktok.replace('@', '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
-                title={`עמוד הטיקטוק של ${ownerName}`}
-              >
-                <TikTokIcon className="w-4 h-4 text-white" />
-              </a>
-            ) : (
-              <div
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-zinc-600 flex items-center justify-center opacity-40 cursor-not-allowed"
-                title="לא הוגדר קישור לטיקטוק"
-              >
-                <TikTokIcon className="w-4 h-4 text-zinc-600" />
+                <div className="flex items-center gap-2 pt-2">
+                  <button
+                    onClick={handleShareClick}
+                    className="p-2.5 rounded-xl bg-[#1C1C20] border border-white/10 hover:bg-[#25252A] text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                  >
+                    <Share2 className="w-4 h-4" style={{ color: themeColor }} /> שתף
+                  </button>
+                  {phone && (
+                    <a
+                      href={`tel:${phone}`}
+                      className="p-2.5 rounded-xl bg-[#1C1C20] border border-white/10 hover:bg-[#25252A] text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                      dir="ltr"
+                    >
+                      <Phone className="w-4 h-4 text-emerald-400" /> {phone}
+                    </a>
+                  )}
+                  {whatsapp && (
+                    <a
+                      href={whatsapp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2.5 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 hover:bg-[#25D366]/25 text-[#25D366] text-xs font-bold flex items-center gap-1.5 transition-all"
+                    >
+                      <MessageCircle className="w-4 h-4 text-[#25D366]" /> וואטסאפ
+                    </a>
+                  )}
+                </div>
               </div>
-            )}
 
-            {/* 5. Instagram Profile (📸) */}
-            {instagram ? (
-              <a
-                href={instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace('@', '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#E1306C]/15 hover:bg-[#E1306C]/25 border border-[#E1306C]/40 text-[#E1306C] flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
-                title={`עמוד האינסטגרם של ${ownerName}`}
-              >
-                <InstagramIcon className="w-4 h-4 text-[#E1306C]" />
-              </a>
-            ) : (
-              <div
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-zinc-600 flex items-center justify-center opacity-40 cursor-not-allowed"
-                title="לא הוגדר קישור לאינסטגרם"
-              >
-                <InstagramIcon className="w-4 h-4 text-zinc-600" />
+              <div className="lg:col-span-5 relative">
+                <div className="relative rounded-3xl overflow-hidden border-2 shadow-2xl aspect-[4/5] bg-zinc-900 group" style={{ borderColor: `${themeColor}40` }}>
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                    style={{
+                      backgroundImage: `url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1000&q=80')`,
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  
+                  <div className="absolute bottom-4 inset-x-4 p-4 rounded-2xl bg-black/70 backdrop-blur-md border border-white/15 text-right">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-xs font-bold text-zinc-400 block">מאסטר ברבר ראשי</span>
+                        <span className="text-base font-black text-white">{ownerName}</span>
+                      </div>
+                      <div
+                        className="px-3 py-1 rounded-xl text-xs font-black border"
+                        style={{
+                          borderColor: `${themeColor}60`,
+                          backgroundColor: `${themeColor}20`,
+                          color: themeColor,
+                        }}
+                      >
+                        10+ שנות ותק
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
-
-            {/* 6. Facebook Profile (👤) */}
-            {facebook ? (
-              <a
-                href={facebook.startsWith('http') ? facebook : `https://facebook.com/${facebook}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#1877F2]/15 hover:bg-[#1877F2]/25 border border-[#1877F2]/40 text-[#1877F2] flex items-center justify-center shadow-md transition-all hover:scale-110 active:scale-95 cursor-pointer"
-                title={`עמוד הפייסבוק של ${ownerName}`}
-              >
-                <FacebookIcon className="w-4 h-4 text-[#1877F2]" />
-              </a>
-            ) : (
-              <div
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-zinc-600 flex items-center justify-center opacity-40 cursor-not-allowed"
-                title="לא הוגדר קישור לפייסבוק"
-              >
-                <FacebookIcon className="w-4 h-4 text-zinc-600" />
-              </div>
-            )}
+            </div>
           </div>
+        </section>
+      )}
 
-          {/* Live Open / Closed Status Badge */}
-          <div className="mt-3.5 flex items-center justify-center">
-            <OpenStatusBadge className="shadow-md bg-[#1E1E1E]" />
+      {heroStyle === 'minimalist-vip' && (
+        <section className="relative w-full bg-[#0D0D0E] text-white py-16 sm:py-24 overflow-hidden text-center" dir="rtl">
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] rounded-full blur-3xl pointer-events-none opacity-20"
+            style={{ backgroundColor: themeColor }}
+          />
+
+          <div className="container mx-auto px-4 relative z-10 max-w-4xl">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border mb-6 backdrop-blur-md"
+              style={{
+                borderColor: `${themeColor}50`,
+                backgroundColor: `${themeColor}15`,
+                color: themeColor,
+              }}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="text-xs font-black tracking-widest uppercase">
+                VIP BARBERSHOP & GROOMING EXPERIENCE
+              </span>
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white mb-4">
+              {bizName}
+            </h1>
+
+            <p className="text-base sm:text-xl text-zinc-300 font-sans max-w-2xl mx-auto mb-6 leading-relaxed">
+              {business?.slogan || 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר.'}
+            </p>
+
+            <div className="flex items-center justify-center gap-3 flex-wrap mb-8">
+              <OpenStatusBadge className="bg-[#18181B] border border-white/10" />
+              <div className="px-3.5 py-1.5 rounded-full bg-[#18181B] border border-white/10 text-xs font-bold text-amber-400 flex items-center gap-1.5 shadow-sm">
+                ★ 5.0 דירוג Google Reviews (420+ לקוחות מרוצים)
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto mb-8">
+              <Link
+                href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-base shadow-2xl shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <Scissors className="w-5 h-5" /> קבע תור עכשיו
+              </Link>
+              <button
+                onClick={() => setIsMyAppointmentsOpen(true)}
+                className="w-full sm:w-auto px-6 py-4 rounded-2xl bg-[#1C1C20] hover:bg-[#25252A] text-white font-bold text-sm border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <Calendar className="w-4 h-4" style={{ color: themeColor }} /> התורים שלי
+              </button>
+              <button
+                onClick={() => setIsHoursOpen(true)}
+                className="w-full sm:w-auto px-5 py-4 rounded-2xl bg-[#1C1C20] hover:bg-[#25252A] text-white font-bold text-sm border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <Clock className="w-4 h-4 text-[#33CCFF]" /> שעות פתיחה
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 pt-4 border-t border-white/10 flex-wrap">
+              <button
+                onClick={handleShareClick}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+              >
+                <Share2 className="w-3.5 h-3.5" style={{ color: themeColor }} /> שתף
+              </button>
+              {phone && (
+                <a
+                  href={`tel:${phone}`}
+                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                  dir="ltr"
+                >
+                  <Phone className="w-3.5 h-3.5 text-emerald-400" /> {phone}
+                </a>
+              )}
+              {whatsapp && (
+                <a
+                  href={whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#25D366] text-xs font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" /> וואטסאפ
+                </a>
+              )}
+              {instagram && (
+                <a
+                  href={instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <InstagramIcon className="w-3.5 h-3.5" /> אינסטגרם
+                </a>
+              )}
+            </div>
           </div>
+        </section>
+      )}
 
-          {/* ============================================================ */}
-          {/* 3. 4 HIGH-CONVERSION ACTION PILL BUTTONS                     */}
-          {/* ============================================================ */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 w-full max-w-2xl mt-5">
-            {/* 1. Book Appointment (קביעת תור) */}
-            <Link
-              href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
-              id="action-pill-book"
-              className="py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-xs sm:text-sm text-center shadow-lg hover:shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-emerald-400/30 cursor-pointer"
-            >
-              <Scissors className="w-4 h-4" /> קביעת תור
-            </Link>
-
-            {/* 2. My Appointments (התורים שלי) */}
-            <button
-              onClick={() => setIsMyAppointmentsOpen(true)}
-              id="action-pill-my-appointments"
-              className="py-3 px-4 rounded-2xl bg-[#222222] hover:bg-[#2A2A2A] text-white font-bold text-xs sm:text-sm text-center border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <Calendar className="w-4 h-4" style={{ color: themeColor }} /> התורים שלי
-            </button>
-
-            {/* 3. Opening Hours (שעות פתיחה) */}
-            <button
-              onClick={() => setIsHoursOpen(true)}
-              id="action-pill-hours"
-              className="py-3 px-4 rounded-2xl bg-[#222222] hover:bg-[#2A2A2A] text-white font-bold text-xs sm:text-sm text-center border border-white/15 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <Clock className="w-4 h-4 text-[#33CCFF]" /> שעות פתיחה
-            </button>
-
-            {/* 4. About Us (קצת עלינו) */}
-            <a
-              href="#about"
-              id="action-pill-about"
-              className="py-3 px-4 rounded-2xl bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-300 font-bold text-xs sm:text-sm text-center border border-emerald-500/30 shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <Heart className="w-4 h-4 text-emerald-400" /> קצת עלינו
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Modals */}
       <OpeningHoursModal isOpen={isHoursOpen} onClose={() => setIsHoursOpen(false)} business={business} />
       <MyAppointmentsModal isOpen={isMyAppointmentsOpen} onClose={() => setIsMyAppointmentsOpen(false)} business={business} />
       <ShareBarbershopModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} business={business} />

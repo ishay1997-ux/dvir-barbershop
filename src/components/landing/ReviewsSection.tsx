@@ -110,7 +110,7 @@ export default function ReviewsSection({
             id="reviews-heading"
             className="text-3xl sm:text-4xl font-black text-white mt-1 mb-3"
           >
-            חוויות והמלצות מאומתות
+            {business?.layout?.sectionTitles?.reviews || 'חוויות והמלצות מאומתות'}
           </h2>
           <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: themeColor }} />
           <p className="text-zinc-400 mt-4 max-w-md mx-auto text-xs sm:text-sm font-sans">

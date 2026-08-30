@@ -99,10 +99,10 @@ export default function PriceListAndGallerySection({
             <span>מחירון ושירותי פרימיום</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white">
-            השירותים והעבודות של {bizName}
+            {business?.layout?.sectionTitles?.services || `השירותים והעבודות של ${bizName}`}
           </h2>
           <p className="text-xs sm:text-sm text-[#9E9891] mt-1.5 font-sans">
-            מחירים שקופים, דיוק ללא פשרות, ואווירה אישית ומקצועית
+            {business?.layout?.sectionTitles?.servicesSubtitle || 'מחירים שקופים, דיוק ללא פשרות, ואווירה אישית ומקצועית'}
           </p>
         </div>
 
