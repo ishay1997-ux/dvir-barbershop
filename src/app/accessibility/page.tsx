@@ -1,43 +1,45 @@
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import type { Metadata } from 'next';
-import { ShieldCheck, Phone, Mail, MapPin, CheckCircle, Clock, Keyboard, Eye, AlertCircle } from 'lucide-react';
-import { SHOP_INFO } from '@/lib/utils';
+import { ShieldCheck, Phone, Mail, CheckCircle, Clock, Keyboard, AlertCircle, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { LegalNavbar } from '@/components/marketing/LegalNavbar';
+import { MarketingFooter } from '@/components/marketing/sections/MarketingFooter';
 
 export const metadata: Metadata = {
-  title: 'הצהרת נגישות | The Cut & המספרה של דביר',
-  description: 'הצהרת נגישות מלאה לפי תקן ישראלי ת"י 5568 ברמת AA ודרישות WCAG 2.1 – פירוט התאמות נגישות באתר ובמספרה.',
+  title: 'הצהרת נגישות | CutWeb OS - פלטפורמת ניהול יומנים ואתרי עסקים',
+  description: 'הצהרת נגישות מלאה לפי תקן ישראלי ת"י 5568 ברמת AA ודרישות WCAG 2.1 – פירוט התאמות נגישות בפלטפורמת CutWeb.',
 };
 
 export default function AccessibilityPage() {
   const lastUpdated = '30 באוגוסט 2026';
 
   return (
-    <>
-      <Header />
-      <main id="main-content" className="min-h-screen bg-[#FAF7F2] pt-24 pb-20" dir="rtl">
-        <div className="container mx-auto px-4 max-w-4xl">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-between text-slate-900" dir="rtl">
+      <LegalNavbar />
+
+      <main id="main-content" className="flex-1 py-12 sm:py-16 px-4">
+        <div className="container mx-auto max-w-4xl space-y-8">
           {/* Header Banner */}
-          <div className="bg-[#1C1C1C] rounded-3xl p-8 sm:p-12 text-center text-white mb-10 shadow-lg relative overflow-hidden">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#C9A84C]/30 bg-[#C9A84C]/10 mb-4">
-              <ShieldCheck className="w-4 h-4 text-[#C9A84C]" />
-              <span className="text-[#C9A84C] text-xs font-bold tracking-wide">תקן ישראלי ת"י 5568 · רמת AA · WCAG 2.1</span>
+          <div className="bg-slate-950 rounded-3xl p-8 sm:p-12 text-center text-white shadow-xl relative overflow-hidden border border-slate-800">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 mb-4">
+              <ShieldCheck className="w-4 h-4 text-indigo-400" />
+              <span className="text-indigo-300 text-xs font-bold tracking-wide">
+                תקן ישראלי ת"י 5568 · רמת AA · WCAG 2.1
+              </span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-black mb-4">הצהרת נגישות</h1>
-            <p className="text-[#9E9891] text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-              הנהלת {SHOP_INFO.name} ופלטפורמת זימון התורים רואות חשיבות עליונה בהנגשת האתר וטפסי הרישום והזימון לאנשים עם מוגבלויות, ופועלות על פי עקרונות שוויון, כבוד והכלה.
+            <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+              הנהלת פלטפורמת <strong>CutWeb OS</strong> רואה חשיבות עליונה בהנגשת האתר, מערכות הניהול וכלל אתרי הלקוחות וטפסי זימון התורים לאנשים עם מוגבלויות, ופועלת על פי עקרונות שוויון, כבוד והכלה.
             </p>
           </div>
 
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#E5DDD0] shadow-sm flex flex-col gap-8">
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm flex flex-col gap-8">
             {/* Quick Keyboard Access Notice */}
-            <div className="bg-[#085B7A]/10 border-2 border-[#085B7A]/30 rounded-2xl p-5 text-slate-800 text-sm leading-relaxed">
-              <div className="font-black text-[#085B7A] text-base mb-2 flex items-center gap-2">
-                <Keyboard className="w-5 h-5" />
-                <span>שִׂים לֵב: בְּאֲתָר זֶה מֻפְעֶלֶת מַעֲרֶכֶת נְגִישׁוּת מִתְקַדֶּמֶת</span>
+            <div className="bg-indigo-50/80 border-2 border-indigo-200/80 rounded-2xl p-5 text-indigo-950 text-sm leading-relaxed">
+              <div className="font-black text-indigo-900 text-base mb-2 flex items-center gap-2">
+                <Keyboard className="w-5 h-5 text-indigo-600" />
+                <span>שִׂים לֵב: בַּמַּעֲרֶכֶת מֻפְעֶלֶת נְגִישׁוּת מִתְקַדֶּמֶת</span>
               </div>
-              <ul className="space-y-1.5 text-xs sm:text-sm text-slate-700">
+              <ul className="space-y-1.5 text-xs sm:text-sm text-indigo-900/90">
                 <li>• לְחַץ <strong>Control + F11</strong> לְהַתְאָמַת הָאֲתָר לְעִוְורִים הַמִּשְׁתַּמְּשִׁים בְּתוֹכְנַת קוֹרֵא־מָסָךְ.</li>
                 <li>• לְחַץ <strong>Control + F10</strong> או <strong>Alt + A</strong> לִפְתִיחַת תַּפְרִיט נְגִישׁוּת.</li>
                 <li>• לחץ <strong>Enter</strong> בראש הדף לקפיצה ישירה לתוכן המרכזי.</li>
@@ -46,153 +48,113 @@ export default function AccessibilityPage() {
 
             {/* General Statement */}
             <section aria-labelledby="statement-intro">
-              <h2 id="statement-intro" className="text-xl font-black text-[#1C1C1C] mb-3">
-                מחויבותנו לנגישות
+              <h2 id="statement-intro" className="text-xl font-black text-slate-900 mb-3">
+                מחויבותנו לנגישות דיגיטלית
               </h2>
-              <p className="text-[#3D3D3D] text-sm sm:text-base leading-relaxed">
-                מערכת האתר וטפסי הרישום מותאמים להנחיות Web Content Accessibility Guidelines (WCAG) 2.0 ו-2.1 ברמה AA, כפי שפורסמו על ידי ארגון התקינה הבינלאומי W3C, ובהתאם לתקן הישראלי ת"י 5568 להנגשת אתרי אינטרנט.
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                פלטפורמת CutWeb, לרבות דפי השיווק, ממשקי ניהול היומנים (Admin Dashboard) וכל אתרי הלקוחות וטפסי קביעת התורים המוקמים באמצעותה, מותאמים להנחיות Web Content Accessibility Guidelines (WCAG) 2.0 ו-2.1 ברמה AA, כפי שפורסמו על ידי ארגון התקינה הבינלאומי W3C, ובהתאם לתקן הישראלי ת"י 5568 להנגשת אתרי אינטרנט.
               </p>
             </section>
 
-            <hr className="border-[#F0EBE1]" />
+            <hr className="border-slate-100" />
 
             {/* Actions Taken for Accessibility */}
             <section aria-labelledby="actions-taken">
-              <h2 id="actions-taken" className="text-xl font-black text-[#1C1C1C] mb-4">
+              <h2 id="actions-taken" className="text-xl font-black text-slate-900 mb-4">
                 פעולות והתאמות שבוצעו לשיפור הנגישות במערכת:
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   {
-                    title: 'אפשרות לשינוי גודל הגופן',
-                    desc: 'הגדלת טקסט עד 150% ושליטה על ריווח מילים, גובה שורות וריווח אותיות.',
+                    title: 'התאמה מלאה לקוראי מסך (Screen Readers)',
+                    desc: 'שימוש בתגיות ARIA, טקסט חלופי (Alt) לכל התמונות, והיררכיית כותרות סמנטית ברורה (H1-H6).',
                   },
                   {
                     title: 'ניווט מקלדת מלא בין שדות הטופס',
                     desc: 'אמצעי ניווט פשוטים ונוחים, כולל מעבר בין כל שדות הטופס, הכפתורים והתורים באמצעות מקש Tab ו-Enter.',
                   },
                   {
-                    title: 'כותרות סמנטיות ומבנה ברור',
-                    desc: 'טקסטים כתובים בשפה ברורה ופשוטה, מאורגנים באמצעות היררכיית כותרות תקנית (H1, H2, H3).',
+                    title: 'ניגודיות צבעים מוקפדת (Color Contrast)',
+                    desc: 'יחסי ניגודיות מחמירים לפי תקן WCAG AA לטקסטים, כפתורים ואייקונים לקריאות מקסימלית.',
                   },
                   {
-                    title: 'התאמת ניגודיות וצבעים',
-                    desc: 'אפשרות לניגודיות כהה (שחור/צהוב), ניגודיות בהירה, היפוך צבעים, מונוכרום ובחירת גוון אישי.',
+                    title: 'שליטה בגודל גופן וריווחים',
+                    desc: 'תמיכה מלאה בהגדלת טקסטים בדפדפן עד 200% ללא פגיעה במבנה הדף או בחוויית המשתמש.',
                   },
                   {
-                    title: 'חלופות טקסטואליות (alt) לתמונות',
-                    desc: 'מתן טקסט אלטרנטיבי ברור לכל האלמנטים הגרפיים והתמונות באתר.',
+                    title: 'התאמה מלאה למובייל וטאבלט',
+                    desc: 'ממשק רספונסיבי מותאם מגע עם מטרות לחיצה (Touch Targets) בגודל תקני של לפחות 44x44 פיקסלים.',
                   },
                   {
-                    title: 'התאמה מלאה לדפדפנים ומכשירים',
-                    desc: 'התאמה לצפייה, ניווט ומילוי טפסים בכל הדפדפנים העדכניים התומכים ב-JavaScript ובמכשירי מובייל.',
-                  },
-                  {
-                    title: 'קישורים ברורים ומוסברים',
-                    desc: 'קישורים ברורים הכוללים הסבר על יעד ההפניה והדגשה חזותית במידת הצורך.',
-                  },
-                  {
-                    title: 'מנוע הקראה קולית חכם',
-                    desc: 'הקראת תוכן האתר בקול טבעי כולל מצב קריאה רציף במעבר עכבר (Hover-to-read).',
+                    title: 'טפסים נגישים עם חיווי שגיאות קולי וחזותי',
+                    desc: 'הודעות שגיאה ברורות ומזוהות ע"י קורא מסך, עם הסבר מפורש כיצד לתקן שדות שגויים.',
                   },
                 ].map((item) => (
-                  <div key={item.title} className="flex items-start gap-3 bg-[#FAF7F2] p-4 rounded-2xl border border-[#E5DDD0]">
-                    <CheckCircle className="w-5 h-5 text-[#085B7A] flex-shrink-0 mt-0.5" />
+                  <div key={item.title} className="flex items-start gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <CheckCircle className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-bold text-[#1C1C1C] text-sm">{item.title}</div>
-                      <div className="text-xs text-[#6B6560] mt-1 leading-relaxed">{item.desc}</div>
+                      <div className="font-bold text-slate-900 text-sm">{item.title}</div>
+                      <div className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</div>
                     </div>
                   </div>
                 ))}
               </div>
             </section>
 
-            <hr className="border-[#F0EBE1]" />
-
-            {/* Physical Barbershop Accessibility */}
-            <section aria-labelledby="physical-a11y">
-              <h2 id="physical-a11y" className="text-xl font-black text-[#1C1C1C] mb-4">
-                הסדרי נגישות פיזיים בסניפי המספרה
-              </h2>
-              <div className="bg-[#FAF7F2] p-6 rounded-2xl border border-[#E5DDD0] flex flex-col gap-3 text-sm text-[#3D3D3D]">
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-[#C9A84C] flex-shrink-0" />
-                  <span><strong>סניפי המספרה:</strong> סניף אריאל (מעונות/קמפוס) | סניף רחובות (הרצל 45)</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[#C9A84C] flex-shrink-0" />
-                  <span><strong>כניסה נגישה:</strong> כניסת המספרה במפלס הרחוב ללא מדרגות או מעלון נגיש.</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[#C9A84C] flex-shrink-0" />
-                  <span><strong>עמדת תספורת מונגשת:</strong> כסא מותאם ומרווח מספק לכיסא גלגלים.</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[#C9A84C] flex-shrink-0" />
-                  <span><strong>חיות שירות:</strong> כניסת כלבי נחייה וחיות שירות מותרת ומבורכת.</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[#C9A84C] flex-shrink-0" />
-                  <span><strong>חניית נכים:</strong> קיימות חניות נכים מסומנות ברחוב בסמוך לכניסה.</span>
-                </div>
-              </div>
-            </section>
-
-            <hr className="border-[#F0EBE1]" />
+            <hr className="border-slate-100" />
 
             {/* Accessibility Limitations / Disclaimer */}
             <section aria-labelledby="a11y-disclaimer">
-              <h2 id="a11y-disclaimer" className="text-xl font-black text-[#1C1C1C] mb-3 flex items-center gap-2">
+              <h2 id="a11y-disclaimer" className="text-xl font-black text-slate-900 mb-3 flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-amber-600" />
                 <span>סייגים לנגישות</span>
               </h2>
-              <p className="text-[#3D3D3D] text-sm sm:text-base leading-relaxed mb-3">
-                אנו מקפידים על בניית טפסים ודפים נגישים ברמת AA. עם זאת, ייתכן כי חלק מהתכנים המועלים על ידי צדדים שלישיים או משתמשים לא כללו טקסט חלופי לתמונות או הסברים לקישורים.
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-3">
+                אנו מקפידים על בניית טפסים ודפים נגישים ברמת AA. עם זאת, ייתכן כי חלק מהתכנים המועלים על ידי בעלי עסקים שונים (כגון תמונות גלריה פרטיות) יחסרו לעיתים תיאור טקסטואלי מלא.
               </p>
-              <p className="text-[#3D3D3D] text-sm sm:text-base leading-relaxed">
-                בנוסף, רכיבים חיצוניים שאינם בשליטתנו המלאה (כגון מפות Google Maps מוטמעות או סרטוני YouTube) עלולים שלא להיות נגישים במלואם.
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                בנוסף, רכיבים חיצוניים מוטמעים שאינם בשליטתנו המלאה (כגון מפות Google Maps או סרטוני וידאו מצד שלישי) עלולים שלא להיות נגישים במלואם.
               </p>
             </section>
 
-            <hr className="border-[#F0EBE1]" />
+            <hr className="border-slate-100" />
 
             {/* Continuous Improvement & Contact */}
             <section aria-labelledby="coordinator-info">
-              <h2 id="coordinator-info" className="text-xl font-black text-[#1C1C1C] mb-3">
-                המשך שיפור ופרטי רכז הנגישות
+              <h2 id="coordinator-info" className="text-xl font-black text-slate-900 mb-3">
+                רכז הנגישות ודרכי התקשרות
               </h2>
-              <p className="text-[#3D3D3D] text-sm leading-relaxed mb-4">
-                אנו מחויבים להמשיך ולשפר את הנגישות במערכת, במטרה לאפשר שימוש שוויוני ונוח לכלל הציבור, ובכלל זה אנשים עם מוגבלויות.
-                נשמח לסייע, להשיב על שאלות ולקבל הערות ובקשות בנושא נגישות:
+              <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                נתקלת בבעיית נגישות באתר או במערכת? מעוניין להציע הצעה לשיפור? צוות הנגישות של CutWeb זמין וקשוב לכל פנייה:
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-4 bg-[#FAF7F2] p-4 rounded-2xl border border-[#E5DDD0]">
-                  <div className="w-10 h-10 rounded-full bg-[#085B7A]/15 flex items-center justify-center text-[#085B7A] flex-shrink-0">
+                <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-xs text-[#6B6560]">טלפון / WhatsApp</div>
-                    <a href="tel:0587815070" className="font-bold text-[#1C1C1C] text-sm hover:text-[#085B7A]" dir="ltr">
+                    <div className="text-xs text-slate-500">טלפון / WhatsApp רכז נגישות</div>
+                    <a href="tel:0587815070" className="font-bold text-slate-900 text-sm hover:text-indigo-600" dir="ltr">
                       058-781-5070
                     </a>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-[#FAF7F2] p-4 rounded-2xl border border-[#E5DDD0]">
-                  <div className="w-10 h-10 rounded-full bg-[#085B7A]/15 flex items-center justify-center text-[#085B7A] flex-shrink-0">
+                <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-xs text-[#6B6560]">דואר אלקטרוני לפניות נגישות</div>
-                    <a href="mailto:support@thecut.co.il" className="font-bold text-[#1C1C1C] text-sm hover:text-[#085B7A]">
-                      support@thecut.co.il
+                    <div className="text-xs text-slate-500">אימייל לפניות נגישות</div>
+                    <a href="mailto:support@cutweb.co.il" className="font-bold text-slate-900 text-sm hover:text-indigo-600">
+                      support@cutweb.co.il
                     </a>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 flex items-center gap-2 text-xs text-[#9E9891]">
+              <div className="mt-6 flex items-center gap-2 text-xs text-slate-400">
                 <Clock className="w-4 h-4" />
                 <span>תאריך עדכון אחרון: <strong>{lastUpdated}</strong></span>
               </div>
@@ -202,15 +164,16 @@ export default function AccessibilityPage() {
             <div className="text-center pt-4">
               <Link
                 href="/"
-                className="inline-block bg-[#085B7A] text-white font-bold text-sm px-8 py-3.5 rounded-full hover:bg-[#064961] transition-colors shadow-md"
+                className="inline-flex items-center gap-2 bg-slate-900 text-white font-bold text-xs px-8 py-3.5 rounded-full hover:bg-slate-800 transition-colors shadow-md hover:scale-105"
               >
-                ← חזרה לעמוד הבית
+                <span>חזרה לעמוד הבית הראשי</span>
               </Link>
             </div>
           </div>
         </div>
       </main>
-      <Footer />
-    </>
+
+      <MarketingFooter />
+    </div>
   );
 }
