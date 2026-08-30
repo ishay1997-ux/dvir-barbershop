@@ -27,7 +27,13 @@ export const SuperAdminHeader: React.FC<SuperAdminHeaderProps> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#C9A84C] flex items-center justify-center text-black font-black shadow-md">
+          <div
+            className={`w-9 h-9 rounded-xl flex items-center justify-center font-black shadow-md ${
+              adminTheme === 'light'
+                ? 'bg-indigo-600 text-white shadow-indigo-200'
+                : 'bg-indigo-500 text-white'
+            }`}
+          >
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
@@ -36,9 +42,15 @@ export const SuperAdminHeader: React.FC<SuperAdminHeaderProps> = ({
                 adminTheme === 'light' ? 'text-slate-900' : 'text-white'
               }`}
             >
-              The Cut · Super Admin
+              Cut<span className="text-indigo-600">Web</span> · Super Admin
             </span>
-            <span className="text-[10px] text-[#B89230] font-bold">Multi-Tenant Master Panel</span>
+            <span
+              className={`text-[10px] font-bold ${
+                adminTheme === 'light' ? 'text-indigo-600' : 'text-indigo-400'
+              }`}
+            >
+              Multi-Tenant Master Panel
+            </span>
           </div>
         </div>
 

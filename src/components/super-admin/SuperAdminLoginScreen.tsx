@@ -17,31 +17,37 @@ export const SuperAdminLoginScreen: React.FC<SuperAdminLoginScreenProps> = ({
   return (
     <div
       className={`min-h-screen flex items-center justify-center p-4 transition-colors ${
-        adminTheme === 'light' ? 'bg-slate-100 text-slate-900' : 'bg-[#121212] text-white'
+        adminTheme === 'light' ? 'bg-[#FAFAFC] text-slate-900' : 'bg-[#121212] text-white'
       }`}
       dir="rtl"
     >
       <div
-        className={`max-w-md w-full rounded-3xl p-8 shadow-2xl border transition-all text-center ${
+        className={`max-w-md w-full rounded-3xl p-8 sm:p-10 shadow-2xl border transition-all text-center ${
           adminTheme === 'light'
-            ? 'bg-white border-slate-200 shadow-slate-200/50'
-            : 'bg-[#1C1C1C] border-[#C9A84C]/30 shadow-black/60'
+            ? 'bg-white border-slate-200/90 shadow-xl shadow-slate-200/50'
+            : 'bg-[#1C1C1C] border-white/10 shadow-black/60'
         }`}
       >
-        <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-[#C9A84C]/40 flex items-center justify-center mx-auto mb-4">
-          <ShieldCheck className="w-8 h-8 text-[#C9A84C]" />
+        <div
+          className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm ${
+            adminTheme === 'light'
+              ? 'bg-indigo-50 border border-indigo-200/80 text-indigo-600'
+              : 'bg-indigo-500/10 border border-indigo-500/30 text-indigo-400'
+          }`}
+        >
+          <ShieldCheck className="w-8 h-8" />
         </div>
 
         <h1
-          className={`text-xl font-black mb-1 ${
+          className={`text-2xl font-black mb-1.5 tracking-tight ${
             adminTheme === 'light' ? 'text-slate-900' : 'text-white'
           }`}
         >
-          The Cut · Super Admin
+          CutWeb <span className="text-indigo-600">· Super Admin</span>
         </h1>
         <p
-          className={`text-xs mb-6 ${
-            adminTheme === 'light' ? 'text-slate-500' : 'text-[#9E9891]'
+          className={`text-xs mb-8 ${
+            adminTheme === 'light' ? 'text-slate-500' : 'text-zinc-400'
           }`}
         >
           פורטל ניהול-על רב-עסקי (Multi-Tenant Master Panel)
@@ -51,16 +57,16 @@ export const SuperAdminLoginScreen: React.FC<SuperAdminLoginScreenProps> = ({
           <button
             onClick={onGoogleLogin}
             disabled={googleLoading}
-            className={`w-full py-3.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-3 transition-all cursor-pointer shadow-md border ${
+            className={`w-full py-3.5 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-3 transition-all cursor-pointer shadow-sm border ${
               adminTheme === 'light'
-                ? 'bg-white hover:bg-slate-50 text-slate-800 border-slate-300 shadow-slate-200'
+                ? 'bg-white hover:bg-slate-50 text-slate-800 border-slate-300 shadow-slate-100 hover:border-slate-400'
                 : 'bg-white hover:bg-gray-100 text-black border-transparent shadow-lg'
             } disabled:opacity-50`}
           >
             {googleLoading ? (
               <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
             ) : (
-              <svg className="w-4 h-4" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -79,12 +85,12 @@ export const SuperAdminLoginScreen: React.FC<SuperAdminLoginScreenProps> = ({
                 />
               </svg>
             )}
-            <span>התחבר עם חשבון Google מורשה</span>
+            <span>התחברות עם חשבון Google מורשה</span>
           </button>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-white/5 text-[10px] text-zinc-500">
-          גישה מאובטחת למורשים בלבד · CutWeb Platform v2.1
+        <div className="mt-8 pt-5 border-t border-slate-200/80 text-[10px] text-slate-400">
+          גישה מאובטחת למורשים בלבד · CutWeb Platform v2.2
         </div>
       </div>
     </div>

@@ -64,7 +64,7 @@ export function useSuperAdminData() {
     : null;
 
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [adminTheme, setAdminTheme] = useState<'dark' | 'light'>('dark');
+  const [adminTheme, setAdminTheme] = useState<'dark' | 'light'>('light');
   const [activeTab, setActiveTab] = useState<'reports' | 'businesses' | 'users'>('businesses');
 
   // Reports state
