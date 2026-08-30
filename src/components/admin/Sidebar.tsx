@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { 
   LayoutDashboard, Calendar, Settings, Users, 
   Sparkles, LogOut, Menu, X, ExternalLink, Share2, Palette, CreditCard, ShieldCheck 
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useShopStore } from '@/lib/store';
 import { getIndustryTerminology } from '@/lib/industry-terminology';
@@ -34,15 +34,28 @@ const navItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const paramSlug = searchParams.get('slug');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const { logout, isDemoMode, user } = useAuth();
   const { settings } = useShopStore();
 
+  const [activeSlug, setActiveSlug] = useState<string>(paramSlug || 'dvir');
+
+  useEffect(() => {
+    if (paramSlug) {
+      setActiveSlug(paramSlug);
+    } else if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('thecut_active_slug');
+      if (stored) setActiveSlug(stored);
+    }
+  }, [paramSlug]);
+
   const terminology = getIndustryTerminology({ name: settings.shopName });
   const bizName = settings.shopName || (isDemoMode ? 'עסק הדגמה (Demo Hub)' : 'דשבורד העסק');
   const ownerName = settings.ownerName || 'מנהל ראשי';
-  const slug = user?.businessSlugs?.[0] || 'dvir';
+  const slug = activeSlug || user?.businessSlugs?.[0] || 'dvir';
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-[#111215] text-zinc-300 select-none">
@@ -81,11 +94,14 @@ export default function AdminSidebar() {
         {navItems.map(({ href, label, icon: Icon, subItems }) => {
           const isActive = pathname === href;
           const isSettingsActive = pathname.startsWith('/admin/settings');
+          const finalHref = slug && slug !== 'dvir'
+            ? `${href}?slug=${slug}${isDemoMode ? '&demo=true' : ''}`
+            : (isDemoMode ? `${href}?demo=true` : href);
 
           return (
             <div key={href} className="flex flex-col gap-1">
               <Link
-                href={href}
+                href={finalHref}
                 onClick={() => setIsMobileOpen(false)}
                 className={cn(
                   'flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 text-xs font-bold',
@@ -107,7 +123,7 @@ export default function AdminSidebar() {
                   {subItems.map((sub) => (
                     <Link
                       key={sub.tab}
-                      href={`/admin/settings?tab=${sub.tab}`}
+                      href={`/admin/settings?tab=${sub.tab}${slug && slug !== 'dvir' ? `&slug=${slug}` : ''}${isDemoMode ? '&demo=true' : ''}`}
                       onClick={() => setIsMobileOpen(false)}
                       className="px-3 py-1.5 rounded-lg text-[11px] font-bold text-zinc-400 hover:text-amber-300 hover:bg-white/5 transition-colors flex items-center gap-2"
                     >

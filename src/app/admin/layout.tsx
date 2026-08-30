@@ -1,11 +1,32 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import React, { Suspense, useEffect } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
 import AdminSidebar from '@/components/admin/Sidebar';
 import AdminAuthGuard from '@/components/admin/AdminAuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
+import { useShopStore } from '@/lib/store';
+
+function BusinessSync() {
+  const searchParams = useSearchParams();
+  const { loadBusinessPreset } = useShopStore();
+  const slug = searchParams.get('slug');
+
+  useEffect(() => {
+    if (slug) {
+      loadBusinessPreset(slug);
+    } else if (typeof window !== 'undefined') {
+      const storedSlug = localStorage.getItem('thecut_active_slug');
+      if (storedSlug) {
+        loadBusinessPreset(storedSlug);
+      }
+    }
+  }, [slug]);
+
+  return null;
+}
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,6 +39,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AdminAuthGuard>
+      <Suspense fallback={null}>
+        <BusinessSync />
+      </Suspense>
       <div className="flex flex-col min-h-screen bg-[#0E0E0E] text-slate-100 w-full overflow-x-hidden font-sans selection:bg-indigo-500 selection:text-white" dir="rtl">
         {/* Interactive Demo Mode Top Banner */}
         {isDemoMode && (

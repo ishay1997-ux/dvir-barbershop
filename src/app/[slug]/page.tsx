@@ -264,7 +264,7 @@ export default function DynamicBusinessLandingPage({
             <span>🎯 אתר הדגמה חי (Flagship Showcase) · התנסו בקביעת תור עצמאית</span>
           </div>
           <Link
-            href="/admin?demo=true"
+            href={`/admin?slug=${slug}&demo=true`}
             className="py-1 px-3.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[11px] transition-transform hover:scale-105 shadow-xs flex items-center gap-1.5"
           >
             <Sparkles className="w-3 text-amber-300" />

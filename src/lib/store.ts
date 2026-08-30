@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getBusinessBySlug } from './business-service';
 import type {
   Branch,
   Service,
@@ -500,6 +501,65 @@ export function useShopStore() {
     saveCustomers(updated);
   };
 
+  const loadBusinessPreset = async (slug: string) => {
+    if (!slug) return;
+    try {
+      const biz = await getBusinessBySlug(slug);
+      if (!biz) return;
+
+      const newSettings: ShopSettings = {
+        ...INITIAL_SETTINGS,
+        shopName: biz.name,
+        ownerName: biz.ownerName || 'מנהל ראשי',
+        mainPhone: biz.phone || '052-1234567',
+        phone: biz.phone || '052-1234567',
+        themeColor: biz.themeColor || '#C9A84C',
+        slogan: biz.slogan || '',
+        announcement: biz.announcement || '',
+        testimonials: (biz.testimonials as any) || INITIAL_SETTINGS.testimonials,
+        faqs: (biz.faqs as any) || INITIAL_SETTINGS.faqs,
+        layout: (biz.layout as any) || INITIAL_SETTINGS.layout,
+      };
+
+      const newServices: Service[] = (biz.services || []).map((s: any, idx: number) => ({
+        id: s.id || `srv-${idx + 1}`,
+        name: s.name,
+        description: s.description || '',
+        duration: s.duration || 30,
+        price: s.price || 100,
+        category: s.category || 'general',
+        icon: s.icon || '✨',
+        isActive: true,
+      }));
+
+      const newBranches: Branch[] = (biz.branches || []).map((b: any, idx: number) => ({
+        id: b.id || `br-${idx + 1}`,
+        name: b.name,
+        city: b.city || biz.city || '',
+        address: b.address || '',
+        shortDescription: b.shortDescription || '',
+        wazeUrl: b.wazeUrl || 'https://waze.com',
+        activeDays: b.activeDays || [0, 1, 2, 3, 4],
+        phone: b.phone || biz.phone || '052-1234567',
+        isActive: true,
+      }));
+
+      setSettings(newSettings);
+      setServices(newServices);
+      setBranches(newBranches);
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('thecut_active_slug', slug);
+        localStorage.setItem('thecut_settings', JSON.stringify(newSettings));
+        localStorage.setItem('thecut_services', JSON.stringify(newServices));
+        localStorage.setItem('thecut_branches', JSON.stringify(newBranches));
+        window.dispatchEvent(new Event('thecut_store_updated'));
+      }
+    } catch (err) {
+      console.error('Failed to load business preset into store:', err);
+    }
+  };
+
   return {
     branches,
     services,
@@ -519,5 +579,6 @@ export function useShopStore() {
     removeFromWaitlist,
     updateWaitlistStatus,
     updateCustomerFormula,
+    loadBusinessPreset,
   };
 }

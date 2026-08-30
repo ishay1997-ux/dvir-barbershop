@@ -138,7 +138,7 @@ export default function Header({
 
             {/* Admin Login Button */}
             <Link
-              href={slug ? `/admin/login?slug=${slug}` : '/admin/login'}
+              href={slug ? `/admin?slug=${slug}&demo=true` : '/admin?demo=true'}
               className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-200 shadow-xs ${t.isLight ? 'border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-800' : 'border-white/20 bg-white/10 hover:bg-white/20 text-white'}`}
               id="header-admin-button"
               title={`כניסת מנהל ל-${bizName}`}
