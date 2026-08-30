@@ -950,6 +950,10 @@ input[type="tel"] {
   border-color: #EDE9FE !important;
 }
 
+.theme-lavender-mist .keep-white-text {
+  color: #FFFFFF !important;
+}
+
 .theme-lavender-mist .shadow-md,
 .theme-lavender-mist .shadow-lg,
 .theme-lavender-mist .shadow-xl,
@@ -968,6 +972,10 @@ input[type="tel"] {
 .theme-botanical-sage section {
   color: #064e3b !important;
   background-color: transparent !important;
+}
+
+.theme-botanical-sage .keep-white-text {
+  color: #FFFFFF !important;
 }
 
 .theme-botanical-sage .bg-\[\#111111\],
@@ -1049,8 +1057,86 @@ input[type="tel"] {
 }
 
 /* ============================================================
-   LIVE CUSTOMIZER DRAWER ISOLATION (Immune to page theme rules)
+   LIVE CUSTOMIZER & DEMO CONTROLS ISOLATION (Immune to page theme rules)
    ============================================================ */
+#live-customizer-trigger-btn,
+.theme-luxury-light #live-customizer-trigger-btn,
+.theme-lavender-mist #live-customizer-trigger-btn,
+.theme-botanical-sage #live-customizer-trigger-btn,
+.theme-brand-midnight #live-customizer-trigger-btn,
+.theme-cyber-carbon #live-customizer-trigger-btn,
+.theme-dark-obsidian #live-customizer-trigger-btn {
+  background-color: rgba(9, 10, 15, 0.95) !important;
+  border-color: rgba(251, 191, 36, 0.6) !important;
+  color: #FBBF24 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 16px rgba(251, 191, 36, 0.25) !important;
+}
+
+#live-customizer-trigger-btn span,
+#live-customizer-trigger-btn strong,
+.theme-luxury-light #live-customizer-trigger-btn span,
+.theme-lavender-mist #live-customizer-trigger-btn span,
+.theme-botanical-sage #live-customizer-trigger-btn span,
+.theme-brand-midnight #live-customizer-trigger-btn span,
+.theme-cyber-carbon #live-customizer-trigger-btn span,
+.theme-dark-obsidian #live-customizer-trigger-btn span {
+  color: #FFFFFF !important;
+}
+
+#flagship-demo-topbar,
+.theme-luxury-light #flagship-demo-topbar,
+.theme-lavender-mist #flagship-demo-topbar,
+.theme-botanical-sage #flagship-demo-topbar {
+  background: linear-gradient(to right, #030712, #0f172a, #1e1b4b) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  color: #FFFFFF !important;
+}
+
+#flagship-demo-topbar span,
+.theme-luxury-light #flagship-demo-topbar span,
+.theme-lavender-mist #flagship-demo-topbar span,
+.theme-botanical-sage #flagship-demo-topbar span {
+  color: #F4F4F5 !important;
+}
+
+#flagship-demo-topbar strong,
+.theme-luxury-light #flagship-demo-topbar strong,
+.theme-lavender-mist #flagship-demo-topbar strong,
+.theme-botanical-sage #flagship-demo-topbar strong {
+  color: #FFFFFF !important;
+}
+
+#back-to-marketing-site,
+.theme-luxury-light #back-to-marketing-site,
+.theme-lavender-mist #back-to-marketing-site,
+.theme-botanical-sage #back-to-marketing-site {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #FFFFFF !important;
+}
+
+#back-to-marketing-site span,
+.theme-luxury-light #back-to-marketing-site span,
+.theme-lavender-mist #back-to-marketing-site span,
+.theme-botanical-sage #back-to-marketing-site span {
+  color: #FFFFFF !important;
+}
+
+#open-demo-admin-dashboard,
+.theme-luxury-light #open-demo-admin-dashboard,
+.theme-lavender-mist #open-demo-admin-dashboard,
+.theme-botanical-sage #open-demo-admin-dashboard {
+  background-color: #4F46E5 !important;
+  color: #FFFFFF !important;
+}
+
+#open-demo-admin-dashboard span,
+.theme-luxury-light #open-demo-admin-dashboard span,
+.theme-lavender-mist #open-demo-admin-dashboard span,
+.theme-botanical-sage #open-demo-admin-dashboard span {
+  color: #FFFFFF !important;
+}
+
 .live-customizer-drawer,
 .live-customizer-panel,
 .theme-luxury-light .live-customizer-drawer,

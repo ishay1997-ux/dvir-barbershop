@@ -303,7 +303,10 @@ export default function DynamicBusinessLandingPage({
 
       {/* Flagship Demo Top Ribbon */}
       {isFlagshipDemo && (
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white py-2 px-4 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2.5 shadow-lg sticky top-0 z-50 border-b border-indigo-500/30 backdrop-blur-md">
+        <div
+          id="flagship-demo-topbar"
+          className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white py-2 px-4 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2.5 shadow-lg sticky top-0 z-50 border-b border-indigo-500/30 backdrop-blur-md"
+        >
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0 shadow-xs" />
             <span className="text-zinc-200">
