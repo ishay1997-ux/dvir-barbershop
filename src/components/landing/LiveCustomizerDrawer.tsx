@@ -94,8 +94,8 @@ export function LiveCustomizerDrawer({
 
   return (
     <>
-      {/* Floating Trigger Button */}
-      <div className="fixed bottom-6 left-6 z-40" dir="rtl">
+      {/* Floating Trigger Button on the RIGHT side to avoid overlapping accessibility widget on the left */}
+      <div className="fixed bottom-6 right-6 z-40" dir="rtl">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="py-3 px-5 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white font-black text-xs flex items-center gap-2.5 shadow-2xl border border-white/20 backdrop-blur-lg hover:scale-105 transition-all cursor-pointer group"
@@ -117,10 +117,10 @@ export function LiveCustomizerDrawer({
         </button>
       </div>
 
-      {/* Slide-Up / Floating Studio Panel */}
+      {/* Slide-Up / Floating Studio Panel on the RIGHT side */}
       {isOpen && (
         <div
-          className="fixed bottom-22 left-6 z-40 w-full max-w-sm sm:max-w-md bg-slate-900/95 border border-slate-700/80 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl text-white space-y-4 text-right animate-in slide-in-from-bottom-5 duration-200"
+          className="fixed bottom-22 right-6 z-40 w-full max-w-sm sm:max-w-md bg-slate-900/95 border border-slate-700/80 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl text-white space-y-4 text-right animate-in slide-in-from-bottom-5 duration-200"
           dir="rtl"
         >
           {/* Header */}

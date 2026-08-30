@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, Calendar, Settings, Users, 
-  Scissors, LogOut, Menu, X, ExternalLink, Share2 
+  Scissors, LogOut, Menu, X, ExternalLink, Share2, Palette, CreditCard 
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,7 +22,8 @@ const navItems = [
     subItems: [
       { tab: 'schedule', label: 'שיבוץ ושעות', icon: Calendar },
       { tab: 'services', label: 'מחירון ושירותים', icon: Scissors },
-      { tab: 'design', label: 'סטודיו עיצוב', icon: LayoutDashboard },
+      { tab: 'design', label: 'סטודיו עיצוב ומודולריות', icon: Palette },
+      { tab: 'billing', label: 'מנוי וחיובים', icon: CreditCard },
       { tab: 'content', label: 'תוכן וביקורות', icon: Users },
     ],
   },
