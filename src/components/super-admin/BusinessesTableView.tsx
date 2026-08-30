@@ -5,20 +5,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Plus,
-  Edit,
+  Edit2,
   ExternalLink,
-  Key,
+  KeyRound,
   Trash2,
   Copy,
   Download,
   MessageCircle,
   RefreshCw,
-  Search,
-  CheckCircle2,
   Building2,
+  CheckCircle2,
   Sparkles,
   Layers,
-  ArrowUpDown,
+  Phone,
 } from 'lucide-react';
 import type { Business } from './types';
 
@@ -48,14 +47,10 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending' | 'suspended'>('all');
   const [planFilter, setPlanFilter] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
 
   const filtered = businesses.filter((biz) => {
-    // Status filter
     if (statusFilter !== 'all' && biz.status !== statusFilter) return false;
-    // Plan filter
     if (planFilter !== 'all' && biz.plan !== planFilter) return false;
-    // Search query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchName = (biz.name || '').toLowerCase().includes(q);
@@ -71,89 +66,85 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
   const pendingCount = businesses.filter((b) => b.status === 'pending').length;
 
   return (
-    <div className="space-y-6">
-      {/* Top Header & Mini KPI Cards (REGIN Style) */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <div className="space-y-6 select-none" dir="rtl">
+      {/* Top Header & Stats */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1
-            className={`text-xl font-black ${
+            className={`text-lg font-black tracking-tight ${
               adminTheme === 'light' ? 'text-slate-900' : 'text-white'
             }`}
           >
-            ניהול מספרות ועסקים
+            ניהול מספרות ועסקים בפלטפורמה
           </h1>
           <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
-            מעקב אחר כל העסקים שנפתחו, התאמה אישית, מחירונים וחיבורי דומיינים
+            מעקב אחר כל העסקים שנפתחו, התאמה אישית, חבילות וחיבורי דומיינים
           </p>
         </div>
 
-        {/* Small KPI Badges */}
-        <div className="flex items-center gap-3">
+        {/* Compact KPI Stats Bar */}
+        <div className="flex items-center gap-2">
           <div
-            className={`px-4 py-2.5 rounded-2xl border text-center ${
+            className={`px-3.5 py-1.5 rounded-xl border flex items-center gap-2 ${
               adminTheme === 'light'
-                ? 'bg-white border-slate-200 shadow-xs'
-                : 'bg-white/5 border-white/10'
+                ? 'bg-white border-slate-200/90 text-slate-700 shadow-xs'
+                : 'bg-white/5 border-white/10 text-zinc-300'
             }`}
           >
-            <span className="text-xs font-bold text-slate-400 block">עסקים פעילים</span>
-            <div className="flex items-center justify-center gap-1.5 mt-0.5">
-              <span className="text-base font-black text-teal-600">{activeCount}</span>
-              <span className="text-[11px] text-slate-400">/ {businesses.length}</span>
-            </div>
+            <span className="text-[11px] text-slate-400 font-medium">עסקים פעילים:</span>
+            <span className="text-xs font-black text-slate-900 dark:text-white">
+              {activeCount} <span className="text-[10px] text-slate-400 font-normal">/ {businesses.length}</span>
+            </span>
           </div>
 
           <div
-            className={`px-4 py-2.5 rounded-2xl border text-center ${
+            className={`px-3.5 py-1.5 rounded-xl border flex items-center gap-1.5 ${
               adminTheme === 'light'
-                ? 'bg-white border-slate-200 shadow-xs'
-                : 'bg-white/5 border-white/10'
+                ? 'bg-white border-slate-200/90 text-emerald-700 shadow-xs'
+                : 'bg-white/5 border-white/10 text-emerald-400'
             }`}
           >
-            <span className="text-xs font-bold text-slate-400 block">זמן תגובה וענן</span>
-            <div className="flex items-center justify-center gap-1 mt-0.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-bold text-emerald-600">100% תקין</span>
-            </div>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs font-bold">ענן מסונכרן 100%</span>
           </div>
         </div>
       </div>
 
-      {/* Toolbar & Filters (REGIN Style) */}
+      {/* Toolbar & Filter Controls */}
       <div
-        className={`p-4 rounded-2xl border flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 ${
+        className={`p-3 rounded-2xl border flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 ${
           adminTheme === 'light'
             ? 'bg-white border-slate-200/90 shadow-xs'
-            : 'bg-[#181818] border-white/10'
+            : 'bg-[#15161A] border-white/10'
         }`}
       >
-        {/* Left/Start: Primary Action Button */}
+        {/* Right: Primary Action Button */}
         <div className="flex items-center gap-2">
           <button
             onClick={onOpenCreateModal}
-            className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-black text-xs transition-all shadow-md shadow-teal-600/20 flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
+            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-xs flex items-center gap-1.5 cursor-pointer dark:bg-indigo-600 dark:hover:bg-indigo-700"
           >
             <Plus className="w-4 h-4" />
-            <span>הקמת עסק חדש במערכת</span>
+            <span>הקמת עסק חדש</span>
           </button>
 
           <button
             onClick={onRefresh}
             disabled={businessesLoading}
-            className={`p-2.5 rounded-xl border cursor-pointer transition-colors ${
+            className={`p-2 rounded-xl border cursor-pointer transition-colors ${
               adminTheme === 'light'
-                ? 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
+                ? 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-600'
                 : 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
             }`}
             title="רענן רשימה"
           >
             <RefreshCw
-              className={`w-3.5 h-3.5 ${businessesLoading ? 'animate-spin text-teal-600' : ''}`}
+              className={`w-3.5 h-3.5 ${businessesLoading ? 'animate-spin text-slate-900' : ''}`}
             />
           </button>
         </div>
 
-        {/* Center: Segmented Status Filter Tabs (REGIN Style) */}
+        {/* Center: Segmented Status Filter Tabs */}
         <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/5 p-1 rounded-xl">
           {[
             { id: 'all' as const, label: 'הכל', count: businesses.length },
@@ -163,18 +154,18 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
             <button
               key={tab.id}
               onClick={() => setStatusFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                 statusFilter === tab.id
-                  ? 'bg-white text-teal-800 shadow-xs dark:bg-teal-600 dark:text-white font-black'
-                  : 'text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white'
+                  ? 'bg-white text-slate-950 shadow-xs font-bold dark:bg-white/15 dark:text-white'
+                  : 'text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               <span>{tab.label}</span>
               <span
-                className={`px-1.5 py-0.2 rounded-full text-[10px] ${
+                className={`px-1.5 py-0.2 rounded-md text-[10px] font-bold ${
                   statusFilter === tab.id
-                    ? 'bg-teal-50 text-teal-700 dark:bg-teal-900 dark:text-teal-200 font-bold'
-                    : 'bg-slate-200/70 text-slate-600 dark:bg-white/10 dark:text-zinc-400'
+                    ? 'bg-slate-100 text-slate-900 dark:bg-white/20 dark:text-white'
+                    : 'bg-slate-200/60 text-slate-500 dark:bg-white/10 dark:text-zinc-400'
                 }`}
               >
                 {tab.count}
@@ -183,14 +174,14 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
           ))}
         </div>
 
-        {/* Right: Plan Filter Dropdown */}
+        {/* Left: Plan Filter Dropdown */}
         <div className="flex items-center gap-2">
           <select
             value={planFilter}
             onChange={(e) => setPlanFilter(e.target.value)}
-            className={`px-3 py-2 text-xs rounded-xl border outline-none font-bold cursor-pointer transition-colors ${
+            className={`px-3 py-1.5 text-xs rounded-xl border outline-none font-semibold cursor-pointer transition-colors ${
               adminTheme === 'light'
-                ? 'bg-slate-50 border-slate-200 text-slate-800 focus:bg-white'
+                ? 'bg-slate-50 border-slate-200 text-slate-700 focus:bg-white focus:border-slate-400'
                 : 'bg-white/5 border-white/10 text-white focus:bg-zinc-800'
             }`}
           >
@@ -203,29 +194,31 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
         </div>
       </div>
 
-      {/* Main Data Table (High-End Enterprise View) */}
+      {/* Main Data Table */}
       <div
         className={`rounded-2xl border overflow-hidden transition-all ${
           adminTheme === 'light'
             ? 'bg-white border-slate-200/90 shadow-xs'
-            : 'bg-[#181818] border-white/10 shadow-lg'
+            : 'bg-[#15161A] border-white/10 shadow-lg'
         }`}
       >
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs" dir="rtl">
-            <thead
-              className={`border-b text-slate-400 font-bold ${
-                adminTheme === 'light' ? 'bg-slate-50/70 border-slate-200' : 'bg-white/5 border-white/10'
-              }`}
-            >
-              <tr>
-                <th className="py-3.5 px-4">עסק ומיתוג</th>
-                <th className="py-3.5 px-4">איש קשר וטלפון</th>
-                <th className="py-3.5 px-4">סניפים ושירותים</th>
-                <th className="py-3.5 px-4">חבילת מנוי</th>
-                <th className="py-3.5 px-4">צבע מיתוג</th>
-                <th className="py-3.5 px-4">סטטוס</th>
-                <th className="py-3.5 px-4 text-center">פעולות</th>
+          <table className="w-full text-right text-xs border-collapse" dir="rtl">
+            <thead>
+              <tr
+                className={`border-b text-[11px] font-bold tracking-wider ${
+                  adminTheme === 'light'
+                    ? 'bg-slate-50/70 border-slate-200/80 text-slate-500'
+                    : 'bg-white/5 border-white/10 text-zinc-400'
+                }`}
+              >
+                <th className="py-3 px-4 w-60">עסק ודומיין</th>
+                <th className="py-3 px-4 w-48">איש קשר וטלפון</th>
+                <th className="py-3 px-4 w-36">סניפים ושירותים</th>
+                <th className="py-3 px-4 w-32">מסלול</th>
+                <th className="py-3 px-4 w-28">צבע מיתוג</th>
+                <th className="py-3 px-4 w-28">סטטוס</th>
+                <th className="py-3 px-4 text-center w-40">פעולות</th>
               </tr>
             </thead>
 
@@ -237,135 +230,141 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                 return (
                   <tr
                     key={biz.id}
-                    className={`group transition-colors ${
-                      adminTheme === 'light' ? 'hover:bg-slate-50/80' : 'hover:bg-white/5'
+                    className={`transition-colors ${
+                      adminTheme === 'light' ? 'hover:bg-slate-50/70' : 'hover:bg-white/5'
                     }`}
                   >
                     {/* 1. Business Info */}
-                    <td className="py-4 px-4">
+                    <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
                         <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-xs"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs shrink-0 shadow-xs"
                           style={{
-                            backgroundColor: `${bizColor}18`,
+                            backgroundColor: `${bizColor}15`,
                             color: bizColor,
-                            border: `1.5px solid ${bizColor}50`,
+                            border: `1.5px solid ${bizColor}40`,
                           }}
                         >
                           {initial}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <span
-                            className={`font-black text-sm block ${
+                            className={`font-bold text-xs block truncate ${
                               adminTheme === 'light' ? 'text-slate-900' : 'text-white'
                             }`}
                           >
                             {biz.name}
                           </span>
-                          <span className="text-[11px] font-bold text-teal-600 block" dir="ltr">
+                          <Link
+                            href={`/${biz.slug}`}
+                            target="_blank"
+                            className="text-[11px] font-medium text-indigo-600 hover:underline block truncate"
+                            dir="ltr"
+                          >
                             {`thecut.co.il/${biz.slug}`}
-                          </span>
+                          </Link>
                         </div>
                       </div>
                     </td>
 
                     {/* 2. Owner & Contact */}
-                    <td className="py-4 px-4">
+                    <td className="py-3.5 px-4">
                       <span
-                        className={`font-bold block ${
+                        className={`font-semibold text-xs block ${
                           adminTheme === 'light' ? 'text-slate-800' : 'text-zinc-200'
                         }`}
                       >
                         {biz.ownerName || 'לא צוין'}
                       </span>
-                      <span className="text-slate-400 text-[11px] block font-mono" dir="ltr">
-                        {biz.phone}
-                      </span>
-                      <a
-                        href={`https://wa.me/${(biz.phone || '').replace(/\D/g, '').replace(/^0/, '972')}?text=${encodeURIComponent(
-                          `היי ${biz.ownerName || 'יקר/ה'}! 🎉\nהאתר והמערכת שלך עבור "${biz.name}" מוכנים באוויר!\n\n🌐 קישור לאתר הלקוחות:\nhttps://thecut.co.il/${biz.slug}\n\n🔐 קישור לפאנל הניהול שלך:\nhttps://thecut.co.il/admin/login`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#E8F7F3] hover:bg-[#D1F2EB] text-[#00796B] border border-[#B2DFDB] transition-colors cursor-pointer"
-                        title="שלח קישורים ישירות לוואטסאפ של בעל העסק"
-                      >
-                        <MessageCircle className="w-3 h-3 text-[#25D366]" />
-                        <span>וואטסאפ לבעל העסק</span>
-                      </a>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-slate-400 text-[11px] font-mono" dir="ltr">
+                          {biz.phone}
+                        </span>
+                        <a
+                          href={`https://wa.me/${(biz.phone || '').replace(/\D/g, '').replace(/^0/, '972')}?text=${encodeURIComponent(
+                            `היי ${biz.ownerName || 'יקר/ה'}! 🎉\nהאתר והמערכת שלך עבור "${biz.name}" מוכנים באוויר!\n\n🌐 קישור לאתר הלקוחות:\nhttps://thecut.co.il/${biz.slug}\n\n🔐 קישור לפאנל הניהול שלך:\nhttps://thecut.co.il/admin/login`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-0.5 text-[#25D366] hover:opacity-80 transition-opacity"
+                          title="שלח וואטסאפ"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
                     </td>
 
                     {/* 3. Branches & Services */}
-                    <td className="py-4 px-4">
-                      <span className="text-slate-600 dark:text-zinc-300 font-medium block">
+                    <td className="py-3.5 px-4">
+                      <div className="text-slate-600 dark:text-zinc-300 text-xs font-medium">
                         {biz.branches?.length || biz.branchesCount || 1} סניפים
-                      </span>
-                      <span className="text-slate-400 text-[11px] block">
-                        {biz.services?.length || 3} שירותים במחירון
-                      </span>
+                      </div>
+                      <div className="text-slate-400 text-[10px]">
+                        {biz.services?.length || 3} שירותים
+                      </div>
                     </td>
 
                     {/* 4. Plan */}
-                    <td className="py-4 px-4">
+                    <td className="py-3.5 px-4">
                       <span
-                        className={`inline-block px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide ${
+                        className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                           biz.plan === 'team'
-                            ? 'bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-300'
+                            ? 'bg-purple-50 text-purple-700 border border-purple-200/80 dark:bg-purple-950/40 dark:text-purple-300'
                             : biz.plan === 'starter'
-                            ? 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-white/10 dark:text-zinc-300'
+                            ? 'bg-slate-100 text-slate-600 border border-slate-200 dark:bg-white/10 dark:text-zinc-300'
                             : biz.plan === 'enterprise'
-                            ? 'bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300'
-                            : 'bg-teal-50 text-teal-800 border border-teal-200 dark:bg-teal-950/40 dark:text-teal-300'
+                            ? 'bg-amber-50 text-amber-800 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300'
+                            : 'bg-indigo-50 text-indigo-700 border border-indigo-200/80 dark:bg-indigo-950/40 dark:text-indigo-300'
                         }`}
                       >
-                        {biz.plan || 'pro'} Plan
+                        {biz.plan || 'pro'}
                       </span>
                     </td>
 
-                    {/* 5. Business Swatch Dot (isolated tenant palette) */}
-                    <td className="py-4 px-4">
+                    {/* 5. Brand Color Swatch */}
+                    <td className="py-3.5 px-4">
                       <div className="flex items-center gap-1.5">
                         <span
-                          className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0 shadow-xs"
+                          className="w-3 h-3 rounded-full border border-black/10 shrink-0 shadow-xs"
                           style={{ backgroundColor: bizColor }}
                         />
-                        <span className="text-[11px] font-mono text-slate-400 uppercase">
-                          {bizColor}
+                        <span className="text-[11px] font-mono text-slate-500 uppercase" dir="ltr">
+                          {bizColor.startsWith('#') ? bizColor : `#${bizColor}`}
                         </span>
                       </div>
                     </td>
 
                     {/* 6. Status */}
-                    <td className="py-4 px-4">
+                    <td className="py-3.5 px-4">
                       <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           biz.status === 'active'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300'
-                            : 'bg-amber-50 text-amber-700 border border-amber-300 dark:bg-amber-950/40 dark:text-amber-300'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300'
                         }`}
                       >
-                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                         <span>{biz.status === 'active' ? 'פעיל באוויר' : biz.status}</span>
                       </span>
                     </td>
 
-                    {/* 7. Action Icons (Like REGIN: Clean Icon Buttons) */}
-                    <td className="py-4 px-4 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
+                    {/* 7. Action Icons Group */}
+                    <td className="py-3.5 px-4 text-center">
+                      <div className="flex items-center justify-center gap-1">
                         {/* Edit Button */}
                         <button
                           onClick={() => onOpenEditModal(biz)}
-                          className="p-2 rounded-xl bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 border border-slate-200 dark:bg-white/5 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors cursor-pointer"
                           title="ערוך והתאם אישית"
                         >
-                          <Edit className="w-3.5 h-3.5" />
+                          <Edit2 className="w-3.5 h-3.5" />
                         </button>
 
                         {/* View Live Site */}
                         <Link
                           href={`/${biz.slug}`}
                           target="_blank"
-                          className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 dark:bg-white/5 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-white/10 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors"
                           title="צפה באתר הלקוחות"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -374,10 +373,10 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                         {/* Business Admin Login */}
                         <button
                           onClick={() => router.push('/admin')}
-                          className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-500/30 dark:text-emerald-400 transition-colors cursor-pointer"
-                          title="כניסה לפאנל הניהול של העסק"
+                          className="p-1.5 rounded-lg text-slate-600 hover:text-emerald-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                          title="כניסה לפאנל הניהול"
                         >
-                          <Key className="w-3.5 h-3.5" />
+                          <KeyRound className="w-3.5 h-3.5" />
                         </button>
 
                         {/* Export JSON Backup */}
@@ -393,7 +392,7 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                             a.click();
                             a.remove();
                           }}
-                          className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 dark:bg-white/5 dark:border-white/10 dark:text-zinc-300 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors cursor-pointer"
                           title="הורד גיבוי JSON"
                         >
                           <Download className="w-3.5 h-3.5" />
@@ -403,8 +402,8 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                         {onCloneBusiness && (
                           <button
                             onClick={() => onCloneBusiness(biz)}
-                            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 dark:bg-white/5 dark:border-white/10 dark:text-zinc-300 transition-colors cursor-pointer"
-                            title="שכפל עסק זה"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                            title="שכפל עסק"
                           >
                             <Copy className="w-3.5 h-3.5" />
                           </button>
@@ -413,7 +412,7 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                         {/* Delete Business */}
                         <button
                           onClick={() => onDeleteBusiness(biz.slug, biz.name)}
-                          className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer dark:hover:bg-rose-950/40"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                           title="מחק עסק"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

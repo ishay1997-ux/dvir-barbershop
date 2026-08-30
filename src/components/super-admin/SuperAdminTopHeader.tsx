@@ -22,37 +22,36 @@ export const SuperAdminTopHeader: React.FC<SuperAdminTopHeaderProps> = ({
   newReportsCount,
 }) => {
   const displayName = adminUser?.displayName || 'ישי אטיאס';
-  const roleTitle = adminUser?.role === 'super_admin' ? 'סופר אדמין / מנהל מערכת' : 'מנהל';
+  const roleTitle = adminUser?.role === 'super_admin' ? 'סופר אדמין' : 'מנהל מערכת';
   const initial = displayName.trim().charAt(0) || 'י';
 
   return (
     <header
-      className={`h-18 px-6 border-b sticky top-0 z-30 flex items-center justify-between transition-colors ${
+      className={`h-16 px-6 border-b sticky top-0 z-30 flex items-center justify-between transition-colors select-none ${
         adminTheme === 'light'
-          ? 'bg-white/95 backdrop-blur-md border-slate-200/90 text-slate-900'
-          : 'bg-[#141414]/95 backdrop-blur-md border-white/10 text-white'
+          ? 'bg-white/95 backdrop-blur-md border-slate-200/80 text-slate-900'
+          : 'bg-[#111215]/95 backdrop-blur-md border-white/10 text-white'
       }`}
       dir="rtl"
     >
-      {/* Search Input Bar (Center / Right) */}
-      <div className="flex-1 max-w-md relative">
-        <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+      {/* Search Input Bar */}
+      <div className="flex-1 max-w-sm relative">
+        <Search className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="חיפוש עסק, סניף, טלפון, אימייל..."
-          className={`w-full pr-10 pl-4 py-2 text-xs rounded-xl border outline-none transition-all ${
+          placeholder="חיפוש מהיר של עסק, סניף, טלפון..."
+          className={`w-full pr-9 pl-3 py-1.5 text-xs rounded-xl border outline-none transition-all ${
             adminTheme === 'light'
-              ? 'bg-slate-50 border-slate-200 focus:bg-white focus:border-teal-600 text-slate-900 placeholder:text-slate-400'
-              : 'bg-white/5 border-white/10 focus:border-teal-500 text-white placeholder:text-zinc-500'
+              ? 'bg-slate-50/80 border-slate-200 focus:bg-white focus:border-slate-400 text-slate-900 placeholder:text-slate-400'
+              : 'bg-white/5 border-white/10 focus:border-white/20 text-white placeholder:text-zinc-500'
           }`}
         />
       </div>
 
-      {/* Left Area: Profile Badge & Theme Switcher */}
+      {/* Left: User Profile & Actions */}
       <div className="flex items-center gap-3">
-        {/* Alerts / Bell */}
         {newReportsCount > 0 && (
           <div className="relative p-2 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400">
             <Bell className="w-4 h-4" />
@@ -72,29 +71,26 @@ export const SuperAdminTopHeader: React.FC<SuperAdminTopHeaderProps> = ({
           title={adminTheme === 'light' ? 'החלף למצב כהה' : 'החלף למצב בהיר'}
         >
           {adminTheme === 'light' ? (
-            <Moon className="w-4 h-4 text-slate-700" />
+            <Moon className="w-4 h-4 text-slate-600" />
           ) : (
             <Sun className="w-4 h-4 text-amber-400" />
           )}
         </button>
 
-        {/* User Profile Pill (Like REGIN: Green circle on left with name and role) */}
+        {/* User Profile Pill */}
         <div
-          className={`flex items-center gap-2.5 px-3 py-1.5 rounded-2xl border transition-all ${
+          className={`flex items-center gap-2.5 px-3 py-1.5 rounded-xl border transition-all ${
             adminTheme === 'light'
-              ? 'bg-slate-50/80 border-slate-200/90 text-slate-900'
+              ? 'bg-slate-50/80 border-slate-200/80 text-slate-900'
               : 'bg-white/5 border-white/10 text-white'
           }`}
         >
-          <div className="w-8 h-8 rounded-full bg-teal-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
+          <div className="w-7 h-7 rounded-lg bg-slate-900 text-white font-bold text-xs flex items-center justify-center shadow-xs">
             {initial}
           </div>
           <div className="text-right leading-tight">
-            <div className="flex items-center gap-1">
-              <span className="text-xs font-bold text-slate-900 dark:text-white">{displayName}</span>
-              <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
-            </div>
-            <span className="text-[10px] text-slate-400 block font-medium">{roleTitle}</span>
+            <span className="text-xs font-bold text-slate-900 dark:text-white block">{displayName}</span>
+            <span className="text-[10px] text-slate-400 font-medium block">{roleTitle}</span>
           </div>
         </div>
       </div>
