@@ -118,5 +118,14 @@ export interface BusinessConfig {
   avatarUrl?: string;
   experienceYears?: number;
   workingHours?: Array<{ day: string; open: string; close: string; closed: boolean; branch?: string }>;
+  features?: {
+    enableWaitlist?: boolean;
+    enableWhatsAppReminders?: boolean;
+    enableProductAddons?: boolean;
+    enableReviewsCollection?: boolean;
+    enableMultiStaff?: boolean;
+    enableEmergencyClosure?: boolean;
+    enableAdvancedAnalytics?: boolean;
+  };
   layout?: BusinessLayoutConfig;
 }
