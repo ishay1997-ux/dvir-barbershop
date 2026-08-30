@@ -6,6 +6,7 @@ export interface CalendarBusinessContext {
   name?: string;
   phone?: string;
   ownerName?: string;
+  category?: string;
 }
 
 /**
@@ -31,14 +32,14 @@ export function generateGoogleCalendarUrl(
 
   const bizName = businessContext?.name || SHOP_INFO.name;
   const bizPhone = businessContext?.phone || SHOP_INFO.phone;
-  const barberName = booking.selectedBarber?.name || businessContext?.ownerName || 'הספר';
+  const staffName = booking.selectedBarber?.name || businessContext?.ownerName || 'איש הצוות';
 
   const branchName = booking.selectedBranch?.name || bizName;
   const branchAddress = booking.selectedBranch?.address || 'ישראל';
 
-  const title = encodeURIComponent(`תספורת ב${bizName} – ${booking.selectedService.name}`);
+  const title = encodeURIComponent(`פגישה ב${bizName} – ${booking.selectedService.name}`);
   const details = encodeURIComponent(
-    `תור לתספורת עם ${barberName}.\n📍 מיקום: ${branchName} (${branchAddress})\n✂️ שירות: ${booking.selectedService.name}\n📞 טלפון: ${bizPhone}`
+    `תור לפגישה/טיפול עם ${staffName}.\n📍 מיקום: ${branchName} (${branchAddress})\n✨ שירות: ${booking.selectedService.name}\n📞 טלפון לבירורים: ${bizPhone}`
   );
   const location = encodeURIComponent(branchAddress);
   const dates = `${formatGCalDate(startDate)}/${formatGCalDate(endDate)}`;
@@ -69,7 +70,7 @@ export function downloadIcsFile(
 
   const bizName = businessContext?.name || SHOP_INFO.name;
   const bizPhone = businessContext?.phone || SHOP_INFO.phone;
-  const barberName = booking.selectedBarber?.name || businessContext?.ownerName || 'הספר';
+  const staffName = booking.selectedBarber?.name || businessContext?.ownerName || 'איש הצוות';
 
   const branchName = booking.selectedBranch?.name || bizName;
   const branchAddress = booking.selectedBranch?.address || 'ישראל';
@@ -85,8 +86,8 @@ export function downloadIcsFile(
     `DTSTAMP:${formatIcsDate(new Date())}Z`,
     `DTSTART:${formatIcsDate(startDate)}`,
     `DTEND:${formatIcsDate(endDate)}`,
-    `SUMMARY:תספורת ב${bizName} - ${booking.selectedService.name}`,
-    `DESCRIPTION:תור עם ${barberName}\\nמיקום: ${branchName} (${branchAddress})\\nשירות: ${booking.selectedService.name}\\nטלפון: ${bizPhone}`,
+    `SUMMARY:תור ב${bizName} - ${booking.selectedService.name}`,
+    `DESCRIPTION:תור עם ${staffName}\\nמיקום: ${branchName} (${branchAddress})\\nשירות: ${booking.selectedService.name}\\nטלפון: ${bizPhone}`,
     `LOCATION:${branchAddress}`,
     'STATUS:CONFIRMED',
     'BEGIN:VALARM',
@@ -116,9 +117,9 @@ export function generateWhatsAppConfirmationUrl(
   booking: BookingState,
   businessContext?: CalendarBusinessContext
 ): string {
-  const serviceName = booking.selectedService?.name || 'תספורת';
-  const bizName = businessContext?.name || 'המספרה';
-  const barberName = booking.selectedBarber?.name || businessContext?.ownerName || 'הספר';
+  const serviceName = booking.selectedService?.name || 'שירות';
+  const bizName = businessContext?.name || 'העסק';
+  const staffName = booking.selectedBarber?.name || businessContext?.ownerName || 'איש הצוות';
   const branchName = booking.selectedBranch ? booking.selectedBranch.name : bizName;
   const dateStr = booking.selectedDate
     ? format(booking.selectedDate, 'dd/MM/yyyy')
@@ -129,9 +130,9 @@ export function generateWhatsAppConfirmationUrl(
   const cleanPhone = phone.replace(/\D/g, '').replace(/^0/, '972');
 
   const message = encodeURIComponent(
-    `היי ${barberName}, הזמנתי תור דרך האתר!\n` +
-      `✂️ שירות: ${serviceName}\n` +
-      `📍 סניף: ${branchName}\n` +
+    `היי ${staffName}, הזמנתי תור דרך האתר של ${bizName}!\n` +
+      `✨ שירות: ${serviceName}\n` +
+      `📍 סניף/מיקום: ${branchName}\n` +
       `📅 תאריך: ${dateStr}\n` +
       `⏰ שעה: ${timeStr}\n\n` +
       `שם: ${booking.customerName}\n` +
@@ -141,3 +142,4 @@ export function generateWhatsAppConfirmationUrl(
 
   return `https://wa.me/${cleanPhone}?text=${message}`;
 }
+

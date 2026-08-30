@@ -202,3 +202,6 @@ export function ImageUploadPicker({
     </div>
   );
 }
+
+export default ImageUploadPicker;
+

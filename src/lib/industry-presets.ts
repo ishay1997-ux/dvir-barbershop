@@ -17,7 +17,9 @@ export interface IndustryPreset {
   showBio?: boolean;
   showBranches?: boolean;
   borderRadius: 'modern-rounded' | 'sharp-luxury' | 'classic-soft';
+  cardRadius?: 'sharp' | 'smooth' | 'pill';
   fontStyle: 'modern-sans' | 'urban-bold' | 'luxury-serif';
+  typographyMood?: 'modern-clean' | 'luxury-serif' | 'urban-bold';
   shopName: string;
   ownerName: string;
   slogan: string;
@@ -26,7 +28,18 @@ export interface IndustryPreset {
   services: ServiceItem[];
   faqs: FaqItem[];
   transformations?: TransformationItem[];
-  sectionsOrder?: Array<'hero' | 'announcement' | 'trust-badges' | 'services' | 'gallery' | 'bio' | 'policies' | 'branches' | 'reviews' | 'faqs'>;
+  sectionsOrder?: any[];
+  sectionTitles?: {
+    services?: string;
+    servicesSubtitle?: string;
+    gallery?: string;
+    bio?: string;
+    branches?: string;
+    reviews?: string;
+    faqs?: string;
+    trustBadges?: string;
+    policies?: string;
+  };
   policies: {
     cancellationNotice: string;
     arrivalTime: string;

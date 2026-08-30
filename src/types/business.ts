@@ -76,11 +76,35 @@ export interface FaqItem {
   answer: string;
 }
 
+export type HeroArchetype = 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
+export type ServicesStyle = 'split-gallery' | 'cards-grid' | 'compact-menu' | 'accordion-list' | 'accordion';
+export type GalleryStyle = 'before-after-slider' | 'instagram-masonry' | 'ambient-carousel';
+export type CardRadius = 'sharp' | 'smooth' | 'pill';
+export type TypographyMood = 'modern-clean' | 'luxury-serif' | 'urban-bold';
+export type SectionId = 
+  | 'hero'
+  | 'booking-action-cards'
+  | 'services'
+  | 'before-after'
+  | 'gallery'
+  | 'about'
+  | 'bio'
+  | 'reviews'
+  | 'policies'
+  | 'branches'
+  | 'faq'
+  | 'faqs'
+  | 'announcement'
+  | 'trust-badges';
+
 export interface BusinessLayoutConfig {
   bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
-  heroStyle?: 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
-  servicesStyle?: 'split-gallery' | 'cards-grid' | 'compact-menu' | 'accordion-list';
-  galleryStyle?: 'before-after-slider' | 'instagram-masonry' | 'ambient-carousel';
+  heroStyle?: HeroArchetype;
+  servicesStyle?: ServicesStyle;
+  galleryStyle?: GalleryStyle;
+  cardRadius?: CardRadius;
+  typographyMood?: TypographyMood;
+  showMobileStickyBar?: boolean;
   mobileStickyStyle?: 'dual-action' | 'triple-action' | 'minimal-pill';
   cardStyle?: 'glass' | 'solid-dark' | 'bordered-neon';
   borderRadius?: 'modern-rounded' | 'sharp-luxury' | 'classic-soft';
@@ -101,7 +125,7 @@ export interface BusinessLayoutConfig {
     paymentMethods?: string;
     customNote?: string;
   };
-  sectionsOrder?: Array<'hero' | 'announcement' | 'trust-badges' | 'services' | 'gallery' | 'bio' | 'policies' | 'branches' | 'reviews' | 'faqs'>;
+  sectionsOrder?: SectionId[];
   sectionTitles?: {
     services?: string;
     servicesSubtitle?: string;

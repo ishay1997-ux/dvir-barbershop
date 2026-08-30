@@ -16,7 +16,7 @@ import {
   ArrowUp,
   ArrowDown,
 } from 'lucide-react';
-import type { BusinessLayoutConfig } from '@/types/business';
+import type { BusinessLayoutConfig, SectionId } from '@/types/business';
 
 interface VisualPuckPageBuilderProps {
   layout: BusinessLayoutConfig;
@@ -26,10 +26,8 @@ interface VisualPuckPageBuilderProps {
   onChangeLayout: (newLayout: BusinessLayoutConfig) => void;
 }
 
-type SectionKey = 'hero' | 'announcement' | 'trust-badges' | 'services' | 'gallery' | 'bio' | 'policies' | 'branches' | 'reviews' | 'faqs';
-
 interface SectionDefinition {
-  id: SectionKey;
+  id: SectionId;
   label: string;
   desc: string;
   icon: string;
@@ -61,7 +59,7 @@ export const VisualPuckPageBuilder: React.FC<VisualPuckPageBuilderProps> = ({
   const [copied, setCopied] = useState(false);
 
   // Active section order
-  const currentOrder: SectionKey[] = layout.sectionsOrder && layout.sectionsOrder.length > 0
+  const currentOrder: SectionId[] = layout.sectionsOrder && layout.sectionsOrder.length > 0
     ? layout.sectionsOrder
     : ['hero', 'services', 'gallery', 'bio', 'reviews', 'faqs', 'branches'];
 
@@ -79,12 +77,14 @@ export const VisualPuckPageBuilder: React.FC<VisualPuckPageBuilderProps> = ({
     });
   };
 
-  const handleToggleSection = (secId: SectionKey) => {
-    const keyMap: Record<string, keyof BusinessLayoutConfig> = {
+  const handleToggleSection = (secId: SectionId) => {
+    const keyMap: Partial<Record<SectionId, keyof BusinessLayoutConfig>> = {
       bio: 'showBio',
       branches: 'showBranches',
       reviews: 'showReviews',
       faqs: 'showFaqs',
+      faq: 'showFaqs',
+      about: 'showBio',
     };
     const propKey = keyMap[secId];
     if (!propKey) return;
@@ -96,12 +96,12 @@ export const VisualPuckPageBuilder: React.FC<VisualPuckPageBuilderProps> = ({
     });
   };
 
-  const isSectionVisible = (secId: SectionKey): boolean => {
-    if (secId === 'hero' || secId === 'services' || secId === 'gallery') return true;
-    if (secId === 'bio') return layout.showBio !== false;
+  const isSectionVisible = (secId: SectionId): boolean => {
+    if (secId === 'hero' || secId === 'services' || secId === 'gallery' || secId === 'before-after') return true;
+    if (secId === 'bio' || secId === 'about') return layout.showBio !== false;
     if (secId === 'branches') return layout.showBranches !== false;
     if (secId === 'reviews') return layout.showReviews !== false;
-    if (secId === 'faqs') return layout.showFaqs !== false;
+    if (secId === 'faqs' || secId === 'faq') return layout.showFaqs !== false;
     return true;
   };
 

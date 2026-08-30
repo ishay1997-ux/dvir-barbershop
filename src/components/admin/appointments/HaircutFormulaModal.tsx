@@ -14,10 +14,12 @@ import {
 } from 'lucide-react';
 import type { HaircutFormula } from '@/lib/types';
 import type { AdminAppointment } from './types';
+import { getIndustryTerminology } from '@/lib/industry-terminology';
 
 interface HaircutFormulaModalProps {
   appointment: AdminAppointment | null;
   formula: HaircutFormula;
+  category?: string;
   onChangeFormula: (formula: HaircutFormula) => void;
   onSave: () => void;
   onClose: () => void;
@@ -25,14 +27,25 @@ interface HaircutFormulaModalProps {
 
 type IndustryPreset = 'barber' | 'beauty' | 'technician' | 'clinic' | 'custom';
 
-export const HaircutFormulaModal: React.FC<HaircutFormulaModalProps> = ({
+export const ClientFormulaModal: React.FC<HaircutFormulaModalProps> = ({
   appointment,
   formula,
+  category,
   onChangeFormula,
   onSave,
   onClose,
 }) => {
-  const [activePreset, setActivePreset] = useState<IndustryPreset>('barber');
+  const terminology = getIndustryTerminology(category);
+
+  const defaultPreset: IndustryPreset = (() => {
+    const cat = category || '';
+    if (cat === 'beauty_salon') return 'beauty';
+    if (cat === 'home_technician') return 'technician';
+    if (cat === 'clinics_aesthetics' || cat === 'clinic_therapist' || cat === 'private_instructor') return 'clinic';
+    return 'barber';
+  })();
+
+  const [activePreset, setActivePreset] = useState<IndustryPreset>(defaultPreset);
   const [customKey, setCustomKey] = useState('');
   const [customVal, setCustomVal] = useState('');
 
@@ -398,3 +411,5 @@ export const HaircutFormulaModal: React.FC<HaircutFormulaModalProps> = ({
     </div>
   );
 };
+
+export const HaircutFormulaModal = ClientFormulaModal;

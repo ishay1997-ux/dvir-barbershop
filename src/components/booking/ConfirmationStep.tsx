@@ -26,6 +26,9 @@ import {
 } from '@/lib/calendar';
 import type { BookingState } from '@/lib/types';
 
+import { useShopStore } from '@/lib/store';
+import { getIndustryTerminology } from '@/lib/industry-terminology';
+
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -35,9 +38,13 @@ function WhatsAppIcon({ className }: { className?: string }) {
 }
 
 export default function ConfirmationStep({ booking }: { booking: BookingState }) {
+  const { settings } = useShopStore();
+  const terminology = getIndustryTerminology({ name: settings.shopName });
+  const bizName = settings.shopName || 'המספרה';
+
   const { selectedBranch, selectedService, selectedBarber, selectedDate, selectedTime, customerName, customerPhone } = booking;
-  const googleCalendarUrl = generateGoogleCalendarUrl(booking);
-  const whatsappUrl = generateWhatsAppConfirmationUrl(booking);
+  const googleCalendarUrl = generateGoogleCalendarUrl(booking, { name: bizName, ownerName: settings.ownerName });
+  const whatsappUrl = generateWhatsAppConfirmationUrl(booking, { name: bizName, phone: settings.phone, ownerName: settings.ownerName });
 
   return (
     <div className="text-center">
@@ -58,7 +65,7 @@ export default function ConfirmationStep({ booking }: { booking: BookingState })
       >
         <h2 className="text-2xl font-black text-[#1C1C1C] mb-1">הזמנה התקבלה! 🎉</h2>
         <p className="text-[#6B6560] text-sm mb-6">
-          {customerName}, פרטי ההזמנה נשמרו בהצלחה במספרה של דביר
+          {customerName}, פרטי ההזמנה נשמרו בהצלחה ב-{bizName}
         </p>
 
         {/* Booking Summary Card */}
@@ -93,7 +100,7 @@ export default function ConfirmationStep({ booking }: { booking: BookingState })
             {selectedService && (
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
-                  <Scissors className="w-4 h-4 text-gold -rotate-45" />
+                  <span className="text-sm">{terminology.icon}</span>
                 </div>
                 <div>
                   <div className="text-xs text-[#9E9891]">שירות</div>
@@ -110,7 +117,7 @@ export default function ConfirmationStep({ booking }: { booking: BookingState })
                   <User className="w-4 h-4 text-gold" />
                 </div>
                 <div>
-                  <div className="text-xs text-[#9E9891]">ספר</div>
+                  <div className="text-xs text-[#9E9891]">{terminology.staffTitle.split(' ')[0]}</div>
                   <div className="font-bold text-[#1C1C1C] text-sm">{selectedBarber.name}</div>
                 </div>
               </div>

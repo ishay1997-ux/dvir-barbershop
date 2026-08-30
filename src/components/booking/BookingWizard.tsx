@@ -10,15 +10,8 @@ import BarberStep from './BarberStep';
 import DateTimeStep from './DateTimeStep';
 import PersonalInfoStep from './PersonalInfoStep';
 import ConfirmationStep from './ConfirmationStep';
-
-const STEPS = [
-  { id: 1, label: 'סניף' },
-  { id: 2, label: 'שירות' },
-  { id: 3, label: 'ספר' },
-  { id: 4, label: 'מועד' },
-  { id: 5, label: 'פרטים' },
-  { id: 6, label: 'אישור' },
-] as const;
+import { useShopStore } from '@/lib/store';
+import { getIndustryTerminology } from '@/lib/industry-terminology';
 
 const initialState: BookingState = {
   step: 1,
@@ -37,10 +30,19 @@ const slideVariants = {
   exit:  (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
 };
 
-import { useShopStore } from '@/lib/store';
-
 export default function BookingWizard({ initialBarber }: { initialBarber?: string }) {
-  const { barbers } = useShopStore();
+  const { barbers, settings } = useShopStore();
+  const terminology = getIndustryTerminology({ name: settings.shopName });
+
+  const steps = [
+    { id: 1, label: 'סניף' },
+    { id: 2, label: 'שירות' },
+    { id: 3, label: terminology.staffPlural || 'צוות' },
+    { id: 4, label: 'מועד' },
+    { id: 5, label: 'פרטים' },
+    { id: 6, label: 'אישור' },
+  ];
+
   const activeBarbers = barbers.filter((b) => b.is_active);
   const isSoloBarber = activeBarbers.length <= 1;
 
@@ -166,7 +168,7 @@ export default function BookingWizard({ initialBarber }: { initialBarber?: strin
     }
   }, [state, goToStep]);
 
-  const visibleSteps = isSoloBarber ? STEPS.filter((s) => s.id !== 3) : STEPS;
+  const visibleSteps = isSoloBarber ? steps.filter((s) => s.id !== 3) : steps;
   const currentVisibleIdx = visibleSteps.findIndex((s) => s.id === state.step);
   const activeIdx = currentVisibleIdx >= 0 ? currentVisibleIdx : 0;
   const progressRatio = visibleSteps.length > 1 ? activeIdx / (visibleSteps.length - 1) : 0;

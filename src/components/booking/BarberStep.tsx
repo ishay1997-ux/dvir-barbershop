@@ -3,6 +3,7 @@
 import { Shuffle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useShopStore } from '@/lib/store';
+import { getIndustryTerminology } from '@/lib/industry-terminology';
 import type { Barber } from '@/lib/types';
 
 const avatarGradients = [
@@ -18,14 +19,15 @@ export default function BarberStep({
   selected: Barber | null;
   onSelect: (barber: Barber) => void;
 }) {
-  const { barbers } = useShopStore();
+  const { barbers, settings } = useShopStore();
+  const terminology = getIndustryTerminology({ name: settings.shopName });
   const activeBarbers = barbers.filter((b) => b.is_active);
   const handleAny = () => {
     const anyBarber: Barber = {
       id: 'any',
-      name: 'כל ספר פנוי',
-      role: 'ספר פנוי',
-      bio: 'השבץ אוטומטי לספר הזמין הקרוב ביותר',
+      name: `כל ${terminology.staffTitle.split(' ')[0]} פנוי/ה`,
+      role: 'שיבוץ פנוי',
+      bio: 'שיבוץ אוטומטי לאיש הצוות הזמין הקרוב ביותר',
       specialties: [],
       color: '#C9A84C',
       branchIds: ['ariel', 'rehovot'],
@@ -38,7 +40,9 @@ export default function BarberStep({
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-black text-[#1C1C1C]">בחר ספר</h2>
+        <h2 className="text-2xl font-black text-[#1C1C1C]">
+          בחר {terminology.staffTitle.split(' ')[0]}
+        </h2>
         <p className="text-[#6B6560] text-sm mt-1">עם מי תרצה לקבוע תור?</p>
       </div>
 
