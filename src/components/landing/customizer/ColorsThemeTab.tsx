@@ -7,11 +7,35 @@ import { BusinessConfig } from '@/types/business';
 
 interface ColorsThemeTabProps {
   business?: Partial<BusinessConfig>;
-  onThemeChange: (themeId: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon') => void;
+  onThemeChange: (themeId: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon' | 'lavender-mist' | 'botanical-sage') => void;
   onColorChange: (color: string) => void;
 }
 
 const THEME_OPTIONS = [
+  {
+    id: 'lavender-mist',
+    name: 'Lavender Mist',
+    subtitle: 'לילך ולבנדר בוטיק',
+    isDark: false,
+    bgPreview: '#FBF9FE',
+    accentPreview: '#8B5CF6',
+  },
+  {
+    id: 'botanical-sage',
+    name: 'Botanical Sage',
+    subtitle: 'מרווה ומנטה בוטנית',
+    isDark: false,
+    bgPreview: '#F6FAF7',
+    accentPreview: '#059669',
+  },
+  {
+    id: 'luxury-light',
+    name: 'Luxury Alabaster',
+    subtitle: 'קרם אלבסטר ושמפניה',
+    isDark: false,
+    bgPreview: '#FAF7F2',
+    accentPreview: '#C9A84C',
+  },
   {
     id: 'dark-obsidian',
     name: 'Dark Obsidian',
@@ -27,14 +51,6 @@ const THEME_OPTIONS = [
     isDark: true,
     bgPreview: '#080C10',
     accentPreview: '#3B82F6',
-  },
-  {
-    id: 'luxury-light',
-    name: 'Luxury Alabaster',
-    subtitle: 'שמפניה בהיר ויוקרתי',
-    isDark: false,
-    bgPreview: '#FAF7F2',
-    accentPreview: '#D97706',
   },
   {
     id: 'cyber-carbon',

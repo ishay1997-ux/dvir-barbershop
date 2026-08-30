@@ -44,8 +44,26 @@ export const EditLayoutTab: React.FC<EditLayoutTabProps> = ({
         >
           ערכת רקע ואווירה כללית לאתר (Website Theme):
         </label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
           {[
+            {
+              id: 'lavender-mist',
+              name: 'לילך ולבנדר בוטיק',
+              sub: 'Lavender Mist',
+              icon: '🌸',
+            },
+            {
+              id: 'botanical-sage',
+              name: 'מרווה ומנטה בוטנית',
+              sub: 'Botanical Sage',
+              icon: '🌿',
+            },
+            {
+              id: 'luxury-light',
+              name: 'קרם אלבסטר ושמפניה',
+              sub: 'Luxury Alabaster',
+              icon: '✨',
+            },
             {
               id: 'dark-obsidian',
               name: 'שחור פחם מט',
@@ -63,12 +81,6 @@ export const EditLayoutTab: React.FC<EditLayoutTabProps> = ({
               name: 'קרבון שחור מוחלט',
               sub: 'Cyber Carbon',
               icon: '⚡',
-            },
-            {
-              id: 'luxury-light',
-              name: 'קרם אלבסטר חם',
-              sub: 'Luxury Alabaster',
-              icon: '✨',
             },
           ].map((th) => {
             const currentBg = editingBiz.layout?.bgTheme || 'dark-obsidian';

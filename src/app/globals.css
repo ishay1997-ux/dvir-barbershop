@@ -867,12 +867,198 @@ input[type="tel"] {
 }
 
 /* ============================================================
+   LAVENDER MIST THEME (לילך ולבנדר בוטיק)
+   ============================================================ */
+.theme-lavender-mist {
+  color: #1e1b4b !important;
+  background-color: #FBF9FE !important;
+}
+
+.theme-lavender-mist section {
+  color: #1e1b4b !important;
+  background-color: transparent !important;
+}
+
+.theme-lavender-mist .bg-\[\#111111\],
+.theme-lavender-mist .bg-\[\#121212\],
+.theme-lavender-mist .bg-\[\#141414\],
+.theme-lavender-mist .bg-\[\#161616\],
+.theme-lavender-mist .bg-\[\#181818\],
+.theme-lavender-mist .bg-\[\#1A1A1A\],
+.theme-lavender-mist .bg-\[\#1C1C1C\],
+.theme-lavender-mist .bg-\[\#1E1E1E\],
+.theme-lavender-mist .bg-\[\#202020\],
+.theme-lavender-mist .bg-\[\#222222\],
+.theme-lavender-mist .bg-\[\#242424\],
+.theme-lavender-mist .bg-\[\#252525\],
+.theme-lavender-mist .bg-\[\#2A2A2A\],
+.theme-lavender-mist .bg-\[\#2F2F2F\],
+.theme-lavender-mist .bg-zinc-900,
+.theme-lavender-mist .bg-black\/60,
+.theme-lavender-mist .bg-black\/40 {
+  background-color: #FFFFFF !important;
+  color: #1e1b4b !important;
+}
+
+.theme-lavender-mist .from-\[\#141414\],
+.theme-lavender-mist .via-\[\#141414\]\/70,
+.theme-lavender-mist .to-black\/60 {
+  --tw-gradient-from: rgba(251, 249, 254, 0.95) !important;
+  --tw-gradient-to: rgba(245, 239, 251, 0.7) !important;
+}
+
+.theme-lavender-mist .text-white {
+  color: #1e1b4b !important;
+}
+
+.theme-lavender-mist .text-zinc-200,
+.theme-lavender-mist .text-zinc-300,
+.theme-lavender-mist .text-zinc-400,
+.theme-lavender-mist .text-\[\#9E9891\],
+.theme-lavender-mist .text-\[\#E0E0E0\] {
+  color: #4c1d95 !important;
+}
+
+.theme-lavender-mist .text-zinc-500 {
+  color: #6b7280 !important;
+}
+
+.theme-lavender-mist .border-white\/5,
+.theme-lavender-mist .border-white\/10,
+.theme-lavender-mist .border-white\/15,
+.theme-lavender-mist .border-white\/20,
+.theme-lavender-mist .border-white\/30,
+.theme-lavender-mist .border-\[\#3D3D3D\],
+.theme-lavender-mist .border-\[\#2A2A2A\] {
+  border-color: #EDE9FE !important;
+}
+
+.theme-lavender-mist .bg-white\/5,
+.theme-lavender-mist .bg-white\/10,
+.theme-lavender-mist .bg-white\/15,
+.theme-lavender-mist footer li,
+.theme-lavender-mist footer .bg-\[\#2A2A2A\] {
+  background-color: #F5EFFB !important;
+  color: #1e1b4b !important;
+  border-color: #EDE9FE !important;
+}
+
+.theme-lavender-mist header,
+.theme-lavender-mist footer {
+  background-color: rgba(251, 249, 254, 0.98) !important;
+  color: #1e1b4b !important;
+  border-color: #EDE9FE !important;
+}
+
+.theme-lavender-mist .shadow-md,
+.theme-lavender-mist .shadow-lg,
+.theme-lavender-mist .shadow-xl,
+.theme-lavender-mist .shadow-2xl {
+  box-shadow: 0 4px 25px -4px rgba(139, 92, 246, 0.08), 0 2px 10px -2px rgba(139, 92, 246, 0.04) !important;
+}
+
+/* ============================================================
+   BOTANICAL SAGE THEME (מרווה ומנטה בוטנית / ירוק בהיר)
+   ============================================================ */
+.theme-botanical-sage {
+  color: #064e3b !important;
+  background-color: #F6FAF7 !important;
+}
+
+.theme-botanical-sage section {
+  color: #064e3b !important;
+  background-color: transparent !important;
+}
+
+.theme-botanical-sage .bg-\[\#111111\],
+.theme-botanical-sage .bg-\[\#121212\],
+.theme-botanical-sage .bg-\[\#141414\],
+.theme-botanical-sage .bg-\[\#161616\],
+.theme-botanical-sage .bg-\[\#181818\],
+.theme-botanical-sage .bg-\[\#1A1A1A\],
+.theme-botanical-sage .bg-\[\#1C1C1C\],
+.theme-botanical-sage .bg-\[\#1E1E1E\],
+.theme-botanical-sage .bg-\[\#202020\],
+.theme-botanical-sage .bg-\[\#222222\],
+.theme-botanical-sage .bg-\[\#242424\],
+.theme-botanical-sage .bg-\[\#252525\],
+.theme-botanical-sage .bg-\[\#2A2A2A\],
+.theme-botanical-sage .bg-\[\#2F2F2F\],
+.theme-botanical-sage .bg-zinc-900,
+.theme-botanical-sage .bg-black\/60,
+.theme-botanical-sage .bg-black\/40 {
+  background-color: #FFFFFF !important;
+  color: #064e3b !important;
+}
+
+.theme-botanical-sage .from-\[\#141414\],
+.theme-botanical-sage .via-\[\#141414\]\/70,
+.theme-botanical-sage .to-black\/60 {
+  --tw-gradient-from: rgba(246, 250, 247, 0.95) !important;
+  --tw-gradient-to: rgba(237, 246, 240, 0.7) !important;
+}
+
+.theme-botanical-sage .text-white {
+  color: #064e3b !important;
+}
+
+.theme-botanical-sage .text-zinc-200,
+.theme-botanical-sage .text-zinc-300,
+.theme-botanical-sage .text-zinc-400,
+.theme-botanical-sage .text-\[\#9E9891\],
+.theme-botanical-sage .text-\[\#E0E0E0\] {
+  color: #065f46 !important;
+}
+
+.theme-botanical-sage .text-zinc-500 {
+  color: #4b5563 !important;
+}
+
+.theme-botanical-sage .border-white\/5,
+.theme-botanical-sage .border-white\/10,
+.theme-botanical-sage .border-white\/15,
+.theme-botanical-sage .border-white\/20,
+.theme-botanical-sage .border-white\/30,
+.theme-botanical-sage .border-\[\#3D3D3D\],
+.theme-botanical-sage .border-\[\#2A2A2A\] {
+  border-color: #D1FAE5 !important;
+}
+
+.theme-botanical-sage .bg-white\/5,
+.theme-botanical-sage .bg-white\/10,
+.theme-botanical-sage .bg-white\/15,
+.theme-botanical-sage footer li,
+.theme-botanical-sage footer .bg-\[\#2A2A2A\] {
+  background-color: #EDF6F0 !important;
+  color: #064e3b !important;
+  border-color: #D1FAE5 !important;
+}
+
+.theme-botanical-sage header,
+.theme-botanical-sage footer {
+  background-color: rgba(246, 250, 247, 0.98) !important;
+  color: #064e3b !important;
+  border-color: #D1FAE5 !important;
+}
+
+.theme-botanical-sage .shadow-md,
+.theme-botanical-sage .shadow-lg,
+.theme-botanical-sage .shadow-xl,
+.theme-botanical-sage .shadow-2xl {
+  box-shadow: 0 4px 25px -4px rgba(16, 185, 129, 0.08), 0 2px 10px -2px rgba(16, 185, 129, 0.04) !important;
+}
+
+/* ============================================================
    LIVE CUSTOMIZER DRAWER ISOLATION (Immune to page theme rules)
    ============================================================ */
 .live-customizer-drawer,
 .live-customizer-panel,
 .theme-luxury-light .live-customizer-drawer,
 .theme-luxury-light .live-customizer-panel,
+.theme-lavender-mist .live-customizer-drawer,
+.theme-lavender-mist .live-customizer-panel,
+.theme-botanical-sage .live-customizer-drawer,
+.theme-botanical-sage .live-customizer-panel,
 .theme-brand-midnight .live-customizer-drawer,
 .theme-brand-midnight .live-customizer-panel,
 .theme-cyber-carbon .live-customizer-drawer,
@@ -893,7 +1079,31 @@ input[type="tel"] {
 .theme-luxury-light .live-customizer-panel h4,
 .theme-luxury-light .live-customizer-panel .text-white,
 .theme-luxury-light .live-customizer-panel span.text-white,
-.theme-luxury-light .live-customizer-panel div.text-white {
+.theme-luxury-light .live-customizer-panel div.text-white,
+.theme-lavender-mist .live-customizer-drawer h2,
+.theme-lavender-mist .live-customizer-drawer h3,
+.theme-lavender-mist .live-customizer-drawer h4,
+.theme-lavender-mist .live-customizer-drawer .text-white,
+.theme-lavender-mist .live-customizer-drawer span.text-white,
+.theme-lavender-mist .live-customizer-drawer div.text-white,
+.theme-lavender-mist .live-customizer-panel h2,
+.theme-lavender-mist .live-customizer-panel h3,
+.theme-lavender-mist .live-customizer-panel h4,
+.theme-lavender-mist .live-customizer-panel .text-white,
+.theme-lavender-mist .live-customizer-panel span.text-white,
+.theme-lavender-mist .live-customizer-panel div.text-white,
+.theme-botanical-sage .live-customizer-drawer h2,
+.theme-botanical-sage .live-customizer-drawer h3,
+.theme-botanical-sage .live-customizer-drawer h4,
+.theme-botanical-sage .live-customizer-drawer .text-white,
+.theme-botanical-sage .live-customizer-drawer span.text-white,
+.theme-botanical-sage .live-customizer-drawer div.text-white,
+.theme-botanical-sage .live-customizer-panel h2,
+.theme-botanical-sage .live-customizer-panel h3,
+.theme-botanical-sage .live-customizer-panel h4,
+.theme-botanical-sage .live-customizer-panel .text-white,
+.theme-botanical-sage .live-customizer-panel span.text-white,
+.theme-botanical-sage .live-customizer-panel div.text-white {
   color: #ffffff !important;
 }
 
@@ -904,7 +1114,23 @@ input[type="tel"] {
 .theme-luxury-light .live-customizer-panel .text-zinc-100,
 .theme-luxury-light .live-customizer-panel .text-zinc-200,
 .theme-luxury-light .live-customizer-panel .text-slate-100,
-.theme-luxury-light .live-customizer-panel .text-slate-200 {
+.theme-luxury-light .live-customizer-panel .text-slate-200,
+.theme-lavender-mist .live-customizer-drawer .text-zinc-100,
+.theme-lavender-mist .live-customizer-drawer .text-zinc-200,
+.theme-lavender-mist .live-customizer-drawer .text-slate-100,
+.theme-lavender-mist .live-customizer-drawer .text-slate-200,
+.theme-lavender-mist .live-customizer-panel .text-zinc-100,
+.theme-lavender-mist .live-customizer-panel .text-zinc-200,
+.theme-lavender-mist .live-customizer-panel .text-slate-100,
+.theme-lavender-mist .live-customizer-panel .text-slate-200,
+.theme-botanical-sage .live-customizer-drawer .text-zinc-100,
+.theme-botanical-sage .live-customizer-drawer .text-zinc-200,
+.theme-botanical-sage .live-customizer-drawer .text-slate-100,
+.theme-botanical-sage .live-customizer-drawer .text-slate-200,
+.theme-botanical-sage .live-customizer-panel .text-zinc-100,
+.theme-botanical-sage .live-customizer-panel .text-zinc-200,
+.theme-botanical-sage .live-customizer-panel .text-slate-100,
+.theme-botanical-sage .live-customizer-panel .text-slate-200 {
   color: #f4f4f5 !important;
 }
 
@@ -917,19 +1143,51 @@ input[type="tel"] {
 .theme-luxury-light .live-customizer-panel .text-zinc-400,
 .theme-luxury-light .live-customizer-panel .text-slate-300,
 .theme-luxury-light .live-customizer-panel .text-slate-400,
-.theme-luxury-light .live-customizer-panel p {
+.theme-luxury-light .live-customizer-panel p,
+.theme-lavender-mist .live-customizer-drawer .text-zinc-300,
+.theme-lavender-mist .live-customizer-drawer .text-zinc-400,
+.theme-lavender-mist .live-customizer-drawer .text-slate-300,
+.theme-lavender-mist .live-customizer-drawer .text-slate-400,
+.theme-lavender-mist .live-customizer-drawer p,
+.theme-lavender-mist .live-customizer-panel .text-zinc-300,
+.theme-lavender-mist .live-customizer-panel .text-zinc-400,
+.theme-lavender-mist .live-customizer-panel .text-slate-300,
+.theme-lavender-mist .live-customizer-panel .text-slate-400,
+.theme-lavender-mist .live-customizer-panel p,
+.theme-botanical-sage .live-customizer-drawer .text-zinc-300,
+.theme-botanical-sage .live-customizer-drawer .text-zinc-400,
+.theme-botanical-sage .live-customizer-drawer .text-slate-300,
+.theme-botanical-sage .live-customizer-drawer .text-slate-400,
+.theme-botanical-sage .live-customizer-drawer p,
+.theme-botanical-sage .live-customizer-panel .text-zinc-300,
+.theme-botanical-sage .live-customizer-panel .text-zinc-400,
+.theme-botanical-sage .live-customizer-panel .text-slate-300,
+.theme-botanical-sage .live-customizer-panel .text-slate-400,
+.theme-botanical-sage .live-customizer-panel p {
   color: #a1a1aa !important;
 }
 
 .theme-luxury-light .live-customizer-drawer .text-zinc-500,
 .theme-luxury-light .live-customizer-drawer .text-slate-500,
 .theme-luxury-light .live-customizer-panel .text-zinc-500,
-.theme-luxury-light .live-customizer-panel .text-slate-500 {
+.theme-luxury-light .live-customizer-panel .text-slate-500,
+.theme-lavender-mist .live-customizer-drawer .text-zinc-500,
+.theme-lavender-mist .live-customizer-drawer .text-slate-500,
+.theme-lavender-mist .live-customizer-panel .text-zinc-500,
+.theme-lavender-mist .live-customizer-panel .text-slate-500,
+.theme-botanical-sage .live-customizer-drawer .text-zinc-500,
+.theme-botanical-sage .live-customizer-drawer .text-slate-500,
+.theme-botanical-sage .live-customizer-panel .text-zinc-500,
+.theme-botanical-sage .live-customizer-panel .text-slate-500 {
   color: #71717a !important;
 }
 
 .theme-luxury-light .live-customizer-drawer .bg-zinc-950,
-.theme-luxury-light .live-customizer-panel .bg-zinc-950 {
+.theme-luxury-light .live-customizer-panel .bg-zinc-950,
+.theme-lavender-mist .live-customizer-drawer .bg-zinc-950,
+.theme-lavender-mist .live-customizer-panel .bg-zinc-950,
+.theme-botanical-sage .live-customizer-drawer .bg-zinc-950,
+.theme-botanical-sage .live-customizer-panel .bg-zinc-950 {
   background-color: #09090b !important;
   color: #ffffff !important;
 }
@@ -943,7 +1201,15 @@ input[type="tel"] {
 .theme-luxury-light .live-customizer-panel .bg-zinc-900\/90,
 .theme-luxury-light .live-customizer-panel .bg-zinc-900\/80,
 .theme-luxury-light .live-customizer-panel .bg-zinc-900\/60,
-.theme-luxury-light .live-customizer-panel .bg-zinc-900\/50 {
+.theme-luxury-light .live-customizer-panel .bg-zinc-900\/50,
+.theme-lavender-mist .live-customizer-drawer .bg-zinc-900,
+.theme-lavender-mist .live-customizer-drawer .bg-zinc-900\/90,
+.theme-lavender-mist .live-customizer-drawer .bg-zinc-900\/80,
+.theme-lavender-mist .live-customizer-panel .bg-zinc-900,
+.theme-botanical-sage .live-customizer-drawer .bg-zinc-900,
+.theme-botanical-sage .live-customizer-drawer .bg-zinc-900\/90,
+.theme-botanical-sage .live-customizer-drawer .bg-zinc-900\/80,
+.theme-botanical-sage .live-customizer-panel .bg-zinc-900 {
   background-color: #18181b !important;
   color: #f4f4f5 !important;
 }
@@ -953,7 +1219,11 @@ input[type="tel"] {
 .theme-luxury-light .live-customizer-drawer .bg-zinc-800\/80,
 .theme-luxury-light .live-customizer-panel .bg-zinc-800,
 .theme-luxury-light .live-customizer-panel .bg-zinc-800\/90,
-.theme-luxury-light .live-customizer-panel .bg-zinc-800\/80 {
+.theme-luxury-light .live-customizer-panel .bg-zinc-800\/80,
+.theme-lavender-mist .live-customizer-drawer .bg-zinc-800,
+.theme-lavender-mist .live-customizer-panel .bg-zinc-800,
+.theme-botanical-sage .live-customizer-drawer .bg-zinc-800,
+.theme-botanical-sage .live-customizer-panel .bg-zinc-800 {
   background-color: #27272a !important;
   color: #ffffff !important;
 }
@@ -965,7 +1235,11 @@ input[type="tel"] {
 .theme-luxury-light .live-customizer-panel .border-white\/10,
 .theme-luxury-light .live-customizer-panel .border-white\/20,
 .theme-luxury-light .live-customizer-panel .border-white\/30,
-.theme-luxury-light .live-customizer-panel .border-white\/5 {
+.theme-luxury-light .live-customizer-panel .border-white\/5,
+.theme-lavender-mist .live-customizer-drawer .border-white\/10,
+.theme-lavender-mist .live-customizer-panel .border-white\/10,
+.theme-botanical-sage .live-customizer-drawer .border-white\/10,
+.theme-botanical-sage .live-customizer-panel .border-white\/10 {
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
 

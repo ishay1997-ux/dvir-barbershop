@@ -289,6 +289,7 @@ export function getIndustryTerminology(business?: any): IndustryTerminology {
     combined.includes('מבנה אנטומי') ||
     combined.includes('ריסים') ||
     themeColor === '#EC4899' ||
+    themeColor === '#8B5CF6' ||
     themeColor === '#A855F7'
   ) {
     return INDUSTRY_TERMINOLOGIES.beauty_salon;
@@ -318,7 +319,8 @@ export function getIndustryTerminology(business?: any): IndustryTerminology {
     combined.includes('לוטוס') ||
     combined.includes('רפלקסולוגיה') ||
     combined.includes('טיפולי גוף') ||
-    themeColor === '#14B8A6'
+    themeColor === '#14B8A6' ||
+    themeColor === '#059669'
   ) {
     return INDUSTRY_TERMINOLOGIES.clinic_therapist;
   }

@@ -148,6 +148,26 @@ export default function DynamicBusinessLandingPage({
   // Dynamic Background Theme Styles
   const bgStyles = (() => {
     switch (bgTheme) {
+      case 'lavender-mist':
+        return {
+          backgroundColor: '#FBF9FE',
+          backgroundImage: `
+            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}22, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, #DDD6FE30, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, #C4B5FD25, transparent 70%),
+            linear-gradient(to bottom, #FBF9FE, #F5EFFB 100%)
+          `,
+        };
+      case 'botanical-sage':
+        return {
+          backgroundColor: '#F6FAF7',
+          backgroundImage: `
+            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}20, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, #A7F3D028, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, #6EE7B722, transparent 70%),
+            linear-gradient(to bottom, #F6FAF7, #EDF6F0 100%)
+          `,
+        };
       case 'brand-midnight':
         return {
           backgroundColor: '#080c10',

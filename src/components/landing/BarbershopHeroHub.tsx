@@ -122,7 +122,7 @@ export default function BarbershopHeroHub({
   // Determine dynamic Industry Info
   const industryMeta = (() => {
     const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
-    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
+    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || combined.includes('שירן') || themeColor === '#EC4899' || themeColor === '#8B5CF6' || themeColor === '#A855F7') {
       return { 
         icon: '💅', 
         label: 'Beauty & Nails',
@@ -133,7 +133,7 @@ export default function BarbershopHeroHub({
         actionLabel: 'קביעת תור',
       };
     }
-    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
+    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || combined.includes('לוטוס') || themeColor === '#14B8A6' || themeColor === '#059669') {
       return { 
         icon: '🌿', 
         label: 'Spa & Wellness',

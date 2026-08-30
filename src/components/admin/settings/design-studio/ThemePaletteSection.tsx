@@ -5,6 +5,30 @@ import { Palette, Sparkles, Check } from 'lucide-react';
 
 export const THEME_PRESETS = [
   {
+    id: 'lavender-mist',
+    name: 'Lavender Mist (לילך ולבנדר בוטיק)',
+    description: 'עיצוב בהיר פסטלי מרהיב בגווני לבנדר ולילך עדינים. טרנדי במיוחד לקוסמטיקה, לק ג׳ל ואסתטיקה.',
+    bg: '#FBF9FE',
+    accentPreview: '#8B5CF6',
+    isDark: false,
+  },
+  {
+    id: 'botanical-sage',
+    name: 'Botanical Sage (מרווה ומנטה בוטנית)',
+    description: 'מראה פורצלן אורגני נקי ורענן עם הילות מרווה ומנטה. מושלם לספא, יוגה, טיפולי גוף וקליניקות.',
+    bg: '#F6FAF7',
+    accentPreview: '#059669',
+    isDark: false,
+  },
+  {
+    id: 'luxury-light',
+    name: 'Luxury Alabaster (קרם אלבסטר ושמפניה)',
+    description: 'עיצוב בהיר, נקי, חם ויוקרתי לעיניים עם ניגודיות מעולה וגווני שמפניה ואלבסטר.',
+    bg: '#FAF7F2',
+    accentPreview: '#C9A84C',
+    isDark: false,
+  },
+  {
     id: 'dark-obsidian',
     name: 'Dark Obsidian (שחור פחם מט יוקרתי)',
     description: 'מראה שחור מט עמוק עם נגיעות תאורה רכות. הבחירה המובילה למספרות גברים יוקרתיות.',
@@ -28,23 +52,17 @@ export const THEME_PRESETS = [
     accentPreview: '#10B981',
     isDark: true,
   },
-  {
-    id: 'luxury-light',
-    name: 'Luxury Alabaster (קרם אלבסטר ושמפניה נעימה)',
-    description: 'עיצוב בהיר, נקי, חם ויוקרתי לעיניים עם ניגודיות מעולה וגווני שמפניה ואלבסטר.',
-    bg: '#FAF7F2',
-    accentPreview: '#C9A84C',
-    isDark: false,
-  },
 ];
 
 export const COLOR_PALETTES = [
+  { name: 'לילך ולבנדר בוטיק (Lavender Mist)', hex: '#8B5CF6' },
+  { name: 'מרווה ומנטה בוטנית (Sage Green)', hex: '#059669' },
   { name: 'זהב מלכותי (Royal Gold)', hex: '#C9A84C' },
-  { name: 'קופר & שקיעה (Sunset Amber)', hex: '#F59E0B' },
+  { name: 'רוז בלאש ורובי (Rose Blush)', hex: '#EC4899' },
   { name: 'טורקיז מנטה נורדי (Nordic Teal)', hex: '#14B8A6' },
   { name: 'אמרלד פרימיום (Emerald Green)', hex: '#10B981' },
   { name: 'ספיר וקובלט (Cobalt Blue)', hex: '#0EA5E9' },
-  { name: 'רוז בלאש ורובי (Rose Blush)', hex: '#EC4899' },
+  { name: 'קופר & שקיעה (Sunset Amber)', hex: '#F59E0B' },
   { name: 'סגול רויאל (Royal Violet)', hex: '#A855F7' },
   { name: 'פלטינום וסילבר (Platinum Slate)', hex: '#E2E8F0' },
 ];
@@ -52,7 +70,7 @@ export const COLOR_PALETTES = [
 interface ThemePaletteSectionProps {
   currentTheme: string;
   currentColor: string;
-  onSelectTheme: (themeId: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon') => void;
+  onSelectTheme: (themeId: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon' | 'lavender-mist' | 'botanical-sage') => void;
   onSelectColor: (hex: string) => void;
 }
 

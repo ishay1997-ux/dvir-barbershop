@@ -125,7 +125,7 @@ export default function PriceListAndGallerySection({
             <div className={`lg:col-span-7 rounded-3xl p-5 sm:p-7 shadow-xl ${t.cardBg}`}>
               <div className={`flex items-center justify-between pb-4 mb-4 border-b ${t.borderColor}`}>
                 <div className="flex items-center gap-2">
-                  <Scissors className="w-5 h-5" style={{ color: themeColor }} />
+                  <Sparkles className="w-5 h-5" style={{ color: themeColor }} />
                   <h3 className={`font-black text-base sm:text-lg ${t.textPrimary}`}>מחירון שירותים דיגיטלי</h3>
                 </div>
                 <span className={`text-xs ${t.textMuted}`}>משך זמן ומחיר</span>

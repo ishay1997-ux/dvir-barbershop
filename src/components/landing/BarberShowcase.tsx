@@ -32,14 +32,14 @@ export default function BarberShowcase({
 
   const industryMeta = (() => {
     const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
-    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
+    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || combined.includes('שירן') || themeColor === '#EC4899' || themeColor === '#8B5CF6' || themeColor === '#A855F7') {
       return { 
         title: 'אמנית ציפורניים ומטפלת ראשית',
         badge: 'הכירו את המומחית',
         icon: '💅',
       };
     }
-    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
+    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || combined.includes('לוטוס') || themeColor === '#14B8A6' || themeColor === '#059669') {
       return { 
         title: 'מטפלת מוסמכת ומנהלת הספא',
         badge: 'אודות המרכז והמטפלים',

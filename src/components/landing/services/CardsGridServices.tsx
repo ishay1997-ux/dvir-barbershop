@@ -70,13 +70,13 @@ export default function CardsGridServices({
 
             <Link
               href={`${bookingUrl}?serviceId=${service.id || index}`}
-              className="px-4 py-2 rounded-xl text-xs font-black text-white shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-black text-white shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer hover:opacity-95"
               style={{
                 backgroundColor: themeColor === '#C9A84C' ? '#10B981' : themeColor,
               }}
             >
-              <Scissors className="w-3.5 h-3.5" />
-              <span>קבע תור</span>
+              <Sparkles className="w-3.5 h-3.5 text-white/90" />
+              <span>הזמן עכשיו</span>
             </Link>
           </div>
         </motion.div>

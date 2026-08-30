@@ -216,7 +216,7 @@ export type SectionId =
   | 'trust-badges';
 
 export interface BusinessLayoutConfig {
-  bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
+  bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon' | 'lavender-mist' | 'botanical-sage';
   heroStyle?: HeroArchetype;
   servicesStyle?: ServicesStyle;
   galleryStyle?: GalleryStyle;
@@ -272,7 +272,7 @@ export interface ShopSettings {
   bio?: string;
   experienceYears?: number;
   themeColor?: string;
-  bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
+  bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon' | 'lavender-mist' | 'botanical-sage';
   avatarUrl?: string;
   logoUrl?: string;
   heroImage?: string;

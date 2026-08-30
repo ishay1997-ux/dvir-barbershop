@@ -277,5 +277,19 @@ export function generateTailoredBusinessConfig(params: {
     branches: params.branches && params.branches.length > 0 ? params.branches : [defaultBranch],
     testimonials: archetype.testimonials(owner, city),
     faqs: archetype.faqs(owner, city),
+    layout: {
+      bgTheme: archetypeKey === 'beauty-cosmetics' ? 'lavender-mist' : archetypeKey === 'clinic-therapist' ? 'botanical-sage' : 'dark-obsidian',
+      heroStyle: archetypeKey === 'beauty-cosmetics' ? 'split-cinema' : archetypeKey === 'clinic-therapist' ? 'minimalist-vip' : 'hub-monogram',
+      servicesStyle: archetypeKey === 'beauty-cosmetics' ? 'cards-grid' : archetypeKey === 'home-technician' ? 'compact-menu' : 'split-gallery',
+      galleryStyle: archetypeKey === 'beauty-cosmetics' ? 'instagram-masonry' : archetypeKey === 'clinic-therapist' ? 'ambient-carousel' : 'before-after-slider',
+      cardStyle: 'glass',
+      borderRadius: archetypeKey === 'beauty-cosmetics' || archetypeKey === 'clinic-therapist' ? 'classic-soft' : 'modern-rounded',
+      fontStyle: archetypeKey === 'beauty-cosmetics' ? 'luxury-serif' : 'urban-bold',
+      showBeforeAfter: true,
+      showReviews: true,
+      showFaqs: true,
+      showBranches: true,
+      showBio: true,
+    },
   };
 }

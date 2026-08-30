@@ -9,7 +9,7 @@ export interface IndustryPreset {
   badge: string;
   description: string;
   themeColor: string;
-  bgTheme: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
+  bgTheme: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon' | 'lavender-mist' | 'botanical-sage';
   heroStyle: 'hub-monogram' | 'split-cinema' | 'minimalist-vip';
   servicesStyle: 'split-gallery' | 'cards-grid' | 'compact-menu';
   galleryStyle: 'before-after-slider' | 'instagram-masonry' | 'ambient-carousel';
@@ -127,22 +127,22 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     name: 'קוסמטיקה, ציפורניים וריסים',
     categoryName: 'קוסמטיקה ויופי',
     icon: '💅',
-    badge: 'Luxury Beauty Lounge',
-    description: 'מראה שמפניה ואלבסטר רך, גלריית אינסטגרם עשירה, מבנה אנטומי וטיפולי פנים.',
-    themeColor: '#EC4899', // Rose Blush
-    bgTheme: 'luxury-light',
+    badge: 'Lavender Luxury Beauty Boutique',
+    description: 'אווירת בוטיק לילך ולבנדר יוקרתית, גלריית אינסטגרם עשירה, מבנה אנטומי וטיפולי פנים.',
+    themeColor: '#8B5CF6', // Royal Lilac & Lavender
+    bgTheme: 'lavender-mist',
     heroStyle: 'split-cinema',
     servicesStyle: 'cards-grid',
     galleryStyle: 'instagram-masonry',
     showBeforeAfter: true,
     showBio: true,
     showBranches: false,
-    borderRadius: 'modern-rounded',
+    borderRadius: 'classic-soft',
     fontStyle: 'luxury-serif',
     shopName: 'סטודיו שירן ביוטי & בוטיק',
     ownerName: 'שירן',
     slogan: 'עיצוב ציפורניים במבנה אנטומי, הרמת ריסים וטיפולי פנים מתקדמים',
-    announcement: '✨ מבצע חודשי: 10% הנחה על טיפול פנים משולב למצטרפות חדשות!',
+    announcement: '🌸 מבצע חודשי: 10% הנחה על טיפול פנים משולב למצטרפות חדשות!',
     sectionsOrder: ['announcement', 'hero', 'trust-badges', 'gallery', 'services', 'bio', 'policies', 'reviews', 'faqs'],
     trustBadges: [
       'סטריליזציה ברמה רפואית (Autoclave)',
@@ -173,10 +173,10 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     name: 'ספא, מסאז׳ים וטיפולי גוף',
     categoryName: 'ספא ובריאות',
     icon: '🌿',
-    badge: 'Holistic Wellness Spa',
-    description: 'גווני טורקיז נורדי ואלבסטר חם, קרוסלת חדרי טיפול מרגיעה ועיסויי גוף עמוקים.',
-    themeColor: '#14B8A6', // Nordic Teal
-    bgTheme: 'luxury-light',
+    badge: 'Holistic Botanical Wellness Spa',
+    description: 'גווני מרווה ומנטה בוטנית, קרוסלת חדרי טיפול מרגיעה ועיסויי גוף עמוקים לגוף ולנפש.',
+    themeColor: '#059669', // Botanical Sage Green
+    bgTheme: 'botanical-sage',
     heroStyle: 'minimalist-vip',
     servicesStyle: 'cards-grid',
     galleryStyle: 'ambient-carousel',
