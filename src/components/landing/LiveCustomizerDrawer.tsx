@@ -18,6 +18,7 @@ import { NichesTab } from './customizer/NichesTab';
 import { ColorsThemeTab } from './customizer/ColorsThemeTab';
 import { SectionsReorderTab } from './customizer/SectionsReorderTab';
 import { StyleTypographyTab } from './customizer/StyleTypographyTab';
+import { presetToBusinessConfig } from '@/lib/business-service';
 import type {
   HeroArchetype,
   ServicesStyle,
@@ -95,30 +96,8 @@ export function LiveCustomizerDrawer({
   };
 
   const handleApplyPreset = (preset: any) => {
-    onChangeBusiness({
-      ...business,
-      name: preset.shopName,
-      ownerName: preset.ownerName,
-      slogan: preset.slogan,
-      announcement: preset.announcement,
-      themeColor: preset.themeColor,
-      heroImages: preset.heroImages || business.heroImages,
-      galleryImages: preset.galleryImages || business.galleryImages,
-      avatarUrl: preset.avatarUrl || business.avatarUrl,
-      transformations: preset.transformations || business.transformations,
-      services: preset.services && preset.services.length > 0 ? preset.services : business.services,
-      faqs: preset.faqs && preset.faqs.length > 0 ? preset.faqs : business.faqs,
-      layout: {
-        ...business.layout,
-        bgTheme: preset.bgTheme,
-        heroStyle: preset.heroStyle,
-        servicesStyle: preset.servicesStyle,
-        galleryStyle: preset.galleryStyle,
-        borderRadius: preset.borderRadius,
-        fontStyle: preset.fontStyle,
-        sectionsOrder: preset.sectionsOrder || business.layout?.sectionsOrder,
-      },
-    });
+    const fullNicheConfig = presetToBusinessConfig(preset, business?.slug || 'dvir');
+    onChangeBusiness(fullNicheConfig);
     success(`סגנון ${preset.name} הוחל בהצלחה! ✨`);
   };
 

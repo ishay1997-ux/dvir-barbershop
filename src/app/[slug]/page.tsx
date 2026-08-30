@@ -17,7 +17,7 @@ import TopAnnouncementBanner from '@/components/common/TopAnnouncementBanner';
 import MobileStickyBar from '@/components/layout/MobileStickyBar';
 import { Scissors, Phone, MessageCircle, Calendar, Sparkles, Globe } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
-import { getBusinessBySlug } from '@/lib/business-service';
+import { getBusinessBySlug, getBusinessConfigSync } from '@/lib/business-service';
 import { DVIR_FLAGSHIP_CONFIG } from '@/config/dvir.config';
 import { LiveCustomizerDrawer } from '@/components/landing/LiveCustomizerDrawer';
 
@@ -58,16 +58,27 @@ export default function DynamicBusinessLandingPage({
     'barbershop',
   ].includes(slug);
 
-  const [business, setBusiness] = useState<BusinessConfig | null>(isDvir ? DVIR_FLAGSHIP_CONFIG : null);
-  const [loading, setLoading] = useState(!isDvir);
+  const initialSync = getBusinessConfigSync(slug);
+  const [business, setBusiness] = useState<BusinessConfig | null>(initialSync);
+  const [loading, setLoading] = useState(!initialSync);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    const syncData = getBusinessConfigSync(slug);
+    if (syncData) {
+      setBusiness(syncData);
+      setLoading(false);
+      setNotFound(false);
+      return;
+    }
+
     async function loadBusiness() {
+      setLoading(true);
       try {
         const data = await getBusinessBySlug(slug);
         if (data) {
           setBusiness(data);
+          setNotFound(false);
         } else {
           setNotFound(true);
         }

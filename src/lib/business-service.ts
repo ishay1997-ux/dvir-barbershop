@@ -133,6 +133,52 @@ export function presetToBusinessConfig(preset: IndustryPreset, slug: string): Bu
   };
 }
 
+const PRESET_MAP: Record<string, string> = {
+  cosmetics: 'cosmetics-aesthetician',
+  'cosmetics-aesthetician': 'cosmetics-aesthetician',
+  glow: 'cosmetics-aesthetician',
+  skin: 'cosmetics-aesthetician',
+  beauty: 'nails-beauty',
+  nails: 'nails-beauty',
+  'nails-beauty': 'nails-beauty',
+  spa: 'spa-massage',
+  massage: 'spa-massage',
+  'spa-massage': 'spa-massage',
+  trainer: 'fitness-trainer',
+  fitness: 'fitness-trainer',
+  'fitness-trainer': 'fitness-trainer',
+  clinic: 'clinics-aesthetics',
+  aesthetics: 'clinics-aesthetics',
+  'clinics-aesthetics': 'clinics-aesthetics',
+  services: 'home-technician',
+  tech: 'home-technician',
+  'home-technician': 'home-technician',
+  plumber: 'home-technician',
+  ac: 'home-technician',
+  tattoo: 'tattoo-piercing',
+  'tattoo-piercing': 'tattoo-piercing',
+  barber: 'barbershop',
+  barbershop: 'barbershop',
+};
+
+/**
+ * Synchronous resolver for instant, zero-latency rendering of flagship and preset demo sites.
+ */
+export function getBusinessConfigSync(slug: string): BusinessConfig | null {
+  const cleanSlug = (slug || 'dvir').trim().toLowerCase();
+  if (cleanSlug === 'dvir' || cleanSlug === 'thecut') {
+    return DVIR_FLAGSHIP_CONFIG;
+  }
+  if (PRESET_MAP[cleanSlug]) {
+    const targetPresetId = PRESET_MAP[cleanSlug];
+    const foundPreset = INDUSTRY_PRESETS.find((p) => p.id === targetPresetId);
+    if (foundPreset) {
+      return presetToBusinessConfig(foundPreset, cleanSlug);
+    }
+  }
+  return null;
+}
+
 /**
  * Resolves a full, rich business configuration for any slug.
  * Always ensures the tenant has complete pricing, branches, FAQs, and reviews.
@@ -140,55 +186,10 @@ export function presetToBusinessConfig(preset: IndustryPreset, slug: string): Bu
 export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
   const cleanSlug = (slug || 'dvir').trim().toLowerCase();
 
-  // 0. Check for Known Flagship Demos and Industry Presets
-  if (cleanSlug === 'dvir' || cleanSlug === 'thecut') {
-    let localStoreOverlay: any = null;
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('thecut_settings');
-        if (stored) {
-          localStoreOverlay = JSON.parse(stored);
-        }
-      } catch (_) {}
-    }
-    return localStoreOverlay ? mergeWithDefaults(localStoreOverlay, DVIR_FLAGSHIP_CONFIG) : DVIR_FLAGSHIP_CONFIG;
-  }
-
-  // Check Niche Aliases
-  const presetMap: Record<string, string> = {
-    cosmetics: 'cosmetics-aesthetician',
-    'cosmetics-aesthetician': 'cosmetics-aesthetician',
-    glow: 'cosmetics-aesthetician',
-    skin: 'cosmetics-aesthetician',
-    beauty: 'nails-beauty',
-    nails: 'nails-beauty',
-    'nails-beauty': 'nails-beauty',
-    spa: 'spa-massage',
-    massage: 'spa-massage',
-    'spa-massage': 'spa-massage',
-    trainer: 'fitness-trainer',
-    fitness: 'fitness-trainer',
-    'fitness-trainer': 'fitness-trainer',
-    clinic: 'clinics-aesthetics',
-    aesthetics: 'clinics-aesthetics',
-    'clinics-aesthetics': 'clinics-aesthetics',
-    services: 'home-technician',
-    tech: 'home-technician',
-    'home-technician': 'home-technician',
-    plumber: 'home-technician',
-    ac: 'home-technician',
-    tattoo: 'tattoo-piercing',
-    'tattoo-piercing': 'tattoo-piercing',
-    barber: 'barbershop',
-    barbershop: 'barbershop',
-  };
-
-  if (presetMap[cleanSlug]) {
-    const targetPresetId = presetMap[cleanSlug];
-    const foundPreset = INDUSTRY_PRESETS.find((p) => p.id === targetPresetId);
-    if (foundPreset) {
-      return presetToBusinessConfig(foundPreset, cleanSlug);
-    }
+  // 0. Check for Known Flagship Demos and Industry Presets (Instant & Isolated)
+  const syncConfig = getBusinessConfigSync(cleanSlug);
+  if (syncConfig) {
+    return syncConfig;
   }
 
   // 1. Direct Firestore fetch on Client (Zero-delay, bypasses serverless cache/network blips)
