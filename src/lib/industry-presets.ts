@@ -1,5 +1,6 @@
 import { BusinessConfig, ServiceItem, FaqItem } from '@/types/business';
 import { TransformationItem } from '@/lib/types';
+import { INDUSTRY_MEDIA_MAP } from '@/lib/industry-media';
 
 export interface IndustryPreset {
   id: string;
@@ -20,6 +21,9 @@ export interface IndustryPreset {
   cardRadius?: 'sharp' | 'smooth' | 'pill';
   fontStyle: 'modern-sans' | 'urban-bold' | 'luxury-serif';
   typographyMood?: 'modern-clean' | 'luxury-serif' | 'urban-bold';
+  heroImages?: string[];
+  galleryImages?: string[];
+  avatarUrl?: string;
   shopName: string;
   ownerName: string;
   slogan: string;
@@ -61,6 +65,9 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     heroStyle: 'hub-monogram',
     servicesStyle: 'split-gallery',
     galleryStyle: 'before-after-slider',
+    heroImages: INDUSTRY_MEDIA_MAP.barber.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.barber.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.barber.avatarUrl,
     showBeforeAfter: true,
     showBio: true,
     showBranches: true,
@@ -134,6 +141,9 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     heroStyle: 'split-cinema',
     servicesStyle: 'cards-grid',
     galleryStyle: 'before-after-slider',
+    heroImages: INDUSTRY_MEDIA_MAP.cosmetics_aesthetician.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.cosmetics_aesthetician.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.cosmetics_aesthetician.avatarUrl,
     showBeforeAfter: true,
     showBio: true,
     showBranches: false,
@@ -211,6 +221,9 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     heroStyle: 'split-cinema',
     servicesStyle: 'cards-grid',
     galleryStyle: 'instagram-masonry',
+    heroImages: INDUSTRY_MEDIA_MAP.beauty_salon.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.beauty_salon.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.beauty_salon.avatarUrl,
     showBeforeAfter: true,
     showBio: true,
     showBranches: false,
@@ -289,6 +302,9 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     heroStyle: 'minimalist-vip',
     servicesStyle: 'cards-grid',
     galleryStyle: 'ambient-carousel',
+    heroImages: INDUSTRY_MEDIA_MAP.clinic_therapist.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.clinic_therapist.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.clinic_therapist.avatarUrl,
     showBeforeAfter: true,
     showBio: true,
     showBranches: true,
@@ -335,6 +351,9 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     heroStyle: 'split-cinema',
     servicesStyle: 'cards-grid',
     galleryStyle: 'instagram-masonry',
+    heroImages: INDUSTRY_MEDIA_MAP.tattoo_piercing.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.tattoo_piercing.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.tattoo_piercing.avatarUrl,
     showBeforeAfter: true,
     showBio: false,
     showBranches: false,
@@ -379,6 +398,9 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     heroStyle: 'split-cinema',
     servicesStyle: 'cards-grid',
     galleryStyle: 'before-after-slider',
+    heroImages: INDUSTRY_MEDIA_MAP.private_instructor.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.private_instructor.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.private_instructor.avatarUrl,
     showBeforeAfter: true,
     showBio: true,
     showBranches: false,
@@ -448,6 +470,9 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     heroStyle: 'minimalist-vip',
     servicesStyle: 'cards-grid',
     galleryStyle: 'before-after-slider',
+    heroImages: INDUSTRY_MEDIA_MAP.clinics_aesthetics.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.clinics_aesthetics.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.clinics_aesthetics.avatarUrl,
     showBeforeAfter: true,
     showBio: true,
     showBranches: false,
@@ -517,6 +542,9 @@ export const INDUSTRY_PRESETS: IndustryPreset[] = [
     heroStyle: 'split-cinema',
     servicesStyle: 'compact-menu',
     galleryStyle: 'compact-menu' as any,
+    heroImages: INDUSTRY_MEDIA_MAP.home_technician.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.home_technician.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.home_technician.avatarUrl,
     showBeforeAfter: false, // Technicians do not have haircut/makeup sliders
     showBio: false,
     showBranches: true,

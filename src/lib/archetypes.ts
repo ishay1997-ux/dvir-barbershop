@@ -6,6 +6,7 @@ import {
   FaqItem,
   BusinessCategory,
 } from '@/types/business';
+import { INDUSTRY_MEDIA_MAP } from '@/lib/industry-media';
 
 export interface BusinessArchetype {
   id: string;
@@ -15,6 +16,9 @@ export interface BusinessArchetype {
   icon: string;
   description: string;
   defaultColor: string;
+  heroImages?: string[];
+  galleryImages?: string[];
+  avatarUrl?: string;
   slogan: (owner: string, city: string, bizName: string) => string;
   announcement: (owner: string, city: string, bizName: string) => string;
   bio: (owner: string, city: string, bizName: string, exp: number) => string;
@@ -115,6 +119,9 @@ export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
     icon: '💈',
     description: 'מתאים למספרות גברים מודרניות, פיידים מדויקים, פיסול זקן ומגבות חמות',
     defaultColor: '#C9A84C',
+    heroImages: INDUSTRY_MEDIA_MAP.barber.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.barber.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.barber.avatarUrl,
     slogan: (owner, city) => `עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר ב${city || 'ישראל'}`,
     announcement: (owner, city) => `🌟 קביעת תורים מהירה אונליין לכל הסניפים ב${city || 'ישראל'} 24/7 – שריינו מראש!`,
     bio: (owner, city, bizName) => `ב-${bizName} אנו מאמינים שתספורת היא כרטיס הביקור של הגבר המודרני. ${owner} מעניק לכל לקוח יחס אישי, התאמה אופטימלית למבנה הפנים, שימוש בתערים יפניים וחיטוי וסטריליות קפדניים.`,
@@ -145,6 +152,9 @@ export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
     icon: '🌸',
     description: 'מתאים לקוסמטיקאיות פרא-רפואיות (P.M.E), אבחון עור קליני, טיפולי אקנה, פיגמנטציה ואנטי-אייג׳ינג',
     defaultColor: '#EC4899',
+    heroImages: INDUSTRY_MEDIA_MAP.cosmetics_aesthetician.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.cosmetics_aesthetician.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.cosmetics_aesthetician.avatarUrl,
     slogan: (owner, city) => `קוסמטיקה פרא-רפואית מתקדמת, אבחון עור קליני, שיקום אקנה והבהרת פיגמנטציה ב${city || 'ישראל'}`,
     announcement: (owner, city) => `✨ אבחון עור קליני והתאמת שגרת טיפוח אישית בקליניקה ב${city || 'ישראל'} – שרייני תור אונליין!`,
     bio: (owner, city, bizName) => `ב-${bizName} אנו מאמינים שבריאות העור היא הבסיס ליופי אמיתי. ${owner} מתמחה באבחון קליני מעמיק, שיקום פגמי עור, החדרת חומרים פעילים ומכשור טכנולוגי מתקדם בתקנים המחמירים ביותר.`,
@@ -176,6 +186,9 @@ export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
     icon: '💅',
     description: 'מתאים למניקוריסטיות, מכוני לק ג׳ל, מבנה אנטומי, בניית ציפורניים בפוליג׳ל ופדיקור',
     defaultColor: '#8B5CF6',
+    heroImages: INDUSTRY_MEDIA_MAP.beauty_salon.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.beauty_salon.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.beauty_salon.avatarUrl,
     slogan: (owner, city) => `מניקור רוסי משולב, מבנה אנטומי עמיד ל-4 שבועות ונייל ארט פרימיום ב${city || 'ישראל'}`,
     announcement: (owner, city) => `✨ שרייני תור אונליין למבנה אנטומי ומניקור משולב ב${city || 'ישראל'} – זמינות מיידית!`,
     bio: (owner, city, bizName) => `ב-${bizName} אנו שמים דגש על בריאות הציפורן הטבעית, דיוק כירורגי במניקור רוסי וחיטוי באוטוקלאב רפואי. ${owner} מתמחה במבנה אנטומי מחוזק (Rubber Base), בנייה קלה בפוליג׳ל ונייל ארט טרנדי.`,
@@ -208,6 +221,9 @@ export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
     icon: '🔧',
     description: 'מתאים לאינסטלטורים, חשמלאים, מנעולנים, תיקוני מזגנים ואנשי שירות שמגיעים לבית הלקוח',
     defaultColor: '#3B82F6',
+    heroImages: INDUSTRY_MEDIA_MAP.home_technician.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.home_technician.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.home_technician.avatarUrl,
     slogan: (owner, city) => `שירותי אינסטלציה ותיקונים מהירים בבית הלקוח ב${city || 'ישראל'} – אמינות, מקצועיות ואחריות מלאה`,
     announcement: (owner, city) => `🛠️ שריינו חלון הגעת טכנאי אונליין לכל אזור ${city || 'ישראל'} – מגיעים עם ציוד מלא!`,
     bio: (owner, city, bizName) => `ב-${bizName} אנו מספקים מענה מהיר, יסודי ומקצועי לכל תקלה בבית או בעסק. ${owner} מתמחה באיתור נזילות במצלמות תרמיות, פתיחת סתימות מורכבות, ועבודות אינסטלציה וחשמל עם אחריות בכתב.`,
@@ -237,6 +253,9 @@ export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
     icon: '🌿',
     description: 'מתאים למטפלים בעיסוי, פסיכותרפיסטים, כירופרקטים, דיקור סיני ומטפלי גוף-נפש',
     defaultColor: '#10B981',
+    heroImages: INDUSTRY_MEDIA_MAP.clinic_therapist.heroImages,
+    galleryImages: INDUSTRY_MEDIA_MAP.clinic_therapist.galleryPhotos.map((p) => p.src),
+    avatarUrl: INDUSTRY_MEDIA_MAP.clinic_therapist.avatarUrl,
     slogan: (owner, city) => `טיפולי גוף ונפש, עיסויים רפואיים ורפואה משלימה באווירה שלווה ב${city || 'ישראל'}`,
     announcement: (owner, city) => `🌿 שריינו מועד לטיפול מרגיע ומחדש אנרגיות בקליניקה ב${city || 'ישראל'} – חוויה מרפאת!`,
     bio: (owner, city, bizName) => `ב-${bizName} אנו יוצרים מרחב של שקט, ריפוי והפגת מתחים. ${owner} מוסמך בטכניקות מתקדמות של שחרור שרירים תפוסים, איזון אנרגטי ושיקום פיזיולוגי מותאם אישית.`,
@@ -301,6 +320,9 @@ export function generateTailoredBusinessConfig(params: {
     slogan: archetype.slogan(owner, city, params.name),
     announcement: archetype.announcement(owner, city, params.name),
     themeColor: color,
+    heroImages: archetype.heroImages,
+    galleryImages: archetype.galleryImages,
+    avatarUrl: archetype.avatarUrl,
     branchesCount: params.branches?.length || 1,
     status: 'active',
     plan: params.plan || 'pro',

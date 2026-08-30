@@ -7,6 +7,7 @@ import { Scissors, Star, Award, Sparkles, MapPin, CheckCircle2 } from 'lucide-re
 import { BusinessConfig } from '@/types/business';
 import { getThemeTokens } from '@/lib/theme-tokens';
 import { getIndustryMeta } from '@/lib/industry-terminology';
+import { getIndustryAvatarUrl } from '@/lib/industry-media';
 
 export default function BarberShowcase({
   business,
@@ -111,10 +112,10 @@ export default function BarberShowcase({
                   color: themeColor,
                 }}
               >
-                {business?.avatarUrl ? (
+                {business?.avatarUrl || getIndustryAvatarUrl(business) ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={business.avatarUrl}
+                    src={business?.avatarUrl || getIndustryAvatarUrl(business)}
                     alt={ownerName}
                     className="w-full h-full object-cover"
                   />

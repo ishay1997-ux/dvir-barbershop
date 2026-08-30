@@ -102,6 +102,10 @@ export function LiveCustomizerDrawer({
       slogan: preset.slogan,
       announcement: preset.announcement,
       themeColor: preset.themeColor,
+      heroImages: preset.heroImages || business.heroImages,
+      galleryImages: preset.galleryImages || business.galleryImages,
+      avatarUrl: preset.avatarUrl || business.avatarUrl,
+      transformations: preset.transformations || business.transformations,
       services: preset.services && preset.services.length > 0 ? preset.services : business.services,
       faqs: preset.faqs && preset.faqs.length > 0 ? preset.faqs : business.faqs,
       layout: {

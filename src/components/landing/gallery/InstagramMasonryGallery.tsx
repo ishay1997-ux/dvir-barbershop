@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X, Eye, Heart, Camera } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { getThemeTokens } from '@/lib/theme-tokens';
+import { getIndustryGalleryPhotos, GalleryPhotoItem } from '@/lib/industry-media';
 
 function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
@@ -17,57 +18,12 @@ function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
-const DEFAULT_MASONRY_PHOTOS = [
-  {
-    id: 1,
-    title: 'מבנה אנטומי & לק ג׳ל מושלם',
-    category: 'ציפורניים',
-    src: 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=700&q=80',
-    likes: 142,
-  },
-  {
-    id: 2,
-    title: 'סקין פייד כירורגי ופיסול זקן',
-    category: 'תספורת',
-    src: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=700&q=80',
-    likes: 218,
-  },
-  {
-    id: 3,
-    title: 'הרמת ריסים טבעית ומלאה',
-    category: 'ריסים וגבות',
-    src: 'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=700&q=80',
-    likes: 95,
-  },
-  {
-    id: 4,
-    title: 'עיסוי אבנים חמות ורגיעה עמוקה',
-    category: 'ספא וטיפולים',
-    src: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=700&q=80',
-    likes: 184,
-  },
-  {
-    id: 5,
-    title: 'קעקוע פיין-ליין גיאומטרי עדין',
-    category: 'קעקועים',
-    src: 'https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=700&q=80',
-    likes: 310,
-  },
-  {
-    id: 6,
-    title: 'טיפול פנים זוהר Glow & לחות',
-    category: 'אסתטיקה',
-    src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=700&q=80',
-    likes: 167,
-  },
-];
-
 export default function InstagramMasonryGallery({
   business,
 }: {
   business?: Partial<BusinessConfig>;
 }) {
-  const [selectedPhoto, setSelectedPhoto] = useState<typeof DEFAULT_MASONRY_PHOTOS[0] | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<GalleryPhotoItem | null>(null);
 
   const themeColor = business?.themeColor || '#EC4899';
   const bizName = business?.name || 'הסטודיו';
@@ -78,15 +34,7 @@ export default function InstagramMasonryGallery({
     ? (business.instagramHandle.startsWith('http') ? business.instagramHandle : `https://instagram.com/${business.instagramHandle.replace('@', '')}`)
     : 'https://instagram.com';
 
-  const photos = Array.isArray(business?.galleryImages) && business.galleryImages.length > 0
-    ? business.galleryImages.map((src, i) => ({
-        id: i + 1,
-        title: `עבודה #${i + 1} - ${bizName}`,
-        category: 'גלריית עבודות',
-        src,
-        likes: 100 + i * 23,
-      }))
-    : DEFAULT_MASONRY_PHOTOS;
+  const photos = getIndustryGalleryPhotos(business);
 
   return (
     <div className="space-y-6">

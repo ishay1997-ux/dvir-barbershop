@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 import { getThemeTokens } from '@/lib/theme-tokens';
+import { getIndustryHeroImage } from '@/lib/industry-media';
 import {
   HeroSharedProps,
   InstagramIcon,
@@ -40,7 +41,7 @@ export function HubMonogramHero({
   onOpenMyAppointments,
   onOpenShare,
 }: HeroSharedProps) {
-  const heroBg = (business?.heroImages && business.heroImages[0]) || industryMeta.heroImage;
+  const heroBg = (business?.heroImages && business.heroImages[0]) || getIndustryHeroImage(business);
   const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
   const t = getThemeTokens(bgTheme);
 

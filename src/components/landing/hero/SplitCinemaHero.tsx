@@ -14,6 +14,7 @@ import {
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 import { HeroSharedProps } from './hero-types';
 import { getThemeTokens } from '@/lib/theme-tokens';
+import { getIndustryHeroImage } from '@/lib/industry-media';
 
 export function SplitCinemaHero({
   business,
@@ -28,7 +29,7 @@ export function SplitCinemaHero({
   onOpenMyAppointments,
   onOpenShare,
 }: HeroSharedProps) {
-  const heroBg = (business?.heroImages && business.heroImages[0]) || industryMeta.heroImage;
+  const heroBg = (business?.heroImages && business.heroImages[0]) || getIndustryHeroImage(business);
   const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
   const t = getThemeTokens(bgTheme);
 

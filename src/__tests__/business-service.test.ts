@@ -129,5 +129,64 @@ describe('Multi-Tenant Business Service & Configuration', () => {
     expect(demoNails.transformations?.length).toBeGreaterThan(0);
     expect(demoNails.transformations?.[0].title).toContain('מניקור רוסי');
   });
+
+  it('should dynamically resolve industry-specific media, gallery photos, and ambient slides across all niches', async () => {
+    const {
+      getIndustryGalleryPhotos,
+      getIndustryAmbientSlides,
+      getIndustryHeroImage,
+      getIndustryAvatarUrl,
+      INDUSTRY_MEDIA_MAP,
+    } = await import('@/lib/industry-media');
+
+    // 1. Verify all 8 niches in INDUSTRY_MEDIA_MAP have authentic high-res images
+    const niches = Object.keys(INDUSTRY_MEDIA_MAP) as (keyof typeof INDUSTRY_MEDIA_MAP)[];
+    expect(niches.length).toBe(8);
+
+    for (const niche of niches) {
+      const media = INDUSTRY_MEDIA_MAP[niche];
+      expect(media.heroImages.length).toBeGreaterThan(0);
+      expect(media.galleryPhotos.length).toBeGreaterThan(0);
+      expect(media.ambientSlides.length).toBeGreaterThan(0);
+      expect(media.avatarUrl).toBeTruthy();
+      expect(media.heroImages[0].startsWith('http')).toBe(true);
+      expect(media.galleryPhotos[0].src.startsWith('http')).toBe(true);
+    }
+
+    // 2. Barbershop gallery vs Cosmetics vs Spa vs Tattoo
+    const barberPhotos = getIndustryGalleryPhotos({ slug: 'dvir', category: 'barber' });
+    expect(barberPhotos.length).toBe(6);
+    expect(barberPhotos.some((p) => p.category.includes('דירוג') || p.category.includes('זקן') || p.category.includes('תספורת'))).toBe(true);
+
+    const beautyPhotos = getIndustryGalleryPhotos({ slug: 'beauty', category: 'beauty_salon' });
+    expect(beautyPhotos.length).toBe(6);
+    expect(beautyPhotos.some((p) => p.category.includes('ציפורניים') || p.category.includes('מבנה אנטומי') || p.category.includes('מניקור'))).toBe(true);
+
+    const spaPhotos = getIndustryGalleryPhotos({ slug: 'spa', category: 'clinic_therapist' });
+    expect(spaPhotos.length).toBe(6);
+    expect(spaPhotos.some((p) => p.category.includes('עיסוי') || p.category.includes('ספא'))).toBe(true);
+
+    const tattooPhotos = getIndustryGalleryPhotos({ slug: 'tattoo' });
+    expect(tattooPhotos.length).toBe(6);
+    expect(tattooPhotos.some((p) => p.category.includes('קעקוע') || p.category.includes('פירסינג'))).toBe(true);
+
+    // 3. Ambient slides resolution
+    const spaSlides = getIndustryAmbientSlides({ slug: 'spa', category: 'clinic_therapist' });
+    expect(spaSlides.length).toBe(3);
+    expect(spaSlides[0].tag).toContain('ספא');
+
+    const barberSlides = getIndustryAmbientSlides({ slug: 'dvir', category: 'barber' });
+    expect(barberSlides.length).toBe(3);
+    expect(barberSlides[0].tag).toContain('ברברשופ');
+
+    // 4. Hero and avatar resolution
+    const heroImage = getIndustryHeroImage({ slug: 'trainer' });
+    expect(heroImage).toBeTruthy();
+    expect(heroImage.startsWith('http')).toBe(true);
+
+    const avatarUrl = getIndustryAvatarUrl({ slug: 'trainer' });
+    expect(avatarUrl).toBeTruthy();
+    expect(avatarUrl.startsWith('http')).toBe(true);
+  });
 });
 

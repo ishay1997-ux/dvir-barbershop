@@ -9,54 +9,16 @@ import { INITIAL_SERVICES } from '@/lib/store';
 import { BusinessConfig } from '@/types/business';
 import { formatPrice } from '@/lib/utils';
 import { getThemeTokens } from '@/lib/theme-tokens';
+import { getIndustryGalleryPhotos, GalleryPhotoItem } from '@/lib/industry-media';
 import CardsGridServices from './services/CardsGridServices';
 import CompactMenuServices from './services/CompactMenuServices';
-
-const DEFAULT_GALLERY_PHOTOS = [
-  {
-    id: 1,
-    title: 'סקין פייד מדויק עם קו תער חד',
-    category: 'דירוגים',
-    src: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 2,
-    title: 'פיסול ויישור זקן פרימיום',
-    category: 'זקנים',
-    src: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 3,
-    title: 'קלאסי מודרני מעוצב בחימר מט',
-    category: 'תספורת',
-    src: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 4,
-    title: 'קרופ צרפתי טקסטורלי',
-    category: 'דירוגים',
-    src: 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 5,
-    title: 'טייפר פייד נקי ומסגרת חדה',
-    category: 'פייד',
-    src: 'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 6,
-    title: 'עיצוב זקן מלא ומטופח',
-    category: 'זקנים',
-    src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-  },
-];
 
 export default function PriceListAndGallerySection({
   business,
 }: {
   business?: Partial<BusinessConfig>;
 }) {
-  const [selectedPhoto, setSelectedPhoto] = useState<typeof DEFAULT_GALLERY_PHOTOS[0] | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<GalleryPhotoItem | null>(null);
 
   const themeColor = business?.themeColor || '#C9A84C';
   const bizName = business?.name || 'דביר';
@@ -78,14 +40,7 @@ export default function PriceListAndGallerySection({
     ? (business.instagramHandle.startsWith('http') ? business.instagramHandle : `https://instagram.com/${business.instagramHandle.replace('@', '')}`)
     : 'https://instagram.com/dvir_barber';
 
-  const galleryPhotos = Array.isArray(business?.galleryImages) && business.galleryImages.length > 0
-    ? business.galleryImages.map((imgUrl, i) => ({
-        id: i + 1,
-        title: `תספורת ועבודה #${i + 1} - ${bizName}`,
-        category: 'עבודות מספרה',
-        src: imgUrl,
-      }))
-    : DEFAULT_GALLERY_PHOTOS;
+  const galleryPhotos = getIndustryGalleryPhotos(business);
 
   return (
     <section id="services-and-gallery" className={`py-12 sm:py-16 ${t.sectionBg}`} dir="rtl">

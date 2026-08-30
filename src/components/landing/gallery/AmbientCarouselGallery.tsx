@@ -6,30 +6,7 @@ import { motion } from 'framer-motion';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { getThemeTokens } from '@/lib/theme-tokens';
-
-const AMBIENT_SLIDES = [
-  {
-    id: 1,
-    title: 'חדרי טיפול פרטיים ואווירת שלווה מוחלטת',
-    description: 'חללים מרווחים, מוזיקה מרגיעה ותאורה עמומה לשחרור מוחלט של הגוף והנפש.',
-    src: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=900&q=80',
-    tag: 'אווירת ספא פרימיום',
-  },
-  {
-    id: 2,
-    title: 'שמנים ארומטיים טבעיים ועיסוי רקמות',
-    description: 'תמציות צמחים אורגניות המעניקות לעור לחות עשירה ומשחררות עומסי שרירים.',
-    src: 'https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=900&q=80',
-    tag: 'חומרים 100% טבעיים',
-  },
-  {
-    id: 3,
-    title: 'טיפולי אסתטיקה וחידוש מרקם העור',
-    description: 'מכשור מתקדם וחומרי מילוי רפואיים להשגת תוצאות טבעיות ומדויקות.',
-    src: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=900&q=80',
-    tag: 'רפואה ואסתטיקה',
-  },
-];
+import { getIndustryAmbientSlides } from '@/lib/industry-media';
 
 export default function AmbientCarouselGallery({
   business,
@@ -41,8 +18,8 @@ export default function AmbientCarouselGallery({
   const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
   const t = getThemeTokens(bgTheme);
 
-  const slides = AMBIENT_SLIDES;
-  const current = slides[currentIdx];
+  const slides = getIndustryAmbientSlides(business);
+  const current = slides[currentIdx] || slides[0];
 
   const handleNext = () => {
     setCurrentIdx((prev) => (prev + 1) % slides.length);
