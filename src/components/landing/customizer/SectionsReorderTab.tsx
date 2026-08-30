@@ -11,15 +11,20 @@ interface SectionsReorderTabProps {
 }
 
 const SECTION_LABELS: Record<string, string> = {
-  hero: 'פתיח האתר (Hero)',
-  'booking-action-cards': 'כרטיסי פעולה מהירים (Action Pills)',
-  services: 'מחירון ושירותים (Price List)',
-  'before-after': 'גלריה ותוצאות (Showcase)',
-  about: 'אודות והיכרות (Bio)',
-  reviews: 'המלצות Google (Social Proof)',
-  policies: 'מדיניות ותנאי הגעה',
-  branches: 'סניפים ומיקומים',
-  faq: 'שאלות ותשובות (FAQ)',
+  hero: '👑 פתיח האתר (Hero Hub)',
+  announcement: '📢 באנר הודעה עליון (Announcement)',
+  'trust-badges': '⭐ תגי אמינות וביטחון (Trust Badges)',
+  services: '💎 מחירון ושירותי פרימיום (Price List)',
+  gallery: '📸 גלריית עבודות ותוצאות (Showcase)',
+  'before-after': '📸 גלריית עבודות ותוצאות (Showcase)',
+  bio: '👤 אודות וסיפור העסק (About & Bio)',
+  about: '👤 אודות וסיפור העסק (About & Bio)',
+  policies: '📜 מדיניות ותנאי הגעה (Policies)',
+  branches: '📍 סניפים ומיקומים (Branches)',
+  reviews: '🌟 המלצות Google (Social Proof)',
+  faqs: '❓ שאלות ותשובות נפוצות (FAQ)',
+  faq: '❓ שאלות ותשובות נפוצות (FAQ)',
+  'booking-action-cards': '⚡ כרטיסי פעולה מהירים (Action Pills)',
 };
 
 export function SectionsReorderTab({
@@ -29,17 +34,20 @@ export function SectionsReorderTab({
 }: SectionsReorderTabProps) {
   const allPossible: SectionId[] = [
     'hero',
-    'booking-action-cards',
+    'announcement',
+    'trust-badges',
     'services',
-    'before-after',
-    'about',
-    'reviews',
+    'gallery',
+    'bio',
     'policies',
     'branches',
-    'faq',
+    'reviews',
+    'faqs',
   ];
 
-  const hiddenSections = allPossible.filter((s) => !sectionsOrder.includes(s));
+  const hiddenSections = allPossible.filter(
+    (s) => !sectionsOrder.includes(s) && !((s === 'gallery' && sectionsOrder.includes('before-after')) || (s === 'bio' && sectionsOrder.includes('about')) || (s === 'faqs' && sectionsOrder.includes('faq')))
+  );
 
   return (
     <div className="space-y-4">

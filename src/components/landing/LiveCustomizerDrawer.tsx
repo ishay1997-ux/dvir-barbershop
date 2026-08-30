@@ -94,6 +94,30 @@ export function LiveCustomizerDrawer({
     info('ההגדרות אופסו לברירת המחדל');
   };
 
+  const handleApplyPreset = (preset: any) => {
+    onChangeBusiness({
+      ...business,
+      name: preset.shopName,
+      ownerName: preset.ownerName,
+      slogan: preset.slogan,
+      announcement: preset.announcement,
+      themeColor: preset.themeColor,
+      services: preset.services && preset.services.length > 0 ? preset.services : business.services,
+      faqs: preset.faqs && preset.faqs.length > 0 ? preset.faqs : business.faqs,
+      layout: {
+        ...business.layout,
+        bgTheme: preset.bgTheme,
+        heroStyle: preset.heroStyle,
+        servicesStyle: preset.servicesStyle,
+        galleryStyle: preset.galleryStyle,
+        borderRadius: preset.borderRadius,
+        fontStyle: preset.fontStyle,
+        sectionsOrder: preset.sectionsOrder || business.layout?.sectionsOrder,
+      },
+    });
+    success(`סגנון ${preset.name} הוחל בהצלחה! ✨`);
+  };
+
   const handleSave = () => {
     setIsSaving(true);
     setTimeout(() => {
@@ -104,19 +128,19 @@ export function LiveCustomizerDrawer({
 
   return (
     <>
-      {/* Trigger Floating Button */}
+      {/* Trigger Floating Button - Top Left with high z-index & no bottom collision */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-24 left-4 z-40 px-3.5 py-2.5 rounded-full bg-slate-900/90 text-amber-400 border border-amber-400/40 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+        className="fixed top-24 left-4 z-40 px-3.5 py-2.5 rounded-full bg-slate-950/95 text-amber-400 border border-amber-400/50 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer group ring-2 ring-amber-400/20 hover:ring-amber-400/50"
         title="פתח מעצב חי (Live Customizer)"
         aria-label="פתח מעצב חי"
       >
         <SlidersHorizontal className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
-        <span className="text-xs font-black text-white hidden sm:inline">התאם אישית (Live)</span>
+        <span className="text-xs font-black text-white hidden sm:inline">מעצב חי (Live)</span>
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
       </button>
 
-      {/* Slide-over Drawer */}
+      {/* Slide-over Drawer - Always on the Left Side */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -129,7 +153,7 @@ export function LiveCustomizerDrawer({
               className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 cursor-pointer"
             />
 
-            {/* Panel */}
+            {/* Panel (Left side slide) */}
             <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
@@ -198,7 +222,7 @@ export function LiveCustomizerDrawer({
               {/* Scrollable Content Body */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {activeTab === 'niches' && (
-                  <NichesTab business={business} />
+                  <NichesTab business={business} onApplyPreset={handleApplyPreset} />
                 )}
 
                 {activeTab === 'colors' && (

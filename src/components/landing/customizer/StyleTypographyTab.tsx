@@ -163,6 +163,32 @@ export function StyleTypographyTab({
           </div>
         </div>
       </div>
+
+      {/* Typography Mood */}
+      <div>
+        <h3 className="text-xs font-black text-white mb-2">סגנון טיפוגרפיה ופונטים:</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: 'modern-clean', label: 'מודרני ונקי', sub: 'Clean Sans' },
+            { id: 'luxury-serif', label: 'סריף יוקרתי', sub: 'Luxury Serif' },
+            { id: 'urban-bold', label: 'אורבני ונועז', sub: 'Urban Bold' },
+          ].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => onTypographyMoodChange(t.id as TypographyMood)}
+              className={`p-2 rounded-xl border text-center text-xs transition-all cursor-pointer ${
+                currentTypo === t.id
+                  ? 'border-amber-400 bg-zinc-800 text-white font-bold ring-1 ring-amber-400/40'
+                  : 'border-white/10 bg-zinc-900 text-zinc-400 hover:bg-zinc-800'
+              }`}
+            >
+              <span className="block text-xs text-white">{t.label}</span>
+              <span className="block text-[9px] text-zinc-400 mt-0.5">{t.sub}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

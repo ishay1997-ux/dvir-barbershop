@@ -252,23 +252,43 @@ export default function DynamicBusinessLandingPage({
         <FaqSection business={business || undefined} />
       </div>
     ) : null,
-    announcement: null,
+    announcement: business?.layout?.showAnnouncement !== false && business?.announcement ? (
+      <TopAnnouncementBanner
+        announcement={business.announcement}
+        themeColor={themeColor}
+        link={business.layout?.announcementLink}
+      />
+    ) : null,
   };
 
   const defaultOrder = ['hero', 'trust-badges', 'services', 'bio', 'policies', 'branches', 'gallery', 'reviews', 'faqs'];
   const activeOrder = (business?.layout?.sectionsOrder && business.layout.sectionsOrder.length > 0)
     ? business.layout.sectionsOrder
     : defaultOrder;
-  const borderRadius = business?.layout?.borderRadius || 'modern-rounded';
-  const fontStyle = business?.layout?.fontStyle || 'urban-bold';
+
+  const borderRadius =
+    business?.layout?.borderRadius ||
+    (business?.layout?.cardRadius === 'sharp'
+      ? 'sharp-luxury'
+      : business?.layout?.cardRadius === 'pill'
+      ? 'classic-soft'
+      : 'modern-rounded');
+
+  const fontStyle =
+    business?.layout?.fontStyle ||
+    (business?.layout?.typographyMood === 'luxury-serif'
+      ? 'luxury-serif'
+      : business?.layout?.typographyMood === 'urban-bold'
+      ? 'urban-bold'
+      : 'modern-sans');
 
   return (
     <div
       className={`min-h-screen transition-colors duration-500 theme-${bgTheme} ${bgTheme === 'luxury-light' ? 'theme-luxury-light' : ''} radius-${borderRadius} font-mood-${fontStyle}`}
       style={bgStyles}
     >
-      {/* Top Announcement Banner (If enabled & text exists) */}
-      {business?.layout?.showAnnouncement !== false && business?.announcement && (
+      {/* Top Announcement Banner (Rendered at top if not explicitly ordered in activeOrder) */}
+      {business?.layout?.showAnnouncement !== false && business?.announcement && !activeOrder.includes('announcement') && (
         <TopAnnouncementBanner
           announcement={business.announcement}
           themeColor={themeColor}
