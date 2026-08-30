@@ -107,5 +107,27 @@ describe('Multi-Tenant Business Service & Configuration', () => {
     expect(demoCosmetics.transformations?.length).toBeGreaterThan(0);
     expect(demoCosmetics.transformations?.[0].title).toContain('אקנאי');
   });
+
+  it('should correctly resolve and instantiate the nails-beauty archetype with authentic Israeli nail services', async () => {
+    const config = generateTailoredBusinessConfig({
+      name: 'סטודיו מיה לציפורניים',
+      slug: 'maya-nails',
+      ownerName: 'מיה',
+      phone: '052-777-6666',
+      city: 'ראשון לציון',
+      archetypeId: 'beauty-cosmetics',
+    });
+
+    expect(config.category).toBe('beauty_salon');
+    expect(config.services.some(s => s.name.includes('מבנה אנטומי'))).toBe(true);
+    expect(config.services.some(s => s.name.includes('פוליג׳ל'))).toBe(true);
+    expect(config.services.some(s => s.name.includes('פדיקור'))).toBe(true);
+
+    const demoNails = await getBusinessBySlug('beauty');
+    expect(demoNails).toBeDefined();
+    expect(demoNails.category).toBe('beauty_salon');
+    expect(demoNails.transformations?.length).toBeGreaterThan(0);
+    expect(demoNails.transformations?.[0].title).toContain('מניקור רוסי');
+  });
 });
 
