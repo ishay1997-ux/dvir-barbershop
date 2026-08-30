@@ -77,5 +77,35 @@ describe('Multi-Tenant Business Service & Configuration', () => {
     expect(trainerMeta.categoryKey).toBe('private_instructor');
     expect(trainerMeta.icon).toBe('🏋️');
   });
+
+  it('should correctly resolve and instantiate the cosmetics-aesthetician archetype', async () => {
+    // 1. Check archetype definition
+    expect(BUSINESS_ARCHETYPES['cosmetics-aesthetician']).toBeDefined();
+    expect(BUSINESS_ARCHETYPES['cosmetics-aesthetician'].name).toContain('קוסמטיקה פרא-רפואית');
+
+    // 2. Generate tailored business config
+    const config = generateTailoredBusinessConfig({
+      name: 'קליניקת גלואו סקין',
+      slug: 'glow-skin',
+      ownerName: 'שירן כהן',
+      phone: '054-999-8888',
+      city: 'הרצליה',
+      archetypeId: 'cosmetics-aesthetician',
+    });
+
+    expect(config.category).toBe('beauty_salon');
+    expect(config.layout?.bgTheme).toBe('lavender-mist');
+    expect(config.layout?.fontStyle).toBe('luxury-serif');
+    expect(config.services.some(s => s.name.includes('אקנה'))).toBe(true);
+    expect(config.services.some(s => s.name.includes('פיגמנטציה'))).toBe(true);
+    expect(config.services.some(s => s.name.includes('אנטי-אייג׳ינג'))).toBe(true);
+
+    // 3. Demo slug resolution
+    const demoCosmetics = await getBusinessBySlug('cosmetics');
+    expect(demoCosmetics).toBeDefined();
+    expect(demoCosmetics.category).toBe('beauty_salon');
+    expect(demoCosmetics.transformations?.length).toBeGreaterThan(0);
+    expect(demoCosmetics.transformations?.[0].title).toContain('אקנאי');
+  });
 });
 

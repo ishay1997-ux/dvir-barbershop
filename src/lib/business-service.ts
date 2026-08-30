@@ -15,6 +15,8 @@ export function presetToBusinessConfig(preset: IndustryPreset, slug: string): Bu
     city:
       preset.id === 'barbershop'
         ? 'אריאל & רחובות'
+        : preset.id === 'cosmetics-aesthetician'
+        ? 'הרצליה פיתוח'
         : preset.id === 'nails-beauty'
         ? 'ראשון לציון'
         : preset.id === 'home-technician'
@@ -35,7 +37,7 @@ export function presetToBusinessConfig(preset: IndustryPreset, slug: string): Bu
     experienceYears: 7,
     instagramHandle: preset.id,
     whatsappNumber: '0548889999',
-    category: (preset.id === 'barbershop' ? 'barber' : preset.id === 'nails-beauty' ? 'beauty_salon' : preset.id === 'spa-massage' ? 'clinic_therapist' : preset.id === 'fitness-trainer' ? 'private_instructor' : preset.id === 'home-technician' ? 'home_technician' : 'barber') as any,
+    category: (preset.id === 'barbershop' ? 'barber' : (preset.id === 'cosmetics-aesthetician' || preset.id === 'nails-beauty') ? 'beauty_salon' : preset.id === 'spa-massage' ? 'clinic_therapist' : preset.id === 'fitness-trainer' ? 'private_instructor' : preset.id === 'home-technician' ? 'home_technician' : 'barber') as any,
     services: preset.services,
     transformations: preset.transformations,
     branches: [
@@ -133,9 +135,12 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
 
   // Check Niche Aliases
   const presetMap: Record<string, string> = {
+    cosmetics: 'cosmetics-aesthetician',
+    'cosmetics-aesthetician': 'cosmetics-aesthetician',
+    glow: 'cosmetics-aesthetician',
+    skin: 'cosmetics-aesthetician',
     beauty: 'nails-beauty',
     nails: 'nails-beauty',
-    cosmetics: 'nails-beauty',
     'nails-beauty': 'nails-beauty',
     spa: 'spa-massage',
     massage: 'spa-massage',

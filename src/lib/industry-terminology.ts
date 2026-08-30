@@ -331,7 +331,7 @@ export function resolveIndustryCategoryKey(business?: any): string {
   if (typeof business === 'string') {
     const raw = business.trim().toLowerCase();
     if (INDUSTRY_META_MAP[raw]) return raw;
-    if (raw === 'beauty' || raw === 'nails' || raw === 'nails-beauty' || raw === 'cosmetics') return 'beauty_salon';
+    if (raw === 'beauty' || raw === 'nails' || raw === 'nails-beauty' || raw === 'cosmetics' || raw === 'cosmetics-aesthetician' || raw === 'glow' || raw === 'skin') return 'beauty_salon';
     if (raw === 'trainer' || raw === 'fitness' || raw === 'fitness-trainer' || raw === 'coach') return 'private_instructor';
     if (raw === 'spa' || raw === 'massage' || raw === 'spa-massage') return 'clinic_therapist';
     if (raw === 'clinic' || raw === 'clinics' || raw === 'clinics-aesthetics' || raw === 'doctor' || raw === 'aesthetics') return 'clinics_aesthetics';
@@ -344,7 +344,7 @@ export function resolveIndustryCategoryKey(business?: any): string {
   // Priority 1: Flagship or explicit slug
   const slug = (business.slug || '').toLowerCase().trim();
   if (slug === 'dvir' || slug === 'thecut') return 'barber';
-  if (slug === 'beauty') return 'beauty_salon';
+  if (slug === 'beauty' || slug === 'cosmetics' || slug === 'glow' || slug === 'skin') return 'beauty_salon';
   if (slug === 'spa') return 'clinic_therapist';
   if (slug === 'trainer') return 'private_instructor';
   if (slug === 'clinic') return 'clinics_aesthetics';
@@ -355,7 +355,7 @@ export function resolveIndustryCategoryKey(business?: any): string {
   const cat = business.category;
   if (cat) {
     if (INDUSTRY_META_MAP[cat]) return cat;
-    if (cat === 'beauty' || cat === 'nails' || cat === 'nails-beauty' || cat === 'cosmetics') return 'beauty_salon';
+    if (cat === 'beauty' || cat === 'nails' || cat === 'nails-beauty' || cat === 'cosmetics' || cat === 'cosmetics-aesthetician' || cat === 'glow' || cat === 'skin') return 'beauty_salon';
     if (cat === 'trainer' || cat === 'fitness' || cat === 'fitness-trainer' || cat === 'coach') return 'private_instructor';
     if (cat === 'spa' || cat === 'massage' || cat === 'spa-massage') return 'clinic_therapist';
     if (cat === 'clinic' || cat === 'clinics' || cat === 'clinics-aesthetics' || cat === 'doctor' || cat === 'aesthetics') return 'clinics_aesthetics';

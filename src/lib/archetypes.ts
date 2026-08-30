@@ -137,6 +137,37 @@ export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
     ],
   },
 
+  'cosmetics-aesthetician': {
+    id: 'cosmetics-aesthetician',
+    category: 'beauty_salon',
+    name: 'קליניקה לקוסמטיקה פרא-רפואית ואסתטיקה',
+    badge: 'קוסמטיקה פרא-רפואית',
+    icon: '🌸',
+    description: 'מתאים לקוסמטיקאיות פרא-רפואיות (P.M.E), אבחון עור קליני, טיפולי אקנה, פיגמנטציה ואנטי-אייג׳ינג',
+    defaultColor: '#EC4899',
+    slogan: (owner, city) => `קוסמטיקה פרא-רפואית מתקדמת, אבחון עור קליני, שיקום אקנה והבהרת פיגמנטציה ב${city || 'ישראל'}`,
+    announcement: (owner, city) => `✨ אבחון עור קליני והתאמת שגרת טיפוח אישית בקליניקה ב${city || 'ישראל'} – שרייני תור אונליין!`,
+    bio: (owner, city, bizName) => `ב-${bizName} אנו מאמינים שבריאות העור היא הבסיס ליופי אמיתי. ${owner} מתמחה באבחון קליני מעמיק, שיקום פגמי עור, החדרת חומרים פעילים ומכשור טכנולוגי מתקדם בתקנים המחמירים ביותר.`,
+    services: [
+      { id: 'srv-1', name: 'טיפול פנים עמוק & אבחון עור קליני', price: 350, duration: 60, description: 'ניקוי עמוק, ניקוז קומדונים, החדרת לחויות עמוקה והרגעת העור בחומרים פעילים', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 15 },
+      { id: 'srv-2', name: 'טיפול שיקום אקנה ואיזון סבום', price: 420, duration: 75, description: 'פרוטוקול טיפולי קליני להפחתת דלקות, ויסות בלוטות החלב ושיקום מחסום העור', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 15 },
+      { id: 'srv-3', name: 'הבהרת פיגמנטציה & פילינג חומצות', price: 480, duration: 60, description: 'קילוף מבוקר של שכבות העור העליונות, פירוק מלנין והבהרת כתמי שמש וגיל', popular: false, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 15 },
+      { id: 'srv-4', name: 'אנטי-אייג׳ינג פרימיום & מזותרפיה', price: 650, duration: 90, description: 'מיקרונידלינג מתקדם להמרצת קולגן ואלסטין, מיצוק וטשטוש קמטוטים', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 20 },
+      { id: 'srv-5', name: 'הרמת ריסים והזנת קרטין', price: 220, duration: 45, description: 'הדגשה והרמה טבעית של הריסים עם סרום קרטין מזין ל-8 שבועות', popular: false, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 10 },
+      { id: 'srv-6', name: 'עיצוב ושיקום גבות בשיטת השערה', price: 120, duration: 30, description: 'פיסול והתאמה למבנה הפנים, צביעה בחומרים צמחיים ושיקום צמיחה', popular: false, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 5 },
+    ],
+    testimonials: (owner) => [
+      { id: 't1', name: 'עדי שפירא', comment: `הגעתי עם אקנה קשה שאף אחד לא הצליח לפתור. אחרי 3 טיפולים אצל ${owner} העור שלי פשוט חלק ומבריק!`, rating: 5, timeAgo: 'לפני 3 ימים', serviceUsed: 'טיפול שיקום אקנה' },
+      { id: 't2', name: 'מאיה אלון', comment: 'הקליניקה הכי נקייה ומקצועית שיש, טיפול הפנים נתן לי זוהר מטורף לחתונה.', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'טיפול פנים עמוק' },
+      { id: 't3', name: 'דניאל כהן', comment: 'קוסמטיקאית בחסד עליון, רואים שיש כאן ידע קליני מעמיק ומכשור ברמה הכי גבוהה.', rating: 5, timeAgo: 'לפני שבועיים', serviceUsed: 'אנטי אייג׳ינג ומזותרפיה' },
+    ],
+    faqs: (owner, city) => [
+      { question: 'מה כולל הטיפול הראשון בקליניקה?', answer: `כל טיפול ראשון אצל ${owner} נפתח באבחון קליני מעמיק של סוג העור, תשאול רפואי והתאמת שגרת טיפוח אישית לבית.` },
+      { question: 'מתי מתחילים לראות תוצאות בטיפולי אקנה או פיגמנטציה?', answer: 'שיפור ברמת הדלקת והאחידות נראה כבר מהטיפול הראשון. שיקום מלא מתרחש בהדרגה לאורך סדרת טיפולים מותאמת.' },
+      { question: 'האם הטיפולים מתאימים בהריון או הנקה?', answer: 'בהחלט! אנו מתאימים פרוטוקול טיפול ייעודי ובטוח ללא חומצות אגרסיביות או רטינול.' },
+      { question: 'האם נדרשת הגנה מיוחדת משמש אחרי טיפול?', answer: 'כן, חובה למרוח מקדם הגנה SPF 50 ולהימנע מחשיפה ישירה לשמש וסאונה ב-48 השעות שלאחר הטיפול.' },
+    ],
+  },
   'beauty-cosmetics': {
     id: 'beauty-cosmetics',
     category: 'beauty_salon',
@@ -278,13 +309,41 @@ export function generateTailoredBusinessConfig(params: {
     testimonials: archetype.testimonials(owner, city),
     faqs: archetype.faqs(owner, city),
     layout: {
-      bgTheme: archetypeKey === 'beauty-cosmetics' ? 'lavender-mist' : archetypeKey === 'clinic-therapist' ? 'botanical-sage' : 'dark-obsidian',
-      heroStyle: archetypeKey === 'beauty-cosmetics' ? 'split-cinema' : archetypeKey === 'clinic-therapist' ? 'minimalist-vip' : 'hub-monogram',
-      servicesStyle: archetypeKey === 'beauty-cosmetics' ? 'cards-grid' : archetypeKey === 'home-technician' ? 'compact-menu' : 'split-gallery',
-      galleryStyle: archetypeKey === 'beauty-cosmetics' ? 'instagram-masonry' : archetypeKey === 'clinic-therapist' ? 'ambient-carousel' : 'before-after-slider',
+      bgTheme:
+        archetypeKey === 'cosmetics-aesthetician' || archetypeKey === 'beauty-cosmetics'
+          ? 'lavender-mist'
+          : archetypeKey === 'clinic-therapist'
+          ? 'botanical-sage'
+          : 'dark-obsidian',
+      heroStyle:
+        archetypeKey === 'cosmetics-aesthetician' || archetypeKey === 'beauty-cosmetics'
+          ? 'split-cinema'
+          : archetypeKey === 'clinic-therapist'
+          ? 'minimalist-vip'
+          : 'hub-monogram',
+      servicesStyle:
+        archetypeKey === 'cosmetics-aesthetician' || archetypeKey === 'beauty-cosmetics'
+          ? 'cards-grid'
+          : archetypeKey === 'home-technician'
+          ? 'compact-menu'
+          : 'split-gallery',
+      galleryStyle:
+        archetypeKey === 'cosmetics-aesthetician'
+          ? 'before-after-slider'
+          : archetypeKey === 'beauty-cosmetics'
+          ? 'instagram-masonry'
+          : archetypeKey === 'clinic-therapist'
+          ? 'ambient-carousel'
+          : 'before-after-slider',
       cardStyle: 'glass',
-      borderRadius: archetypeKey === 'beauty-cosmetics' || archetypeKey === 'clinic-therapist' ? 'classic-soft' : 'modern-rounded',
-      fontStyle: archetypeKey === 'beauty-cosmetics' ? 'luxury-serif' : 'urban-bold',
+      borderRadius:
+        archetypeKey === 'cosmetics-aesthetician' || archetypeKey === 'beauty-cosmetics' || archetypeKey === 'clinic-therapist'
+          ? 'classic-soft'
+          : 'modern-rounded',
+      fontStyle:
+        archetypeKey === 'cosmetics-aesthetician' || archetypeKey === 'beauty-cosmetics'
+          ? 'luxury-serif'
+          : 'urban-bold',
       showBeforeAfter: true,
       showReviews: true,
       showFaqs: true,

@@ -8,6 +8,7 @@ import { ExternalLink, CheckCircle2 } from 'lucide-react';
 
 const PRESET_ROUTES: Record<string, string> = {
   barbershop: '/dvir',
+  'cosmetics-aesthetician': '/cosmetics',
   'nails-beauty': '/beauty',
   'spa-massage': '/spa',
   'fitness-trainer': '/trainer',
@@ -42,6 +43,7 @@ export function NichesTab({ business, onApplyPreset }: NichesTabProps) {
           const isCurrent =
             currentSlug === preset.id ||
             (currentSlug === 'dvir' && preset.id === 'barbershop') ||
+            (currentSlug === 'cosmetics' && preset.id === 'cosmetics-aesthetician') ||
             (currentSlug === 'beauty' && preset.id === 'nails-beauty') ||
             (currentSlug === 'trainer' && preset.id === 'fitness-trainer') ||
             (currentSlug === 'spa' && preset.id === 'spa-massage') ||
