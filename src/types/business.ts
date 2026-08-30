@@ -1,3 +1,40 @@
+export type BusinessCategory = 
+  | 'barber'            // מספרות ועיצוב שיער
+  | 'beauty_salon'       // קוסמטיקה, ציפורניים, טיפוח
+  | 'clinic_therapist'   // עיסוי, טיפולים, רפואה משלימה
+  | 'home_technician'    // אינסטלטורים, חשמלאים, מנעולנים
+  | 'private_instructor';// מאמני כושר, שיעורים פרטיים
+
+export type ServiceBookingType = 
+  | 'FIXED_SLOT'         // תור מוגדר על הדקה (תספורת 30 דק')
+  | 'TIME_WINDOW'        // חלון הגעה (אינסטלטור יגיע בין 10:00 ל-13:00)
+  | 'CONSULTATION_QUOTE';// ייעוץ / הצעת מחיר
+
+export type ServiceLocationType = 
+  | 'BUSINESS_LOCATION'  // הגעה לסניף/קליניקה/מספרה
+  | 'CLIENT_ADDRESS'     // שירות בבית הלקוח
+  | 'ONLINE_VIDEO';      // פגישה אונליין
+
+export interface ClientAddress {
+  city: string;
+  street: string;
+  houseNumber?: string;
+  apartment?: string;
+  floor?: string;
+  entryCode?: string;
+  notes?: string;
+}
+
+export interface StaffMember {
+  id: string;
+  name: string;
+  role: string;
+  phone?: string;
+  avatarUrl?: string;
+  servicesProvided?: string[]; // IDs של השירותים שהעובד מבצע
+  isActive?: boolean;
+}
+
 export interface ServiceItem {
   id?: string;
   name: string;
@@ -5,6 +42,10 @@ export interface ServiceItem {
   duration: number; // in minutes
   description?: string;
   popular?: boolean;
+  bookingType?: ServiceBookingType;
+  locationType?: ServiceLocationType;
+  bufferAfterMinutes?: number; // זמן ניקיון / מעבר בין לקוחות
+  staffIds?: string[];
 }
 
 export interface BranchItem {
@@ -47,6 +88,7 @@ export interface BusinessConfig {
   id: string;
   name: string;
   slug: string;
+  category?: BusinessCategory;
   ownerName: string;
   phone: string;
   city: string;
@@ -61,6 +103,8 @@ export interface BusinessConfig {
   galleryImages?: string[];
   services: ServiceItem[];
   branches: BranchItem[];
+  staff?: StaffMember[];
+  bufferMinutesDefault?: number;
   testimonials?: TestimonialItem[];
   faqs?: FaqItem[];
   instagramHandle?: string;

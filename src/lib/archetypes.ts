@@ -1,7 +1,15 @@
-import { BusinessConfig, ServiceItem, BranchItem, TestimonialItem, FaqItem } from '@/types/business';
+import {
+  BusinessConfig,
+  ServiceItem,
+  BranchItem,
+  TestimonialItem,
+  FaqItem,
+  BusinessCategory,
+} from '@/types/business';
 
 export interface BusinessArchetype {
-  id: 'mens-barbershop' | 'womens-salon' | 'luxury-vip' | 'unisex-family';
+  id: string;
+  category: BusinessCategory;
   name: string;
   badge: string;
   icon: string;
@@ -85,6 +93,7 @@ export const THEME_PALETTES = [
 export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
   'mens-barbershop': {
     id: 'mens-barbershop',
+    category: 'barber',
     name: 'ברברשופ גברים קלאסי & פיידים',
     badge: 'ברברשופ לגברים',
     icon: '💈',
@@ -92,109 +101,107 @@ export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
     defaultColor: '#C9A84C',
     slogan: (owner, city) => `עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר ב${city || 'ישראל'}`,
     announcement: (owner, city) => `🌟 קביעת תורים מהירה אונליין לכל הסניפים ב${city || 'ישראל'} 24/7 – שריינו מראש!`,
-    bio: (owner, city, bizName, exp) => `ב-${bizName} אנו מאמינים שתספורת היא כרטיס הביקור של הגבר המודרני. ${owner} מעניק לכל לקוח יחס אישי, התאמה אופטימלית למבנה הפנים, שימוש בתערים יפניים וחיטוי וסטריליות קפדניים.`,
+    bio: (owner, city, bizName) => `ב-${bizName} אנו מאמינים שתספורת היא כרטיס הביקור של הגבר המודרני. ${owner} מעניק לכל לקוח יחס אישי, התאמה אופטימלית למבנה הפנים, שימוש בתערים יפניים וחיטוי וסטריליות קפדניים.`,
     services: [
-      { id: 'srv-1', name: 'תספורת גברים פרימיום (Fade)', price: 80, duration: 30, description: 'כולל חפיפה מפנקת, דירוג Fade מדויק ועיצוב בחומרי פרימיום', popular: true },
-      { id: 'srv-2', name: 'עיצוב ופיסול זקן Master', price: 40, duration: 20, description: 'תיחום קווים בתער, ריכוך בשמנים מזינים ומגבת חמה', popular: false },
-      { id: 'srv-3', name: 'חבילת VIP משולבת (תספורת + זקן)', price: 110, duration: 45, description: 'החוויה המושלמת: תספורת פייד, פיסול זקן, טיפול מגבת חמה וחפיפה', popular: true },
-      { id: 'srv-4', name: 'תספורת ילדים ונוער', price: 70, duration: 30, description: 'תספורת אופנתית וסבלנית באווירה צעירה ונעימה', popular: false },
+      { id: 'srv-1', name: 'תספורת גברים פרימיום (Fade)', price: 80, duration: 30, description: 'כולל חפיפה מפנקת, דירוג Fade מדויק ועיצוב בחומרי פרימיום', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 5 },
+      { id: 'srv-2', name: 'עיצוב ופיסול זקן Master', price: 40, duration: 20, description: 'תיחום קווים בתער, ריכוך בשמנים מזינים ומגבת חמה', popular: false, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 5 },
+      { id: 'srv-3', name: 'חבילת VIP משולבת (תספורת + זקן)', price: 110, duration: 45, description: 'החוויה המושלמת: תספורת פייד, פיסול זקן, טיפול מגבת חמה וחפיפה', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 5 },
+      { id: 'srv-4', name: 'תספורת ילדים ונוער', price: 70, duration: 30, description: 'תספורת אופנתית וסבלנית באווירה צעירה ונעימה', popular: false, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 5 },
     ],
-    testimonials: (owner, city) => [
-      { id: 't1', name: 'יונתן כהן', comment: `הספר הכי מדויק שיצא לי להסתפר אצלו ב${city}! פייד נקי וחלק בלי שום פשרות.`, rating: 5, timeAgo: 'לפני 3 ימים', serviceUsed: 'תספורת גברים פרימיום' },
-      { id: 't2', name: 'עומר לוי', comment: 'חבילת ה-VIP שווה כל שקל! פיסול הזקן והמגבת החמה זו חוויה של מספרת יוקרה.', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'חבילת VIP משולבת' },
-      { id: 't3', name: 'רועי ששון', comment: 'שירות מעל המצופה, עמידה מדויקת בזמנים, אווירה טובה ומקצוענות שיא!', rating: 5, timeAgo: 'לפני שבועיים', serviceUsed: 'תספורת גברים פרימיום' },
+    testimonials: (owner) => [
+      { id: 't1', name: 'איתי ברקוביץ', comment: `הסקין פייד הכי מדויק שעשו לי אי פעם. שירות ויחס ברמה הכי גבוהה שיש אצל ${owner}!`, rating: 5, timeAgo: 'לפני יומיים', serviceUsed: 'תספורת גברים פרימיום' },
+      { id: 't2', name: 'עומר אלוני', comment: 'מסתפר קבוע, אווירה נעימה, מקצועיות שאין לתאר וזמנים מדויקים על הדקה.', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'חבילת VIP משולבת' },
+      { id: 't3', name: 'יונתן שפירא', comment: 'אין על הדיוק והשירות, תמיד יוצא מרוצה במאה אחוז.', rating: 5, timeAgo: 'לפני שבועיים', serviceUsed: 'תספורת + זקן' },
     ],
     faqs: (owner, city) => [
-      { question: 'האם חובה לקבוע תור מראש?', answer: 'כן, כדי להבטיח שלא תמתינו אפילו דקה אחת, אנו עובדים במתכונת תורים מוזמנים מראש דרך המערכת.' },
-      { question: 'האם ניתן לבטל או להזיז תור?', answer: 'בהחלט! ניתן לבטל תור בקלות דרך האתר עד שעתיים לפני מועד התור ללא עלות.' },
-      { question: 'אילו אמצעי תשלום מתקבלים במספרה?', answer: 'אנו מקבלים מזומן, כרטיסי אשראי, Bit, PayBox ו-Apple Pay.' },
-      { question: 'האם יש חניה צמודה בסניף?', answer: `כן, בקרבת הסניף ב${city} קיימת חניה מסודרת וגישה נוחה ללקוחותינו.` },
+      { question: 'האם חובה להזמין תור מראש?', answer: `כן, כדי למנוע המתנה מומלץ תמיד לשריין תור מראש במערכת האונליין של ${owner}.` },
+      { question: 'מהי מדיניות ביטול או שינוי תור?', answer: 'ניתן לבטל או להזיז תור עד שעתיים לפני המועד בלחיצת כפתור דרך האתר.' },
+      { question: 'אילו אמצעי תשלום מכבדים במספרה?', answer: 'מזומן, אשראי, Bit, PayBox ו-Apple Pay.' },
+      { question: 'האם יש חניה צמודה?', answer: `כן, ישנה חניה זמינה ובחינם בסמוך למספרה ב${city}.` },
     ],
   },
 
-  'womens-salon': {
-    id: 'womens-salon',
-    name: 'סלון עיצוב שיער נשים & החלקות',
-    badge: 'סלון נשים והחלקות',
-    icon: '💇‍♀️',
-    description: 'מתאים לסלוני נשים, החלקות אורגניות, גוונים, בלונד, תספורות ועיצוב תסרוקות',
+  'beauty-cosmetics': {
+    id: 'beauty-cosmetics',
+    category: 'beauty_salon',
+    name: 'קליניקת קוסמטיקה, ציפורניים & טיפוח',
+    badge: 'קוסמטיקה ויופי',
+    icon: '💅',
+    description: 'מתאים לקוסמטיקאיות, מכוני מניקור-פדיקור, טיפולי פנים, עיצוב גבות והסרת שיער',
     defaultColor: '#EC4899',
-    slogan: (owner, city) => `מרכז החלקות אורגניות, בלונד מושלם, גוונים ועיצוב שיער מקצועי ב${city || 'ישראל'}`,
-    announcement: (owner, city) => `✨ 15% הנחה על טיפול שיקום שיער בכל הזמנת החלקה אורגנית השבוע!`,
-    bio: (owner, city, bizName, exp) => `ב-${bizName} אנו מתמחים בטיפוח, שיקום והעצמת השיער הנשי. ${owner} מתמחה בהחלקות בריאות ללא פורמלין באישור משרד הבריאות, כימיה מתקדמת וגוונים טבעיים בטכניקות המובילות בעולם.`,
+    slogan: (owner, city) => `טיפולי קוסמטיקה מתקדמים, מניקור ג׳ל מדויק וטיפוח עור הפנים ב${city || 'ישראל'}`,
+    announcement: (owner, city) => `✨ שרייני תור אונליין לטיפולי יופי וציפורניים בקליניקה ב${city || 'ישראל'} – זמינות מיידית!`,
+    bio: (owner, city, bizName) => `ב-${bizName} אנו מחברים בין בריאות העור ליופי ואסתטיקה ללא פשרות. ${owner} מתמחה במכשור מתקדם, חומרי פרימיום בינלאומיים וחיטוי בסטנדרט רפואי מחמיר.`,
     services: [
-      { id: 'srv-1', name: 'החלקה אורגנית משקמת פרימיום', price: 550, duration: 120, description: 'פורמולה טבעית ללא פורמלין, מועשרת בחומצות אמינו ומעניקה ברק מושלם', popular: true },
-      { id: 'srv-2', name: 'גוונים / בליאז׳ / אומברה', price: 420, duration: 90, description: 'טכניקת פיזור טבעית בהתאמה אישית לגוון העור ומבנה הפנים', popular: true },
-      { id: 'srv-3', name: 'תספורת נשים ועיצוב קצוות', price: 120, duration: 45, description: 'כולל חפיפה טיפולית, מסכה מזינה והתאמת דירוג אישי', popular: false },
-      { id: 'srv-4', name: 'פן מקצועי ועיצוב תסרוקת VIP', price: 80, duration: 30, description: 'פן עמיד ומבריק עם חומרי הזנה וברק יוקרתיים', popular: false },
+      { id: 'srv-1', name: 'מניקור ג׳ל רוסי משולב מבנה אנטומי', price: 140, duration: 60, description: 'מניקור יסודי, חיזוק במבנה אנטומי ומריחה צמודה לעור עם לקים מובחרים', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 10 },
+      { id: 'srv-2', name: 'טיפול פנים קלאסי עמוק & זוהר', price: 280, duration: 75, description: 'ניקוי עמוק, פילינג חומצות, החדרת לחויות ומסכת זוהר בהתאמה אישית', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 15 },
+      { id: 'srv-3', name: 'עיצוב ושיקום גבות + צביעה', price: 90, duration: 30, description: 'עיצוב בשיטת השערה, התאמה למבנה הפנים וצביעה בחומרים טבעיים', popular: false, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 5 },
+      { id: 'srv-4', name: 'פדיקור רפואי / טיפולי מפנק', price: 180, duration: 50, description: 'טיפול יסודי בכף הרגל, הסרת עור קשה, עיסוי קרם הזנה ומריחת לק', popular: false, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 10 },
     ],
-    testimonials: (owner, city) => [
-      { id: 't1', name: 'מיכל שטרן', comment: `ההחלקה הכי טובה שעשיתי בחיים! השיער נשאר חלק, רך וזוהר כבר 4 חודשים. ממליצה על ${owner} בחום!`, rating: 5, timeAgo: 'לפני 4 ימים', serviceUsed: 'החלקה אורגנית משקמת' },
-      { id: 't2', name: 'שירה אברהם', comment: 'הגוונים יצאו פשוט מושלמים! בדיוק כמו בתמונות שרציתי. יחס חם ואווירה נעימה.', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'גוונים / בליאז׳' },
-      { id: 't3', name: 'נועה ברק', comment: 'שירות מכל הלב, ידי זהב ומקצוענות ללא פשרות. הסלון הכי שווה ב' + city + '!', rating: 5, timeAgo: 'לפני שבועיים', serviceUsed: 'תספורת נשים' },
+    testimonials: (owner) => [
+      { id: 't1', name: 'רוני כהן', comment: `המניקור של ${owner} מחזיק לי חודש שלם בלי שום צ׳יפ! עבודה נקייה ומדויקת להפליא.`, rating: 5, timeAgo: 'לפני 3 ימים', serviceUsed: 'מניקור ג׳ל מבנה אנטומי' },
+      { id: 't2', name: 'הילה שמש', comment: 'טיפול הפנים עשה פלאים לעור שלי, מקצועיות שאין כמותה ואווירה סופר מרגיעה.', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'טיפול פנים זוהר' },
+      { id: 't3', name: 'שני מזרחי', comment: 'קליניקה מדהימה, סטריליות 100% ושירות מושלם. ממליצה בחום!', rating: 5, timeAgo: 'לפני שבועיים', serviceUsed: 'עיצוב גבות' },
     ],
     faqs: (owner, city) => [
-      { question: 'האם ההחלקות מאושרות ע״י משרד הבריאות?', answer: 'כן, כל החומצות והחומרים בהם אנו משתמשים הינם 100% מאושרים ובטוחים לשימוש.' },
-      { question: 'איך לשמור על ההחלקה לאורך זמן?', answer: 'אנו ממליצים על שימוש בשמפו ומסכה ללא מלחים אותם ניתן לרכוש גם ישירות אצלנו בסלון.' },
-      { question: 'כמה זמן מראש צריך לשריין תור להחלקה?', answer: 'החלקות דורשות זמן עבודה ממושך, לכן מומלץ לשריין לפחות 3-5 ימים מראש.' },
-      { question: 'אילו אמצעי תשלום מתקבלים?', answer: 'מזומן, אשראי (חלוקה לתשלומים בהחלקות), Bit ו-Apple Pay.' },
+      { question: 'האם המכשור עובר חיטוי וסטריליזציה?', answer: 'באופן קפדני ביותר. כל הכלים עוברים תהליך חיטוי ועיקור באוטוקלאב רפואי לפני כל לקוחה.' },
+      { question: 'כמה זמן מחזיק מבנה אנטומי?', answer: 'בממוצע 3 עד 4 שבועות של עמידות מושלמת וברק מלא.' },
+      { question: 'איך מתבצעת הגעה לקליניקה?', answer: `הקליניקה ממוקמת ב${city} במקום נגיש עם חניה נוחה.` },
     ],
   },
 
-  'luxury-vip': {
-    id: 'luxury-vip',
-    name: 'סטודיו בוטיק יוקרתי VIP',
-    badge: 'בוטיק יוקרה VIP',
-    icon: '👑',
-    description: 'מתאים לסטודיו פרימיום, טיפולי פנים, חבילות יוקרה וטיפוח לגבר ולאישה',
-    defaultColor: '#10B981',
-    slogan: (owner, city) => `חוויית טיפוח ועיצוב שיער אקסקלוסיבית באווירת בוטיק יוקרתית ב${city || 'ישראל'}`,
-    announcement: (owner, city) => `💎 חוויית אירוח VIP מלאה, קפה מובחר וטיפולים בלעדיים – שריינו מראש!`,
-    bio: (owner, city, bizName, exp) => `ב-${bizName} אנו הופכים כל תספורת לחוויית פינוק מושלמת. ${owner} מוביל סטנדרט חדש של אירוח: טיפולי מגבת חמה, טיפולי פנים מטהרים, מוצרי פרימיום עולמיים ויחס אקסקלוסיבי לכל לקוח.`,
-    services: [
-      { id: 'srv-1', name: 'חבילת Platinum VIP לגבר', price: 150, duration: 60, description: 'תספורת פייד, פיסול זקן, מסכה שחורה מטהרת, טיפול מגבות חמות וקרם עיסוי', popular: true },
-      { id: 'srv-2', name: 'תספורת Executive Signature', price: 90, duration: 35, description: 'דירוג מדויק ומותאם אישית, שטיפה כפולה ועיצוב במוצרי יוקרה', popular: true },
-      { id: 'srv-3', name: 'טיפול פנים ופילינג עמוק', price: 70, duration: 25, description: 'ניקוי נקבוביות, מסכת לחות עשירה ועיסוי מרענן לקרקפת', popular: false },
-      { id: 'srv-4', name: 'עיצוב זקן ושפם Signature', price: 50, duration: 25, description: 'תיחום גיאומטרי מדויק, שמני ארגן מזינים ומגבת ארומטית', popular: false },
-    ],
-    testimonials: (owner, city) => [
-      { id: 't1', name: 'דניאל מזרחי', comment: `חבילת הפלטינום היא הרמה הכי גבוהה שנתקלתי בה בישראל. שירות מדהים ופינוק אמיתי אצל ${owner}!`, rating: 5, timeAgo: 'לפני יומיים', serviceUsed: 'חבילת Platinum VIP' },
-      { id: 't2', name: 'איתי קליין', comment: 'סטודיו ברמה אירופאית! מקום יפהפה, נקי, קפה טעים וידיים של אמן.', rating: 5, timeAgo: 'לפני 5 ימים', serviceUsed: 'תספורת Executive' },
-      { id: 't3', name: 'גיא פרידמן', comment: 'הדיוק והירידה לפרטים כאן היא משהו נדיר. שווה כל שקל!', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'חבילת Platinum VIP' },
-    ],
-    faqs: (owner, city) => [
-      { question: 'מה כוללת חוויית ה-VIP בסטודיו?', answer: 'כל לקוח נהנה מחוויית אירוח אישית, משקאות פרימיום, טיפולי מגבת חמה ומוצרי טיפוח מובחרים.' },
-      { question: 'האם יש פרטיות במהלך הטיפול?', answer: 'כן, הסטודיו מתוכנן במתכונת בוטיק אינטימית ללא צפיפות ועומס.' },
-      { question: 'האם ניתן לרכוש שובר מתנה?', answer: 'בהחלט! ניתן לרכוש שובר חוויית VIP דיגיטלי מתנה ליום הולדת או אירוע מיוחד.' },
-      { question: 'היכן ממוקם הסטודיו?', answer: `הסטודיו ממוקם במיקום מרכזי ונגיש ב${city} עם חניה נוחה.` },
-    ],
-  },
-
-  'unisex-family': {
-    id: 'unisex-family',
-    name: 'מספרת יוניסקס ומשפחה',
-    badge: 'מספרה לכל המשפחה',
-    icon: '✂️',
-    description: 'מתאים למספרות שכונתיות, גברים, נשים, ילדים ונוער באווירה חמה ונגישה',
+  'home-technician': {
+    id: 'home-technician',
+    category: 'home_technician',
+    name: 'טכנאי שירותי בית & אינסטלציה (שירות בבית הלקוח)',
+    badge: 'שירותי בית ואחזקה',
+    icon: '🔧',
+    description: 'מתאים לאינסטלטורים, חשמלאים, מנעולנים, תיקוני מזגנים ואנשי שירות שמגיעים לבית הלקוח',
     defaultColor: '#3B82F6',
-    slogan: (owner, city) => `עיצוב שיער מקצועי לכל המשפחה – גברים, נשים וילדים באווירה חמה ב${city || 'ישראל'}`,
-    announcement: (owner, city) => `👨‍👩‍👧 מבצע משפחתי: 15% הנחה על כל תספורת שנייה ומעלה באותו היום!`,
-    bio: (owner, city, bizName, exp) => `ב-${bizName} אנו מעניקים חוויית מספרה חמה, סבלנית ומקצועית לכל המשפחה. ${owner} והצוות מקפידים על מחירים הוגנים, יחס אוהב לילדים, ועיצוב תספורות עדכניות לכל הגילאים.`,
+    slogan: (owner, city) => `שירותי אינסטלציה ותיקונים מהירים בבית הלקוח ב${city || 'ישראל'} – אמינות, מקצועיות ואחריות מלאה`,
+    announcement: (owner, city) => `🛠️ שריינו חלון הגעת טכנאי אונליין לכל אזור ${city || 'ישראל'} – מגיעים עם ציוד מלא!`,
+    bio: (owner, city, bizName) => `ב-${bizName} אנו מספקים מענה מהיר, יסודי ומקצועי לכל תקלה בבית או בעסק. ${owner} מתמחה באיתור נזילות במצלמות תרמיות, פתיחת סתימות מורכבות, ועבודות אינסטלציה וחשמל עם אחריות בכתב.`,
     services: [
-      { id: 'srv-1', name: 'תספורת גברים / דירוג מודרני', price: 75, duration: 30, description: 'תספורת גברים אופנתית כולל חפיפה ועיצוב', popular: true },
-      { id: 'srv-2', name: 'תספורת נשים ועיצוב', price: 110, duration: 40, description: 'תספורת, התאמת קצוות וחפיפה עם מסכה', popular: true },
-      { id: 'srv-3', name: 'תספורת ילדים ונוער', price: 60, duration: 25, description: 'תספורת סבלנית וכיפית עם יחס חם לילדים', popular: false },
-      { id: 'srv-4', name: 'פן / עיצוב תסרוקת מהיר', price: 70, duration: 25, description: 'פן חלק או גלי עמיד ומעוצב', popular: false },
+      { id: 'srv-1', name: 'ביקור טכנאי ובדיקה כללית בבית הלקוח', price: 200, duration: 60, description: 'הגעה, בדיקת התקלה, מתן דיאגנוסטיקה והצעת מחיר מדויקת במקום', popular: true, bookingType: 'TIME_WINDOW', locationType: 'CLIENT_ADDRESS', bufferAfterMinutes: 30 },
+      { id: 'srv-2', name: 'פתיחת סתימה במכשור חשמלי מתקדם', price: 350, duration: 60, description: 'פתיחת סתימות בכיור, באסלה או בצנרת ראשית ללא שבירות ונזקים', popular: true, bookingType: 'TIME_WINDOW', locationType: 'CLIENT_ADDRESS', bufferAfterMinutes: 30 },
+      { id: 'srv-3', name: 'איתור נזילות במצלמה תרמית + דו״ח', price: 750, duration: 90, description: 'בדיקה תרמית ללא הרס ואיתור מקור הרטיבות כולל הפקת דו״ח מקצועי', popular: false, bookingType: 'TIME_WINDOW', locationType: 'CLIENT_ADDRESS', bufferAfterMinutes: 45 },
+      { id: 'srv-4', name: 'החלפת ברזים / סיפונים וכלים סניטריים', price: 280, duration: 45, description: 'התקנה מקצועית של ברזים, ניאגרות וחיבורי מים עם איטום מלא', popular: false, bookingType: 'TIME_WINDOW', locationType: 'CLIENT_ADDRESS', bufferAfterMinutes: 30 },
     ],
-    testimonials: (owner, city) => [
-      { id: 't1', name: 'קרן דהן', comment: `הספר היחיד שהילד שלי יושב אצלו בשקט ומחייך! סבלנות מדהימה ויחס נדיר תודה ל${owner}.`, rating: 5, timeAgo: 'לפני 3 ימים', serviceUsed: 'תספורת ילדים' },
-      { id: 't2', name: 'אביב גבאי', comment: 'תספורת גברים מעולה ומחיר הכי הוגן באזור. מומלץ מאוד!', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'תספורת גברים' },
-      { id: 't3', name: 'מיכל לוין', comment: 'מקום נעים, נקי ותמיד מקבלים אותך עם חיוך. מספרה משפחתית אמיתית!', rating: 5, timeAgo: 'לפני שבועיים', serviceUsed: 'תספורת נשים' },
+    testimonials: (owner) => [
+      { id: 't1', name: 'יורם אשכנזי', comment: `הגיע בדיוק בזמן, איתר את הנזילה תוך 10 דקות ותיקן במחיר הוגן ביותר. ${owner} מקצוען אמיתי!`, rating: 5, timeAgo: 'לפני 4 ימים', serviceUsed: 'איתור נזילה' },
+      { id: 't2', name: 'דנה קופלר', comment: 'השירות הכי מהיר ואמין שקיבלתי. פתר סתימה קשה ששני בעלי מקצוע אחרים הסתבכו איתה.', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'פתיחת סתימה' },
+      { id: 't3', name: 'משה ארצי', comment: 'עבודה נקייה, יסודית ואחריות מלאה על העבודה. ממליץ בחום!', rating: 5, timeAgo: 'לפני שבועיים', serviceUsed: 'החלפת ברזים' },
     ],
     faqs: (owner, city) => [
-      { question: 'האם מתאים לילדים קטנים?', answer: 'בהחלט! יש לנו ניסיון רב וסבלנות גדולה עם פעוטות וילדים בכל הגילאים.' },
-      { question: 'האם אפשר לקבוע תור משפחתי ברצף?', answer: 'כן, ניתן לבחור מספר תורים ברצף עבור בני המשפחה במערכת ההזמנות.' },
-      { question: 'אילו אמצעי תשלום מקבלים?', answer: 'אנו מקבלים מזומן, אשראי, Bit, PayBox ו-Apple Pay.' },
+      { question: 'האם ניתנת אחריות על התיקון?', answer: 'בהחלט! על כל עבודה ותיקון ניתנת אחריות מלאה בכתב.' },
+      { question: 'איך עובד חלון הזמנים להגעה?', answer: 'בעת ההזמנה בוחרים חלון הגעה נוח (בוקר/צהריים/ערב), והטכנאי מעדכן בוואטסאפ כחצי שעה לפני הגעתו.' },
+      { question: 'באילו אזורים ניתן השירות?', answer: `אנו מספקים שירות ב${city} ובכל יישובי הסביבה.` },
+    ],
+  },
+
+  'clinic-therapist': {
+    id: 'clinic-therapist',
+    category: 'clinic_therapist',
+    name: 'קליניקה פרטית, עיסויים & רפואה משלימה',
+    badge: 'קליניקה ובריאות',
+    icon: '🌿',
+    description: 'מתאים למטפלים בעיסוי, פסיכותרפיסטים, כירופרקטים, דיקור סיני ומטפלי גוף-נפש',
+    defaultColor: '#10B981',
+    slogan: (owner, city) => `טיפולי גוף ונפש, עיסויים רפואיים ורפואה משלימה באווירה שלווה ב${city || 'ישראל'}`,
+    announcement: (owner, city) => `🌿 שריינו מועד לטיפול מרגיע ומחדש אנרגיות בקליניקה ב${city || 'ישראל'} – חוויה מרפאת!`,
+    bio: (owner, city, bizName) => `ב-${bizName} אנו יוצרים מרחב של שקט, ריפוי והפגת מתחים. ${owner} מוסמך בטכניקות מתקדמות של שחרור שרירים תפוסים, איזון אנרגטי ושיקום פיזיולוגי מותאם אישית.`,
+    services: [
+      { id: 'srv-1', name: 'עיסוי רפואי משולב & שחרור מתחים (60 דק\')', price: 280, duration: 60, description: 'שילוב טכניקות שוודי, רקמות עמוקות ושמנים ארומתרפיים להרפיה מלאה', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 15 },
+      { id: 'srv-2', name: 'עיסוי רקמות עמוקות וספורטאים (75 דק\')', price: 340, duration: 75, description: 'עבודה ממוקדת על שרירים תפוסים, שחרור מפרקים ושיפור טווחי תנועה', popular: true, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 15 },
+      { id: 'srv-3', name: 'פגישת ייעוץ וטיפול ברפואה משלימה', price: 250, duration: 50, description: 'אבחון מקיף, דיקור סיני / רפלקסולוגיה והתאמת תוכנית טיפול', popular: false, bookingType: 'FIXED_SLOT', locationType: 'BUSINESS_LOCATION', bufferAfterMinutes: 10 },
+    ],
+    testimonials: (owner) => [
+      { id: 't1', name: 'רועי בן דוד', comment: `הגעתי עם גב תפוס לחלוטין ויצאתי כמו חדש. הטיפול של ${owner} פשוט מציל חיים!`, rating: 5, timeAgo: 'לפני יומיים', serviceUsed: 'עיסוי רקמות עמוקות' },
+      { id: 't2', name: 'מיכל אלון', comment: 'קליניקה מדהימה, שקטה ונקייה. העיסוי הכי מקצועי ומרגיע שחוויתי.', rating: 5, timeAgo: 'לפני שבוע', serviceUsed: 'עיסוי שוודי משולב' },
+    ],
+    faqs: (owner, city) => [
+      { question: 'האם הטיפול מתאים גם לסובלים מכאבים כרוניים?', answer: 'כן, הטיפול מותאם אישית לאחר תשאול רפואי מדויק בתחילת הפגישה.' },
+      { question: 'מה צריך להביא לטיפול?', answer: 'אין צורך להביא דבר, הקליניקה מספקת מגבות סטריליות, חלוקים ומקלחת צמודה.' },
     ],
   },
 };
@@ -208,6 +215,7 @@ export function generateTailoredBusinessConfig(params: {
   ownerName: string;
   phone: string;
   city: string;
+  category?: BusinessCategory;
   archetypeId?: string;
   themeColor?: string;
   plan?: 'pro' | 'starter' | 'enterprise';
@@ -216,7 +224,8 @@ export function generateTailoredBusinessConfig(params: {
   services?: ServiceItem[];
 }): BusinessConfig {
   const cleanSlug = params.slug.toLowerCase().trim().replace(/[^a-z0-9-_]/g, '');
-  const archetype = BUSINESS_ARCHETYPES[params.archetypeId || 'mens-barbershop'] || BUSINESS_ARCHETYPES['mens-barbershop'];
+  const archetypeKey = params.archetypeId || 'mens-barbershop';
+  const archetype = BUSINESS_ARCHETYPES[archetypeKey] || BUSINESS_ARCHETYPES['mens-barbershop'];
   const color = params.themeColor || archetype.defaultColor;
   const owner = params.ownerName || params.name;
   const city = params.city || 'ישראל';
@@ -235,6 +244,7 @@ export function generateTailoredBusinessConfig(params: {
     id: `biz-${cleanSlug}`,
     name: params.name,
     slug: cleanSlug,
+    category: params.category || archetype.category || 'barber',
     ownerName: owner,
     phone: params.phone,
     city: city,
@@ -246,7 +256,7 @@ export function generateTailoredBusinessConfig(params: {
     plan: params.plan || 'pro',
     createdAt: new Date().toISOString().split('T')[0],
     experienceYears: 5,
-    instagramHandle: params.instagramHandle || `@${cleanSlug}_barber`,
+    instagramHandle: params.instagramHandle || `@${cleanSlug}`,
     services: params.services && params.services.length > 0 ? params.services : archetype.services,
     branches: params.branches && params.branches.length > 0 ? params.branches : [defaultBranch],
     testimonials: archetype.testimonials(owner, city),

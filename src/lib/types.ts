@@ -55,6 +55,14 @@ export interface Appointment {
   end_time: string;   // ISO
   status: 'pending' | 'confirmed' | 'cancelled' | 'no_show';
   notes?: string;
+  client_address?: {
+    city: string;
+    street: string;
+    apartment?: string;
+    floor?: string;
+    notes?: string;
+  };
+  booking_type?: 'FIXED_SLOT' | 'TIME_WINDOW' | 'CONSULTATION_QUOTE';
   created_at: string;
 }
 

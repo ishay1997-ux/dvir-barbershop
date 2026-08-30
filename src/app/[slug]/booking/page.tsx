@@ -52,6 +52,7 @@ export default function DynamicBusinessBookingPage({
   const [selectedBranch, setSelectedBranch] = useState<string>('');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [bookedAppointment, setBookedAppointment] = useState<any>(null);
@@ -94,12 +95,17 @@ export default function DynamicBusinessBookingPage({
       error('נא למלא שם ומספר טלפון');
       return;
     }
+    if (selectedService?.locationType === 'CLIENT_ADDRESS' && !customerAddress.trim()) {
+      error('שירות זה מתבצע בבית הלקוח – נא להזין כתובת להגעת הטכנאי/נותן השירות');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       const apptData = {
         customerName,
         customerPhone,
+        customerAddress: customerAddress || undefined,
         service: selectedService?.name || 'תספורת',
         price: selectedService?.price || 80,
         date: selectedDate,
@@ -108,6 +114,8 @@ export default function DynamicBusinessBookingPage({
         businessSlug: slug,
         businessName: business?.name || 'The Cut',
         status: 'confirmed',
+        locationType: selectedService?.locationType || 'BUSINESS_LOCATION',
+        bookingType: selectedService?.bookingType || 'FIXED_SLOT',
       };
 
       const res = await fetch('/api/appointments', {
@@ -417,6 +425,20 @@ export default function DynamicBusinessBookingPage({
                   />
                   <Phone className="w-4 h-4 text-zinc-500 absolute right-3.5 top-1/2 -translate-y-1/2" />
                 </div>
+
+                {selectedService?.locationType === 'CLIENT_ADDRESS' && (
+                  <div className="relative animate-in fade-in slide-in-from-top-1 duration-200">
+                    <input
+                      type="text"
+                      value={customerAddress}
+                      onChange={(e) => setCustomerAddress(e.target.value)}
+                      placeholder="כתובת להגעת איש השירות (עיר, רחוב, מספר בית) *"
+                      required
+                      className="w-full bg-[#141414] border border-amber-500/40 focus:border-amber-400 rounded-xl py-2.5 pr-10 pl-3 text-xs text-white placeholder-zinc-400 outline-none shadow-xs"
+                    />
+                    <MapPin className="w-4 h-4 text-amber-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}

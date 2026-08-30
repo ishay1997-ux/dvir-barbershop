@@ -31,6 +31,9 @@ interface MemoryAppointment {
   time: string;
   customerName: string;
   customerPhone: string;
+  customerAddress?: string;
+  locationType?: string;
+  bookingType?: string;
   status: 'confirmed' | 'cancelled';
   createdAt: string;
 }
@@ -38,7 +41,7 @@ interface MemoryAppointment {
 const memoryAppointments: MemoryAppointment[] = [];
 
 // ============================================================
-// 1. CREATE APPOINTMENT (POST)
+// POST: Book a new appointment (Production Double Booking Safe)
 // ============================================================
 export async function POST(request: Request) {
   try {
@@ -59,6 +62,9 @@ export async function POST(request: Request) {
       time,
       customerName,
       customerPhone,
+      customerAddress,
+      locationType,
+      bookingType,
     } = body;
 
     // Strict input validation
@@ -179,6 +185,9 @@ export async function POST(request: Request) {
           customerName: cleanName,
           customerPhone: String(customerPhone).trim(),
           cleanPhone,
+          customerAddress: customerAddress || null,
+          locationType: locationType || 'BUSINESS_LOCATION',
+          bookingType: bookingType || 'FIXED_SLOT',
           status: 'confirmed',
           createdAt: serverTimestamp(),
         });
@@ -205,6 +214,9 @@ export async function POST(request: Request) {
       time: String(time).trim(),
       customerName: cleanName,
       customerPhone: String(customerPhone).trim(),
+      customerAddress: customerAddress || undefined,
+      locationType: locationType || 'BUSINESS_LOCATION',
+      bookingType: bookingType || 'FIXED_SLOT',
       status: 'confirmed',
       createdAt: new Date().toISOString(),
     };

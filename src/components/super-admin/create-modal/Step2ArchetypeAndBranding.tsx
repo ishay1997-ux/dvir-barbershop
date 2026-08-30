@@ -33,7 +33,7 @@ export const Step2ArchetypeAndBranding: React.FC<Step2ArchetypeAndBrandingProps>
             adminTheme === 'light' ? 'text-slate-700' : 'text-gray-300'
           }`}
         >
-          בחר את אופי וסגנון המספרה:
+          בחר תחום עיסוק וסגנון לעסק החדש:
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {Object.values(BUSINESS_ARCHETYPES).map((arch) => (
