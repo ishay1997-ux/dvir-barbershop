@@ -20,8 +20,17 @@ const memoryBugReports: BugReportPayload[] = [];
 // 1. CREATE BUG REPORT (POST)
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { fullName, phone, email, category, message, businessName } = body;
+    let body: any = {};
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'נא למלא את כל שדות החובה (שם, טלפון ותוכן ההודעה)' },
+        { status: 400 }
+      );
+    }
+
+    const { fullName, phone, email, category, message, businessName } = body || {};
 
     if (!fullName || !phone || !message) {
       return NextResponse.json(
