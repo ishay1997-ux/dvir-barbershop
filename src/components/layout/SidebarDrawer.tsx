@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Scissors,
   Clock,
+  Globe,
 } from 'lucide-react';
 import { ShareBarbershopModal } from '@/components/landing/QuickModals';
 import BugReportModal from '@/components/common/BugReportModal';
@@ -168,6 +169,23 @@ export default function SidebarDrawer({ isOpen, onClose, business }: SidebarDraw
               {/* 2. MENU ITEMS LIST (Exact Order and Icons from Screenshot)    */}
               {/* ============================================================ */}
               <div className="flex-1 overflow-y-auto py-2 bg-[#F4F4F6]">
+                {/* 0. לאתר המערכת הראשי */}
+                <Link
+                  href="/"
+                  onClick={onClose}
+                  className="w-full flex items-center justify-between py-3.5 px-5 hover:bg-indigo-50/80 active:bg-indigo-100 transition-colors text-right group border-b border-gray-200/90 bg-indigo-50/40"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-bold text-sm text-indigo-950 group-hover:text-indigo-600 transition-colors">
+                      לאתר המערכת הראשי
+                    </span>
+                    <span className="text-[11px] text-zinc-500 font-sans">
+                      פלטפורמת CutWeb · הקמת אתר ותורים ↗
+                    </span>
+                  </div>
+                  <Globe className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform flex-shrink-0" />
+                </Link>
+
                 {/* 1. שתפו עם חבר */}
                 <button
                   onClick={() => {

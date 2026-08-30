@@ -15,7 +15,7 @@ import TrustBadgesSection from '@/components/landing/TrustBadgesSection';
 import BookingPoliciesSection from '@/components/landing/BookingPoliciesSection';
 import TopAnnouncementBanner from '@/components/common/TopAnnouncementBanner';
 import MobileStickyBar from '@/components/layout/MobileStickyBar';
-import { Scissors, Phone, MessageCircle, Calendar, Sparkles } from 'lucide-react';
+import { Scissors, Phone, MessageCircle, Calendar, Sparkles, Globe } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { getBusinessBySlug } from '@/lib/business-service';
 import { DVIR_FLAGSHIP_CONFIG } from '@/config/dvir.config';
@@ -34,6 +34,9 @@ export default function DynamicBusinessLandingPage({
     'beauty',
     'nails',
     'cosmetics',
+    'cosmetics-aesthetician',
+    'glow',
+    'skin',
     'nails-beauty',
     'spa',
     'massage',
@@ -300,18 +303,35 @@ export default function DynamicBusinessLandingPage({
 
       {/* Flagship Demo Top Ribbon */}
       {isFlagshipDemo && (
-        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-2 px-4 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md sticky top-0 z-50 border-b border-indigo-500/30">
+        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white py-2 px-4 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2.5 shadow-lg sticky top-0 z-50 border-b border-indigo-500/30 backdrop-blur-md">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
-            <span>🎯 אתר הדגמה חי (Flagship Showcase) · התנסו בקביעת תור עצמאית</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0 shadow-xs" />
+            <span className="text-zinc-200">
+              <strong className="text-white font-black">אתר הדגמה חי (Showcase)</strong> · התנסו בקביעת תור והתאמה אישית
+            </span>
           </div>
-          <Link
-            href={`/admin?slug=${slug}&demo=true`}
-            className="py-1 px-3.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[11px] transition-transform hover:scale-105 shadow-xs flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3 text-amber-300" />
-            <span>כניסה לדאשבורד הניהול של העסק ↗</span>
-          </Link>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link
+              href="/"
+              id="back-to-marketing-site"
+              className="py-1 px-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 hover:border-white/40 text-white font-bold text-[11px] transition-all hover:scale-105 shadow-xs flex items-center gap-1.5 cursor-pointer"
+              title="מעבר לאתר הראשי ולמידע על פלטפורמת TheCut"
+            >
+              <Globe className="w-3.5 h-3.5 text-cyan-300" />
+              <span>לאתר המערכת הראשי</span>
+            </Link>
+
+            <Link
+              href={`/admin?slug=${slug}&demo=true`}
+              id="open-demo-admin-dashboard"
+              className="py-1 px-3.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[11px] transition-transform hover:scale-105 shadow-md flex items-center gap-1.5 cursor-pointer border border-indigo-400/40"
+              title="כניסה לדאשבורד הניהול לדוגמה"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>דאשבורד ניהול לעסק ↗</span>
+            </Link>
+          </div>
         </div>
       )}
       <Header business={business || undefined} />

@@ -114,6 +114,24 @@ export function NichesTab({ business, onApplyPreset }: NichesTabProps) {
           );
         })}
       </div>
+
+      {/* Link to Marketing Website */}
+      <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/70 to-slate-900/90 border border-indigo-500/30 text-right space-y-2 mt-3 shadow-lg">
+        <div className="flex items-center gap-2">
+          <span className="text-sm">🚀</span>
+          <span className="text-xs font-black text-white">רוצים אתר ומערכת כזו לעסק שלכם?</span>
+        </div>
+        <p className="text-[11px] text-zinc-300 leading-relaxed font-sans">
+          פלטפורמת CutWeb מאפשרת לכם להקים אתר מיתוגי ומערכת תורים אוטומטית תוך דקות.
+        </p>
+        <Link
+          href="/"
+          className="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
+        >
+          <span>מעבר לאתר המערכת הראשי והצטרפות</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </Link>
+      </div>
     </div>
   );
 }
