@@ -753,15 +753,15 @@ input[type="tel"] {
 }
 
 /* ============================================================
-   WEBSITE DYNAMIC THEMES (LUXURY LIGHT SYSTEM)
+   WEBSITE DYNAMIC THEMES (LUXURY LIGHT SYSTEM - WARM ALABASTER)
    ============================================================ */
 .theme-luxury-light {
-  color: #0f172a !important;
-  background-color: #F8FAFC !important;
+  color: #1c1c1e !important;
+  background-color: #FAF7F2 !important;
 }
 
 .theme-luxury-light section {
-  color: #0f172a !important;
+  color: #1c1c1e !important;
 }
 
 .theme-luxury-light .bg-\[\#121212\],
@@ -776,19 +776,19 @@ input[type="tel"] {
 .theme-luxury-light .bg-zinc-900,
 .theme-luxury-light .bg-black\/60,
 .theme-luxury-light .bg-black\/40 {
-  background-color: rgba(255, 255, 255, 0.94) !important;
-  color: #0f172a !important;
+  background-color: #FFFFFF !important;
+  color: #1c1c1e !important;
 }
 
 .theme-luxury-light .from-\[\#141414\],
 .theme-luxury-light .via-\[\#141414\]\/70,
 .theme-luxury-light .to-black\/60 {
-  --tw-gradient-from: rgba(248, 250, 252, 0.85) !important;
-  --tw-gradient-to: rgba(248, 250, 252, 0.4) !important;
+  --tw-gradient-from: rgba(250, 247, 242, 0.95) !important;
+  --tw-gradient-to: rgba(244, 239, 230, 0.7) !important;
 }
 
 .theme-luxury-light .text-white {
-  color: #0f172a !important;
+  color: #1c1c1e !important;
 }
 
 .theme-luxury-light .text-zinc-200,
@@ -796,11 +796,11 @@ input[type="tel"] {
 .theme-luxury-light .text-zinc-400,
 .theme-luxury-light .text-\[\#9E9891\],
 .theme-luxury-light .text-\[\#E0E0E0\] {
-  color: #475569 !important;
+  color: #57534e !important;
 }
 
 .theme-luxury-light .text-zinc-500 {
-  color: #64748b !important;
+  color: #78716c !important;
 }
 
 .theme-luxury-light .border-white\/5,
@@ -808,14 +808,14 @@ input[type="tel"] {
 .theme-luxury-light .border-white\/15,
 .theme-luxury-light .border-white\/20,
 .theme-luxury-light .border-white\/30 {
-  border-color: rgba(226, 232, 240, 0.9) !important;
+  border-color: #E7E0D6 !important;
 }
 
 .theme-luxury-light .bg-white\/5,
 .theme-luxury-light .bg-white\/10,
 .theme-luxury-light .bg-white\/15 {
-  background-color: rgba(241, 245, 249, 0.9) !important;
-  color: #1e293b !important;
+  background-color: #F5EFEB !important;
+  color: #292524 !important;
 }
 
 .theme-luxury-light .bg-emerald-950\/40,
@@ -831,9 +831,9 @@ input[type="tel"] {
 
 .theme-luxury-light header,
 .theme-luxury-light footer {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  color: #0f172a !important;
-  border-color: rgba(226, 232, 240, 0.9) !important;
+  background-color: rgba(250, 247, 242, 0.96) !important;
+  color: #1c1c1e !important;
+  border-color: #E7E0D6 !important;
 }
 
 .theme-luxury-light .keep-white-text {
@@ -844,6 +844,54 @@ input[type="tel"] {
 .theme-luxury-light .shadow-lg,
 .theme-luxury-light .shadow-xl,
 .theme-luxury-light .shadow-2xl {
-  box-shadow: 0 4px 25px -4px rgba(0, 0, 0, 0.08), 0 2px 10px -2px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 4px 25px -4px rgba(60, 45, 30, 0.06), 0 2px 10px -2px rgba(60, 45, 30, 0.03) !important;
+}
+
+/* ============================================================
+   LIVE CUSTOMIZER DRAWER ISOLATION (Immune to page theme rules)
+   ============================================================ */
+.live-customizer-drawer,
+.theme-luxury-light .live-customizer-drawer {
+  background-color: rgba(15, 23, 42, 0.97) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(51, 65, 85, 0.9) !important;
+}
+
+.live-customizer-drawer *,
+.theme-luxury-light .live-customizer-drawer * {
+  /* Prevent dark text override inside dark studio */
+}
+
+.theme-luxury-light .live-customizer-drawer h4,
+.theme-luxury-light .live-customizer-drawer .text-white,
+.theme-luxury-light .live-customizer-drawer span.text-white,
+.theme-luxury-light .live-customizer-drawer div.text-white {
+  color: #FFFFFF !important;
+}
+
+.theme-luxury-light .live-customizer-drawer .text-slate-400,
+.theme-luxury-light .live-customizer-drawer .text-slate-300,
+.theme-luxury-light .live-customizer-drawer .text-zinc-400,
+.theme-luxury-light .live-customizer-drawer p {
+  color: #94a3b8 !important;
+}
+
+.theme-luxury-light .live-customizer-drawer .text-slate-200 {
+  color: #e2e8f0 !important;
+}
+
+.theme-luxury-light .live-customizer-drawer .bg-slate-800\/80,
+.theme-luxury-light .live-customizer-drawer .bg-slate-800\/60,
+.theme-luxury-light .live-customizer-drawer .bg-slate-800\/50,
+.theme-luxury-light .live-customizer-drawer .bg-slate-800 {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.theme-luxury-light .live-customizer-drawer .border-slate-800,
+.theme-luxury-light .live-customizer-drawer .border-slate-700,
+.theme-luxury-light .live-customizer-drawer .border-slate-700\/80,
+.theme-luxury-light .live-customizer-drawer .border-slate-700\/60 {
+  border-color: rgba(51, 65, 85, 0.8) !important;
 }
 

@@ -120,7 +120,7 @@ export function LiveCustomizerDrawer({
       {/* Slide-Up / Floating Studio Panel on the RIGHT side */}
       {isOpen && (
         <div
-          className="fixed bottom-22 right-6 z-40 w-full max-w-sm sm:max-w-md bg-slate-900/95 border border-slate-700/80 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl text-white space-y-4 text-right animate-in slide-in-from-bottom-5 duration-200"
+          className="live-customizer-drawer fixed bottom-22 right-6 z-50 w-full max-w-sm sm:max-w-md bg-[#0F172A] border border-slate-700 rounded-3xl p-5 shadow-2xl backdrop-blur-2xl text-white space-y-4 text-right animate-in slide-in-from-bottom-5 duration-200"
           dir="rtl"
         >
           {/* Header */}
@@ -134,7 +134,7 @@ export function LiveCustomizerDrawer({
               </div>
               <div>
                 <h4 className="text-xs font-black text-white">התאמה אישית בזמן אמת</h4>
-                <p className="text-[10px] text-slate-400">כל שינוי משתקף מיידית באתר הלקוחות</p>
+                <p className="text-[10px] text-slate-300">כל שינוי משתקף מיידית באתר הלקוחות</p>
               </div>
             </div>
 
@@ -156,11 +156,11 @@ export function LiveCustomizerDrawer({
           </div>
 
           {/* Sub-tabs Switcher */}
-          <div className="grid grid-cols-3 gap-1 p-1 bg-slate-800/80 rounded-xl text-xs font-bold">
+          <div className="grid grid-cols-3 gap-1 p-1 bg-slate-800/90 rounded-xl text-xs font-bold border border-slate-700/60">
             <button
               onClick={() => setActiveTab('colors')}
               className={`py-1.5 rounded-lg transition-all cursor-pointer ${
-                activeTab === 'colors' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                activeTab === 'colors' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
               צבעי מיתוג
@@ -168,7 +168,7 @@ export function LiveCustomizerDrawer({
             <button
               onClick={() => setActiveTab('theme')}
               className={`py-1.5 rounded-lg transition-all cursor-pointer ${
-                activeTab === 'theme' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                activeTab === 'theme' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
               אווירה ורקע
@@ -176,7 +176,7 @@ export function LiveCustomizerDrawer({
             <button
               onClick={() => setActiveTab('sections')}
               className={`py-1.5 rounded-lg transition-all cursor-pointer ${
-                activeTab === 'sections' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                activeTab === 'sections' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'
               }`}
             >
               מודולריות
@@ -195,8 +195,8 @@ export function LiveCustomizerDrawer({
                       onClick={() => handleColorChange(p.color)}
                       className={`p-2.5 rounded-xl border flex items-center gap-2.5 transition-all text-right cursor-pointer ${
                         isSelected
-                          ? 'border-indigo-400 bg-indigo-950/60 shadow-xs'
-                          : 'border-slate-800 bg-slate-800/50 hover:bg-slate-800'
+                          ? 'border-indigo-400 bg-indigo-950/80 shadow-xs'
+                          : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800'
                       }`}
                     >
                       <div
@@ -207,7 +207,7 @@ export function LiveCustomizerDrawer({
                       </div>
                       <div className="truncate">
                         <div className="text-[11px] font-bold text-white truncate">{p.name}</div>
-                        <div className="text-[9px] text-slate-400 truncate">{p.label}</div>
+                        <div className="text-[9px] text-slate-300 truncate">{p.label}</div>
                       </div>
                     </button>
                   );
@@ -216,7 +216,7 @@ export function LiveCustomizerDrawer({
 
               {/* Custom Hex Color Picker */}
               <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-[11px] text-slate-400 font-bold">צבע מותאם אישית:</span>
+                <span className="text-[11px] text-slate-300 font-bold">צבע מותאם אישית:</span>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
@@ -224,7 +224,7 @@ export function LiveCustomizerDrawer({
                     onChange={(e) => handleColorChange(e.target.value)}
                     className="w-7 h-7 rounded-lg bg-transparent cursor-pointer border border-slate-700"
                   />
-                  <span className="font-mono text-[11px] text-slate-300 uppercase" dir="ltr">
+                  <span className="font-mono text-[11px] text-white uppercase font-bold" dir="ltr">
                     {business.themeColor}
                   </span>
                 </div>
@@ -243,15 +243,15 @@ export function LiveCustomizerDrawer({
                     onClick={() => handleBgThemeChange(t.id)}
                     className={`w-full p-3 rounded-2xl border flex items-center justify-between transition-all text-right cursor-pointer ${
                       isSelected
-                        ? 'border-indigo-400 bg-indigo-950/60 shadow-xs'
-                        : 'border-slate-800 bg-slate-800/50 hover:bg-slate-800'
+                        ? 'border-indigo-400 bg-indigo-950/80 shadow-xs'
+                        : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-xl">{t.icon}</span>
                       <div>
                         <div className="text-xs font-black text-white">{t.label}</div>
-                        <div className="text-[10px] text-slate-400">{t.desc}</div>
+                        <div className="text-[10px] text-slate-300">{t.desc}</div>
                       </div>
                     </div>
                     {isSelected && (

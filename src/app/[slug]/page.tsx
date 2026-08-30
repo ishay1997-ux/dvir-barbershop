@@ -131,11 +131,12 @@ export default function DynamicBusinessLandingPage({
         };
       case 'luxury-light':
         return {
-          backgroundColor: '#F8FAFC',
+          backgroundColor: '#FAF7F2',
           backgroundImage: `
-            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}25, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 100% 40%, ${themeColor}15, transparent 70%),
-            radial-gradient(ellipse 70% 50% at 0% 80%, ${themeColor}15, transparent 70%)
+            radial-gradient(ellipse 90% 50% at 50% 0%, ${themeColor}18, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 100% 40%, ${themeColor}10, transparent 70%),
+            radial-gradient(ellipse 70% 50% at 0% 80%, ${themeColor}10, transparent 70%),
+            linear-gradient(to bottom, #FAF7F2, #F4EFE6 100%)
           `,
         };
       case 'cyber-carbon':
