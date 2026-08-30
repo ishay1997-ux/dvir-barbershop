@@ -36,6 +36,7 @@ import { MonthlyCalendarGrid } from '@/components/admin/appointments/MonthlyCale
 import { HaircutFormulaModal } from '@/components/admin/appointments/HaircutFormulaModal';
 import { EmergencyClosureModal } from '@/components/admin/appointments/EmergencyClosureModal';
 import { AppointmentsToolbar } from '@/components/admin/appointments/AppointmentsToolbar';
+import { InteractiveScheduleXCalendar } from '@/components/admin/appointments/InteractiveScheduleXCalendar';
 
 const today = startOfToday();
 const INITIAL_APPOINTMENTS: AdminAppointment[] = [];
@@ -57,6 +58,7 @@ export default function AppointmentsPage() {
 
   // View Controls
   const [activeMainTab, setActiveMainTab] = useState<'calendar' | 'waitlist'>('calendar');
+  const [calendarType, setCalendarType] = useState<'classic' | 'schedulex'>('classic');
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('week');
   const [currentDate, setCurrentDate] = useState<Date>(today);
   const [selectedBranchFilter, setSelectedBranchFilter] = useState<'all' | 'ariel' | 'rehovot'>('all');
@@ -154,6 +156,28 @@ export default function AppointmentsPage() {
     } catch (err) {
       console.error('Failed to update status on server:', err);
       error('שגיאת תקשורת בעדכון התור');
+    }
+  };
+
+  const handleAppointmentReschedule = async (id: string, newDate: string, newTime: string) => {
+    setAppointments((prev) =>
+      prev.map((a) =>
+        String(a.id) === String(id) ? { ...a, date: new Date(newDate), time: newTime } : a
+      )
+    );
+    try {
+      const res = await fetch('/api/appointments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, date: newDate, time: newTime }),
+      });
+      if (res.ok) {
+        success('התור נגרר והועבר בהצלחה! 🔄', `הועבר לתאריך ${newDate} בשעה ${newTime}`);
+      } else {
+        error('שגיאה בעדכון מועד התור בשרת');
+      }
+    } catch {
+      error('שגיאת תקשורת בהעברת התור');
     }
   };
 
@@ -278,55 +302,91 @@ export default function AppointmentsPage() {
             </div>
           </div>
 
-          {/* View Mode & Date Switcher Toolbar */}
-          <AppointmentsToolbar
-            viewMode={viewMode}
-            currentDate={currentDate}
-            weekDays={weekDays}
-            selectedBranchFilter={selectedBranchFilter}
-            onViewModeChange={setViewMode}
-            onPrev={handlePrev}
-            onNext={handleNext}
-            onToday={() => setCurrentDate(today)}
-            onBranchFilterChange={setSelectedBranchFilter}
-          />
+          {/* Engine / View Switcher (Classic vs Schedule-X Drag & Drop) */}
+          <div className="flex items-center gap-2 mb-5 bg-white p-1.5 rounded-2xl border border-[#E5DDD0] w-fit shadow-xs">
+            <button
+              onClick={() => setCalendarType('classic')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                calendarType === 'classic'
+                  ? 'bg-[#1C1C1C] text-gold shadow-sm'
+                  : 'text-[#6B6560] hover:text-[#1C1C1C]'
+              }`}
+            >
+              📅 יומן שבועי / יומי מעוצב
+            </button>
+            <button
+              onClick={() => setCalendarType('schedulex')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                calendarType === 'schedulex'
+                  ? 'bg-[#C9A84C] text-black font-black shadow-sm'
+                  : 'text-[#6B6560] hover:text-[#1C1C1C]'
+              }`}
+            >
+              <span>⚡ יומן גרירה חי (Schedule-X Drag & Drop)</span>
+            </button>
+          </div>
 
-          {/* 1. DAILY VIEW */}
-          {viewMode === 'day' && (
-            <DailyAgendaTimeline
-              currentDate={currentDate}
-              dayAppointments={dayAppointments}
-              onOpenFormula={handleOpenFormula}
-              onStatusChange={handleStatusChange}
-            />
-          )}
+          {calendarType === 'schedulex' ? (
+            <div className="mb-6">
+              <InteractiveScheduleXCalendar
+                appointments={filteredAppointments}
+                onAppointmentReschedule={handleAppointmentReschedule}
+                onAppointmentClick={handleOpenFormula}
+              />
+            </div>
+          ) : (
+            <>
+              {/* View Mode & Date Switcher Toolbar */}
+              <AppointmentsToolbar
+                viewMode={viewMode}
+                currentDate={currentDate}
+                weekDays={weekDays}
+                selectedBranchFilter={selectedBranchFilter}
+                onViewModeChange={setViewMode}
+                onPrev={handlePrev}
+                onNext={handleNext}
+                onToday={() => setCurrentDate(today)}
+                onBranchFilterChange={setSelectedBranchFilter}
+              />
 
-          {/* 2. WEEKLY VIEW */}
-          {viewMode === 'week' && (
-            <WeeklyCalendarGrid
-              weekDays={weekDays}
-              today={today}
-              filteredAppointments={filteredAppointments}
-              settings={settings}
-              onSelectDay={(day) => {
-                setCurrentDate(day);
-                setViewMode('day');
-              }}
-            />
-          )}
+              {/* 1. DAILY VIEW */}
+              {viewMode === 'day' && (
+                <DailyAgendaTimeline
+                  currentDate={currentDate}
+                  dayAppointments={dayAppointments}
+                  onOpenFormula={handleOpenFormula}
+                  onStatusChange={handleStatusChange}
+                />
+              )}
 
-          {/* 3. MONTHLY VIEW */}
-          {viewMode === 'month' && (
-            <MonthlyCalendarGrid
-              monthWeeks={monthWeeks}
-              currentDate={currentDate}
-              today={today}
-              filteredAppointments={filteredAppointments}
-              onSelectDay={(day) => {
-                setCurrentDate(day);
-                setViewMode('day');
-              }}
-            />
+              {/* 2. WEEKLY VIEW */}
+              {viewMode === 'week' && (
+                <WeeklyCalendarGrid
+                  weekDays={weekDays}
+                  today={today}
+                  filteredAppointments={filteredAppointments}
+                  settings={settings}
+                  onSelectDay={(day) => {
+                    setCurrentDate(day);
+                    setViewMode('day');
+                  }}
+                />
+              )}
+
+              {/* 3. MONTHLY VIEW */}
+              {viewMode === 'month' && (
+                <MonthlyCalendarGrid
+                  monthWeeks={monthWeeks}
+                  currentDate={currentDate}
+                  today={today}
+                  filteredAppointments={filteredAppointments}
+                  onSelectDay={(day) => {
+                    setCurrentDate(day);
+                    setViewMode('day');
+                  }}
+                />
+              )}
+            </>
           )}
         </div>
       )}
