@@ -96,6 +96,12 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
     }
   };
 
+  const [createdWorkspace, setCreatedWorkspace] = useState<{
+    slug: string;
+    workspaceUrl: string;
+    bookingUrl: string;
+  } | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!businessName.trim() || !ownerName.trim() || !phone.trim()) {
@@ -128,6 +134,15 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
         throw new Error(err.error || 'שגיאה בשליחת הבקשה');
       }
 
+      const data = await res.json();
+      if (data.slug) {
+        setCreatedWorkspace({
+          slug: data.slug,
+          workspaceUrl: data.workspaceUrl || `/admin`,
+          bookingUrl: data.bookingUrl || `/${data.slug}`,
+        });
+      }
+
       setStep(3); // Success Screen
     } catch (err: any) {
       setErrorMsg(err.message || 'שגיאה בחיבור לשרת');
@@ -145,6 +160,7 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
     setEmail('');
     setNotes('');
     setGoogleUser(null);
+    setCreatedWorkspace(null);
     onClose();
   };
 
@@ -481,7 +497,7 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
             </form>
           )}
 
-          {/* STEP 3: SUCCESS CONFIRMATION & WHATSAPP FAST-TRACK */}
+          {/* STEP 3: SUCCESS CONFIRMATION & DIRECT WORKSPACE ACCESS */}
           {step === 3 && (
             <div className="text-center py-4 space-y-4">
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center shadow-md shadow-emerald-500/20">
@@ -490,37 +506,67 @@ export const SaaSOnboardingModal: React.FC<SaaSOnboardingModalProps> = ({
 
               <div className="space-y-1">
                 <h4 className="text-lg font-black text-slate-900">
-                  מעולה {ownerName}! הבקשה שלך עבור "{businessName}" נקלטה בהצלחה!
+                  מעולה {ownerName}! העסק "{businessName}" הוקם בהצלחה! 🚀
                 </h4>
                 <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-                  הפרטים נשמרו במערכת CutWeb OS. ישי מצוות הפלטפורמה יצור עמך קשר תוך זמן קצר לסיום הגדרת האתר והיומן.
+                  המרחב הדיגיטלי ואתר התורים שלך נוצרו במערכת CutWeb OS. כעת באפשרותך לגשת ישירות לדאשבורד הניהול או לצפות באתר הלקוחות שלך.
                 </p>
               </div>
 
+              {/* Direct Workspace & Live Site Actions */}
+              {createdWorkspace && (
+                <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 space-y-2.5 text-right">
+                  <div className="flex items-center justify-between text-xs font-black text-indigo-950">
+                    <span>קישורי המערכת שלך:</span>
+                    <span className="text-[11px] font-mono text-indigo-600" dir="ltr">
+                      /{createdWorkspace.slug}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <Link
+                      href={createdWorkspace.workspaceUrl}
+                      className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>כניסה לדאשבורד הניהול</span>
+                    </Link>
+
+                    <Link
+                      href={createdWorkspace.bookingUrl}
+                      target="_blank"
+                      className="py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs border border-slate-300 flex items-center justify-center gap-1.5 transition-all shadow-xs"
+                    >
+                      <span>צפייה באתר הלקוחות ↗</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+
               {/* Fast Track WhatsApp Direct to Ishay 058-7815070 */}
-              <div className="pt-3 border-t border-slate-100 space-y-2">
+              <div className="pt-2 border-t border-slate-100 space-y-2">
                 <span className="text-[11px] font-bold text-slate-400 block">
-                  רוצים הפעלה מיידית תוך 5 דקות?
+                  צריך עזרה ראשונית או התאמה אישית?
                 </span>
                 <a
                   href={`https://wa.me/972587815070?text=${encodeURIComponent(
                     `היי ישי! 👋\nמילאתי עכשיו טופס הצטרפות באתר CutWeb עבור "${businessName}".\nתחום: ${industry}\nמסלול מבוקש: ${plan}\nטלפון: ${phone}\n${
                       email ? `אימייל: ${email}\n` : ''
-                    }\nאשמח להפעיל את המערכת ולקבל את הקישורים לאתר!`
+                    }${createdWorkspace ? `קישור: thecut.co.il/${createdWorkspace.slug}\n` : ''}\nאשמח לקבל הדרכה קצרה והפעלה מלאה!`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3.5 rounded-2xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-black text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#25D366]/25 hover:scale-[1.02] cursor-pointer"
+                  className="w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-black text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-[#25D366]/20 hover:scale-[1.01] cursor-pointer"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>המשך לוואטסאפ לשיחה מהירה עם ישי</span>
+                  <span>שליחת הודעת וואטסאפ מהירה לישי</span>
                 </a>
               </div>
 
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-xs text-slate-400 hover:text-slate-700 pt-2 block mx-auto underline cursor-pointer"
+                className="text-xs text-slate-400 hover:text-slate-700 pt-1 block mx-auto underline cursor-pointer"
               >
                 סגור חלון
               </button>

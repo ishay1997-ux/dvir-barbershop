@@ -14,6 +14,7 @@ import {
   Search,
   Sparkles,
   ChevronLeft,
+  CreditCard,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +27,7 @@ export type SettingsTabId =
   | 'branches'
   | 'marketing'
   | 'staff'
+  | 'billing'
   | 'security';
 
 export interface SettingsCategory {
@@ -113,6 +115,16 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
   },
 
   // 4. System & Security Group
+  {
+    id: 'billing',
+    label: 'מנוי, חיובים ושדרוג',
+    shortLabel: 'מנוי ותשלומים',
+    description: 'מסלול פעיל (Starter/Pro/Team), חשבוניות מס ושדרוג',
+    icon: CreditCard,
+    badge: 'SaaS',
+    badgeColor: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/30',
+    group: 'system',
+  },
   {
     id: 'security',
     label: 'חוקי תורים ואבטחה',

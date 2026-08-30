@@ -67,6 +67,14 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
   const activeCount = businesses.filter((b) => b.status === 'active').length;
   const pendingCount = businesses.filter((b) => b.status === 'pending').length;
 
+  const totalMRR = businesses.reduce((acc, b) => {
+    if (b.status !== 'active') return acc;
+    if (b.plan === 'team') return acc + 119;
+    if (b.plan === 'pro') return acc + 59;
+    if (b.plan === 'enterprise') return acc + 199;
+    return acc;
+  }, 0);
+
   return (
     <div className="space-y-6 select-none" dir="rtl">
       {/* Top Header & Stats */}
@@ -85,7 +93,21 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
         </div>
 
         {/* Compact KPI Stats Bar */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* MRR Card */}
+          <div
+            className={`px-3.5 py-1.5 rounded-xl border flex items-center gap-2 ${
+              adminTheme === 'light'
+                ? 'bg-indigo-50/80 border-indigo-200/90 text-indigo-950 shadow-xs'
+                : 'bg-indigo-950/40 border-indigo-500/30 text-indigo-300'
+            }`}
+          >
+            <span className="text-[11px] text-indigo-600 font-bold">הכנסה חודשית (MRR):</span>
+            <span className="text-xs font-black font-mono">
+              {totalMRR.toLocaleString()} ₪
+            </span>
+          </div>
+
           <div
             className={`px-3.5 py-1.5 rounded-xl border flex items-center gap-2 ${
               adminTheme === 'light'

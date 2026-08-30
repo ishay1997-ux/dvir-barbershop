@@ -72,15 +72,92 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    // Save to Firebase Firestore
+    // Generate a unique, url-safe slug
+    const cleanName = businessName
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9\u0590-\u05FF]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+    const randomSuffix = Math.floor(100 + Math.random() * 900);
+    const slug = cleanName.length > 2 ? `${cleanName}-${randomSuffix}` : `biz-${Date.now().toString().slice(-6)}`;
+
+    // Industry Theme Color & Defaults
+    let themeColor = '#C9A84C';
+    let defaultServices = [
+      { name: 'תספורת גברים פרימיום', price: 80, duration: 30 },
+      { name: 'עיצוב ופיסול זקן Master', price: 40, duration: 20 },
+    ];
+
+    if (industry?.includes('קוסמטיקה') || industry?.includes('ציפורניים')) {
+      themeColor = '#EC4899';
+      defaultServices = [
+        { name: 'מניקור לק ג׳ל משולב', price: 130, duration: 50 },
+        { name: 'טיפול פנים קלאסי עמוק', price: 280, duration: 60 },
+      ];
+    } else if (industry?.includes('נשים') || industry?.includes('סלון')) {
+      themeColor = '#A855F7';
+      defaultServices = [
+        { name: 'גוונים / בליאז׳ פרימיום', price: 450, duration: 120 },
+        { name: 'תספורת ופאן מעוצב', price: 160, duration: 45 },
+      ];
+    } else if (industry?.includes('אינסטלציה') || industry?.includes('טכנאי')) {
+      themeColor = '#0EA5E9';
+      defaultServices = [
+        { name: 'קריאת שירות / איתור תקלה', price: 250, duration: 60 },
+        { name: 'תיקון והתקנה מקצועית', price: 350, duration: 90 },
+      ];
+    } else if (industry?.includes('מאמן') || industry?.includes('קליניקה')) {
+      themeColor = '#10B981';
+      defaultServices = [
+        { name: 'אימון אישי 1-על-1', price: 220, duration: 50 },
+        { name: 'אבחון יציבה ותנועה ראשוני', price: 300, duration: 60 },
+      ];
+    }
+
+    const newBusinessObj = {
+      id: `biz-${slug}`,
+      slug,
+      name: businessName,
+      ownerName,
+      phone,
+      email: email || '',
+      city: city || 'ישראל',
+      industry: industry || 'כללי',
+      plan: plan || 'starter',
+      subscriptionStatus: 'active',
+      subscriptionStartDate: new Date().toISOString(),
+      themeColor,
+      slogan: `${businessName} · שירות ואיכות ללא פשרות`,
+      announcement: `🌟 ברוכים הבאים ל${businessName}! שריינו תור אונליין בקלות 24/7`,
+      branchesCount: 1,
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      branches: [
+        {
+          name: 'סניף ראשי',
+          address: city ? `מרכז העיר, ${city}` : 'מרכז העיר',
+          wazeLink: 'https://waze.com',
+        },
+      ],
+      services: defaultServices,
+    };
+
+    // Save Lead & Provision Business in Firestore
     if (isFirebaseConfigured && db) {
       try {
         await addDoc(collection(db, 'leads'), {
           ...leadData,
+          provisionedSlug: slug,
+          serverCreatedAt: serverTimestamp(),
+        });
+
+        // Create business document in 'businesses'
+        await addDoc(collection(db, 'businesses'), {
+          ...newBusinessObj,
           serverCreatedAt: serverTimestamp(),
         });
       } catch (fbError) {
-        console.error('Firebase leads save error:', fbError);
+        console.error('Firebase leads/business save error:', fbError);
       }
     }
 
@@ -90,8 +167,11 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: 'הבקשה התקבלה בהצלחה! צוות המערכת ייצור עמך קשר תוך דקות.',
+        message: 'הבקשה התקבלה והעסק הוקם בהצלחה!',
         lead: leadData,
+        slug,
+        workspaceUrl: `/admin?slug=${slug}`,
+        bookingUrl: `/${slug}`,
       },
       { status: 201 }
     );

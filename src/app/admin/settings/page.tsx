@@ -25,6 +25,7 @@ import BranchesContactSettings from '@/components/admin/settings/BranchesContact
 import MarketingBannerSettings from '@/components/admin/settings/MarketingBannerSettings';
 import StaffSettings from '@/components/admin/settings/StaffSettings';
 import GeneralSecuritySettings from '@/components/admin/settings/GeneralSecuritySettings';
+import { BillingSettingsTab } from '@/components/admin/settings/BillingSettingsTab';
 
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -272,6 +273,23 @@ function SettingsContent() {
               branches={branches}
               onUpdateBarbers={saveBarbers}
               onNotifySave={notifySave}
+            />
+          )}
+
+          {activeTab === 'billing' && (
+            <BillingSettingsTab
+              business={{
+                slug: activeSlug,
+                name: settings.shopName || 'העסק שלי',
+                plan: (settings as any).plan || 'pro',
+              }}
+              onUpdateBusiness={async (updated) => {
+                saveSettings({
+                  ...settings,
+                  plan: updated.plan,
+                } as any);
+                notifySave();
+              }}
             />
           )}
 
