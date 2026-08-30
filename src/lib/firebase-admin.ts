@@ -37,8 +37,6 @@ function initAdmin() {
             credential: cert({ projectId, clientEmail, privateKey }),
             projectId,
           });
-        } else if (projectId) {
-          adminApp = initializeApp({ projectId });
         }
       }
     }
@@ -48,7 +46,7 @@ function initAdmin() {
       adminDb = getFirestore(adminApp);
     }
   } catch (error) {
-    console.error('[firebase-admin] Initialization error:', error);
+    console.warn('[firebase-admin] Running in lightweight fallback mode:', error);
   }
 }
 

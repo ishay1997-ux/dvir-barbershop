@@ -1,0 +1,47 @@
+export const marketingSuite = {
+  id: 'marketing',
+  title: 'Public Marketing & Landing Hub (שיווק ראשי ועמודי תדמית)',
+  description: 'Verifies the primary marketing pages, SEO, PWA manifest, and regulatory legal pages.',
+  targets: [
+    {
+      name: 'Main Landing Hub',
+      path: '/',
+      expectedStatus: 200,
+      expectedContentType: 'text/html',
+      contentCheck: 'CutWeb',
+      maxLatencyMs: 3000,
+    },
+    {
+      name: 'Accessibility Statement (IS 5568 / WCAG)',
+      path: '/accessibility',
+      expectedStatus: 200,
+      expectedContentType: 'text/html',
+      contentCheck: 'הצהרת נגישות',
+      maxLatencyMs: 2500,
+    },
+    {
+      name: 'Privacy Policy Page',
+      path: '/privacy',
+      expectedStatus: 200,
+      expectedContentType: 'text/html',
+      contentCheck: 'מדיניות פרטיות',
+      maxLatencyMs: 2500,
+    },
+    {
+      name: 'Terms of Service Page',
+      path: '/terms',
+      expectedStatus: 200,
+      expectedContentType: 'text/html',
+      contentCheck: 'תנאי שימוש',
+      maxLatencyMs: 2500,
+    },
+    {
+      name: 'PWA Web Manifest',
+      path: '/manifest.webmanifest',
+      expectedStatus: 200,
+      expectedContentType: 'manifest',
+      contentCheck: 'standalone',
+      maxLatencyMs: 2000,
+    },
+  ],
+};
