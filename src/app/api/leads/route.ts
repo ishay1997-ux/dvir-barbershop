@@ -5,6 +5,7 @@ import {
   addDoc,
   getDocs,
   doc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -216,8 +217,9 @@ export async function POST(request: Request) {
         });
 
         // Create business document in 'businesses'
-        await addDoc(collection(db, 'businesses'), {
+        await setDoc(doc(db, 'businesses', `biz-${slug}`), {
           ...newBusinessObj,
+          id: `biz-${slug}`,
           serverCreatedAt: serverTimestamp(),
         });
       } catch (fbError) {

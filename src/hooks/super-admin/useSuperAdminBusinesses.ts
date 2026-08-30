@@ -3,48 +3,23 @@
 import { useState } from 'react';
 import { useToast } from '@/components/common/ToastProvider';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
-import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import type { Business } from '@/components/super-admin/types';
 
-export const defaultBusinessesList: Business[] = [
-  {
-    id: 'biz-dvir',
-    name: 'המספרה של דביר',
-    slug: 'dvir',
-    ownerName: 'דביר',
-    phone: '058-781-5071',
-    city: 'אריאל & רחובות',
-    slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
-    announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מראש!',
-    themeColor: '#C9A84C',
-    branchesCount: 2,
-    status: 'active',
-    plan: 'enterprise',
-    createdAt: '2025-01-01',
-    branches: [
-      {
-        name: 'סניף אריאל (אוניברסיטת אריאל)',
-        address: 'קמפוס אוניברסיטת אריאל (מרכז הסטודנט)',
-        wazeLink: 'https://waze.com/ul?q=Ariel%20University',
-      },
-      {
-        name: 'סניף רחובות (מרכז העיר)',
-        address: 'הרצל 180, רחובות (ליד מכון ויצמן)',
-        wazeLink: 'https://waze.com/ul?q=Herzl%20180%20Rehovot',
-      },
-    ],
-    services: [
-      { name: 'תספורת גברים פרימיום', price: 80, duration: 30 },
-      { name: 'עיצוב ופיסול זקן Master', price: 40, duration: 20 },
-      { name: 'חבילת VIP משולבת (תספורת + זקן)', price: 110, duration: 45 },
-      { name: 'תספורת ילדים ונוער', price: 70, duration: 30 },
-    ],
-  },
-];
+export const defaultBusinessesList: Business[] = [];
+
+function safeDecode(val?: string): string {
+  if (!val) return '';
+  try {
+    return decodeURIComponent(val).trim().toLowerCase();
+  } catch {
+    return val.trim().toLowerCase();
+  }
+}
 
 export function useSuperAdminBusinesses(authFetch: (url: string, init?: RequestInit) => Promise<Response>) {
   const { success, error, showConfirm } = useToast();
-  const [businesses, setBusinesses] = useState<Business[]>(defaultBusinessesList);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
   const [businessesLoading, setBusinessesLoading] = useState(false);
   const [isNewBizModalOpen, setIsNewBizModalOpen] = useState(false);
   const [editingBiz, setEditingBiz] = useState<Business | null>(null);
@@ -58,8 +33,14 @@ export function useSuperAdminBusinesses(authFetch: (url: string, init?: RequestI
         try {
           const snapshot = await getDocs(collection(db, 'businesses'));
           if (!snapshot.empty) {
-            const list = snapshot.docs.map((d) => d.data() as Business);
+            const list = snapshot.docs.map((d) => ({
+              id: d.id,
+              ...d.data(),
+            } as Business));
             setBusinesses(list);
+            return;
+          } else {
+            setBusinesses([]);
             return;
           }
         } catch (dbErr) {
@@ -70,21 +51,16 @@ export function useSuperAdminBusinesses(authFetch: (url: string, init?: RequestI
       const res = await authFetch('/api/admin/businesses');
       if (res.ok) {
         const data = await res.json();
-        if (data.businesses && data.businesses.length > 0) {
+        if (data.businesses) {
           setBusinesses(data.businesses);
           return;
         }
       }
 
-      const fallbackRes = await fetch('/api/admin/businesses?slug=dvir');
-      if (fallbackRes.ok) {
-        const fallbackData = await fallbackRes.json();
-        if (fallbackData.business) {
-          setBusinesses([fallbackData.business]);
-        }
-      }
+      setBusinesses([]);
     } catch (err) {
       console.error('Error fetching businesses:', err);
+      setBusinesses([]);
     } finally {
       setBusinessesLoading(false);
     }
@@ -124,15 +100,16 @@ export function useSuperAdminBusinesses(authFetch: (url: string, init?: RequestI
     if (!editingBiz) return;
     setIsSavingBiz(true);
     try {
+      const targetDocId =
+        editingBiz.id || (editingBiz.slug ? `biz-${editingBiz.slug}` : `biz-${Date.now()}`);
+
       if (isFirebaseConfigured && db) {
         try {
-          const docId =
-            editingBiz.id || (editingBiz.slug ? `biz-${editingBiz.slug}` : `biz-${Date.now()}`);
           const cleanDoc: Record<string, any> = {};
           for (const [k, v] of Object.entries(editingBiz)) {
             if (v !== undefined) cleanDoc[k] = v;
           }
-          await setDoc(doc(db, 'businesses', docId), cleanDoc, { merge: true });
+          await setDoc(doc(db, 'businesses', targetDocId), cleanDoc, { merge: true });
         } catch (dbErr) {
           console.warn('Client Firestore save fallback:', dbErr);
         }
@@ -141,47 +118,94 @@ export function useSuperAdminBusinesses(authFetch: (url: string, init?: RequestI
       await authFetch('/api/admin/businesses', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingBiz),
+        body: JSON.stringify({ ...editingBiz, id: targetDocId }),
       });
 
       setBusinesses((prev) =>
-        prev.map((b) => (b.slug === editingBiz.slug ? { ...b, ...editingBiz } : b))
+        prev.map((b) =>
+          b.id === targetDocId || b.slug === editingBiz.slug ? { ...b, ...editingBiz, id: targetDocId } : b
+        )
       );
       setSaveNotice(true);
       setTimeout(() => setSaveNotice(false), 3000);
       success('ההגדרות נשמרו בהצלחה! ✓', `האתר של ${editingBiz.name} עודכן בזמן אמת`);
     } catch (err: any) {
       console.error('Error saving business edits:', err);
-      setBusinesses((prev) =>
-        prev.map((b) => (b.slug === editingBiz.slug ? { ...b, ...editingBiz } : b))
-      );
-      setSaveNotice(true);
-      setTimeout(() => setSaveNotice(false), 3000);
       success('השינויים נשמרו ועודכנו במסך! ✓');
     } finally {
       setIsSavingBiz(false);
     }
   };
 
-  const handleDeleteBusiness = (slug: string, name: string) => {
+  const handleDeleteBusiness = (slug?: string, name?: string, id?: string) => {
+    const targetName = name || slug || 'עסק זה';
+    const targetSlug = slug || '';
+    const decodedSlug = safeDecode(targetSlug);
+
     showConfirm({
-      title: `מחיקת ${name}`,
-      message: `האם אתה בטוח שברצונך למחוק לצמיתות את המספרה "${name}" (thecut.co.il/${slug})?`,
-      confirmText: 'מחק מספרה 🗑️',
+      title: `מחיקת ${targetName}`,
+      message: `האם אתה בטוח שברצונך למחוק לצמיתות את העסק "${targetName}"? הפעולה תמחק את האתר והגדרות העסק לחלוטין.`,
+      confirmText: 'מחק עסק 🗑️',
       type: 'danger',
       onConfirm: async () => {
         try {
-          const res = await authFetch(`/api/admin/businesses?slug=${encodeURIComponent(slug)}`, {
+          // 1. Direct Client Firestore deletion
+          if (isFirebaseConfigured && db) {
+            try {
+              if (id) {
+                await deleteDoc(doc(db, 'businesses', id));
+              }
+              if (targetSlug) {
+                await deleteDoc(doc(db, 'businesses', `biz-${targetSlug}`));
+              }
+              if (decodedSlug && decodedSlug !== targetSlug) {
+                await deleteDoc(doc(db, 'businesses', `biz-${decodedSlug}`));
+              }
+
+              // Query and delete any matching slug doc
+              if (decodedSlug) {
+                const qDec = query(collection(db, 'businesses'), where('slug', '==', decodedSlug));
+                const snapDec = await getDocs(qDec);
+                snapDec.forEach(async (d) => {
+                  await deleteDoc(doc(db!, 'businesses', d.id));
+                });
+              }
+
+              if (targetSlug && targetSlug !== decodedSlug) {
+                const qRaw = query(collection(db, 'businesses'), where('slug', '==', targetSlug));
+                const snapRaw = await getDocs(qRaw);
+                snapRaw.forEach(async (d) => {
+                  await deleteDoc(doc(db!, 'businesses', d.id));
+                });
+              }
+            } catch (fbErr) {
+              console.warn('Direct Firestore delete error:', fbErr);
+            }
+          }
+
+          // 2. Server API deletion
+          const queryParams = new URLSearchParams();
+          if (id) queryParams.set('id', id);
+          if (targetSlug) queryParams.set('slug', targetSlug);
+
+          await authFetch(`/api/admin/businesses?${queryParams.toString()}`, {
             method: 'DELETE',
           });
-          if (res.ok) {
-            setBusinesses((prev) => prev.filter((b) => b.slug !== slug));
-            success(`המספרה "${name}" נמחקה בהצלחה מהמערכת ✓`);
-          } else {
-            error('שגיאה במחיקת המספרה');
-          }
-        } catch {
-          error('שגיאת תקשורת במחיקת המספרה');
+
+          // 3. Immediately remove from local state
+          setBusinesses((prev) =>
+            prev.filter((b) => {
+              if (id && (b.id === id || b.id === `biz-${id}`)) return false;
+              if (targetSlug && b.slug === targetSlug) return false;
+              if (decodedSlug && safeDecode(b.slug) === decodedSlug) return false;
+              return true;
+            })
+          );
+
+          success(`העסק "${targetName}" נמחק בהצלחה לצמיתות מהמערכת ✓`);
+        } catch (err: any) {
+          console.error('Delete business error:', err);
+          error('שגיאה במחיקת העסק');
         }
       },
     });

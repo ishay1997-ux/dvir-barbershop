@@ -27,7 +27,11 @@ export default function DynamicBusinessLandingPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = use(params);
-  const slug = resolvedParams.slug.toLowerCase().trim();
+  let rawSlug = resolvedParams.slug || '';
+  let slug = rawSlug.toLowerCase().trim();
+  try {
+    slug = decodeURIComponent(rawSlug).toLowerCase().trim();
+  } catch {}
 
   const isDvir = slug === 'dvir' || slug === 'thecut';
   const isFlagshipDemo = isDvir || slug === 'demo' || [

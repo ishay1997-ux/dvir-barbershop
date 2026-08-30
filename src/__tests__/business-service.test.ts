@@ -34,11 +34,14 @@ describe('Multi-Tenant Business Service & Configuration', () => {
     expect(BUSINESS_ARCHETYPES['clinic-therapist']).toBeDefined();
   });
 
-  it('should resolve fallback config gracefully when offline', async () => {
-    const business = await getBusinessBySlug('unknown-tenant');
-    expect(business).toBeDefined();
-    expect(business.slug).toBe('unknown-tenant');
-    expect(business.services.length).toBeGreaterThan(0);
+  it('should return null for non-existent tenant while resolving preset demos instantly', async () => {
+    const unknownBiz = await getBusinessBySlug('unknown-tenant');
+    expect(unknownBiz).toBeNull();
+
+    const beautyDemo = await getBusinessBySlug('beauty');
+    expect(beautyDemo).toBeDefined();
+    expect(beautyDemo?.slug).toBe('beauty');
+    expect(beautyDemo?.services.length).toBeGreaterThan(0);
   });
 
   it('should guarantee Barbershop classification regardless of theme color', () => {
@@ -103,9 +106,9 @@ describe('Multi-Tenant Business Service & Configuration', () => {
     // 3. Demo slug resolution
     const demoCosmetics = await getBusinessBySlug('cosmetics');
     expect(demoCosmetics).toBeDefined();
-    expect(demoCosmetics.category).toBe('cosmetics_aesthetician');
-    expect(demoCosmetics.transformations?.length).toBeGreaterThan(0);
-    expect(demoCosmetics.transformations?.[0].title).toContain('אקנאי');
+    expect(demoCosmetics?.category).toBe('cosmetics_aesthetician');
+    expect(demoCosmetics?.transformations?.length).toBeGreaterThan(0);
+    expect(demoCosmetics?.transformations?.[0].title).toContain('אקנאי');
   });
 
   it('should correctly resolve and instantiate the nails-beauty archetype with authentic Israeli nail services', async () => {
@@ -125,9 +128,9 @@ describe('Multi-Tenant Business Service & Configuration', () => {
 
     const demoNails = await getBusinessBySlug('beauty');
     expect(demoNails).toBeDefined();
-    expect(demoNails.category).toBe('beauty_salon');
-    expect(demoNails.transformations?.length).toBeGreaterThan(0);
-    expect(demoNails.transformations?.[0].title).toContain('מניקור רוסי');
+    expect(demoNails?.category).toBe('beauty_salon');
+    expect(demoNails?.transformations?.length).toBeGreaterThan(0);
+    expect(demoNails?.transformations?.[0].title).toContain('מניקור רוסי');
   });
 
   it('should dynamically resolve industry-specific media, gallery photos, and ambient slides across all niches', async () => {

@@ -30,7 +30,7 @@ interface BusinessesTableViewProps {
   onOpenCreateModal: () => void;
   onOpenEditModal: (biz: Business) => void;
   onCloneBusiness?: (biz: Business) => void;
-  onDeleteBusiness: (slug: string, name: string) => void;
+  onDeleteBusiness: (slug: string, name: string, id?: string) => void;
   searchQuery: string;
 }
 
@@ -451,7 +451,7 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            onDeleteBusiness(biz.slug, biz.name);
+                            onDeleteBusiness(biz.slug, biz.name, biz.id);
                           }}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                           title="מחק עסק"

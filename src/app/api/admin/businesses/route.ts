@@ -1,7 +1,19 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
-import { collection, getDocs, getDoc, doc, query, where, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { verifyAuth, requireRole } from '@/lib/firebase-admin';
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  query,
+  where,
+  deleteDoc,
+  setDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { requireRole } from '@/lib/firebase-admin';
+
+export const dynamic = 'force-dynamic';
 
 export interface BusinessItem {
   id: string;
@@ -28,145 +40,128 @@ export interface BusinessItem {
   branches?: Array<{ name: string; address: string; wazeLink?: string }>;
 }
 
-const defaultBusinesses: BusinessItem[] = [
-  {
-    id: 'biz-dvir',
-    name: 'המספרה של דביר',
-    slug: 'dvir',
-    ownerName: 'דביר',
-    phone: '058-781-5071',
-    city: 'אריאל & רחובות',
-    slogan: 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר בישראל',
-    announcement: '🌟 קביעת תורים מהירה אונליין לכל הסניפים 24/7 – שריינו מראש!',
-    themeColor: '#C9A84C',
-    instagramHandle: 'dvir_barber',
-    instagramUrl: 'https://instagram.com/dvir_barber',
-    whatsappNumber: '0587815071',
-    branchesCount: 2,
-    status: 'active',
-    plan: 'enterprise',
-    createdAt: '2025-01-01',
-    branches: [
-      { name: 'סניף אריאל (אוניברסיטת אריאל)', address: 'קמפוס אוניברסיטת אריאל (מרכז הסטודנט)', wazeLink: 'https://waze.com/ul?q=Ariel%20University' },
-      { name: 'סניף רחובות (מרכז העיר)', address: 'הרצל 180, רחובות (ליד מכון ויצמן)', wazeLink: 'https://waze.com/ul?q=Herzl%20180%20Rehovot' },
-    ],
-    services: [
-      { name: 'תספורת גברים פרימיום', price: 80, duration: 30 },
-      { name: 'עיצוב ופיסול זקן Master', price: 40, duration: 20 },
-      { name: 'חבילת VIP משולבת (תספורת + זקן)', price: 110, duration: 45 },
-      { name: 'תספורת ילדים ונוער', price: 70, duration: 30 },
-    ],
-  },
-];
+const memoryBusinesses: BusinessItem[] = [];
+
+function safeDecode(val: string): string {
+  try {
+    return decodeURIComponent(val).trim().toLowerCase();
+  } catch {
+    return val.trim().toLowerCase();
+  }
+}
 
 // GET /api/admin/businesses?slug=...
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const slug = searchParams.get('slug')?.toLowerCase().trim();
+    const rawSlugParam = searchParams.get('slug');
 
     // 1. Fetch single business by slug
-    if (slug) {
+    if (rawSlugParam) {
+      const decodedSlug = safeDecode(rawSlugParam);
+      const rawSlug = rawSlugParam.trim().toLowerCase();
+
       let firestoreBiz: BusinessItem | null = null;
 
       if (isFirebaseConfigured && db) {
         try {
-          const q = query(collection(db, 'businesses'), where('slug', '==', slug));
-          const snapshot = await getDocs(q);
-          if (!snapshot.empty) {
-            firestoreBiz = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as BusinessItem;
+          // Check by direct doc ID
+          const docId1 = `biz-${decodedSlug}`;
+          const snap1 = await getDoc(doc(db, 'businesses', docId1));
+          if (snap1.exists()) {
+            firestoreBiz = { id: snap1.id, ...snap1.data() } as BusinessItem;
+          }
+
+          // Check by slug field queries
+          if (!firestoreBiz) {
+            const qDecoded = query(collection(db, 'businesses'), where('slug', '==', decodedSlug));
+            const snapDecoded = await getDocs(qDecoded);
+            if (!snapDecoded.empty) {
+              firestoreBiz = {
+                id: snapDecoded.docs[0].id,
+                ...snapDecoded.docs[0].data(),
+              } as BusinessItem;
+            }
+          }
+
+          if (!firestoreBiz && rawSlug !== decodedSlug) {
+            const qRaw = query(collection(db, 'businesses'), where('slug', '==', rawSlug));
+            const snapRaw = await getDocs(qRaw);
+            if (!snapRaw.empty) {
+              firestoreBiz = {
+                id: snapRaw.docs[0].id,
+                ...snapRaw.docs[0].data(),
+              } as BusinessItem;
+            }
           }
         } catch (fbError) {
           console.error('Firebase business slug fetch error:', fbError);
         }
       }
 
-      const defaultMatch = defaultBusinesses.find((b) => b.slug === slug || (slug === 'thecut' && b.slug === 'dvir'));
-
-      if (firestoreBiz && defaultMatch) {
-        return NextResponse.json({
-          business: {
-            ...defaultMatch,
-            ...firestoreBiz,
-            branches: firestoreBiz.branches?.length ? firestoreBiz.branches : defaultMatch.branches,
-            services: firestoreBiz.services?.length ? firestoreBiz.services : defaultMatch.services,
-          },
-        });
-      }
-
       if (firestoreBiz) {
         return NextResponse.json({ business: firestoreBiz });
       }
 
-      if (defaultMatch) {
-        return NextResponse.json({ business: defaultMatch });
-      }
-
-      if (slug === 'dvir' || slug === 'thecut') {
-        return NextResponse.json({ business: defaultBusinesses[0] });
+      const memMatch = memoryBusinesses.find(
+        (b) =>
+          safeDecode(b.slug) === decodedSlug ||
+          b.slug === rawSlug ||
+          b.id === `biz-${decodedSlug}`
+      );
+      if (memMatch) {
+        return NextResponse.json({ business: memMatch });
       }
 
       return NextResponse.json({ error: 'Business not found' }, { status: 404 });
     }
 
-    // 2. Fetch ALL businesses for Super Admin Dashboard (requires auth)
+    // 2. Fetch ALL registered businesses for Super Admin Dashboard
     const authResult = await requireRole(request, ['super_admin']);
     if (authResult instanceof NextResponse) {
       return authResult;
     }
 
-    let firestoreList: BusinessItem[] = [];
+    const firestoreList: BusinessItem[] = [];
 
     if (isFirebaseConfigured && db) {
       try {
         const snapshot = await getDocs(collection(db, 'businesses'));
         if (!snapshot.empty) {
-          firestoreList = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as BusinessItem));
+          snapshot.forEach((d) => {
+            const data = d.data();
+            firestoreList.push({
+              id: d.id,
+              ...data,
+            } as BusinessItem);
+          });
         }
       } catch (fbError) {
         console.error('Firebase businesses fetch error:', fbError);
       }
     }
 
-    // Build unified list: guaranteed to include Dvir (flagship) and default businesses
+    // Merge with memory businesses
     const mergedMap = new Map<string, BusinessItem>();
 
-    // Add default businesses first
-    for (const defBiz of defaultBusinesses) {
-      mergedMap.set(defBiz.slug, defBiz);
+    for (const mem of memoryBusinesses) {
+      mergedMap.set(mem.id || mem.slug, mem);
     }
 
-    // Overlay firestore businesses (keeping custom edits and custom businesses)
     for (const fBiz of firestoreList) {
-      const existing = mergedMap.get(fBiz.slug);
-      if (existing) {
-        mergedMap.set(fBiz.slug, {
-          ...existing,
-          ...fBiz,
-          branches: fBiz.branches?.length ? fBiz.branches : existing.branches,
-          services: fBiz.services?.length ? fBiz.services : existing.services,
-        });
-      } else {
-        mergedMap.set(fBiz.slug || fBiz.id, fBiz);
-      }
+      mergedMap.set(fBiz.id || fBiz.slug, fBiz);
     }
 
     const allBusinesses = Array.from(mergedMap.values());
-
-    // Sort to always place Dvir at the top (index 0)
-    allBusinesses.sort((a, b) => {
-      if (a.slug === 'dvir') return -1;
-      if (b.slug === 'dvir') return 1;
-      return (b.createdAt || '').localeCompare(a.createdAt || '');
-    });
+    allBusinesses.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
 
     return NextResponse.json({ businesses: allBusinesses });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message, businesses: defaultBusinesses }, { status: 500 });
+    return NextResponse.json({ error: error.message, businesses: memoryBusinesses }, { status: 500 });
   }
 }
 
-// POST /api/admin/businesses (Add New Business with Archetype & Rich Tailoring)
+// POST /api/admin/businesses (Add New Business)
 export async function POST(request: Request) {
   try {
     const authResult = await requireRole(request, ['super_admin']);
@@ -185,7 +180,6 @@ export async function POST(request: Request) {
       slogan,
       announcement,
       themeColor,
-      archetypeId,
       instagramHandle,
       branches,
       services,
@@ -194,112 +188,86 @@ export async function POST(request: Request) {
     } = body;
 
     if (!name || !slug || !phone) {
-      return NextResponse.json({ error: 'שם העסק, מזהה קישור (slug) וטלפון הם שדות חובה' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'שם העסק, מזהה קישור (slug) וטלפון הם שדות חובה' },
+        { status: 400 }
+      );
     }
 
-    const cleanSlug = slug.toLowerCase().trim().replace(/[^a-z0-9-_]/g, '');
+    const cleanSlug = safeDecode(slug).replace(/[^a-zA-Z0-9\u0590-\u05FF-_]/g, '-');
     if (!cleanSlug || cleanSlug.length < 2) {
-      return NextResponse.json({ error: 'מזהה הקישור (slug) חייב להכיל לפחות 2 תווים באנגלית או מספרים' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'מזהה הקישור (slug) חייב להכיל לפחות 2 תווים' },
+        { status: 400 }
+      );
     }
+
     const docId = `biz-${cleanSlug}`;
 
-    // Slug uniqueness check in Firestore
-    if (isFirebaseConfigured && db) {
-      try {
-        const existingDoc = await getDoc(doc(db, 'businesses', docId));
-        if (existingDoc.exists()) {
-          return NextResponse.json(
-            { error: `מזהה הקישור (Slug) "${cleanSlug}" כבר קיים במערכת. אנא בחר מזהה ייחודי אחר.` },
-            { status: 409 }
-          );
-        }
-      } catch (fbErr) {
-        console.error('Firebase slug check error:', fbErr);
-      }
-    }
-
-    const { generateTailoredBusinessConfig } = await import('@/lib/archetypes');
-
-    const generated = generateTailoredBusinessConfig({
-      name,
-      slug: cleanSlug,
-      ownerName: ownerName || name,
-      phone,
-      city: city || 'ישראל',
-      archetypeId: archetypeId || 'mens-barbershop',
-      themeColor: themeColor || '#C9A84C',
-      plan: plan || 'pro',
-      instagramHandle,
-      branches,
-      services,
-    });
-
-    const newBiz: BusinessItem = {
-      ...generated,
+    const newBusiness: BusinessItem = {
       id: docId,
-      slogan: slogan || generated.slogan,
-      announcement: announcement || generated.announcement,
-      themeColor: themeColor || generated.themeColor,
+      name: String(name).trim(),
+      slug: cleanSlug,
+      ownerName: String(ownerName || name).trim(),
+      phone: String(phone).trim(),
+      city: city || 'ישראל',
+      plan: plan || 'starter',
+      slogan: slogan || `${name} · שירות ואיכות ללא פשרות`,
+      announcement: announcement || `🌟 ברוכים הבאים ל${name}! שריינו תור אונליין בקלות 24/7`,
+      themeColor: themeColor || '#C9A84C',
+      instagramHandle: instagramHandle || '',
+      branchesCount: Array.isArray(branches) && branches.length > 0 ? branches.length : 1,
+      status: 'active',
       createdAt: new Date().toISOString().split('T')[0],
-      ...(testimonials && testimonials.length > 0 ? { testimonials } : {}),
-      ...(faqs && faqs.length > 0 ? { faqs } : {}),
+      branches: Array.isArray(branches) && branches.length > 0 ? branches : [{ name: 'סניף מרכזי', address: city || 'מרכז העיר' }],
+      services: Array.isArray(services) && services.length > 0 ? services : [{ name: 'שירות פרימיום', price: 100, duration: 30 }],
     };
 
+    // Save in Firestore
     if (isFirebaseConfigured && db) {
       try {
         await setDoc(doc(db, 'businesses', docId), {
-          ...newBiz,
+          ...newBusiness,
           serverCreatedAt: serverTimestamp(),
-        }, { merge: true });
-      } catch (fbError) {
-        console.error('Firebase business save error:', fbError);
+          updatedAt: serverTimestamp(),
+        });
+      } catch (fbErr) {
+        console.error('Firebase save business error:', fbErr);
       }
     }
 
-    const existingIdx = defaultBusinesses.findIndex((b) => b.slug === cleanSlug);
+    // Save in memory
+    const existingIdx = memoryBusinesses.findIndex((b) => b.slug === cleanSlug || b.id === docId);
     if (existingIdx !== -1) {
-      defaultBusinesses[existingIdx] = newBiz;
+      memoryBusinesses[existingIdx] = newBusiness;
     } else {
-      defaultBusinesses.unshift(newBiz);
+      memoryBusinesses.unshift(newBusiness);
     }
 
     return NextResponse.json({
       success: true,
-      message: 'העסק החדש הוקם בהצלחה במערכת עם התאמה אישית מלאה',
-      business: newBiz,
+      message: 'העסק הוקם בהצלחה!',
+      business: newBusiness,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-// PATCH /api/admin/businesses (Update Business Customization & Settings)
+// PATCH /api/admin/businesses (Update Business)
 export async function PATCH(request: Request) {
   try {
-    const authResult = await requireRole(request, ['super_admin', 'business_admin']);
+    const authResult = await requireRole(request, ['super_admin']);
     if (authResult instanceof NextResponse) {
       return authResult;
     }
 
     const body = await request.json();
-    const { slug, id, ...updates } = body;
+    const { id, slug, ...updates } = body;
 
-    if (!slug && !id) {
-      return NextResponse.json({ error: 'Missing business slug or id' }, { status: 400 });
-    }
-
-    const targetSlug = slug?.toLowerCase().trim();
-
-    // If caller is business_admin, verify they have access to this businessSlug
-    if (authResult.role === 'business_admin') {
-      const allowedSlugs = authResult.businessSlugs || [];
-      if (!allowedSlugs.includes(targetSlug)) {
-        return NextResponse.json({ error: 'אין הרשאה לערוך עסק זה' }, { status: 403 });
-      }
-    }
+    const targetSlug = slug ? safeDecode(slug) : '';
     const targetDocId = id || (targetSlug ? `biz-${targetSlug}` : `biz-${Date.now()}`);
 
-    // Sanitize updates to prevent Firestore undefined field errors
     const sanitizedUpdates: Record<string, any> = {};
     for (const [key, value] of Object.entries(updates)) {
       if (value !== undefined) {
@@ -309,58 +277,27 @@ export async function PATCH(request: Request) {
 
     if (isFirebaseConfigured && db) {
       try {
-        if (id) {
-          await setDoc(
-            doc(db, 'businesses', id),
-            {
-              id,
-              ...(targetSlug ? { slug: targetSlug } : {}),
-              ...sanitizedUpdates,
-              updatedAt: serverTimestamp(),
-            },
-            { merge: true }
-          );
-        } else if (targetSlug) {
-          const q = query(collection(db, 'businesses'), where('slug', '==', targetSlug));
-          const snapshot = await getDocs(q);
-          if (!snapshot.empty) {
-            const existingId = snapshot.docs[0].id;
-            await setDoc(
-              doc(db, 'businesses', existingId),
-              {
-                id: existingId,
-                slug: targetSlug,
-                ...sanitizedUpdates,
-                updatedAt: serverTimestamp(),
-              },
-              { merge: true }
-            );
-          } else {
-            await setDoc(
-              doc(db, 'businesses', targetDocId),
-              {
-                id: targetDocId,
-                slug: targetSlug,
-                ...sanitizedUpdates,
-                serverCreatedAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-              },
-              { merge: true }
-            );
-          }
-        }
+        await setDoc(
+          doc(db, 'businesses', targetDocId),
+          {
+            id: targetDocId,
+            ...(targetSlug ? { slug: targetSlug } : {}),
+            ...sanitizedUpdates,
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
       } catch (fbError) {
         console.error('Firebase business update error:', fbError);
       }
     }
 
-    // Update in-memory store
-    const found = defaultBusinesses.find((b) => (targetSlug && b.slug === targetSlug) || (id && b.id === id));
+    // Update in memory
+    const found = memoryBusinesses.find(
+      (b) => (targetSlug && b.slug === targetSlug) || (id && b.id === id)
+    );
     if (found) {
       Object.assign(found, sanitizedUpdates);
-      if (sanitizedUpdates.branches) {
-        found.branchesCount = sanitizedUpdates.branches.length;
-      }
     }
 
     return NextResponse.json({
@@ -382,44 +319,74 @@ export async function DELETE(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    const slug = searchParams.get('slug')?.toLowerCase().trim();
+    const id = searchParams.get('id')?.trim();
+    const rawSlug = searchParams.get('slug')?.trim();
+    const decodedSlug = rawSlug ? safeDecode(rawSlug) : '';
 
-    if (!id && !slug) {
-      return NextResponse.json({ error: 'Missing id or slug' }, { status: 400 });
-    }
-
-    if (slug === 'dvir' || id === 'biz-dvir') {
-      return NextResponse.json({ error: 'לא ניתן למחוק את עסק הדגל של דביר' }, { status: 400 });
+    if (!id && !decodedSlug && !rawSlug) {
+      return NextResponse.json({ error: 'Missing id or slug parameter' }, { status: 400 });
     }
 
     if (isFirebaseConfigured && db) {
       try {
+        const deleteDocIds = new Set<string>();
+
         if (id) {
-          await deleteDoc(doc(db, 'businesses', id));
+          deleteDocIds.add(id);
         }
-        if (slug) {
-          const q = query(collection(db, 'businesses'), where('slug', '==', slug));
-          const snapshot = await getDocs(q);
-          const deletePromises = snapshot.docs.map((d) => deleteDoc(doc(db!, 'businesses', d.id)));
-          await Promise.all(deletePromises);
+        if (decodedSlug) {
+          deleteDocIds.add(`biz-${decodedSlug}`);
         }
+        if (rawSlug) {
+          deleteDocIds.add(`biz-${rawSlug}`);
+        }
+
+        // Query by decoded slug
+        if (decodedSlug) {
+          const qDecoded = query(collection(db, 'businesses'), where('slug', '==', decodedSlug));
+          const snapDecoded = await getDocs(qDecoded);
+          snapDecoded.forEach((d) => deleteDocIds.add(d.id));
+        }
+
+        // Query by raw slug
+        if (rawSlug && rawSlug !== decodedSlug) {
+          const qRaw = query(collection(db, 'businesses'), where('slug', '==', rawSlug));
+          const snapRaw = await getDocs(qRaw);
+          snapRaw.forEach((d) => deleteDocIds.add(d.id));
+        }
+
+        // Execute deletions
+        const deletePromises = Array.from(deleteDocIds).map((docId) =>
+          deleteDoc(doc(db!, 'businesses', docId))
+        );
+        await Promise.all(deletePromises);
       } catch (fbError) {
         console.error('Firebase business delete error:', fbError);
       }
     }
 
-    const idx = defaultBusinesses.findIndex((b) => (id && b.id === id) || (slug && b.slug === slug));
-    if (idx !== -1 && defaultBusinesses[idx].slug !== 'dvir') {
-      defaultBusinesses.splice(idx, 1);
+    // Clean from memory store
+    const filterFn = (b: BusinessItem) => {
+      if (id && (b.id === id || b.id === `biz-${id}`)) return false;
+      if (decodedSlug && (safeDecode(b.slug) === decodedSlug || b.id === `biz-${decodedSlug}`))
+        return false;
+      if (rawSlug && (b.slug === rawSlug || b.id === `biz-${rawSlug}`)) return false;
+      return true;
+    };
+
+    const initialLen = memoryBusinesses.length;
+    for (let i = memoryBusinesses.length - 1; i >= 0; i--) {
+      if (!filterFn(memoryBusinesses[i])) {
+        memoryBusinesses.splice(i, 1);
+      }
     }
 
     return NextResponse.json({
       success: true,
-      message: 'המספרה נמחקה בהצלחה מהמערכת',
+      message: 'העסק נמחק בהצלחה מהמערכת',
     });
   } catch (error: any) {
+    console.error('DELETE business error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

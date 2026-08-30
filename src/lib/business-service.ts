@@ -5,6 +5,15 @@ import { INDUSTRY_PRESETS, IndustryPreset } from '@/lib/industry-presets';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
+function safeDecodeSlug(slug: string): string {
+  if (!slug) return '';
+  try {
+    return decodeURIComponent(slug).trim().toLowerCase();
+  } catch {
+    return slug.trim().toLowerCase();
+  }
+}
+
 export function presetToBusinessConfig(preset: IndustryPreset, slug: string): BusinessConfig {
   return {
     id: `biz-${preset.id}`,
@@ -165,7 +174,7 @@ const PRESET_MAP: Record<string, string> = {
  * Synchronous resolver for instant, zero-latency rendering of flagship and preset demo sites.
  */
 export function getBusinessConfigSync(slug: string): BusinessConfig | null {
-  const cleanSlug = (slug || 'dvir').trim().toLowerCase();
+  const cleanSlug = safeDecodeSlug(slug);
   if (cleanSlug === 'dvir' || cleanSlug === 'thecut') {
     return DVIR_FLAGSHIP_CONFIG;
   }
@@ -180,43 +189,60 @@ export function getBusinessConfigSync(slug: string): BusinessConfig | null {
 }
 
 /**
- * Resolves a full, rich business configuration for any slug.
- * Always ensures the tenant has complete pricing, branches, FAQs, and reviews.
+ * Resolves a full, rich business configuration for any registered tenant slug.
+ * Returns null if the business is not found.
  */
-export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
-  const cleanSlug = (slug || 'dvir').trim().toLowerCase();
+export async function getBusinessBySlug(slug: string): Promise<BusinessConfig | null> {
+  const decodedSlug = safeDecodeSlug(slug);
+  const rawSlug = (slug || '').trim().toLowerCase();
 
-  // 0. Check for Known Flagship Demos and Industry Presets (Instant & Isolated)
-  const syncConfig = getBusinessConfigSync(cleanSlug);
+  // 0. Check for Known Flagship Demos and Industry Presets
+  const syncConfig = getBusinessConfigSync(decodedSlug);
   if (syncConfig) {
     return syncConfig;
   }
 
-  // 1. Direct Firestore fetch on Client (Zero-delay, bypasses serverless cache/network blips)
+  // 1. Direct Firestore fetch on Client
   if (typeof window !== 'undefined' && isFirebaseConfigured && db) {
     try {
-      // Check direct document ID (biz-dvir or biz-[slug])
-      const directDocRef = doc(db, 'businesses', `biz-${cleanSlug}`);
+      // Check direct document ID (biz-[decodedSlug] or biz-[rawSlug])
+      const directDocRef = doc(db, 'businesses', `biz-${decodedSlug}`);
       const directSnap = await getDoc(directDocRef);
       if (directSnap.exists()) {
         return mergeWithDefaults(directSnap.data() as Partial<BusinessConfig>);
       }
 
+      if (rawSlug !== decodedSlug) {
+        const rawDocRef = doc(db, 'businesses', `biz-${rawSlug}`);
+        const rawSnap = await getDoc(rawDocRef);
+        if (rawSnap.exists()) {
+          return mergeWithDefaults(rawSnap.data() as Partial<BusinessConfig>);
+        }
+      }
+
       // Query by slug field
-      const q = query(collection(db, 'businesses'), where('slug', '==', cleanSlug));
+      const q = query(collection(db, 'businesses'), where('slug', '==', decodedSlug));
       const qSnap = await getDocs(q);
       if (!qSnap.empty) {
         return mergeWithDefaults(qSnap.docs[0].data() as Partial<BusinessConfig>);
+      }
+
+      if (rawSlug !== decodedSlug) {
+        const qRaw = query(collection(db, 'businesses'), where('slug', '==', rawSlug));
+        const qRawSnap = await getDocs(qRaw);
+        if (!qRawSnap.empty) {
+          return mergeWithDefaults(qRawSnap.docs[0].data() as Partial<BusinessConfig>);
+        }
       }
     } catch (dbErr) {
       console.warn('Direct Firestore client read fallback:', dbErr);
     }
   }
 
-  // 2. Fetch from backend /api/admin/businesses (in browser environment)
+  // 2. Fetch from backend /api/admin/businesses
   if (typeof window !== 'undefined') {
     try {
-      const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(cleanSlug)}`, {
+      const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(decodedSlug)}`, {
         cache: 'no-store',
       });
       if (res.ok) {
@@ -230,14 +256,7 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
     }
   }
 
-  // 3. Default fallback if not found
-  return generateTailoredBusinessConfig({
-    name: cleanSlug.charAt(0).toUpperCase() + cleanSlug.slice(1),
-    slug: cleanSlug,
-    ownerName: cleanSlug,
-    phone: '052-000-0000',
-    city: 'ישראל',
-  });
+  return null;
 }
 
 export function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: BusinessConfig): BusinessConfig {
@@ -295,4 +314,3 @@ export function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: B
     },
   };
 }
-
