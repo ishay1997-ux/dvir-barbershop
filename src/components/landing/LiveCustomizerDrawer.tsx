@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, Reorder } from 'framer-motion';
 import {
   Palette,
   Sparkles,
@@ -16,6 +17,7 @@ import {
   Type,
   Square,
   Sparkle,
+  GripVertical,
 } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
 import { SaaSOnboardingModal } from '@/components/marketing/SaaSOnboardingModal';
@@ -339,10 +341,25 @@ export function LiveCustomizerDrawer({
           {activeTab === 'sections' && (
             <div className="space-y-4">
               <div className="text-[10px] text-slate-300 pb-1 flex items-center justify-between">
-                <span>סדר את סדר המקטעים בעמוד:</span>
-                <span className="text-indigo-400 font-bold">1-Click Live Reorder</span>
+                <span>גרור או סדר את סדר המקטעים בעמוד:</span>
+                <span className="text-indigo-400 font-bold flex items-center gap-1">
+                  <span>✋ Drag & Drop Reorder</span>
+                </span>
               </div>
-              <div className="space-y-2">
+              <Reorder.Group
+                axis="y"
+                values={sectionsOrder}
+                onReorder={(newOrder) => {
+                  onChangeBusiness({
+                    ...business,
+                    layout: {
+                      ...(business.layout || {}),
+                      sectionsOrder: newOrder as any,
+                    },
+                  });
+                }}
+                className="space-y-2 select-none"
+              >
                 {sectionsOrder.map((sectionKey, idx) => {
                   const meta = SECTION_LABELS[sectionKey] || { label: sectionKey, icon: '📌' };
                   const isVisible = meta.toggleKey
@@ -350,36 +367,54 @@ export function LiveCustomizerDrawer({
                     : true;
 
                   return (
-                    <div
+                    <Reorder.Item
                       key={sectionKey}
-                      className={`p-2.5 rounded-2xl border flex items-center justify-between transition-all ${
+                      value={sectionKey}
+                      className={`p-2.5 rounded-2xl border flex items-center justify-between transition-all cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md ${
                         isVisible
-                          ? 'bg-slate-800/70 border-slate-700/80 text-white'
-                          : 'bg-slate-900/60 border-slate-800/80 text-slate-500 opacity-60'
+                          ? 'bg-slate-800/90 border-slate-700 text-white'
+                          : 'bg-slate-900/60 border-slate-800 text-slate-500 opacity-60'
                       }`}
+                      whileDrag={{
+                        scale: 1.03,
+                        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5)",
+                        borderColor: "rgba(99, 102, 241, 0.8)",
+                        zIndex: 50
+                      }}
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1 rounded-lg text-slate-400 hover:text-slate-200 cursor-grab active:cursor-grabbing" title="גרור לשינוי סדר">
+                          <GripVertical className="w-4 h-4" />
+                        </div>
                         <span className="text-base">{meta.icon}</span>
                         <div className="leading-tight">
                           <div className="text-xs font-bold">{meta.label}</div>
-                          <div className="text-[9px] text-slate-400">מיקום {idx + 1} בעמוד</div>
+                          <div className="text-[9px] text-slate-400">גרור או הזז (מיקום {idx + 1})</div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                         {/* Up / Down Controls */}
                         <div className="flex items-center bg-slate-900 rounded-lg p-0.5 border border-slate-700/60">
                           <button
+                            type="button"
                             disabled={idx === 0}
-                            onClick={() => handleMoveSection(idx, 'up')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMoveSection(idx, 'up');
+                            }}
                             className="p-1 rounded text-slate-300 hover:text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
                             title="הזז למעלה"
                           >
                             <ArrowUp className="w-3.5 h-3.5" />
                           </button>
                           <button
+                            type="button"
                             disabled={idx === sectionsOrder.length - 1}
-                            onClick={() => handleMoveSection(idx, 'down')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMoveSection(idx, 'down');
+                            }}
                             className="p-1 rounded text-slate-300 hover:text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
                             title="הזז למטה"
                           >
@@ -390,7 +425,11 @@ export function LiveCustomizerDrawer({
                         {/* Visibility Toggle */}
                         {meta.toggleKey && (
                           <button
-                            onClick={() => handleToggleSection(meta.toggleKey!, isVisible)}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleSection(meta.toggleKey!, isVisible);
+                            }}
                             className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
                               isVisible
                                 ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
@@ -402,10 +441,10 @@ export function LiveCustomizerDrawer({
                           </button>
                         )}
                       </div>
-                    </div>
+                    </Reorder.Item>
                   );
                 })}
-              </div>
+              </Reorder.Group>
 
               {/* Custom Headline Overrides */}
               <div className="pt-3 border-t border-slate-800 space-y-2">

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion, Reorder } from 'framer-motion';
 import {
   Palette,
   Sparkles,
@@ -12,6 +13,7 @@ import {
   RotateCcw,
   Sun,
   Moon,
+  GripVertical,
 } from 'lucide-react';
 import { useToast } from '@/components/common/ToastProvider';
 import type { ShopSettings, BusinessLayoutConfig } from '@/lib/types';
@@ -468,15 +470,31 @@ export default function DesignStudioSettings({
           <div>
             <div className="flex items-center gap-2">
               <Layout className="w-5 h-5 text-gold" />
-              <h2 className="text-base font-black text-[#1C1C1C]">סדר מקטעים ומודולריות (1-Click Reorder)</h2>
+              <h2 className="text-base font-black text-[#1C1C1C]">סדר מקטעים ומודולריות (Drag & Drop Reorder)</h2>
             </div>
             <p className="text-xs text-[#6B6560] mt-1">
-              שלוט בסדר שבו המקטעים מופיעים בעמוד והפעל או כבה סקשנים לפי הצורך
+              גרור ושחרר (Drag & Drop) או לחץ על החיצים כדי לשנות את סדר הסקשנים בעמוד
             </p>
           </div>
         </div>
 
-        <div className="space-y-3">
+        <Reorder.Group
+          axis="y"
+          values={layout.sectionsOrder || ['hero', 'services', 'bio', 'branches', 'gallery', 'reviews', 'faqs']}
+          onReorder={(newOrder) => {
+            const updated: ShopSettings = {
+              ...settings,
+              layout: {
+                ...(settings.layout || {}),
+                sectionsOrder: newOrder as any,
+              },
+            };
+            onUpdateSettings(updated);
+            onNotifySave();
+            success('סדר הסקשנים עודכן', 'סדר המקטעים נשמר בהצלחה');
+          }}
+          className="space-y-3 select-none"
+        >
           {(layout.sectionsOrder || ['hero', 'services', 'bio', 'branches', 'gallery', 'reviews', 'faqs']).map((secKey, idx, arr) => {
             const labels: Record<string, { name: string; desc: string; icon: string; toggleKey?: keyof BusinessLayoutConfig }> = {
               hero: { name: 'פתיח ראשי (Hero Hub)', desc: 'תמונת אווירה, לוגו, סטטוס פתיחה וכפתורי קביעת תור', icon: '💈' },
@@ -512,28 +530,41 @@ export default function DesignStudioSettings({
             };
 
             return (
-              <div
+              <Reorder.Item
                 key={secKey}
-                className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${
+                value={secKey}
+                className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all cursor-grab active:cursor-grabbing shadow-xs hover:shadow-md ${
                   isVisible ? 'bg-[#FAF7F2] border-[#E5DDD0]' : 'bg-zinc-100 border-zinc-200 opacity-60'
                 }`}
+                whileDrag={{
+                  scale: 1.02,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+                  borderColor: "#C9A84C",
+                  zIndex: 50
+                }}
               >
                 <div className="flex items-center gap-3">
+                  <div className="p-1 rounded-lg text-slate-400 hover:text-slate-600 cursor-grab active:cursor-grabbing" title="גרור לשינוי מיקום">
+                    <GripVertical className="w-4 h-4" />
+                  </div>
                   <span className="text-xl">{meta.icon}</span>
                   <div>
                     <span className="font-bold text-xs sm:text-sm text-[#1C1C1C] block">
-                      {meta.name} <span className="text-[10px] text-slate-500 font-normal">(מיקום {idx + 1})</span>
+                      {meta.name} <span className="text-[10px] text-slate-500 font-normal">(גרור או העבר · מיקום {idx + 1})</span>
                     </span>
                     <span className="text-[11px] text-[#6B6560]">{meta.desc}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center bg-white rounded-xl border border-[#E5DDD0] p-0.5 shadow-xs">
                     <button
                       type="button"
                       disabled={idx === 0}
-                      onClick={() => handleMove('up')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMove('up');
+                      }}
                       className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-100 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
                       title="הזז למעלה"
                     >
@@ -542,7 +573,10 @@ export default function DesignStudioSettings({
                     <button
                       type="button"
                       disabled={idx === arr.length - 1}
-                      onClick={() => handleMove('down')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMove('down');
+                      }}
                       className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-100 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
                       title="הזז למטה"
                     >
@@ -553,7 +587,10 @@ export default function DesignStudioSettings({
                   {meta.toggleKey && (
                     <button
                       type="button"
-                      onClick={() => handleToggleSection(meta.toggleKey!)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleSection(meta.toggleKey!);
+                      }}
                       className={`text-xs px-3.5 py-2 rounded-xl font-bold transition-all cursor-pointer ${
                         isVisible
                           ? 'bg-emerald-500 text-white shadow-xs'
@@ -564,10 +601,10 @@ export default function DesignStudioSettings({
                     </button>
                   )}
                 </div>
-              </div>
+              </Reorder.Item>
             );
           })}
-        </div>
+        </Reorder.Group>
 
         {/* 5. Custom Headlines inputs */}
         <div className="pt-5 border-t border-[#E5DDD0] space-y-4">
