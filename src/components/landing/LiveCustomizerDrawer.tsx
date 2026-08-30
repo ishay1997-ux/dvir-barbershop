@@ -128,17 +128,22 @@ export function LiveCustomizerDrawer({
 
   return (
     <>
-      {/* Trigger Floating Button - Top Left with high z-index & no bottom collision */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed top-24 left-4 z-40 px-3.5 py-2.5 rounded-full bg-slate-950/95 text-amber-400 border border-amber-400/50 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer group ring-2 ring-amber-400/20 hover:ring-amber-400/50"
-        title="פתח מעצב חי (Live Customizer)"
-        aria-label="פתח מעצב חי"
-      >
-        <SlidersHorizontal className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
-        <span className="text-xs font-black text-white hidden sm:inline">מעצב חי (Live)</span>
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-      </button>
+      {/* Trigger Floating Button - Bottom Right (no top collision, high contrast in all themes) */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 px-4 py-2.5 rounded-full bg-[#090A0F]/95 text-amber-400 border border-amber-400/60 shadow-[0_8px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer group ring-2 ring-amber-400/20 hover:ring-amber-400/60 select-none"
+          title="פתח מעצב חי (Live Customizer)"
+          aria-label="פתח מעצב חי"
+          id="live-customizer-trigger-btn"
+        >
+          <div className="w-6 h-6 rounded-full bg-amber-400/15 border border-amber-400/40 flex items-center justify-center text-amber-400 group-hover:rotate-45 transition-transform">
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+          </div>
+          <span className="text-xs font-black text-white">התאמה אישית (Live)</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ring-2 ring-emerald-400/40" />
+        </button>
+      )}
 
       {/* Slide-over Drawer - Always on the Left Side */}
       <AnimatePresence>
