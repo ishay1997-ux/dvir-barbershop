@@ -20,6 +20,7 @@ import {
   Phone,
 } from 'lucide-react';
 import type { Business } from './types';
+import { BusinessDetailDrawer } from './BusinessDetailDrawer';
 
 interface BusinessesTableViewProps {
   businesses: Business[];
@@ -47,6 +48,7 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending' | 'suspended'>('all');
   const [planFilter, setPlanFilter] = useState<string>('all');
+  const [selectedDetailBiz, setSelectedDetailBiz] = useState<Business | null>(null);
 
   const filtered = businesses.filter((biz) => {
     if (statusFilter !== 'all' && biz.status !== statusFilter) return false;
@@ -230,8 +232,9 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                 return (
                   <tr
                     key={biz.id}
-                    className={`transition-colors ${
-                      adminTheme === 'light' ? 'hover:bg-slate-50/70' : 'hover:bg-white/5'
+                    onClick={() => setSelectedDetailBiz(biz)}
+                    className={`transition-colors cursor-pointer ${
+                      adminTheme === 'light' ? 'hover:bg-slate-50/80' : 'hover:bg-white/5'
                     }`}
                   >
                     {/* 1. Business Info */}
@@ -249,7 +252,7 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                         </div>
                         <div className="min-w-0">
                           <span
-                            className={`font-bold text-xs block truncate ${
+                            className={`font-bold text-xs block truncate hover:underline ${
                               adminTheme === 'light' ? 'text-slate-900' : 'text-white'
                             }`}
                           >
@@ -258,6 +261,7 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                           <Link
                             href={`/${biz.slug}`}
                             target="_blank"
+                            onClick={(e) => e.stopPropagation()}
                             className="text-[11px] font-medium text-indigo-600 hover:underline block truncate"
                             dir="ltr"
                           >
@@ -286,6 +290,7 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                           className="p-0.5 text-[#25D366] hover:opacity-80 transition-opacity"
                           title="שלח וואטסאפ"
                         >
@@ -350,10 +355,13 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
 
                     {/* 7. Action Icons Group */}
                     <td className="py-3.5 px-4 text-center">
-                      <div className="flex items-center justify-center gap-1">
+                      <div className="flex items-center justify-center gap-1" onClick={(e) => e.stopPropagation()}>
                         {/* Edit Button */}
                         <button
-                          onClick={() => onOpenEditModal(biz)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenEditModal(biz);
+                          }}
                           className="p-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors cursor-pointer"
                           title="ערוך והתאם אישית"
                         >
@@ -364,6 +372,7 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                         <Link
                           href={`/${biz.slug}`}
                           target="_blank"
+                          onClick={(e) => e.stopPropagation()}
                           className="p-1.5 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors"
                           title="צפה באתר הלקוחות"
                         >
@@ -372,7 +381,10 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
 
                         {/* Business Admin Login */}
                         <button
-                          onClick={() => router.push('/admin')}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push('/admin');
+                          }}
                           className="p-1.5 rounded-lg text-slate-600 hover:text-emerald-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors cursor-pointer"
                           title="כניסה לפאנל הניהול"
                         >
@@ -381,7 +393,8 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
 
                         {/* Export JSON Backup */}
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             const dataStr =
                               'data:text/json;charset=utf-8,' +
                               encodeURIComponent(JSON.stringify(biz, null, 2));
@@ -401,7 +414,10 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
                         {/* Clone Business */}
                         {onCloneBusiness && (
                           <button
-                            onClick={() => onCloneBusiness(biz)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onCloneBusiness(biz);
+                            }}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-white/10 transition-colors cursor-pointer"
                             title="שכפל עסק"
                           >
@@ -411,7 +427,10 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
 
                         {/* Delete Business */}
                         <button
-                          onClick={() => onDeleteBusiness(biz.slug, biz.name)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteBusiness(biz.slug, biz.name);
+                          }}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                           title="מחק עסק"
                         >
@@ -426,6 +445,14 @@ export const BusinessesTableView: React.FC<BusinessesTableViewProps> = ({
           </table>
         </div>
       </div>
+
+      {/* Full Business Detail Drawer Modal */}
+      <BusinessDetailDrawer
+        business={selectedDetailBiz}
+        adminTheme={adminTheme}
+        onClose={() => setSelectedDetailBiz(null)}
+        onOpenEditModal={onOpenEditModal}
+      />
     </div>
   );
 };
