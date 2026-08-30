@@ -2,26 +2,13 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Keyboard,
-  Volume2,
-  Moon,
-  Sun,
-  Contrast,
-  Eye,
-  ZoomIn,
-  Type,
-  Image as ImageIcon,
-  Link as LinkIcon,
-  Heading,
-  BookOpen,
-  Search,
-} from 'lucide-react';
 
 import { A11yState, TileItem } from './types';
 import { A11Y_I18N } from './i18n';
 import { useAccessibility } from './useAccessibility';
 import { useSpeechSynthesis } from './useSpeechSynthesis';
+import { useA11yShortcuts } from './useA11yShortcuts';
+import { buildA11yTiles } from './a11yTilesConfig';
 import {
   FloatingTrigger,
   DrawerHeader,
@@ -69,7 +56,6 @@ export default function AccessibilityWidget({
   const [showReaderModal, setShowReaderModal] = useState(false);
   const [showFloatingFontToolbar, setShowFloatingFontToolbar] = useState(false);
   const [hoveredTile, setHoveredTile] = useState<TileItem | null>(null);
-  const [activeInput, setActiveInput] = useState<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
   const activeHideStorageKey = storageKey ? `${storageKey}_hidden_until` : 'thecut_a11y_hidden_until';
   const activeHideSessionKey = storageKey ? `${storageKey}_hidden_session` : 'thecut_a11y_hidden_session';
@@ -100,7 +86,16 @@ export default function AccessibilityWidget({
   const isRtl = state.language === 'he' || state.language === 'ar';
   const currentDirection = isRtl ? 'rtl' : 'ltr';
 
-  // 4. Check whether accessibility button was hidden by user preference
+  // 4. Shortcuts & Virtual Keyboard Input Listener
+  const { handleVirtualKeyPress, handleVirtualBackspace } = useA11yShortcuts({
+    setState,
+    setIsOpen,
+    setIsLanguageOpen,
+    setShowReaderModal,
+    setIsHideModalOpen,
+  });
+
+  // 5. Check whether accessibility button was hidden by user preference
   useEffect(() => {
     try {
       const sessionHidden = sessionStorage.getItem(activeHideSessionKey);
@@ -119,55 +114,7 @@ export default function AccessibilityWidget({
     }
   }, [activeHideSessionKey, activeHideStorageKey]);
 
-  // 5. Listen to focus events to support virtual keyboard typing into any active input
-  useEffect(() => {
-    const handleFocus = (e: FocusEvent) => {
-      const target = e.target as HTMLElement;
-      if (
-        target &&
-        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') &&
-        !target.closest('.a11y-ignore')
-      ) {
-        setActiveInput(target as HTMLInputElement | HTMLTextAreaElement);
-      }
-    };
-
-    window.addEventListener('focusin', handleFocus);
-    return () => window.removeEventListener('focusin', handleFocus);
-  }, []);
-
-  // 6. Global Keyboard Shortcuts: Alt+A, Ctrl+F10 (opens drawer), Ctrl+F11 (toggle blind / keyboard nav mode), Escape (closes)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Open / Close Drawer
-      if (
-        (e.altKey && (e.key === 'a' || e.key === 'A' || e.key === 'ש')) ||
-        (e.ctrlKey && e.key === 'F10')
-      ) {
-        e.preventDefault();
-        setIsOpen((prev) => !prev);
-      }
-      // Blind / Screen-Reader / Keyboard Mode Toggle
-      if (e.ctrlKey && e.key === 'F11') {
-        e.preventDefault();
-        setState((prev) => ({
-          ...prev,
-          keyboardNav: !prev.keyboardNav,
-        }));
-      }
-      // Close
-      if (e.key === 'Escape') {
-        setIsOpen(false);
-        setIsLanguageOpen(false);
-        setShowReaderModal(false);
-        setIsHideModalOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [setState]);
-
-  // 7. Hide Button Handler
+  // 6. Hide Button Handler
   const handleConfirmHide = useCallback(
     (duration: HideDuration) => {
       try {
@@ -192,39 +139,6 @@ export default function AccessibilityWidget({
     [activeHideSessionKey, activeHideStorageKey]
   );
 
-  // 6. Virtual Keyboard Actions
-  const handleVirtualKeyPress = useCallback(
-    (char: string) => {
-      if (!activeInput) return;
-      const start = activeInput.selectionStart || activeInput.value.length;
-      const end = activeInput.selectionEnd || activeInput.value.length;
-      const val = activeInput.value;
-      const newVal = val.slice(0, start) + char + val.slice(end);
-      activeInput.value = newVal;
-      activeInput.dispatchEvent(new Event('input', { bubbles: true }));
-      activeInput.setSelectionRange(start + char.length, start + char.length);
-      activeInput.focus();
-    },
-    [activeInput]
-  );
-
-  const handleVirtualBackspace = useCallback(() => {
-    if (!activeInput) return;
-    const start = activeInput.selectionStart || activeInput.value.length;
-    const end = activeInput.selectionEnd || activeInput.value.length;
-    const val = activeInput.value;
-    if (start === end && start > 0) {
-      activeInput.value = val.slice(0, start - 1) + val.slice(end);
-      activeInput.dispatchEvent(new Event('input', { bubbles: true }));
-      activeInput.setSelectionRange(start - 1, start - 1);
-    } else if (start !== end) {
-      activeInput.value = val.slice(0, start) + val.slice(end);
-      activeInput.dispatchEvent(new Event('input', { bubbles: true }));
-      activeInput.setSelectionRange(start, start);
-    }
-    activeInput.focus();
-  }, [activeInput]);
-
   // 7. Reset all modifications
   const handleResetAll = useCallback(() => {
     speech.handleCloseSpeech();
@@ -235,164 +149,18 @@ export default function AccessibilityWidget({
 
   // 8. 14 Core Tiles
   const a11yTiles: TileItem[] = useMemo(
-    () => [
-      {
-        id: 'keyboardNav',
-        title: t.keyboardNavTitle,
-        desc: t.keyboardNavDesc,
-        icon: <Keyboard className="w-6 h-6 text-[#085B7A]" />,
-        active: state.keyboardNav,
-        onClick: () => setState((prev) => ({ ...prev, keyboardNav: !prev.keyboardNav })),
-      },
-      {
-        id: 'speech',
-        title: speech.isSpeaking || speech.isSpeechBarOpen ? t.speechStopTitle : t.speechTitle,
-        desc: t.speechDesc,
-        icon: (
-          <Volume2
-            className={`w-6 h-6 ${
-              speech.isSpeaking ? 'text-[#0088A9] animate-pulse' : 'text-[#085B7A]'
-            }`}
-          />
-        ),
-        active: speech.isSpeechBarOpen || speech.isSpeaking,
-        onClick: () => {
-          speech.setIsSpeechBarOpen(true);
-          setIsOpen(false);
-          if (!speech.isSpeaking) {
-            speech.handlePlayPause();
-          }
-        },
-      },
-      {
-        id: 'contrastDark',
-        title: t.contrastDarkTitle,
-        desc: t.contrastDarkDesc,
-        icon: <Moon className="w-6 h-6 text-[#085B7A]" />,
-        active: state.contrastMode === 'dark',
-        onClick: () =>
-          setState((prev) => ({
-            ...prev,
-            contrastMode: prev.contrastMode === 'dark' ? 'normal' : 'dark',
-          })),
-      },
-      {
-        id: 'contrastLight',
-        title: t.contrastLightTitle,
-        desc: t.contrastLightDesc,
-        icon: <Sun className="w-6 h-6 text-[#085B7A]" />,
-        active: state.contrastMode === 'light',
-        onClick: () =>
-          setState((prev) => ({
-            ...prev,
-            contrastMode: prev.contrastMode === 'light' ? 'normal' : 'light',
-          })),
-      },
-      {
-        id: 'contrastInvert',
-        title: t.contrastInvertTitle,
-        desc: t.contrastInvertDesc,
-        icon: <Contrast className="w-6 h-6 text-[#085B7A]" />,
-        active: state.contrastMode === 'invert',
-        onClick: () =>
-          setState((prev) => ({
-            ...prev,
-            contrastMode: prev.contrastMode === 'invert' ? 'normal' : 'invert',
-          })),
-      },
-      {
-        id: 'grayscale',
-        title: t.grayscaleTitle,
-        desc: t.grayscaleDesc,
-        icon: <Eye className="w-6 h-6 text-[#085B7A]" />,
-        active: state.contrastMode === 'grayscale',
-        onClick: () =>
-          setState((prev) => ({
-            ...prev,
-            contrastMode: prev.contrastMode === 'grayscale' ? 'normal' : 'grayscale',
-          })),
-      },
-      {
-        id: 'screenZoom',
-        title: t.screenZoomTitle,
-        desc: t.screenZoomDesc,
-        icon: <ZoomIn className="w-6 h-6 text-[#085B7A]" />,
-        active: state.screenZoom,
-        onClick: () => setState((prev) => ({ ...prev, screenZoom: !prev.screenZoom })),
-      },
-      {
-        id: 'readableFont',
-        title: t.readableFontTitle,
-        desc: t.readableFontDesc,
-        icon: <Type className="w-6 h-6 text-[#085B7A]" />,
-        active: state.readableFont,
-        onClick: () => setState((prev) => ({ ...prev, readableFont: !prev.readableFont })),
-      },
-      {
-        id: 'imageAlt',
-        title: t.imageAltTitle,
-        desc: t.imageAltDesc,
-        icon: <ImageIcon className="w-6 h-6 text-[#085B7A]" />,
-        active: state.imageAltTooltips,
-        onClick: () => setState((prev) => ({ ...prev, imageAltTooltips: !prev.imageAltTooltips })),
-      },
-      {
-        id: 'highlightLinks',
-        title: t.highlightLinksTitle,
-        desc: t.highlightLinksDesc,
-        icon: <LinkIcon className="w-6 h-6 text-[#085B7A]" />,
-        active: state.highlightLinks,
-        onClick: () => setState((prev) => ({ ...prev, highlightLinks: !prev.highlightLinks })),
-      },
-      {
-        id: 'highlightHeadings',
-        title: t.highlightHeadingsTitle,
-        desc: t.highlightHeadingsDesc,
-        icon: <Heading className="w-6 h-6 text-[#085B7A]" />,
-        active: state.highlightHeadings,
-        onClick: () => setState((prev) => ({ ...prev, highlightHeadings: !prev.highlightHeadings })),
-      },
-      {
-        id: 'readingMode',
-        title: t.readingModeTitle,
-        desc: t.readingModeDesc,
-        icon: <BookOpen className="w-6 h-6 text-[#085B7A]" />,
-        active: showReaderModal,
-        onClick: () => setShowReaderModal(true),
-      },
-      {
-        id: 'contentScale',
-        title: t.contentScaleTitle,
-        desc: t.contentScaleDesc,
-        icon: <Search className="w-6 h-6 text-[#085B7A]" />,
-        active: state.fontScaleLevel > 0 || showFloatingFontToolbar,
-        onClick: () => {
-          setShowFloatingFontToolbar((prev) => !prev);
-          setState((prev) => ({
-            ...prev,
-            fontAdjustmentMode: 'size',
-            fontScaleLevel: prev.fontScaleLevel === 0 ? 1 : prev.fontScaleLevel,
-          }));
-        },
-      },
-      {
-        id: 'virtualKeyboard',
-        title: t.virtualKeyboardTitle,
-        desc: t.virtualKeyboardDesc,
-        icon: (
-          <div className="w-6 h-6 border-2 border-[#085B7A] rounded-md flex flex-wrap gap-0.5 p-0.5 items-center justify-center">
-            <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-            <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-            <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-            <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-            <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-            <span className="w-1 h-1 bg-[#085B7A] rounded-[1px]" />
-          </div>
-        ),
-        active: state.virtualKeyboard,
-        onClick: () => setState((prev) => ({ ...prev, virtualKeyboard: !prev.virtualKeyboard })),
-      },
-    ],
+    () =>
+      buildA11yTiles({
+        t,
+        state,
+        setState,
+        speech,
+        showReaderModal,
+        setShowReaderModal,
+        showFloatingFontToolbar,
+        setShowFloatingFontToolbar,
+        setIsOpen,
+      }),
     [t, speech, state, showReaderModal, setState]
   );
 
