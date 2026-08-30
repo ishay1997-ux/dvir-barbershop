@@ -1,0 +1,75 @@
+import { IndustryPreset } from './types';
+import { INDUSTRY_MEDIA_MAP } from '@/lib/industry-media';
+
+export const clinicsAestheticsPreset: IndustryPreset = {
+  id: 'clinics-aesthetics',
+  name: 'קליניקות אסתטיקה ורופאים',
+  categoryName: 'קליניקות ורפואה',
+  icon: '🩺',
+  badge: 'Advanced Aesthetic Clinic',
+  description: 'מראה Brand Midnight כחול-ספיר יוקרתי, תוצאות הזרקות וטיפולי פנים רפואיים.',
+  themeColor: '#0EA5E9', // Electric Blue / Sapphire
+  bgTheme: 'brand-midnight',
+  heroStyle: 'minimalist-vip',
+  servicesStyle: 'cards-grid',
+  galleryStyle: 'before-after-slider',
+  heroImages: INDUSTRY_MEDIA_MAP.clinics_aesthetics.heroImages,
+  galleryImages: INDUSTRY_MEDIA_MAP.clinics_aesthetics.galleryPhotos.map((p) => p.src),
+  avatarUrl: INDUSTRY_MEDIA_MAP.clinics_aesthetics.avatarUrl,
+  showBeforeAfter: true,
+  showBio: true,
+  showBranches: false,
+  borderRadius: 'classic-soft',
+  fontStyle: 'modern-sans',
+  shopName: 'קליניקת ד״ר לוי לאסתטיקה רפואית',
+  ownerName: 'ד״ר לוי',
+  slogan: 'רפואה אסתטית מתקדמת, פיסול פנים, בוטוקס וחומצה היאלורונית',
+  announcement: '💎 ייעוץ ואבחון פנים מקצועי ללא עלות בהרשמה מראש דרך האתר',
+  sectionsOrder: ['hero', 'announcement', 'trust-badges', 'gallery', 'services', 'bio', 'policies', 'reviews', 'faqs'],
+  transformations: [
+    {
+      id: '1',
+      title: 'טיפול פנים זוהר והעלמת פיגמנטציה',
+      category: 'פרוטוקול Glow רפואי',
+      description: 'חידוש מרקם העור, אחידות גוון הפנים והחזרת הברק הטבעי.',
+      beforeGradient: 'from-slate-900 via-zinc-900 to-slate-950',
+      afterGradient: 'from-sky-950 via-blue-900 to-sky-700',
+    },
+    {
+      id: '2',
+      title: 'פיסול ועיבוי שפתיים סימטרי',
+      category: 'חומצה היאלורונית פרימיום',
+      description: 'עיצוב קווי מתאר עדינים והענקת נפח טבעי ומחמיא במיוחד.',
+      beforeGradient: 'from-slate-900 via-neutral-900 to-zinc-900',
+      afterGradient: 'from-blue-950 via-indigo-900 to-sky-700',
+    },
+    {
+      id: '3',
+      title: 'טשטוש קמטי הבעה במצח',
+      category: 'בוטוקס רפואי מדויק',
+      description: 'מראה מצח חלק, פתוח ורענן תוך שמירה מלאה על הבעות הפנים הטבעיות.',
+      beforeGradient: 'from-zinc-900 via-slate-900 to-stone-900',
+      afterGradient: 'from-sky-900 via-blue-800 to-indigo-700',
+    },
+  ],
+  trustBadges: [
+    'טיפולים ע״י רופאים מוסמכים בלבד',
+    'חומרי מילוי באישור FDA ומשרד הבריאות',
+    'טכנולוגיות מיצוק והצערה המתקדמות בעולם',
+    'תוצאות טבעיות ומדויקות ללא זמן החלמה',
+  ],
+  services: [
+    { id: 'srv-501', name: 'פגישת אבחון ותכנון טיפול רפואי', price: 200, duration: 30, description: 'מיפוי תווי הפנים, התאמת פרוטוקול טיפולים ותיאום ציפיות מדויק' },
+    { id: 'srv-502', name: 'הזרקת בוטוקס (אזור אחד / שלושה אזורים)', price: 750, duration: 30, description: 'טשטוש קמטי הבעה במצח, בין הגבות ובצידי העיניים למראה רענן' },
+    { id: 'srv-503', name: 'פיסול ועיבוי שפתיים בחומצה היאלורונית', price: 1400, duration: 45, description: 'עיצוב שפתיים סימטרי וטבעי עם חומרי מילוי אירופאיים מהשורה הראשונה' },
+  ],
+  faqs: [
+    { id: 'faq-501', question: 'כמה זמן נמשכת השפעת הטיפול?', answer: 'תוצאות בוטוקס נשמרות בין 4 ל-6 חודשים, וחומצה היאלורונית בין 9 ל-14 חודשים.' },
+  ],
+  policies: {
+    cancellationNotice: 'ביטול תור עד 24 שעות מראש',
+    arrivalTime: 'הגעה 10 דקות לפני למריחת קרם אלחוש',
+    paymentMethods: 'אשראי (עד 12 תשלומים), Bit, העברה בנקאית ומזומן',
+    customNote: 'יש להימנע מנטילת מדללי דם יום לפני ההזרקות',
+  },
+};

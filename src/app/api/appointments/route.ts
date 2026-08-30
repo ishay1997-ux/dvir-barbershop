@@ -7,7 +7,6 @@ import {
   doc,
   setDoc,
   getDocs,
-  getDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -15,80 +14,34 @@ import {
   orderBy,
   serverTimestamp,
 } from 'firebase/firestore';
+import {
+  MemoryAppointment,
+  validateAppointmentPayload,
+  checkMemoryConflict,
+  getPhoneVariations,
+  createMemoryAppointment,
+} from '@/lib/appointment-helpers';
 
 // In-Memory fallback store for runtime consistency across serverless invocations
-interface MemoryAppointment {
-  id: string;
-  serviceId: string;
-  serviceName: string;
-  servicePrice: number;
-  barberId: string;
-  barberName: string;
-  branchId: string;
-  branchName: string;
-  businessSlug: string;
-  businessName: string;
-  date: string;
-  time: string;
-  customerName: string;
-  customerPhone: string;
-  customerAddress?: string;
-  locationType?: string;
-  bookingType?: string;
-  status: 'confirmed' | 'cancelled';
-  createdAt: string;
-}
-
 const memoryAppointments: MemoryAppointment[] = [];
 
 // ============================================================
-// POST: Book a new appointment (Production Double Booking Safe)
+// 1. POST: Book a new appointment (Production Double Booking Safe)
 // ============================================================
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {
-      serviceId,
-      serviceName,
-      service,
-      servicePrice,
-      price,
-      barberId,
-      barberName,
-      branchId,
-      branchName,
-      businessSlug,
-      businessName,
-      date,
-      time,
-      customerName,
-      customerPhone,
-      customerAddress,
-      locationType,
-      bookingType,
-    } = body;
+    const validation = validateAppointmentPayload(body);
 
-    // Strict input validation
-    if ((!serviceId && !serviceName && !service) || !date || !time || !customerName || !customerPhone) {
-      return NextResponse.json(
-        { error: 'נא למלא את כל שדות החובה להזמנת תור' },
-        { status: 400 }
-      );
+    if (!validation.isValid || !validation.data) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    const cleanName = String(customerName).trim().slice(0, 60);
-    const cleanPhone = String(customerPhone).replace(/\D/g, '').slice(0, 20);
-    const resolvedServiceName = String(serviceName || service || 'תספורת גברים').trim().slice(0, 80);
-    const resolvedPrice = Number(servicePrice || price) || 80;
-    const resolvedSlug = String(businessSlug || 'dvir').toLowerCase().trim();
-    const resolvedBizName = String(businessName || 'המספרה של דביר').trim();
-    const resolvedDate = String(date).trim();
-    const resolvedTime = String(time).trim();
-    const resolvedBarberId = String(barberId || 'dvir').trim();
+    const { data } = validation;
 
     // Rate Limiting Protection (Max 15 bookings per minute per IP / phone)
     const ip = request.headers.get('x-forwarded-for') || 'anon';
-    const rateCheck = checkRateLimit(`book:${ip}:${cleanPhone}`, 15, 60 * 1000);
+    const rateCheck = checkRateLimit(`book:${ip}:${data.cleanPhone}`, 15, 60 * 1000);
     if (!rateCheck.success) {
       return NextResponse.json(
         { error: 'בוצעו יותר מדי ניסיונות הזמנה בדקה האחרונה. אנא המתן מספר שניות ונסה שוב.' },
@@ -96,43 +49,8 @@ export async function POST(request: Request) {
       );
     }
 
-    if (cleanName.length < 2 || cleanPhone.length < 9) {
-      return NextResponse.json(
-        { error: 'שם מלא (לפחות 2 תווים) או מספר טלפון תקין (לפחות 9 ספרות) נדרשים' },
-        { status: 400 }
-      );
-    }
-
-    // 1. Date & Time validity and past validation
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(resolvedDate) || !/^\d{2}:\d{2}$/.test(resolvedTime)) {
-      return NextResponse.json(
-        { error: 'פורמט תאריך או שעה אינו תקין' },
-        { status: 400 }
-      );
-    }
-
-    try {
-      const appointmentDateTime = new Date(`${resolvedDate}T${resolvedTime}:00`);
-      if (isNaN(appointmentDateTime.getTime()) || appointmentDateTime.getTime() < Date.now() - 5 * 60 * 1000) {
-        return NextResponse.json(
-          { error: 'לא ניתן לקבוע תור למועד שעבר. אנא בחר שעה עתידית.' },
-          { status: 400 }
-        );
-      }
-    } catch {
-      // ignore parse fallback
-    }
-
-    // 2. Conflict Check: In-memory store
-    const conflictInMemory = memoryAppointments.find(
-      (a) =>
-        a.businessSlug === resolvedSlug &&
-        a.date === resolvedDate &&
-        a.time === resolvedTime &&
-        a.barberId === resolvedBarberId &&
-        a.status === 'confirmed'
-    );
-    if (conflictInMemory) {
+    // In-memory conflict check
+    if (checkMemoryConflict(memoryAppointments, data.resolvedSlug, data.resolvedDate, data.resolvedTime, data.resolvedBarberId)) {
       return NextResponse.json(
         { error: 'מועד זה כבר נתפס על ידי לקוח אחר. אנא בחר שעה אחרת.' },
         { status: 409 }
@@ -141,20 +59,20 @@ export async function POST(request: Request) {
 
     let appointmentId = `apt-${Date.now()}`;
 
-    // 3. Primary: Firebase Firestore Cloud Database with double-booking check
+    // Firebase Firestore Cloud Database with double-booking check
     if (isFirebaseConfigured && db) {
       try {
         const conflictQuery = query(
           collection(db, 'appointments'),
-          where('businessSlug', '==', resolvedSlug),
-          where('date', '==', resolvedDate),
-          where('time', '==', resolvedTime),
+          where('businessSlug', '==', data.resolvedSlug),
+          where('date', '==', data.resolvedDate),
+          where('time', '==', data.resolvedTime),
           where('status', '==', 'confirmed')
         );
         const conflictSnap = await getDocs(conflictQuery);
         if (!conflictSnap.empty) {
           const barberConflict = conflictSnap.docs.some(
-            (d) => (d.data().barberId || 'dvir') === resolvedBarberId
+            (d) => (d.data().barberId || 'dvir') === data.resolvedBarberId
           );
           if (barberConflict) {
             return NextResponse.json(
@@ -165,16 +83,16 @@ export async function POST(request: Request) {
         }
 
         // Record Customer in Firestore
-        const customerRef = doc(db, 'customers', cleanPhone);
+        const customerRef = doc(db, 'customers', data.cleanPhone);
         await setDoc(
           customerRef,
           {
-            name: cleanName,
-            phone: customerPhone,
-            cleanPhone,
+            name: data.cleanName,
+            phone: data.customerPhone,
+            cleanPhone: data.cleanPhone,
             lastVisit: new Date().toISOString(),
-            favoriteBranchId: branchId || 'ariel',
-            businessSlug: resolvedSlug,
+            favoriteBranchId: data.branchId || 'ariel',
+            businessSlug: data.resolvedSlug,
             updatedAt: serverTimestamp(),
           },
           { merge: true }
@@ -182,23 +100,23 @@ export async function POST(request: Request) {
 
         // Add Appointment to 'appointments' collection
         const appointmentDoc = await addDoc(collection(db, 'appointments'), {
-          serviceId: serviceId || 'srv-haircut',
-          serviceName: resolvedServiceName,
-          servicePrice: resolvedPrice,
-          barberId: resolvedBarberId,
-          barberName: barberName || 'דביר',
-          branchId: branchId || 'ariel',
-          branchName: branchName || (branchId === 'rehovot' ? 'סניף רחובות' : 'סניף אריאל'),
-          businessSlug: resolvedSlug,
-          businessName: resolvedBizName,
-          date: resolvedDate,
-          time: resolvedTime,
-          customerName: cleanName,
-          customerPhone: String(customerPhone).trim(),
-          cleanPhone,
-          customerAddress: customerAddress || null,
-          locationType: locationType || 'BUSINESS_LOCATION',
-          bookingType: bookingType || 'FIXED_SLOT',
+          serviceId: data.serviceId,
+          serviceName: data.resolvedServiceName,
+          servicePrice: data.resolvedPrice,
+          barberId: data.resolvedBarberId,
+          barberName: data.barberName,
+          branchId: data.branchId,
+          branchName: data.branchName,
+          businessSlug: data.resolvedSlug,
+          businessName: data.resolvedBizName,
+          date: data.resolvedDate,
+          time: data.resolvedTime,
+          customerName: data.cleanName,
+          customerPhone: data.customerPhone,
+          cleanPhone: data.cleanPhone,
+          customerAddress: data.customerAddress || null,
+          locationType: data.locationType,
+          bookingType: data.bookingType,
           status: 'confirmed',
           createdAt: serverTimestamp(),
         });
@@ -210,27 +128,7 @@ export async function POST(request: Request) {
     }
 
     // Save to memory store as backup
-    const newApt: MemoryAppointment = {
-      id: appointmentId,
-      serviceId: serviceId || 'srv-haircut',
-      serviceName: resolvedServiceName,
-      servicePrice: resolvedPrice,
-      barberId: barberId || 'dvir',
-      barberName: barberName || 'דביר',
-      branchId: branchId || 'ariel',
-      branchName: branchName || (branchId === 'rehovot' ? 'סניף רחובות' : 'סניף אריאל'),
-      businessSlug: resolvedSlug,
-      businessName: resolvedBizName,
-      date: String(date).trim(),
-      time: String(time).trim(),
-      customerName: cleanName,
-      customerPhone: String(customerPhone).trim(),
-      customerAddress: customerAddress || undefined,
-      locationType: locationType || 'BUSINESS_LOCATION',
-      bookingType: bookingType || 'FIXED_SLOT',
-      status: 'confirmed',
-      createdAt: new Date().toISOString(),
-    };
+    const newApt = createMemoryAppointment(appointmentId, data);
     memoryAppointments.unshift(newApt);
 
     return NextResponse.json({
@@ -249,7 +147,7 @@ export async function POST(request: Request) {
 }
 
 // ============================================================
-// 2. GET APPOINTMENTS (GET) with phone / slug filter
+// 2. GET: List or Search Appointments
 // ============================================================
 export async function GET(request: Request) {
   try {
@@ -257,7 +155,7 @@ export async function GET(request: Request) {
     const phoneFilter = searchParams.get('phone');
     const slugFilter = searchParams.get('businessSlug');
 
-    // If searching by customer phone
+    // Search by customer phone
     if (phoneFilter) {
       const cleanSearchPhone = phoneFilter.replace(/\D/g, '');
 
@@ -281,14 +179,13 @@ export async function GET(request: Request) {
         }
       }
 
-      // Memory fallback search
       const memoryMatches = memoryAppointments.filter((a) =>
         a.customerPhone.replace(/\D/g, '').includes(cleanSearchPhone)
       );
       return NextResponse.json({ appointments: memoryMatches, source: 'memory' });
     }
 
-    // Default: List appointments (Tenant-scoped indexed query for 1,000+ scale)
+    // Tenant-scoped indexed query
     if (isFirebaseConfigured && db) {
       try {
         const q = slugFilter
@@ -308,11 +205,7 @@ export async function GET(request: Request) {
 
           return NextResponse.json(
             { appointments: list, source: 'firestore' },
-            {
-              headers: {
-                'Cache-Control': 'private, max-age=5, stale-while-revalidate=15',
-              },
-            }
+            { headers: { 'Cache-Control': 'private, max-age=5, stale-while-revalidate=15' } }
           );
         }
       } catch (fbError) {
@@ -327,11 +220,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       { appointments: result, source: 'memory' },
-      {
-        headers: {
-          'Cache-Control': 'private, max-age=5, stale-while-revalidate=15',
-        },
-      }
+      { headers: { 'Cache-Control': 'private, max-age=5, stale-while-revalidate=15' } }
     );
   } catch (error) {
     console.error('Appointment GET error:', error);
@@ -343,7 +232,7 @@ export async function GET(request: Request) {
 }
 
 // ============================================================
-// 3. UPDATE APPOINTMENT (PATCH)
+// 3. PATCH: Update appointment status
 // ============================================================
 export async function PATCH(request: Request) {
   try {
@@ -351,10 +240,7 @@ export async function PATCH(request: Request) {
     const { id, status } = body;
 
     if (!id || !status) {
-      return NextResponse.json(
-        { error: 'Missing appointment ID or status' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing appointment ID or status' }, { status: 400 });
     }
 
     if (status !== 'confirmed' && status !== 'cancelled' && status !== 'completed' && status !== 'no_show') {
@@ -394,7 +280,7 @@ export async function PATCH(request: Request) {
 }
 
 // ============================================================
-// 4. DELETE / PURGE APPOINTMENTS (DELETE)
+// 4. DELETE: Purge appointments by ID or Phone
 // ============================================================
 export async function DELETE(request: Request) {
   try {
@@ -417,18 +303,7 @@ export async function DELETE(request: Request) {
     }
 
     if (phone) {
-      const rawDigits = phone.replace(/\D/g, '');
-      const last9Digits = rawDigits.slice(-9); // e.g. 587815070
-      const variations = Array.from(
-        new Set([
-          rawDigits,
-          phone.trim(),
-          last9Digits,
-          `0${last9Digits}`,
-          `972${last9Digits}`,
-          `+972${last9Digits}`,
-        ].filter(Boolean))
-      );
+      const { last9Digits, variations } = getPhoneVariations(phone);
 
       if (isFirebaseConfigured && db) {
         try {
@@ -449,11 +324,10 @@ export async function DELETE(request: Request) {
             }
           });
 
-          const deletePromises = toDeleteIds.map((id) =>
-            deleteDoc(doc(currentDb, 'appointments', id))
+          const deletePromises = toDeleteIds.map((delId) =>
+            deleteDoc(doc(currentDb, 'appointments', delId))
           );
 
-          // Also delete customer document from 'customers' collection
           for (const v of variations) {
             deletePromises.push(
               deleteDoc(doc(currentDb, 'customers', v)).catch(() => {})

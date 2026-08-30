@@ -1,0 +1,75 @@
+import { IndustryPreset } from './types';
+import { INDUSTRY_MEDIA_MAP } from '@/lib/industry-media';
+
+export const fitnessTrainerPreset: IndustryPreset = {
+  id: 'fitness-trainer',
+  name: 'אימונים אישיים וקליניקות כושר',
+  categoryName: 'כושר וספורט',
+  icon: '🏋️',
+  badge: 'Pro Fitness & Body Coaching',
+  description: 'מראה ירוק אמרלד ספורטיבי, סליידר תוצאות גוף וחיטוב, תוכניות VIP ותזונה.',
+  themeColor: '#10B981', // Cyber Emerald
+  bgTheme: 'dark-obsidian',
+  heroStyle: 'split-cinema',
+  servicesStyle: 'cards-grid',
+  galleryStyle: 'before-after-slider',
+  heroImages: INDUSTRY_MEDIA_MAP.private_instructor.heroImages,
+  galleryImages: INDUSTRY_MEDIA_MAP.private_instructor.galleryPhotos.map((p) => p.src),
+  avatarUrl: INDUSTRY_MEDIA_MAP.private_instructor.avatarUrl,
+  showBeforeAfter: true,
+  showBio: true,
+  showBranches: false,
+  borderRadius: 'modern-rounded',
+  fontStyle: 'urban-bold',
+  shopName: 'סטודיו אופק – אימונים אישיים',
+  ownerName: 'אופק',
+  slogan: 'אימוני כושר אישיים, חיטוב והעלאת מסת שריר בליווי תזונתי מדויק',
+  announcement: '💪 הצטרפו עכשיו לתוכנית הליווי הממוקדת לחיטוב הגוף – מספר מקומות מוגבל!',
+  sectionsOrder: ['hero', 'announcement', 'trust-badges', 'services', 'gallery', 'bio', 'reviews', 'faqs', 'policies'],
+  transformations: [
+    {
+      id: '1',
+      title: 'חיטוב גוף מלא וירידה ב-8% שומן',
+      category: 'תוכנית ליווי 90 יום',
+      description: 'תהליך חיטוב ממוקד המשלב אימוני כוח אישיים ותפריט תזונה עשיר בחלבון.',
+      beforeGradient: 'from-stone-900 via-stone-800 to-zinc-900',
+      afterGradient: 'from-emerald-950 via-teal-900 to-emerald-700',
+    },
+    {
+      id: '2',
+      title: 'עלייה במסת שריר ושיפור יציבה',
+      category: 'אימוני היפרטרופיה',
+      description: 'עלייה של 4.5 ק״ג מסת שריר נקייה, חיזוק חגורת הכתפיים ושרירי הליבה.',
+      beforeGradient: 'from-zinc-900 via-neutral-900 to-stone-900',
+      afterGradient: 'from-teal-950 via-emerald-900 to-teal-700',
+    },
+    {
+      id: '3',
+      title: 'הצרת היקפים ובטן חטובה',
+      category: 'חיטוב פונקציונלי',
+      description: 'ירידה של 7 ס״מ בהיקף המותניים ושיפור דרמטי בסיבולת לב-ריאה.',
+      beforeGradient: 'from-neutral-900 via-zinc-800 to-stone-900',
+      afterGradient: 'from-emerald-900 via-teal-800 to-emerald-600',
+    },
+  ],
+  trustBadges: [
+    'מאמנים מוסמכי וינגייט בעלי תואר ראשון',
+    'תוכניות מותאמות אישית לפי בדיקת מדדים',
+    'ציוד כוח ומשקולות מתקדם ביותר',
+    'מעקב שבועי בוואטסאפ ותפריט תזונה',
+  ],
+  services: [
+    { id: 'srv-401', name: 'אימון אישי 1-על-1 (VIP Session)', price: 200, duration: 60, description: 'אימון ממוקד עם ליווי מלא על טכניקה, נשימה ודחיפה לקצה היכולת' },
+    { id: 'srv-402', name: 'כרטיסיית 10 אימונים אישיים', price: 1800, duration: 60, description: 'חבילת אימונים מקיפה כולל תפריט תזונה מותאם ובדיקות שקילה חודשיות' },
+    { id: 'srv-403', name: 'אימון זוגי / חברים', price: 280, duration: 60, description: 'אימון אינטנסיבי וחווייתי לשניים עם אנרגיות גבוהות' },
+  ],
+  faqs: [
+    { id: 'faq-401', question: 'האם האימון מתאים גם למתחילים?', answer: 'בהחלט! כל תוכנית נבנית בהתאם לרמת הכושר הנוכחית שלך ומתקדמת בצורה בטוחה.' },
+  ],
+  policies: {
+    cancellationNotice: 'ביטול אימון עד 8 שעות מראש ללא חיוב',
+    arrivalTime: 'נא להגיע בבגדי ספורט, נעלי ריצה ובקבוק מים',
+    paymentMethods: 'Bit, אשראי, PayBox והוראת קבע לחבילות',
+    customNote: 'נדרש אישור רפואי בתוקף לפני תחילת האימונים',
+  },
+};
