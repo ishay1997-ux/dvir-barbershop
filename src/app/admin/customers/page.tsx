@@ -297,17 +297,17 @@ export default function CustomersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
             מאגר לקוחות וכרטיס 360 (Smart CRM)
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1 font-sans">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1 font-sans">
             היסטוריית ביקורים מלאה, מפרט טכני לכל לקוח ותזכורות שימור בוואטסאפ
           </p>
         </div>
 
         <Link
           href="/booking"
-          className="text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 py-2.5 px-4 rounded-xl flex items-center gap-1.5 self-start sm:self-auto shadow-md shadow-indigo-600/30 transition-transform hover:scale-105 active:scale-95"
+          className="text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 py-2.5 px-4 rounded-xl flex items-center gap-1.5 self-start sm:self-auto shadow-xs transition-transform hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>הוסף לקוח / תור חדש</span>
@@ -323,16 +323,16 @@ export default function CustomersPage() {
       />
 
       {/* Filters & Search */}
-      <div className="bg-[#111420] rounded-2xl border border-slate-800/80 p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Search */}
         <div className="relative w-full sm:w-80">
-          <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             placeholder="חפש לפי שם, טלפון או הערות..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-10 py-2 rounded-xl border border-slate-800 bg-slate-900 text-white text-xs outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-500"
+            className="w-full pl-3 pr-10 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-xs outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-400"
           />
         </div>
 
@@ -342,8 +342,8 @@ export default function CustomersPage() {
             onClick={() => setFilterType('all')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               filterType === 'all'
-                ? 'bg-indigo-600 text-white font-black shadow-md shadow-indigo-600/30'
-                : 'bg-slate-800/60 text-slate-400 border border-slate-700/80 hover:bg-slate-700 hover:text-white'
+                ? 'bg-indigo-600 text-white font-black shadow-xs'
+                : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 hover:text-slate-900'
             }`}
           >
             כל הלקוחות ({processedCustomers.length})
@@ -353,8 +353,8 @@ export default function CustomersPage() {
             onClick={() => setFilterType('at_risk')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               filterType === 'at_risk'
-                ? 'bg-rose-600 text-white font-black shadow-md shadow-rose-600/30'
-                : 'bg-rose-950/30 text-rose-300 border border-rose-500/30 hover:bg-rose-900/40'
+                ? 'bg-rose-600 text-white font-black shadow-xs'
+                : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
             }`}
           >
             לשימור דחוף ({atRiskCount})
@@ -364,8 +364,8 @@ export default function CustomersPage() {
             onClick={() => setFilterType('vip')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap cursor-pointer ${
               filterType === 'vip'
-                ? 'bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/30'
-                : 'bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20'
+                ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
+                : 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100'
             }`}
           >
             לקוחות VIP 👑 ({vipCount})

@@ -29,13 +29,13 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
   onBranchFilterChange,
 }) => {
   return (
-    <div className="bg-[#111420] rounded-2xl border border-slate-800/80 p-3 shadow-md mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div className="bg-white rounded-2xl border border-slate-200/80 p-3 shadow-xs mb-6 flex flex-wrap items-center justify-between gap-4">
       {/* View Mode Switcher */}
-      <div className="flex items-center gap-1 bg-[#141827] p-1 rounded-xl border border-slate-800">
+      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
         <button
           onClick={() => onViewModeChange('day')}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            viewMode === 'day' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+            viewMode === 'day' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           יומי
@@ -43,7 +43,7 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
         <button
           onClick={() => onViewModeChange('week')}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            viewMode === 'week' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+            viewMode === 'week' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           שבועי
@@ -51,7 +51,7 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
         <button
           onClick={() => onViewModeChange('month')}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            viewMode === 'month' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+            viewMode === 'month' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           חודשי
@@ -62,12 +62,12 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
       <div className="flex items-center gap-2">
         <button
           onClick={onPrev}
-          className="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
 
-        <span className="font-bold text-sm text-white min-w-32 text-center font-sans">
+        <span className="font-bold text-sm text-slate-900 min-w-32 text-center font-sans">
           {viewMode === 'day' && format(currentDate, 'd בMMMM yyyy', { locale: he })}
           {viewMode === 'week' &&
             `${format(weekDays[0], 'd MMM', { locale: he })} - ${format(weekDays[6], 'd MMM yyyy', { locale: he })}`}
@@ -76,14 +76,14 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
 
         <button
           onClick={onNext}
-          className="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
         <button
           onClick={onToday}
-          className="text-xs font-bold text-indigo-300 bg-indigo-950/60 hover:bg-indigo-900/80 px-3 py-1.5 rounded-xl border border-indigo-500/30 transition-colors mr-2 cursor-pointer shadow-xs"
+          className="text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl border border-indigo-200 transition-colors mr-2 cursor-pointer shadow-xs"
         >
           היום
         </button>
@@ -91,7 +91,7 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
 
       {/* Branch Filter Switcher */}
       <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar">
-        <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
+        <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
           <Filter className="w-3.5 h-3.5" />
           סניף:
         </span>
@@ -99,8 +99,8 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
           onClick={() => onBranchFilterChange('all')}
           className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedBranchFilter === 'all'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'bg-slate-800/60 text-slate-400 border border-slate-700 hover:text-white'
+              ? 'bg-indigo-600 text-white shadow-xs'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }`}
         >
           הכל
@@ -109,11 +109,11 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
           onClick={() => onBranchFilterChange('ariel')}
           className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedBranchFilter === 'ariel'
-              ? 'bg-indigo-600 text-white font-bold shadow-sm'
-              : 'bg-slate-800/60 text-slate-400 border border-slate-700 hover:text-white'
+              ? 'bg-indigo-600 text-white shadow-xs'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }`}
         >
-          📍 סניף מרכזי
+          סניף מרכזי
         </button>
       </div>
     </div>

@@ -138,19 +138,19 @@ function SettingsContent() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <h1 className="text-2xl sm:text-3xl font-black text-white">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
               הגדרות ושליטה · {bizName}
             </h1>
           </div>
-          <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-sans">
+          <p className="text-slate-500 text-xs sm:text-sm mt-1 font-sans">
             שליטה מלאה ועצמאית בכל פרטי האתר, היומן, המחירון, העיצוב והסניפים
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
           {savedNotice && (
-            <div className="flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-3.5 py-2 rounded-xl text-xs font-bold animate-fadeIn">
+            <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-bold animate-fadeIn shadow-xs">
               <CheckCircle2 className="w-4 h-4" />
               <span>נשמר בהצלחה!</span>
             </div>
@@ -159,10 +159,10 @@ function SettingsContent() {
           <button
             onClick={handleSyncToCloud}
             disabled={isSyncingCloud}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-700 text-xs font-bold transition-all shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 text-xs font-bold transition-all shadow-xs cursor-pointer"
             title="סנכרון מיידי עם הענן"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin text-indigo-400' : 'text-slate-400'}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin text-indigo-600' : 'text-slate-500'}`} />
             <span>סנכרן ענן</span>
           </button>
 
@@ -170,7 +170,7 @@ function SettingsContent() {
             href={activeSlug === 'dvir' || activeSlug === 'thecut' ? '/dvir' : `/${activeSlug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-md shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-xs hover:scale-105 active:scale-95 transition-all"
           >
             <span>צפה באתר הלקוחות</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -199,13 +199,13 @@ function SettingsContent() {
         {/* Right Active Content Panel (8 cols on desktop) */}
         <main className="lg:col-span-8 w-full min-w-0">
           {/* Active Category Header */}
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-800/80">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-200/80">
             <div>
-              <h2 className="text-xl font-black text-white flex items-center gap-2">
-                {currentCategory && <currentCategory.icon className="w-5 h-5 text-indigo-400" />}
+              <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                {currentCategory && <currentCategory.icon className="w-5 h-5 text-indigo-600" />}
                 <span>{currentCategory?.label}</span>
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5 font-sans">{currentCategory?.description}</p>
+              <p className="text-xs text-slate-500 mt-0.5 font-sans">{currentCategory?.description}</p>
             </div>
           </div>
 

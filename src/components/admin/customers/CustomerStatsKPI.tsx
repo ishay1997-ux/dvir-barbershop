@@ -36,16 +36,16 @@ export const CustomerStatsKPI: React.FC<CustomerStatsKPIProps> = ({
     <>
       {/* Retention Alert Banner */}
       {atRiskCount > 0 && (
-        <div className="bg-gradient-to-r from-rose-950/40 via-[#161722] to-[#111420] border border-rose-500/30 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+        <div className="bg-rose-50 border border-rose-200/90 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-400 flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-rose-100 border border-rose-200 text-rose-600 flex items-center justify-center shrink-0 shadow-xs">
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-sm sm:text-base font-black text-white">
+              <h2 className="text-sm sm:text-base font-black text-slate-900">
                 זוהו {atRiskCount} {terminology.clientPlural || 'לקוחות'} שלא תיאמו {terminology.serviceTitle || 'תור'} מעל 25 יום!
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-600 mt-0.5 font-sans">
                 שמור על קשר אישי ישיר. לחיצה אחת שולחת תזכורת שימור אישית בוואטסאפ.
               </p>
             </div>
@@ -53,7 +53,7 @@ export const CustomerStatsKPI: React.FC<CustomerStatsKPIProps> = ({
 
           <button
             onClick={onFilterAtRisk}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl transition-colors whitespace-nowrap shadow-md shadow-rose-600/30 cursor-pointer"
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl transition-all whitespace-nowrap shadow-xs cursor-pointer active:scale-95"
           >
             הצג לקוחות לשימור מיידי ←
           </button>
@@ -62,44 +62,44 @@ export const CustomerStatsKPI: React.FC<CustomerStatsKPIProps> = ({
 
       {/* KPI Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-[#111420] p-5 rounded-2xl border border-slate-800/80 shadow-md">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-slate-400 font-bold">סך {terminology.clientPlural || 'לקוחות'} פעילים</span>
-            <div className="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <span className="text-xs text-slate-500 font-bold">סך {terminology.clientPlural || 'לקוחות'} פעילים</span>
+            <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
               <Users className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-white">{processedCustomers.length}</div>
+          <div className="text-2xl font-black text-slate-900">{processedCustomers.length}</div>
         </div>
 
-        <div className="bg-[#111420] p-5 rounded-2xl border border-slate-800/80 shadow-md">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-slate-400 font-bold">{terminology.clientTitle || 'לקוחות'} VIP (👑)</span>
-            <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+            <span className="text-xs text-slate-500 font-bold">{terminology.clientTitle || 'לקוחות'} VIP (👑)</span>
+            <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
               <Crown className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-amber-400">{vipCount}</div>
+          <div className="text-2xl font-black text-amber-600">{vipCount}</div>
         </div>
 
-        <div className="bg-[#111420] p-5 rounded-2xl border border-slate-800/80 shadow-md">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-slate-400 font-bold">לשימור (מעל 25 יום)</span>
-            <div className="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+            <span className="text-xs text-slate-500 font-bold">לשימור (מעל 25 יום)</span>
+            <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
               <AlertTriangle className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-rose-400">{atRiskCount}</div>
+          <div className="text-2xl font-black text-rose-600">{atRiskCount}</div>
         </div>
 
-        <div className="bg-[#111420] p-5 rounded-2xl border border-slate-800/80 shadow-md">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-slate-400 font-bold">ממוצע {terminology.serviceTitlePlural || 'ביקורים'} ללקוח</span>
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <span className="text-xs text-slate-500 font-bold">ממוצע {terminology.serviceTitlePlural || 'ביקורים'} ללקוח</span>
+            <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
               <TrendingUp className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-emerald-400">{avgVisits}</div>
+          <div className="text-2xl font-black text-emerald-600">{avgVisits}</div>
         </div>
       </div>
     </>

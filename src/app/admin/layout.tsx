@@ -42,10 +42,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <Suspense fallback={null}>
         <BusinessSync />
       </Suspense>
-      <div className="flex flex-col min-h-screen bg-[#0B0D13] text-slate-100 w-full overflow-x-hidden font-sans selection:bg-indigo-500 selection:text-white" dir="rtl">
+      <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-slate-900 w-full overflow-x-hidden font-sans selection:bg-indigo-500 selection:text-white" dir="rtl">
         {/* Interactive Demo Mode Top Banner */}
         {isDemoMode && (
-          <div className="bg-gradient-to-r from-slate-950 via-[#111420] to-slate-950 text-white px-4 py-2 border-b border-indigo-500/20 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs z-50 sticky top-0 shadow-md">
+          <div className="bg-slate-900 text-white px-4 py-2 border-b border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs z-50 sticky top-0 shadow-xs">
             <div className="flex items-center gap-2 text-center sm:text-right">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
               <span className="font-bold text-slate-200">
@@ -64,7 +64,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <div className="flex flex-col md:flex-row flex-1 w-full overflow-x-hidden">
           <AdminSidebar />
-          <main id="main-content" className="flex-1 w-full overflow-x-hidden overflow-y-auto">
+          <main id="main-content" className="flex-1 w-full overflow-x-hidden overflow-y-auto min-w-0">
             {children}
           </main>
         </div>
