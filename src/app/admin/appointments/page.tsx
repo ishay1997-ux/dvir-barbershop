@@ -21,6 +21,7 @@ import {
   Plus,
   Bell,
   AlertTriangle,
+  Sparkles,
 } from 'lucide-react';
 import { useShopStore } from '@/lib/store';
 import { useToast } from '@/components/common/ToastProvider';
@@ -235,10 +236,10 @@ export default function AppointmentsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveMainTab('calendar')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs sm:text-sm font-black transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
               activeMainTab === 'calendar'
-                ? 'bg-[#1C1C1C] text-gold shadow-md scale-105'
-                : 'bg-white text-[#6B6560] border border-[#E5DDD0] hover:text-[#1C1C1C]'
+                ? 'bg-amber-400 text-slate-950 shadow-lg'
+                : 'bg-[#16171B] text-zinc-400 border border-white/10 hover:border-white/20 hover:text-white'
             }`}
           >
             <Calendar className="w-4 h-4" />
@@ -247,16 +248,16 @@ export default function AppointmentsPage() {
 
           <button
             onClick={() => setActiveMainTab('waitlist')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs sm:text-sm font-black transition-all relative ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs sm:text-sm font-black transition-all relative cursor-pointer ${
               activeMainTab === 'waitlist'
-                ? 'bg-[#1C1C1C] text-gold shadow-md scale-105'
-                : 'bg-white text-[#6B6560] border border-[#E5DDD0] hover:text-[#1C1C1C]'
+                ? 'bg-amber-400 text-slate-950 shadow-lg'
+                : 'bg-[#16171B] text-zinc-400 border border-white/10 hover:border-white/20 hover:text-white'
             }`}
           >
             <Bell className="w-4 h-4 text-amber-500" />
             <span>רשימת המתנה (Waitlist)</span>
             {waitingCount > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-black">
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black">
                 {waitingCount}
               </span>
             )}
@@ -266,9 +267,9 @@ export default function AppointmentsPage() {
         {activeMainTab === 'calendar' && (
           <button
             onClick={() => setShowEmergencyModal(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold transition-all shadow-xs"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold transition-all shadow-xs cursor-pointer"
           >
-            <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
+            <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
             <span>סגירת חירום / מילואים</span>
           </button>
         )}
@@ -285,31 +286,33 @@ export default function AppointmentsPage() {
           {/* Header & Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-[#1C1C1C]">יומן תורים חכם לדביר</h1>
-              <p className="text-[#6B6560] text-sm mt-0.5">
-                ניהול לו״ז שבועי, שינוי סטטוסים ותיעוד נוסחת תספורת לכל לקוח
+              <h1 className="text-2xl sm:text-3xl font-black text-white">
+                יומן תורים חכם · {settings.shopName || 'העסק'}
+              </h1>
+              <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-sans">
+                ניהול לו״ז שבועי, שינוי סטטוסים ותיעוד נוסחת טיפול לכל לקוח
               </p>
             </div>
 
             <div className="flex items-center gap-3">
               <Link
                 href="/booking"
-                className="btn-shimmer text-xs font-black text-[#1C1C1C] py-2.5 px-4 rounded-xl flex items-center gap-1.5 shadow-sm"
+                className="text-xs font-black text-slate-950 bg-amber-400 hover:bg-amber-300 py-2.5 px-4 rounded-xl flex items-center gap-1.5 shadow-md transition-transform hover:scale-105 active:scale-95"
               >
                 <Plus className="w-4 h-4" />
-                קבע תור חדש
+                <span>קבע תור חדש</span>
               </Link>
             </div>
           </div>
 
           {/* Engine / View Switcher (Classic vs Schedule-X Drag & Drop) */}
-          <div className="flex items-center gap-2 mb-5 bg-white p-1.5 rounded-2xl border border-[#E5DDD0] w-fit shadow-xs">
+          <div className="flex items-center gap-2 mb-5 bg-[#16171B] p-1.5 rounded-2xl border border-white/10 w-fit shadow-md">
             <button
               onClick={() => setCalendarType('classic')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 calendarType === 'classic'
-                  ? 'bg-[#1C1C1C] text-gold shadow-sm'
-                  : 'text-[#6B6560] hover:text-[#1C1C1C]'
+                  ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               📅 יומן שבועי / יומי מעוצב
@@ -318,11 +321,12 @@ export default function AppointmentsPage() {
               onClick={() => setCalendarType('schedulex')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 calendarType === 'schedulex'
-                  ? 'bg-[#C9A84C] text-black font-black shadow-sm'
-                  : 'text-[#6B6560] hover:text-[#1C1C1C]'
+                  ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <span>⚡ יומן גרירה חי (Schedule-X Drag & Drop)</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>לוח גרירה אינטראקטיבי (Drag & Drop)</span>
             </button>
           </div>
 

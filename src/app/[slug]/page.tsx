@@ -168,6 +168,7 @@ export default function DynamicBusinessLandingPage({
   const sectionMap: Record<string, React.ReactNode> = {
     hero: <BarbershopHeroHub business={business || undefined} />,
     services: <PriceListAndGallerySection business={business || undefined} />,
+    'booking-action-cards': null,
     'trust-badges': business?.layout?.showTrustBadges !== false ? (
       <TrustBadgesSection business={business || undefined} />
     ) : null,
@@ -179,10 +180,18 @@ export default function DynamicBusinessLandingPage({
         <BarberShowcase business={business || undefined} />
       </div>
     ) : null,
+    about: business?.layout?.showBio !== false ? (
+      <div id="about">
+        <BarberShowcase business={business || undefined} />
+      </div>
+    ) : null,
     branches: business?.layout?.showBranches !== false ? (
       <BranchNavigationSection business={business || undefined} />
     ) : null,
     gallery: business?.layout?.showBeforeAfter !== false ? (
+      <BeforeAfterSection business={business || undefined} />
+    ) : null,
+    'before-after': business?.layout?.showBeforeAfter !== false ? (
       <BeforeAfterSection business={business || undefined} />
     ) : null,
     reviews: business?.layout?.showReviews !== false ? (
@@ -193,10 +202,18 @@ export default function DynamicBusinessLandingPage({
         <FaqSection business={business || undefined} />
       </div>
     ) : null,
+    faq: business?.layout?.showFaqs !== false ? (
+      <div id="faq">
+        <FaqSection business={business || undefined} />
+      </div>
+    ) : null,
+    announcement: null,
   };
 
   const defaultOrder = ['hero', 'trust-badges', 'services', 'bio', 'policies', 'branches', 'gallery', 'reviews', 'faqs'];
-  const activeOrder = business?.layout?.sectionsOrder || defaultOrder;
+  const activeOrder = (business?.layout?.sectionsOrder && business.layout.sectionsOrder.length > 0)
+    ? business.layout.sectionsOrder
+    : defaultOrder;
   const borderRadius = business?.layout?.borderRadius || 'modern-rounded';
   const fontStyle = business?.layout?.fontStyle || 'urban-bold';
 

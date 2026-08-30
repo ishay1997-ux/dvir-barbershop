@@ -6,6 +6,7 @@ import { useShopStore } from '@/lib/store';
 import type { Customer } from '@/lib/types';
 import Link from 'next/link';
 import { useToast } from '@/components/common/ToastProvider';
+import { getIndustryTerminology } from '@/lib/industry-terminology';
 
 // Subcomponents
 import type { ProcessedCustomer, CustomerHistoryItem } from '@/components/admin/customers/types';
@@ -273,34 +274,38 @@ export default function CustomersPage() {
     });
   };
 
+  const terminology = getIndustryTerminology({ name: settings.shopName });
+  const bizName = settings.shopName || 'העסק';
+
   const generateRetentionWhatsAppUrl = (customer: Customer) => {
     const template =
       settings.retentionMessageTemplate ||
-      'היי {name}, מה קורה? עבר כבר מעל חודש מאז התספורת הקודמת שלך במספרה של דביר ✂️ רוצה שאשריין לך תור להשבוע?';
+      terminology.whatsappRetentionTemplate ||
+      `היי {name}, מה קורה? עבר כבר זמן מאז הטיפול הקודם שלך ב-${bizName} 🌟 רוצה שאשריין לך תור להשבוע?`;
     const message = template.replace('{name}', customer.name);
     const cleanPhone = customer.phone.replace(/\D/g, '').replace(/^0/, '972');
     return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
   };
 
   return (
-    <div className="p-4 sm:p-8 max-w-6xl mx-auto" dir="rtl">
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-6" dir="rtl">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#1C1C1C]">
+          <h1 className="text-2xl sm:text-3xl font-black text-white">
             מאגר לקוחות וכרטיס לקוח 360 (Smart CRM)
           </h1>
-          <p className="text-[#6B6560] text-sm mt-0.5">
-            היסטוריית תספורות מלאה, מפרט טכני לכל לקוח ושימור לקוחות בוואטסאפ
+          <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-sans">
+            היסטוריית ביקורים מלאה, מפרט טכני לכל לקוח ושימור לקוחות בוואטסאפ
           </p>
         </div>
 
         <Link
           href="/booking"
-          className="btn-shimmer text-xs font-black text-[#1C1C1C] py-2.5 px-4 rounded-xl flex items-center gap-1.5 self-start sm:self-auto shadow-sm"
+          className="text-xs font-black text-slate-950 bg-amber-400 hover:bg-amber-300 py-2.5 px-4 rounded-xl flex items-center gap-1.5 self-start sm:self-auto shadow-md transition-transform hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          הוסף לקוח חדש / תור
+          <span>הוסף לקוח חדש / תור</span>
         </Link>
       </div>
 
@@ -313,16 +318,16 @@ export default function CustomersPage() {
       />
 
       {/* Filters & Search */}
-      <div className="bg-white rounded-2xl border border-[#E5DDD0] p-4 shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-[#16171B] rounded-2xl border border-white/10 p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Search */}
         <div className="relative w-full sm:w-80">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9891]" />
+          <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             type="text"
-            placeholder="חפש לפי שם, טלפון או מספר מכונה..."
+            placeholder="חפש לפי שם, טלפון או הערות..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-9 py-2 rounded-xl border border-[#E5DDD0] bg-[#FAF7F2] text-xs outline-none focus:border-gold transition-colors"
+            className="w-full pl-3 pr-10 py-2 rounded-xl border border-white/10 bg-zinc-900 text-white text-xs outline-none focus:border-amber-400 transition-colors placeholder-zinc-500"
           />
         </div>
 
@@ -330,10 +335,10 @@ export default function CustomersPage() {
         <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto no-scrollbar">
           <button
             onClick={() => setFilterType('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               filterType === 'all'
-                ? 'bg-[#1C1C1C] text-gold'
-                : 'bg-[#FAF7F2] text-[#6B6560] hover:bg-[#F0EBE1]'
+                ? 'bg-amber-400 text-slate-950 font-black shadow-md'
+                : 'bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10 hover:text-white'
             }`}
           >
             כל הלקוחות ({processedCustomers.length})
@@ -341,10 +346,10 @@ export default function CustomersPage() {
 
           <button
             onClick={() => setFilterType('at_risk')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               filterType === 'at_risk'
-                ? 'bg-amber-600 text-white'
-                : 'bg-[#FAF7F2] text-amber-800 hover:bg-amber-50'
+                ? 'bg-rose-500 text-white font-black shadow-md'
+                : 'bg-rose-500/10 text-rose-300 border border-rose-500/20 hover:bg-rose-500/20'
             }`}
           >
             לשימור דחוף ({atRiskCount})

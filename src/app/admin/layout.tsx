@@ -18,7 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AdminAuthGuard>
-      <div className="flex flex-col min-h-screen bg-[#1C1C1C] md:bg-[#F5F0E8] w-full overflow-x-hidden" dir="rtl">
+      <div className="flex flex-col min-h-screen bg-[#0E0E0E] text-slate-100 w-full overflow-x-hidden font-sans selection:bg-indigo-500 selection:text-white" dir="rtl">
         {/* Interactive Demo Mode Top Banner */}
         {isDemoMode && (
           <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white px-4 py-2.5 border-b border-indigo-500/30 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs z-50 sticky top-0 shadow-md">

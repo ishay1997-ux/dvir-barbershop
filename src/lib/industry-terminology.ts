@@ -25,6 +25,8 @@ export interface IndustryTerminology {
   retentionMessage: string;
   icon: string;
   badge: string;
+  categoryName?: string;
+  whatsappRetentionTemplate?: string;
 }
 
 export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {

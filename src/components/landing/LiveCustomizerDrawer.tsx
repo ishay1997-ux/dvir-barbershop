@@ -46,6 +46,13 @@ export function LiveCustomizerDrawer({
   const handleApplyPreset = (preset: IndustryPreset) => {
     const updated: BusinessConfig = {
       ...business,
+      name: preset.shopName || business.name,
+      ownerName: preset.ownerName || business.ownerName,
+      slogan: preset.slogan || business.slogan,
+      announcement: preset.announcement || business.announcement,
+      services: preset.services && preset.services.length > 0 ? preset.services : business.services,
+      faqs: preset.faqs && preset.faqs.length > 0 ? preset.faqs : business.faqs,
+      category: (preset.id === 'barbershop' ? 'barber' : preset.id === 'nails-beauty' ? 'beauty_salon' : preset.id === 'spa-massage' ? 'clinic_therapist' : preset.id === 'fitness-coach' ? 'private_instructor' : preset.id === 'home-tech' ? 'home_technician' : 'barber') as any,
       themeColor: preset.themeColor,
       layout: {
         ...business.layout,
@@ -57,14 +64,14 @@ export function LiveCustomizerDrawer({
         typographyMood: preset.typographyMood || 'modern-clean',
         sectionsOrder: preset.sectionsOrder || [
           'hero',
-          'booking-action-cards',
+          'trust-badges',
           'services',
-          'before-after',
-          'about',
-          'reviews',
+          'gallery',
+          'bio',
           'policies',
           'branches',
-          'faq',
+          'reviews',
+          'faqs',
         ],
         trustBadges: preset.trustBadges,
         sectionTitles: {
@@ -76,7 +83,7 @@ export function LiveCustomizerDrawer({
       },
     };
     onChangeBusiness(updated);
-    info(`הוחלה תבנית ענף: "${preset.name}"!`);
+    info(`הוחלה תבנית ענף: "${preset.name}"! כל נתוני ההדגמה עודכנו.`);
   };
 
   const handleToggleSection = (id: SectionId) => {

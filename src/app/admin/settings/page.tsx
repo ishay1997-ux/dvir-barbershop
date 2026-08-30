@@ -26,6 +26,7 @@ import MarketingBannerSettings from '@/components/admin/settings/MarketingBanner
 import StaffSettings from '@/components/admin/settings/StaffSettings';
 import GeneralSecuritySettings from '@/components/admin/settings/GeneralSecuritySettings';
 import { BillingSettingsTab } from '@/components/admin/settings/BillingSettingsTab';
+import { getIndustryTerminology } from '@/lib/industry-terminology';
 
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -127,47 +128,49 @@ function SettingsContent() {
     }
   };
 
+  const terminology = getIndustryTerminology({ name: settings.shopName });
+  const bizName = settings.shopName || (activeSlug === 'dvir' ? 'המספרה של דביר' : 'העסק שלך');
   const currentCategory = SETTINGS_CATEGORIES.find((c) => c.id === activeTab);
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto" dir="rtl">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6" dir="rtl">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-            <h1 className="text-2xl sm:text-3xl font-black text-[#1C1C1C]">
-              הגדרות ושליטה במספרה של דביר
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <h1 className="text-2xl sm:text-3xl font-black text-white">
+              הגדרות ושליטה · {bizName}
             </h1>
           </div>
-          <p className="text-[#6B6560] text-xs sm:text-sm mt-1">
+          <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-sans">
             שליטה מלאה ועצמאית בכל פרטי האתר, היומן, המחירון, העיצוב והסניפים
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
           {savedNotice && (
-            <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-bold animate-fadeIn">
+            <div className="flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-3.5 py-2 rounded-xl text-xs font-bold animate-fadeIn">
               <CheckCircle2 className="w-4 h-4" />
-              נשמר בהצלחה!
+              <span>נשמר בהצלחה!</span>
             </div>
           )}
 
           <button
             onClick={handleSyncToCloud}
             disabled={isSyncingCloud}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#E5DDD0] text-[#1C1C1C] hover:border-gold text-xs font-bold transition-all shadow-2xs"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#16171B] border border-white/10 text-white hover:border-amber-400 text-xs font-bold transition-all shadow-md cursor-pointer"
             title="סנכרון מיידי עם הענן"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin text-gold' : 'text-[#9E9891]'}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin text-amber-400' : 'text-zinc-400'}`} />
             <span>סנכרן ענן</span>
           </button>
 
           <a
-            href={activeSlug === 'dvir' || activeSlug === 'thecut' ? '/' : `/${activeSlug}`}
+            href={activeSlug === 'dvir' || activeSlug === 'thecut' ? '/dvir' : `/${activeSlug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-shimmer flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[#1C1C1C] shadow-sm hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-md hover:scale-105 active:scale-95 transition-all"
           >
             <span>צפה באתר הלקוחות</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -196,13 +199,13 @@ function SettingsContent() {
         {/* Right Active Content Panel (8 cols on desktop) */}
         <main className="lg:col-span-8 w-full min-w-0">
           {/* Active Category Header */}
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#E5DDD0]">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-white/10">
             <div>
-              <h2 className="text-xl font-black text-[#1C1C1C] flex items-center gap-2">
-                {currentCategory && <currentCategory.icon className="w-5 h-5 text-gold" />}
-                {currentCategory?.label}
+              <h2 className="text-xl font-black text-white flex items-center gap-2">
+                {currentCategory && <currentCategory.icon className="w-5 h-5 text-amber-400" />}
+                <span>{currentCategory?.label}</span>
               </h2>
-              <p className="text-xs text-[#6B6560] mt-0.5">{currentCategory?.description}</p>
+              <p className="text-xs text-zinc-400 mt-0.5 font-sans">{currentCategory?.description}</p>
             </div>
           </div>
 

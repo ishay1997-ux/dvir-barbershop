@@ -53,15 +53,38 @@ export default function AmbientCarouselGallery({
   };
 
   return (
-    <div className={`max-w-4xl mx-auto rounded-3xl p-4 sm:p-6 shadow-2xl overflow-hidden text-right transition-colors ${t.cardBg}`}>
-      <div className="relative aspect-16/9 w-full rounded-2xl overflow-hidden mb-5">
-        <Image
-          src={current.src}
-          alt={current.title}
-          fill
-          className="object-cover transition-all duration-700"
-          priority
-        />
+    <section id="ambient-gallery" className={`py-12 sm:py-16 ${t.sectionBg}`} dir="rtl">
+      <div className="container mx-auto px-4">
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <div
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2.5 border"
+            style={{
+              backgroundColor: `${themeColor}15`,
+              borderColor: `${themeColor}40`,
+              color: themeColor,
+            }}
+          >
+            <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
+            <span>חלל הטיפולים והאווירה</span>
+          </div>
+          <h2 className={`text-2xl sm:text-3xl font-black ${t.textPrimary}`}>
+            {business?.layout?.sectionTitles?.gallery || 'חוויית טיפול פרימיום ורגיעה'}
+          </h2>
+          <p className={`text-xs sm:text-sm mt-1.5 font-sans ${t.textSecondary}`}>
+            הציצו בחלל המעוצב, בחדרי הטיפול ובאווירה המרגיעה שמחכה לכם
+          </p>
+        </div>
+
+        <div className={`max-w-4xl mx-auto rounded-3xl p-4 sm:p-6 shadow-2xl overflow-hidden text-right transition-colors ${t.cardBg}`}>
+          <div className="relative aspect-16/9 w-full rounded-2xl overflow-hidden mb-5">
+            <Image
+              src={current.src}
+              alt={current.title}
+              fill
+              className="object-cover transition-all duration-700"
+              priority
+            />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 sm:p-8">
           <span
             className="text-[11px] font-bold px-3 py-1 rounded-full text-slate-950 inline-block w-fit mb-2 shadow-xs"
@@ -98,21 +121,23 @@ export default function AmbientCarouselGallery({
         </div>
       </div>
 
-      {/* Dots Indicator */}
-      <div className="flex items-center justify-center gap-2">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => setCurrentIdx(i)}
-            className={`h-2 rounded-full transition-all cursor-pointer ${
-              i === currentIdx ? 'w-8' : 'w-2 bg-slate-400/40 hover:bg-slate-400'
-            }`}
-            style={i === currentIdx ? { backgroundColor: themeColor } : {}}
-            aria-label={`עבור לשקופית ${i + 1}`}
-          />
-        ))}
+        {/* Dots Indicator */}
+        <div className="flex items-center justify-center gap-2">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setCurrentIdx(i)}
+              className={`h-2 rounded-full transition-all cursor-pointer ${
+                i === currentIdx ? 'w-8' : 'w-2 bg-slate-400/40 hover:bg-slate-400'
+              }`}
+              style={i === currentIdx ? { backgroundColor: themeColor } : {}}
+              aria-label={`עבור לשקופית ${i + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
+  </section>
   );
 }
