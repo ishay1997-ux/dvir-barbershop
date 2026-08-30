@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { Calendar, Scissors, Phone } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import { createAppointmentReminderUrl } from '@/lib/whatsapp';
 import type { AdminAppointment } from './types';
 
 interface DailyAgendaTimelineProps {
@@ -42,9 +43,12 @@ export const DailyAgendaTimeline: React.FC<DailyAgendaTimelineProps> = ({
       ) : (
         <div className="space-y-3">
           {dayAppointments.map((app) => {
-            const cleanPhone = app.phone.replace(/\D/g, '').replace(/^0/, '972');
-            const whatsappMsg = `היי ${app.customerName}, מדבר דביר מהמספרה. מזכיר לך את התור שלך ב-${app.time}:`;
-            const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(whatsappMsg)}`;
+            const whatsappUrl = createAppointmentReminderUrl({
+              customerPhone: app.phone,
+              customerName: app.customerName,
+              time: app.time,
+              serviceName: app.service,
+            });
 
             return (
               <div

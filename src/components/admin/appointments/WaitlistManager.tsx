@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Bell, MessageCircle, Trash2 } from 'lucide-react';
+import { createWaitlistAlertUrl } from '@/lib/whatsapp';
 import type { WaitlistEntry } from '@/lib/types';
 
 interface WaitlistManagerProps {
@@ -63,9 +64,14 @@ export const WaitlistManager: React.FC<WaitlistManagerProps> = ({
                 ? 'ערב (16:30 - 20:00)'
                 : 'כל שעה שתתפנה';
 
-            const cleanPhone = item.customerPhone.replace(/\D/g, '').replace(/^0/, '972');
-            const whatsappText = `היי ${item.customerName}, התפנה תור להיום במספרה של דביר (${item.branchName})! רוצה שאשריין לך אותו לפני שיתפס?`;
-            const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(whatsappText)}`;
+            const whatsappUrl = createWaitlistAlertUrl({
+              customerPhone: item.customerPhone,
+              customerName: item.customerName,
+              dateStr: item.date,
+              timeSlot: rangeLabel,
+              serviceName: item.serviceName || 'תספורת גברים',
+              businessName: item.branchName || 'המספרה של דביר',
+            });
 
             return (
               <div

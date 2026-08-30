@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { format, addMinutes } from 'date-fns';
+import { format, addMinutes, parseISO } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { INITIAL_BRANCHES, INITIAL_SERVICES, INITIAL_BARBERS } from './store';
 import type { Branch, Service, Barber } from './types';
@@ -26,6 +26,39 @@ export function formatDateHebrew(date: Date): string {
 
 export function formatTime(time: string): string {
   return time;
+}
+
+/**
+ * Returns a standardized date key formatted as YYYY-MM-DD
+ */
+export function toDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+/**
+ * Safely parses a YYYY-MM-DD date key into a Date object
+ */
+export function fromDateKey(dateKey: string): Date {
+  try {
+    return parseISO(dateKey);
+  } catch {
+    return new Date();
+  }
+}
+
+/**
+ * Sanitizes a business name into a URL-friendly slug
+ */
+export function sanitizeSlug(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9-_]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 export function addDuration(time: string, minutes: number): string {

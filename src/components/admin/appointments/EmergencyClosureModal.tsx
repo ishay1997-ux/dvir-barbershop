@@ -4,6 +4,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { AlertTriangle, MessageCircle } from 'lucide-react';
+import { createEmergencyRescheduleUrl } from '@/lib/whatsapp';
 import type { AdminAppointment } from './types';
 
 interface EmergencyClosureModalProps {
@@ -76,9 +77,14 @@ export const EmergencyClosureModal: React.FC<EmergencyClosureModalProps> = ({
               </h4>
               <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
                 {dayAppointments.map((app) => {
-                  const cleanPhone = app.phone.replace(/\D/g, '').replace(/^0/, '972');
-                  const msg = `היי ${app.customerName}, מדבר דביר מהמספרה. לצערי עקב ${emergencyReason} לא אוכל לקבל אותך היום בשעה ${app.time}. מתנצל מאוד! אנא קבע מועד חלופי כאן: https://thecut.co.il/booking`;
-                  const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+                  const url = createEmergencyRescheduleUrl({
+                    customerPhone: app.phone,
+                    customerName: app.customerName,
+                    dateStr: 'היום',
+                    time: app.time,
+                    businessName: 'המספרה של דביר',
+                    reason: emergencyReason,
+                  });
 
                   return (
                     <div
