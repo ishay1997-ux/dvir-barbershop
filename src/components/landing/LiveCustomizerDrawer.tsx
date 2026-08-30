@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   SlidersHorizontal,
@@ -12,6 +12,7 @@ import {
   RotateCcw,
   Sparkles,
   Save,
+  Rocket,
 } from 'lucide-react';
 import { useToast } from '@/components/common/ToastProvider';
 import { NichesTab } from './customizer/NichesTab';
@@ -19,6 +20,7 @@ import { ColorsThemeTab } from './customizer/ColorsThemeTab';
 import { SectionsReorderTab } from './customizer/SectionsReorderTab';
 import { StyleTypographyTab } from './customizer/StyleTypographyTab';
 import { presetToBusinessConfig } from '@/lib/business-service';
+import { SaaSOnboardingModal } from '@/components/marketing/SaaSOnboardingModal';
 import type {
   HeroArchetype,
   ServicesStyle,
@@ -34,6 +36,19 @@ interface LiveCustomizerDrawerProps {
   onChangeBusiness: (updated: BusinessConfig) => void;
 }
 
+export const DEFAULT_SECTIONS_ORDER: SectionId[] = [
+  'hero',
+  'announcement',
+  'trust-badges',
+  'services',
+  'gallery',
+  'bio',
+  'policies',
+  'branches',
+  'reviews',
+  'faqs',
+];
+
 export function LiveCustomizerDrawer({
   business,
   onChangeBusiness,
@@ -42,9 +57,39 @@ export function LiveCustomizerDrawer({
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'colors' | 'layout' | 'sections' | 'niches'>('colors');
   const [isSaving, setIsSaving] = useState(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+
+  const effectiveSectionsOrder: SectionId[] =
+    business.layout?.sectionsOrder && business.layout.sectionsOrder.length > 0
+      ? business.layout.sectionsOrder
+      : DEFAULT_SECTIONS_ORDER;
+
+  // Restore saved customization from localStorage on initial load
+  useEffect(() => {
+    try {
+      const slugKey = business?.slug || 'dvir';
+      const saved = localStorage.getItem(`cutweb_customizer_${slugKey}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          onChangeBusiness({
+            ...business,
+            ...parsed,
+            layout: {
+              ...business.layout,
+              ...parsed.layout,
+              sectionsOrder: parsed.layout?.sectionsOrder?.length
+                ? parsed.layout.sectionsOrder
+                : effectiveSectionsOrder,
+            },
+          });
+        }
+      }
+    } catch (_) {}
+  }, []);
 
   const handleToggleSection = (id: SectionId) => {
-    const currentOrder = business.layout?.sectionsOrder || [];
+    const currentOrder = effectiveSectionsOrder;
     const newOrder = currentOrder.includes(id)
       ? currentOrder.filter((s) => s !== id)
       : [...currentOrder, id];
@@ -59,7 +104,7 @@ export function LiveCustomizerDrawer({
   };
 
   const handleMoveSection = (id: SectionId, direction: 'up' | 'down') => {
-    const currentOrder = [...(business.layout?.sectionsOrder || [])];
+    const currentOrder = [...effectiveSectionsOrder];
     const idx = currentOrder.indexOf(id);
     if (idx === -1) return;
 
@@ -89,7 +134,7 @@ export function LiveCustomizerDrawer({
   };
 
   const handleReset = () => {
-    onChangeBusiness({
+    const defaultBusiness: BusinessConfig = {
       ...business,
       themeColor: '#C9A84C',
       layout: {
@@ -100,8 +145,15 @@ export function LiveCustomizerDrawer({
         cardRadius: 'smooth',
         galleryStyle: 'before-after-slider',
         typographyMood: 'modern-clean',
+        sectionsOrder: DEFAULT_SECTIONS_ORDER,
       },
-    });
+    };
+
+    onChangeBusiness(defaultBusiness);
+    try {
+      const slugKey = business?.slug || 'dvir';
+      localStorage.removeItem(`cutweb_customizer_${slugKey}`);
+    } catch (_) {}
     info('ההגדרות אופסו לברירת המחדל');
   };
 
@@ -113,10 +165,24 @@ export function LiveCustomizerDrawer({
 
   const handleSave = () => {
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const slugKey = business?.slug || 'dvir';
+      const payload = {
+        themeColor: business.themeColor,
+        layout: {
+          ...business.layout,
+          sectionsOrder: effectiveSectionsOrder,
+        },
+      };
+      localStorage.setItem(`cutweb_customizer_${slugKey}`, JSON.stringify(payload));
+      setTimeout(() => {
+        setIsSaving(false);
+        success('העיצוב נשמר בהצלחה בדפדפן! ✓', 'השינויים יישמרו גם בעת ניווט ורענון העמוד');
+      }, 300);
+    } catch {
       setIsSaving(false);
-      success('העיצוב נשמר בהצלחה!');
-    }, 400);
+      success('העיצוב הוחל בזמן אמת!');
+    }
   };
 
   return (
@@ -286,7 +352,7 @@ export function LiveCustomizerDrawer({
 
                 {activeTab === 'sections' && (
                   <SectionsReorderTab
-                    sectionsOrder={business.layout?.sectionsOrder || []}
+                    sectionsOrder={effectiveSectionsOrder}
                     onToggleSection={handleToggleSection}
                     onMoveSection={handleMoveSection}
                     onReorderSections={handleReorderSections}
@@ -294,24 +360,36 @@ export function LiveCustomizerDrawer({
                 )}
               </div>
 
-              {/* Footer CTA */}
-              <div className="p-3 border-t border-white/10 bg-zinc-900 flex items-center justify-between">
-                <span className="text-[11px] text-zinc-400 font-sans">
-                  השינויים מוחלים אוטומטית באתר החי
-                </span>
+              {/* Footer CTA Actions */}
+              <div className="p-3 border-t border-white/10 bg-zinc-900 flex items-center justify-between gap-2">
+                <button
+                  onClick={() => setIsOnboardingOpen(true)}
+                  className="px-3 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-300 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                  title="הקם עסק חדש עם ההגדרות האלו"
+                >
+                  <Rocket className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>הקם עסק בעיצוב זה</span>
+                </button>
+
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md hover:scale-102 active:scale-98"
                 >
                   <Save className="w-3.5 h-3.5" />
-                  <span>{isSaving ? 'שומר...' : 'שמור'}</span>
+                  <span>{isSaving ? 'שומר...' : 'שמור עיצוב'}</span>
                 </button>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      <SaaSOnboardingModal
+        isOpen={isOnboardingOpen}
+        onClose={() => setIsOnboardingOpen(false)}
+        initialPlan="pro"
+      />
     </>
   );
 }
