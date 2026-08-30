@@ -762,17 +762,23 @@ input[type="tel"] {
 
 .theme-luxury-light section {
   color: #1c1c1e !important;
+  background-color: transparent !important;
 }
 
+.theme-luxury-light .bg-\[\#111111\],
 .theme-luxury-light .bg-\[\#121212\],
 .theme-luxury-light .bg-\[\#141414\],
+.theme-luxury-light .bg-\[\#161616\],
 .theme-luxury-light .bg-\[\#181818\],
 .theme-luxury-light .bg-\[\#1A1A1A\],
 .theme-luxury-light .bg-\[\#1C1C1C\],
+.theme-luxury-light .bg-\[\#1E1E1E\],
 .theme-luxury-light .bg-\[\#202020\],
 .theme-luxury-light .bg-\[\#222222\],
 .theme-luxury-light .bg-\[\#242424\],
 .theme-luxury-light .bg-\[\#252525\],
+.theme-luxury-light .bg-\[\#2A2A2A\],
+.theme-luxury-light .bg-\[\#2F2F2F\],
 .theme-luxury-light .bg-zinc-900,
 .theme-luxury-light .bg-black\/60,
 .theme-luxury-light .bg-black\/40 {
@@ -807,15 +813,28 @@ input[type="tel"] {
 .theme-luxury-light .border-white\/10,
 .theme-luxury-light .border-white\/15,
 .theme-luxury-light .border-white\/20,
-.theme-luxury-light .border-white\/30 {
+.theme-luxury-light .border-white\/30,
+.theme-luxury-light .border-\[\#3D3D3D\],
+.theme-luxury-light .border-\[\#2A2A2A\] {
   border-color: #E7E0D6 !important;
 }
 
 .theme-luxury-light .bg-white\/5,
 .theme-luxury-light .bg-white\/10,
-.theme-luxury-light .bg-white\/15 {
+.theme-luxury-light .bg-white\/15,
+.theme-luxury-light footer li,
+.theme-luxury-light footer .bg-\[\#2A2A2A\] {
   background-color: #F5EFEB !important;
-  color: #292524 !important;
+  color: #1c1c1e !important;
+  border-color: #E7E0D6 !important;
+}
+
+.theme-luxury-light footer li .text-white {
+  color: #1c1c1e !important;
+}
+
+.theme-luxury-light footer li .text-\[\#9E9891\] {
+  color: #78716c !important;
 }
 
 .theme-luxury-light .bg-emerald-950\/40,
@@ -831,7 +850,7 @@ input[type="tel"] {
 
 .theme-luxury-light header,
 .theme-luxury-light footer {
-  background-color: rgba(250, 247, 242, 0.96) !important;
+  background-color: rgba(250, 247, 242, 0.98) !important;
   color: #1c1c1e !important;
   border-color: #E7E0D6 !important;
 }
@@ -851,15 +870,12 @@ input[type="tel"] {
    LIVE CUSTOMIZER DRAWER ISOLATION (Immune to page theme rules)
    ============================================================ */
 .live-customizer-drawer,
-.theme-luxury-light .live-customizer-drawer {
-  background-color: rgba(15, 23, 42, 0.97) !important;
+.theme-luxury-light .live-customizer-drawer,
+.theme-brand-midnight .live-customizer-drawer,
+.theme-cyber-carbon .live-customizer-drawer {
+  background-color: rgba(15, 23, 42, 0.98) !important;
   color: #FFFFFF !important;
   border-color: rgba(51, 65, 85, 0.9) !important;
-}
-
-.live-customizer-drawer *,
-.theme-luxury-light .live-customizer-drawer * {
-  /* Prevent dark text override inside dark studio */
 }
 
 .theme-luxury-light .live-customizer-drawer h4,
@@ -883,7 +899,9 @@ input[type="tel"] {
 .theme-luxury-light .live-customizer-drawer .bg-slate-800\/80,
 .theme-luxury-light .live-customizer-drawer .bg-slate-800\/60,
 .theme-luxury-light .live-customizer-drawer .bg-slate-800\/50,
-.theme-luxury-light .live-customizer-drawer .bg-slate-800 {
+.theme-luxury-light .live-customizer-drawer .bg-slate-800,
+.theme-luxury-light .live-customizer-drawer .bg-slate-800\/70,
+.theme-luxury-light .live-customizer-drawer .bg-slate-800\/90 {
   background-color: #1e293b !important;
   color: #f8fafc !important;
 }
@@ -903,15 +921,24 @@ input[type="tel"] {
   color: #F8FAFC !important;
 }
 
+.theme-brand-midnight section {
+  background-color: transparent !important;
+}
+
+.theme-brand-midnight .bg-\[\#111111\],
 .theme-brand-midnight .bg-\[\#121212\],
 .theme-brand-midnight .bg-\[\#141414\],
+.theme-brand-midnight .bg-\[\#161616\],
 .theme-brand-midnight .bg-\[\#181818\],
 .theme-brand-midnight .bg-\[\#1A1A1A\],
 .theme-brand-midnight .bg-\[\#1C1C1C\],
+.theme-brand-midnight .bg-\[\#1E1E1E\],
 .theme-brand-midnight .bg-\[\#202020\],
 .theme-brand-midnight .bg-\[\#222222\],
 .theme-brand-midnight .bg-\[\#242424\],
 .theme-brand-midnight .bg-\[\#252525\],
+.theme-brand-midnight .bg-\[\#2A2A2A\],
+.theme-brand-midnight .bg-\[\#2F2F2F\],
 .theme-brand-midnight .bg-zinc-900,
 .theme-brand-midnight .bg-black\/60,
 .theme-brand-midnight .bg-black\/40 {
@@ -925,13 +952,21 @@ input[type="tel"] {
 .theme-brand-midnight .border-white\/10,
 .theme-brand-midnight .border-white\/15,
 .theme-brand-midnight .border-white\/20,
-.theme-brand-midnight .border-white\/30 {
-  border-color: rgba(56, 189, 248, 0.15) !important;
+.theme-brand-midnight .border-white\/30,
+.theme-brand-midnight .border-\[\#3D3D3D\],
+.theme-brand-midnight .border-\[\#2A2A2A\] {
+  border-color: rgba(56, 189, 248, 0.18) !important;
 }
 
 .theme-brand-midnight .text-zinc-400,
 .theme-brand-midnight .text-\[\#9E9891\] {
   color: #94A3B8 !important;
+}
+
+.theme-brand-midnight footer li,
+.theme-brand-midnight footer .bg-\[\#2A2A2A\] {
+  background-color: #0F1D38 !important;
+  border-color: #1E293B !important;
 }
 
 .theme-brand-midnight header,
@@ -948,15 +983,24 @@ input[type="tel"] {
   color: #FFFFFF !important;
 }
 
+.theme-cyber-carbon section {
+  background-color: transparent !important;
+}
+
+.theme-cyber-carbon .bg-\[\#111111\],
 .theme-cyber-carbon .bg-\[\#121212\],
 .theme-cyber-carbon .bg-\[\#141414\],
+.theme-cyber-carbon .bg-\[\#161616\],
 .theme-cyber-carbon .bg-\[\#181818\],
 .theme-cyber-carbon .bg-\[\#1A1A1A\],
 .theme-cyber-carbon .bg-\[\#1C1C1C\],
+.theme-cyber-carbon .bg-\[\#1E1E1E\],
 .theme-cyber-carbon .bg-\[\#202020\],
 .theme-cyber-carbon .bg-\[\#222222\],
 .theme-cyber-carbon .bg-\[\#242424\],
 .theme-cyber-carbon .bg-\[\#252525\],
+.theme-cyber-carbon .bg-\[\#2A2A2A\],
+.theme-cyber-carbon .bg-\[\#2F2F2F\],
 .theme-cyber-carbon .bg-zinc-900,
 .theme-cyber-carbon .bg-black\/60,
 .theme-cyber-carbon .bg-black\/40 {
@@ -970,13 +1014,21 @@ input[type="tel"] {
 .theme-cyber-carbon .border-white\/10,
 .theme-cyber-carbon .border-white\/15,
 .theme-cyber-carbon .border-white\/20,
-.theme-cyber-carbon .border-white\/30 {
+.theme-cyber-carbon .border-white\/30,
+.theme-cyber-carbon .border-\[\#3D3D3D\],
+.theme-cyber-carbon .border-\[\#2A2A2A\] {
   border-color: rgba(255, 255, 255, 0.16) !important;
 }
 
 .theme-cyber-carbon .text-zinc-400,
 .theme-cyber-carbon .text-\[\#9E9891\] {
   color: #A1A1AA !important;
+}
+
+.theme-cyber-carbon footer li,
+.theme-cyber-carbon footer .bg-\[\#2A2A2A\] {
+  background-color: #0E1017 !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
 }
 
 .theme-cyber-carbon header,
