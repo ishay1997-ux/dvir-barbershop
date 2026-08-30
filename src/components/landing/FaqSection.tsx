@@ -2,9 +2,9 @@
 
 import { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { HelpCircle, ChevronDown, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import { HelpCircle, ChevronDown } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 interface FaqItem {
   question: string;
@@ -14,23 +14,23 @@ interface FaqItem {
 const DEFAULT_FAQS: FaqItem[] = [
   {
     question: 'איך מבטלים או משנים מועד של תור שכבר הוזמן?',
-    answer: 'ניתן לבטל תור בקלות ובכל עת דרך כפתור "התורים שלי" בראש האתר, בהודעת ה-WhatsApp של אישור ההזמנה, או בפנייה ישירה למספרה.',
+    answer: 'ניתן לבטל תור בקלות ובכל עת דרך כפתור "התורים שלי" בראש האתר, בהודעת ה-WhatsApp של אישור ההזמנה, או בפנייה ישירה לעסק.',
   },
   {
     question: 'מה קורה אם אני מאחר לתור שנקבע לי?',
     answer: 'אנחנו מקפידים על לוח זמנים מדויק. איחור של מעל 10 דקות עלול לגרום לקיצור זמן הטיפול או לצורך בקביעת מועד חדש.',
   },
   {
-    question: 'האם יש חניה נגישה בסמוך למספרה?',
-    answer: 'כן! קיימות חניות רחוב וחניון מוסדר בצמוד למספרה עם גישה נוחה ונגישה.',
+    question: 'האם יש חניה נגישה בסמוך למקום?',
+    answer: 'כן! קיימות חניות רחוב וחניון מוסדר בצמוד לעסק עם גישה נוחה ונגישה.',
   },
   {
-    question: 'באילו אמצעי תשלום ניתן לשלם במספרה?',
-    answer: 'אנו מקבלים את כל סוגי כרטיסי האשראי, אפליקציות תשלום (Bit, Apple Pay, Google Pay) ומזומן. התשלום מתבצע במספרה בסיום הטיפול.',
+    question: 'באילו אמצעי תשלום ניתן לשלם?',
+    answer: 'אנו מקבלים את כל סוגי כרטיסי האשראי, אפליקציות תשלום (Bit, Apple Pay, Google Pay) ומזומן. התשלום מתבצע בסיום הטיפול.',
   },
   {
-    question: 'האם אתם מספרים גם ילדים ונוער?',
-    answer: 'כן! אנו מבצעים תספורות ילדים ונוער באווירה סבלנית, חווייתית ומקצועית עם כל הטרנדים והדירוגים המובילים.',
+    question: 'האם יש צורך בהרשמה מראש?',
+    answer: 'קביעת התור אונליין מהירה ולוקחת פחות מ-30 שניות – ללא צורך בהורדת אפליקציות.',
   },
 ];
 
@@ -44,7 +44,9 @@ export default function FaqSection({
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const themeColor = business?.themeColor || '#C9A84C';
-  const bizName = business?.name || 'המספרה של דביר';
+  const bizName = business?.name || 'העסק';
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   const faqs: FaqItem[] = business?.faqs && business.faqs.length > 0
     ? business.faqs
@@ -58,7 +60,7 @@ export default function FaqSection({
     <section
       id="faq"
       ref={ref}
-      className="py-20 bg-[#141414] text-white relative border-t border-white/10"
+      className={`py-20 relative border-t transition-colors ${t.sectionBg} ${t.borderColor}`}
       aria-labelledby="faq-heading"
       dir="rtl"
     >
@@ -85,12 +87,12 @@ export default function FaqSection({
           </div>
           <h2
             id="faq-heading"
-            className="text-3xl sm:text-4xl font-black text-white mt-1 mb-3"
+            className={`text-3xl sm:text-4xl font-black mt-1 mb-3 ${t.textPrimary}`}
           >
             {business?.layout?.sectionTitles?.faqs || 'שאלות נפוצות'}
           </h2>
           <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: themeColor }} />
-          <p className="text-zinc-400 mt-4 max-w-md mx-auto text-xs sm:text-sm font-sans">
+          <p className={`mt-4 max-w-md mx-auto text-xs sm:text-sm font-sans ${t.textSecondary}`}>
             כל מה שחשוב לדעת לפני שמגיעים לתור שלך ב-{bizName}
           </p>
         </motion.div>
@@ -105,23 +107,23 @@ export default function FaqSection({
                 initial={{ opacity: 0, y: 15 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.4, delay: index * 0.06 }}
-                className="bg-[#202020] rounded-2xl border transition-all overflow-hidden"
+                className={`rounded-2xl border transition-all overflow-hidden ${t.cardBg}`}
                 style={{
-                  borderColor: isOpen ? `${themeColor}80` : 'rgba(255,255,255,0.08)',
+                  borderColor: isOpen ? `${themeColor}80` : (t.isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)'),
                 }}
               >
                 <button
                   onClick={() => toggle(index)}
-                  className="w-full p-5 text-right flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-white transition-colors cursor-pointer"
+                  className={`w-full p-5 text-right flex items-center justify-between gap-4 font-bold text-sm sm:text-base transition-colors cursor-pointer ${t.textPrimary}`}
                   aria-expanded={isOpen}
                 >
                   <span className="flex-1 leading-relaxed">{faq.question}</span>
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-transform duration-300"
                     style={{
-                      backgroundColor: isOpen ? themeColor : 'rgba(255,255,255,0.05)',
-                      borderColor: isOpen ? themeColor : 'rgba(255,255,255,0.1)',
-                      color: isOpen ? '#1C1C1C' : '#9E9891',
+                      backgroundColor: isOpen ? themeColor : (t.isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.05)'),
+                      borderColor: isOpen ? themeColor : (t.isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)'),
+                      color: isOpen ? '#1C1C1C' : (t.isLight ? '#64748B' : '#9E9891'),
                       transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                     }}
                   >
@@ -137,7 +139,7 @@ export default function FaqSection({
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25 }}
                     >
-                      <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans border-t border-white/5">
+                      <div className={`px-5 pb-5 pt-1 text-xs sm:text-sm leading-relaxed font-sans border-t ${t.borderColor} ${t.textSecondary}`}>
                         {faq.answer}
                       </div>
                     </motion.div>

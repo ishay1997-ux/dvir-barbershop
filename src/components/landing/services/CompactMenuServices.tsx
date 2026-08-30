@@ -5,23 +5,27 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Clock, ArrowLeft } from 'lucide-react';
 import { ServiceItem } from '@/types/business';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 interface CompactMenuServicesProps {
   services: ServiceItem[];
   themeColor?: string;
   slug?: string;
+  bgTheme?: string;
 }
 
 export default function CompactMenuServices({
   services,
   themeColor = '#C9A84C',
   slug = 'dvir',
+  bgTheme,
 }: CompactMenuServicesProps) {
   const bookingUrl = slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`;
+  const t = getThemeTokens(bgTheme);
 
   return (
-    <div className="bg-[#18181B] rounded-3xl border border-white/10 p-4 sm:p-6 shadow-2xl max-w-4xl mx-auto">
-      <div className="divide-y divide-white/10">
+    <div className={`rounded-3xl p-4 sm:p-6 max-w-4xl mx-auto transition-colors ${t.cardBg}`}>
+      <div className={`divide-y ${t.divideColor}`}>
         {services.map((service, index) => (
           <motion.div
             key={service.id || index}
@@ -29,20 +33,20 @@ export default function CompactMenuServices({
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.3, delay: index * 0.04 }}
-            className="py-4 first:pt-2 last:pb-2 flex items-center justify-between gap-4 hover:bg-white/5 px-3 rounded-2xl transition-colors group"
+            className={`py-4 first:pt-2 last:pb-2 flex items-center justify-between gap-4 px-3 rounded-2xl transition-colors group ${t.hoverItemBg}`}
           >
             <div className="flex-1 text-right">
               <div className="flex items-center gap-2">
-                <span className="text-base font-black text-white group-hover:text-amber-300 transition-colors">
+                <span className={`text-base font-black transition-colors ${t.textPrimary}`}>
                   {service.name}
                 </span>
-                <span className="text-xs text-zinc-400 flex items-center gap-1">
+                <span className={`text-xs flex items-center gap-1 ${t.textMuted}`}>
                   <Clock className="w-3 h-3" />
                   {service.duration} דק׳
                 </span>
               </div>
               {service.description && (
-                <p className="text-xs text-zinc-400 mt-1 line-clamp-1">
+                <p className={`text-xs mt-1 line-clamp-1 ${t.textSecondary}`}>
                   {service.description}
                 </p>
               )}

@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 const AMBIENT_SLIDES = [
   {
@@ -37,6 +38,8 @@ export default function AmbientCarouselGallery({
 }) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const themeColor = business?.themeColor || '#14B8A6';
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   const slides = AMBIENT_SLIDES;
   const current = slides[currentIdx];
@@ -50,7 +53,7 @@ export default function AmbientCarouselGallery({
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-[#1A1A1E] rounded-3xl border border-white/10 p-4 sm:p-6 shadow-2xl overflow-hidden text-right">
+    <div className={`max-w-4xl mx-auto rounded-3xl p-4 sm:p-6 shadow-2xl overflow-hidden text-right transition-colors ${t.cardBg}`}>
       <div className="relative aspect-16/9 w-full rounded-2xl overflow-hidden mb-5">
         <Image
           src={current.src}
@@ -103,9 +106,10 @@ export default function AmbientCarouselGallery({
             type="button"
             onClick={() => setCurrentIdx(i)}
             className={`h-2 rounded-full transition-all cursor-pointer ${
-              i === currentIdx ? 'w-8 bg-white' : 'w-2 bg-white/30 hover:bg-white/50'
+              i === currentIdx ? 'w-8' : 'w-2 bg-slate-400/40 hover:bg-slate-400'
             }`}
-            style={{ backgroundColor: i === currentIdx ? themeColor : undefined }}
+            style={i === currentIdx ? { backgroundColor: themeColor } : {}}
+            aria-label={`עבור לשקופית ${i + 1}`}
           />
         ))}
       </div>

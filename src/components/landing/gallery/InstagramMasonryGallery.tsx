@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X, Eye, Heart, Camera } from 'lucide-react';
 import { BusinessConfig } from '@/types/business';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 function InstagramIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
@@ -70,6 +71,9 @@ export default function InstagramMasonryGallery({
 
   const themeColor = business?.themeColor || '#EC4899';
   const bizName = business?.name || 'הסטודיו';
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
+
   const instagram = business?.instagramHandle
     ? (business.instagramHandle.startsWith('http') ? business.instagramHandle : `https://instagram.com/${business.instagramHandle.replace('@', '')}`)
     : 'https://instagram.com';
@@ -84,8 +88,6 @@ export default function InstagramMasonryGallery({
       }))
     : DEFAULT_MASONRY_PHOTOS;
 
-  const sectionTitle = business?.layout?.sectionTitles?.gallery || 'גלריית עבודות ותוצאות מהאינסטגרם';
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
@@ -97,7 +99,7 @@ export default function InstagramMasonryGallery({
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: idx * 0.05 }}
             onClick={() => setSelectedPhoto(photo)}
-            className="group relative aspect-4/5 rounded-3xl overflow-hidden bg-zinc-900 border border-white/10 shadow-lg cursor-pointer text-right focus:outline-none focus:ring-2"
+            className={`group relative aspect-4/5 rounded-3xl overflow-hidden shadow-lg cursor-pointer text-right focus:outline-none focus:ring-2 ${t.cardBg}`}
             style={{ '--tw-ring-color': themeColor } as any}
           >
             <Image
@@ -141,7 +143,7 @@ export default function InstagramMasonryGallery({
           href={instagram}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold text-xs border border-white/10 transition-all hover:scale-105"
+          className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs border transition-all hover:scale-105 ${t.buttonSecondaryBg}`}
         >
           <InstagramIcon className="w-4 h-4 text-pink-400" />
           <span>עקבו אחרינו באינסטגרם לעבודות נוספות ↗</span>
@@ -159,7 +161,7 @@ export default function InstagramMasonryGallery({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="relative max-w-lg w-full bg-[#1A1A1E] rounded-3xl overflow-hidden border p-4 shadow-2xl"
+              className={`relative max-w-lg w-full rounded-3xl overflow-hidden border p-4 shadow-2xl ${t.isLight ? 'bg-white text-slate-900' : 'bg-[#1A1A1E] text-white'}`}
               style={{ borderColor: `${themeColor}60` }}
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
@@ -174,7 +176,7 @@ export default function InstagramMasonryGallery({
 
               <div className="flex items-center justify-between">
                 <div className="text-right">
-                  <h4 className="font-bold text-sm text-white">{selectedPhoto.title}</h4>
+                  <h4 className={`font-bold text-sm ${t.textPrimary}`}>{selectedPhoto.title}</h4>
                   <span className="text-xs font-semibold" style={{ color: themeColor }}>
                     {selectedPhoto.category}
                   </span>
@@ -183,7 +185,7 @@ export default function InstagramMasonryGallery({
                 <button
                   type="button"
                   onClick={() => setSelectedPhoto(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer"
+                  className={`w-8 h-8 rounded-full flex items-center justify-center cursor-pointer ${t.isLight ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-white/10 hover:bg-white/20 text-white'}`}
                 >
                   <X className="w-4 h-4" />
                 </button>

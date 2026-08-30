@@ -3,6 +3,7 @@ import { Scissors, Phone, MapPin, Clock, Lock } from 'lucide-react';
 import { SHOP_INFO } from '@/lib/utils';
 import { BusinessConfig } from '@/types/business';
 import { SHORT_VERSION_LABEL } from '@/config/version';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -34,6 +35,8 @@ export default function Footer({
   const city = business?.city || 'אריאל & רחובות';
   const phone = business?.phone || SHOP_INFO.phone;
   const slug = business?.slug || 'dvir';
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   const facebook = business?.facebookUrl || (slug === 'dvir' ? SHOP_INFO.facebook : '');
   const instagram = business?.instagramUrl || (business?.instagramHandle
@@ -48,7 +51,7 @@ export default function Footer({
       ];
 
   return (
-    <footer className="bg-[#1C1C1C] text-white" role="contentinfo" id="footer" dir="rtl">
+    <footer className={`border-t transition-colors ${t.isLight ? 'bg-white text-slate-900 border-slate-200' : 'bg-[#1C1C1C] text-white border-white/10'}`} role="contentinfo" id="footer" dir="rtl">
       {/* Brand top border */}
       <div className="h-0.5" style={{ backgroundColor: themeColor }} />
 
@@ -64,13 +67,13 @@ export default function Footer({
                 <Scissors className="w-5 h-5 -rotate-45" />
               </div>
               <div>
-                <span className="block text-xl font-black tracking-wider">
+                <span className={`block text-xl font-black tracking-wider ${t.textPrimary}`}>
                   {bizName}
                 </span>
-                <span className="text-xs text-[#9E9891]">{city}</span>
+                <span className={`text-xs ${t.textMuted}`}>{city}</span>
               </div>
             </div>
-            <p className="text-[#9E9891] text-xs sm:text-sm leading-relaxed max-w-xs font-sans">
+            <p className={`text-xs sm:text-sm leading-relaxed max-w-xs font-sans ${t.textSecondary}`}>
               {business?.slogan || 'תספורות פרימיום, דירוגי פייד ופיסול זקן ברמה הגבוהה ביותר בישראל.'}
             </p>
             {/* Social */}
@@ -82,7 +85,7 @@ export default function Footer({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram"
-                    className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-white hover:text-white transition-all duration-200"
+                    className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 ${t.isLight ? 'border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-900' : 'border-[#3D3D3D] text-[#9E9891] hover:border-white hover:text-white'}`}
                   >
                     <InstagramIcon className="w-4 h-4" />
                   </a>
@@ -93,7 +96,7 @@ export default function Footer({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Facebook"
-                    className="w-10 h-10 rounded-full border border-[#3D3D3D] flex items-center justify-center text-[#9E9891] hover:border-white hover:text-white transition-all duration-200"
+                    className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 ${t.isLight ? 'border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-900' : 'border-[#3D3D3D] text-[#9E9891] hover:border-white hover:text-white'}`}
                   >
                     <FacebookIcon className="w-4 h-4" />
                   </a>
@@ -109,9 +112,9 @@ export default function Footer({
             </h3>
             <ul className="flex flex-col gap-3 text-xs">
               {branches.map((b, idx) => (
-                <li key={idx} className="bg-[#2A2A2A] p-3 rounded-xl border border-[#3D3D3D]">
-                  <div className="font-bold text-white mb-1">📍 {b.name}</div>
-                  <div className="text-[#9E9891]">{b.hours || b.address}</div>
+                <li key={idx} className={`p-3 rounded-xl border transition-colors ${t.isLight ? 'bg-slate-50 border-slate-200' : 'bg-[#2A2A2A] border-[#3D3D3D]'}`}>
+                  <div className={`font-bold mb-1 ${t.textPrimary}`}>📍 {b.name}</div>
+                  <div className={t.textSecondary}>{b.hours || b.address}</div>
                 </li>
               ))}
             </ul>
@@ -127,7 +130,7 @@ export default function Footer({
                 <Phone className="w-4 h-4 flex-shrink-0" style={{ color: themeColor }} />
                 <a
                   href={`tel:${phone}`}
-                  className="text-sm text-[#9E9891] hover:text-white transition-colors"
+                  className={`text-sm hover:underline transition-colors ${t.textSecondary}`}
                   dir="ltr"
                 >
                   {phone}
@@ -146,25 +149,25 @@ export default function Footer({
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-[#3D3D3D] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9E9891]">
+        <div className={`mt-12 pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-xs ${t.isLight ? 'border-slate-200 text-slate-500' : 'border-[#3D3D3D] text-[#9E9891]'}`}>
           <div className="flex items-center gap-2">
             <span>© {currentYear} {bizName} · כל הזכויות שמורות</span>
             <span className="text-[11px] opacity-70">({SHORT_VERSION_LABEL})</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/terms" className="hover:text-white transition-colors">
+            <Link href="/terms" className={`hover:underline transition-colors ${t.isLight ? 'text-slate-600 hover:text-slate-900' : 'hover:text-white'}`}>
               תנאי שימוש
             </Link>
             <span>·</span>
-            <Link href="/privacy" className="hover:text-white transition-colors">
+            <Link href="/privacy" className={`hover:underline transition-colors ${t.isLight ? 'text-slate-600 hover:text-slate-900' : 'hover:text-white'}`}>
               מדיניות פרטיות
             </Link>
             <span>·</span>
-            <Link href="/accessibility" className="hover:text-white transition-colors">
+            <Link href="/accessibility" className={`hover:underline transition-colors ${t.isLight ? 'text-slate-600 hover:text-slate-900' : 'hover:text-white'}`}>
               הצהרת נגישות
             </Link>
             <span>·</span>
-            <Link href="/admin" className="hover:text-white transition-colors flex items-center gap-1">
+            <Link href="/admin" className={`hover:underline transition-colors flex items-center gap-1 ${t.isLight ? 'text-slate-600 hover:text-slate-900' : 'hover:text-white'}`}>
               <Lock className="w-3 h-3" /> ניהול
             </Link>
           </div>

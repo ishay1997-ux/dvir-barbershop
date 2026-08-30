@@ -5,19 +5,23 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Clock, Scissors, Sparkles, Check } from 'lucide-react';
 import { ServiceItem } from '@/types/business';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 interface CardsGridServicesProps {
   services: ServiceItem[];
   themeColor?: string;
   slug?: string;
+  bgTheme?: string;
 }
 
 export default function CardsGridServices({
   services,
   themeColor = '#C9A84C',
   slug = 'dvir',
+  bgTheme,
 }: CardsGridServicesProps) {
   const bookingUrl = slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`;
+  const t = getThemeTokens(bgTheme);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -28,7 +32,7 @@ export default function CardsGridServices({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: index * 0.05 }}
-          className="bg-[#202020] rounded-3xl border border-white/10 p-6 flex flex-col justify-between shadow-xl transition-all duration-300 hover:border-white/20 hover:scale-[1.02] group relative overflow-hidden text-right"
+          className={`rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] group relative overflow-hidden text-right ${t.cardBg}`}
         >
           {/* Subtle Glow corner */}
           <div
@@ -38,7 +42,7 @@ export default function CardsGridServices({
 
           <div>
             <div className="flex items-start justify-between gap-3 mb-3">
-              <h3 className="text-lg font-black text-white group-hover:text-amber-200 transition-colors">
+              <h3 className={`text-lg font-black transition-colors ${t.textPrimary}`}>
                 {service.name}
               </h3>
               <div
@@ -53,14 +57,14 @@ export default function CardsGridServices({
               </div>
             </div>
 
-            <p className="text-xs text-zinc-400 leading-relaxed min-h-[36px] mb-5">
+            <p className={`text-xs leading-relaxed min-h-[36px] mb-5 ${t.textSecondary}`}>
               {service.description || 'טיפול מקצועי ברמה הגבוהה ביותר עם חומרי פרימיום'}
             </p>
           </div>
 
-          <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3 mt-auto">
-            <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-bold">
-              <Clock className="w-3.5 h-3.5 text-zinc-400" />
+          <div className={`pt-4 border-t flex items-center justify-between gap-3 mt-auto ${t.borderColor}`}>
+            <div className={`flex items-center gap-1.5 text-xs font-bold ${t.textMuted}`}>
+              <Clock className="w-3.5 h-3.5" />
               <span>{service.duration} דקות</span>
             </div>
 

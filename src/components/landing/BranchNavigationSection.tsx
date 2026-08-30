@@ -4,15 +4,17 @@ import { useState } from 'react';
 import { MapPin, Navigation, Phone, Clock, ExternalLink, Sparkles } from 'lucide-react';
 import { INITIAL_BRANCHES } from '@/lib/store';
 import { BusinessConfig } from '@/types/business';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 export default function BranchNavigationSection({
   business,
 }: {
   business?: Partial<BusinessConfig>;
 }) {
-  const currentDay = new Date().getDay();
   const themeColor = business?.themeColor || '#C9A84C';
   const bizName = business?.name || 'המספרה של דביר';
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   const branches = business?.branches && business.branches.length > 0
     ? business.branches.map((b, i) => ({
@@ -36,7 +38,7 @@ export default function BranchNavigationSection({
   const activeBranch = branches[selectedBranchIndex] || branches[0];
 
   return (
-    <section id="locations" className="py-12 sm:py-16 bg-[#141414] text-white" dir="rtl">
+    <section id="locations" className={`py-12 sm:py-16 transition-colors ${t.sectionBg}`} dir="rtl">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-8">
@@ -51,10 +53,10 @@ export default function BranchNavigationSection({
             <Navigation className="w-3.5 h-3.5" />
             <span>סניפים ודרכי הגעה</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white">
+          <h2 className={`text-2xl sm:text-3xl font-black ${t.textPrimary}`}>
             {business?.layout?.sectionTitles?.branches || 'איפה אנחנו נמצאים?'}
           </h2>
-          <p className="text-xs sm:text-sm text-[#9E9891] mt-1.5 font-sans">
+          <p className={`text-xs sm:text-sm mt-1.5 font-sans ${t.textSecondary}`}>
             {bizName} – הגעה נוחה, חניה צמודה ומיקום מרכזי
           </p>
         </div>
@@ -62,15 +64,15 @@ export default function BranchNavigationSection({
         {/* Branch Toggle Tabs */}
         {branches.length > 1 && (
           <div className="flex justify-center mb-6">
-            <div className="bg-[#222222] p-1.5 rounded-2xl border border-white/10 flex gap-1 shadow-lg flex-wrap justify-center">
+            <div className={`p-1.5 rounded-2xl border flex gap-1 shadow-lg flex-wrap justify-center ${t.isLight ? 'bg-slate-100 border-slate-200' : 'bg-[#222222] border-white/10'}`}>
               {branches.map((b, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedBranchIndex(idx)}
                   className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
                     selectedBranchIndex === idx
-                      ? 'text-[#1C1C1C] shadow-md'
-                      : 'text-zinc-400 hover:text-white'
+                      ? 'text-[#1C1C1C] shadow-md font-black'
+                      : `${t.textMuted} hover:${t.textPrimary}`
                   }`}
                   style={{
                     backgroundColor: selectedBranchIndex === idx ? themeColor : undefined,
@@ -84,7 +86,7 @@ export default function BranchNavigationSection({
         )}
 
         {/* Interactive Map & Navigation Card */}
-        <div className="max-w-4xl mx-auto bg-[#202020] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+        <div className={`max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl transition-colors ${t.cardBg}`}>
           {/* Map Preview Graphic Frame */}
           <div className="relative h-64 sm:h-72 w-full bg-[#18232c] overflow-hidden flex items-center justify-center">
             {/* Styled Map Background Grid */}
@@ -150,19 +152,19 @@ export default function BranchNavigationSection({
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[11px] text-zinc-400 font-bold block">כתובת הסניף</span>
-                <p className="font-black text-sm text-white mt-0.5">{activeBranch.address}</p>
+                <span className={`text-[11px] font-bold block ${t.textMuted}`}>כתובת הסניף</span>
+                <p className={`font-black text-sm mt-0.5 ${t.textPrimary}`}>{activeBranch.address}</p>
               </div>
             </div>
 
             {/* Hours */}
             <div className="flex items-start gap-3.5 text-right">
-              <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-300 shrink-0">
+              <div className={`w-10 h-10 rounded-2xl border flex items-center justify-center shrink-0 ${t.isLight ? 'bg-slate-100 border-slate-200 text-slate-700' : 'bg-white/5 border-white/10 text-zinc-300'}`}>
                 <Clock className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[11px] text-zinc-400 font-bold block">שעות פתיחה</span>
-                <p className="font-bold text-xs sm:text-sm text-white mt-0.5" dir="ltr">
+                <span className={`text-[11px] font-bold block ${t.textMuted}`}>שעות פעילות</span>
+                <p className={`font-bold text-xs sm:text-sm mt-0.5 ${t.textPrimary}`} dir="ltr">
                   {activeBranch.hours || '09:00 - 19:00'}
                 </p>
               </div>
@@ -172,7 +174,7 @@ export default function BranchNavigationSection({
             <div className="flex gap-2">
               <a
                 href={`tel:${activeBranch.phone}`}
-                className="flex-1 py-3 px-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs text-center flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className={`flex-1 py-3 px-4 rounded-2xl font-bold text-xs text-center flex items-center justify-center gap-2 transition-colors cursor-pointer border ${t.buttonSecondaryBg}`}
               >
                 <Phone className="w-4 h-4" style={{ color: themeColor }} />
                 <span>חייג לסניף</span>

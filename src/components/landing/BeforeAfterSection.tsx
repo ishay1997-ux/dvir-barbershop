@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { Sparkles, MoveHorizontal, Scissors } from 'lucide-react';
 import Link from 'next/link';
 import { BusinessConfig } from '@/types/business';
+import { getThemeTokens } from '@/lib/theme-tokens';
 import InstagramMasonryGallery from './gallery/InstagramMasonryGallery';
 import AmbientCarouselGallery from './gallery/AmbientCarouselGallery';
 
@@ -59,6 +60,8 @@ export default function BeforeAfterSection({
   const themeColor = business?.themeColor || '#C9A84C';
   const ownerName = business?.ownerName || 'דביר';
   const slug = business?.slug || 'dvir';
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   const current = DEFAULT_TRANSFORMATIONS[activeItem];
 
@@ -84,7 +87,7 @@ export default function BeforeAfterSection({
     <section
       id="transformations"
       ref={ref}
-      className="py-20 bg-[#161616] text-white relative overflow-hidden"
+      className={`py-20 relative overflow-hidden transition-colors ${t.sectionBg}`}
       aria-labelledby="transformations-heading"
       dir="rtl"
     >
@@ -117,12 +120,12 @@ export default function BeforeAfterSection({
           </div>
           <h2
             id="transformations-heading"
-            className="text-3xl sm:text-4xl font-black text-white mt-1 mb-3"
+            className={`text-3xl sm:text-4xl font-black mt-1 mb-3 ${t.textPrimary}`}
           >
             {business?.layout?.sectionTitles?.gallery || 'לפני ואחרי'}
           </h2>
           <div className="w-16 h-1 mx-auto rounded-full" style={{ backgroundColor: themeColor }} />
-          <p className="text-zinc-400 mt-4 max-w-md mx-auto text-xs sm:text-sm font-sans">
+          <p className={`mt-4 max-w-md mx-auto text-xs sm:text-sm font-sans ${t.textSecondary}`}>
             גרור את הסליידר כדי לראות את התוצאה המדויקת והחדה
           </p>
         </motion.div>
@@ -136,24 +139,24 @@ export default function BeforeAfterSection({
           <>
             {/* Tab selector for transformations */}
             <div className="flex flex-wrap justify-center gap-2 mb-8 max-w-2xl mx-auto">
-              {DEFAULT_TRANSFORMATIONS.map((t, index) => (
+              {DEFAULT_TRANSFORMATIONS.map((item, index) => (
                 <button
-                  key={t.id}
+                  key={item.id}
                   onClick={() => {
                     setActiveItem(index);
                     setSliderPosition(50);
                   }}
                   className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
                     activeItem === index
-                      ? 'text-[#1C1C1C] shadow-md'
-                      : 'bg-[#222222] text-zinc-400 border-white/10 hover:text-white'
+                      ? 'text-[#1C1C1C] shadow-md font-black'
+                      : `${t.buttonSecondaryBg}`
                   }`}
                   style={{
                     backgroundColor: activeItem === index ? themeColor : undefined,
                     borderColor: activeItem === index ? themeColor : undefined,
                   }}
                 >
-                  {t.title.split(' ')[0]} {t.title.split(' ')[1]}
+                  {item.title.split(' ')[0]} {item.title.split(' ')[1]}
                 </button>
               ))}
             </div>
@@ -163,7 +166,7 @@ export default function BeforeAfterSection({
               initial={{ opacity: 0, scale: 0.96 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="max-w-3xl mx-auto bg-[#202020] border border-white/10 rounded-3xl p-4 sm:p-6 shadow-2xl"
+              className={`max-w-3xl mx-auto rounded-3xl p-4 sm:p-6 shadow-2xl ${t.cardBg}`}
             >
               <div
                 ref={containerRef}
@@ -253,13 +256,13 @@ export default function BeforeAfterSection({
               </div>
 
               {/* Details & CTA below slider */}
-              <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10">
+              <div className={`mt-5 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t ${t.borderColor}`}>
                 <div className="text-right">
                   <div className="text-xs font-bold" style={{ color: themeColor }}>
                     {current.category} · בוצע ע"י {ownerName}
                   </div>
-                  <h3 className="text-base sm:text-lg font-black text-white mt-0.5">{current.title}</h3>
-                  <p className="text-zinc-400 text-xs mt-1 font-sans">{current.description}</p>
+                  <h3 className={`text-base sm:text-lg font-black mt-0.5 ${t.textPrimary}`}>{current.title}</h3>
+                  <p className={`text-xs mt-1 font-sans ${t.textSecondary}`}>{current.description}</p>
                 </div>
 
                 <Link

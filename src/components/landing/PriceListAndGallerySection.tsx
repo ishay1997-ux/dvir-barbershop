@@ -8,6 +8,7 @@ import { Scissors, Sparkles, X, ChevronLeft, Camera } from 'lucide-react';
 import { INITIAL_SERVICES } from '@/lib/store';
 import { BusinessConfig } from '@/types/business';
 import { formatPrice } from '@/lib/utils';
+import { getThemeTokens } from '@/lib/theme-tokens';
 import CardsGridServices from './services/CardsGridServices';
 import CompactMenuServices from './services/CompactMenuServices';
 
@@ -60,6 +61,8 @@ export default function PriceListAndGallerySection({
   const themeColor = business?.themeColor || '#C9A84C';
   const bizName = business?.name || 'דביר';
   const slug = business?.slug || 'dvir';
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   const services = business?.services && business.services.length > 0
     ? business.services
@@ -85,7 +88,7 @@ export default function PriceListAndGallerySection({
     : DEFAULT_GALLERY_PHOTOS;
 
   return (
-    <section id="services-and-gallery" className="py-12 sm:py-16 bg-[#181818] text-white" dir="rtl">
+    <section id="services-and-gallery" className={`py-12 sm:py-16 ${t.sectionBg}`} dir="rtl">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
@@ -100,44 +103,44 @@ export default function PriceListAndGallerySection({
             <Sparkles className="w-3.5 h-3.5" />
             <span>מחירון ושירותי פרימיום</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white">
+          <h2 className={`text-2xl sm:text-3xl font-black ${t.textPrimary}`}>
             {business?.layout?.sectionTitles?.services || `השירותים והעבודות של ${bizName}`}
           </h2>
-          <p className="text-xs sm:text-sm text-[#9E9891] mt-1.5 font-sans">
+          <p className={`text-xs sm:text-sm mt-1.5 font-sans ${t.textSecondary}`}>
             {business?.layout?.sectionTitles?.servicesSubtitle || 'מחירים שקופים, דיוק ללא פשרות, ואווירה אישית ומקצועית'}
           </p>
         </div>
 
         {/* Conditional Layout Styles: cards-grid / compact-menu / split-gallery */}
         {business?.layout?.servicesStyle === 'cards-grid' ? (
-          <CardsGridServices services={services} themeColor={themeColor} slug={slug} />
+          <CardsGridServices services={services} themeColor={themeColor} slug={slug} bgTheme={bgTheme} />
         ) : business?.layout?.servicesStyle === 'compact-menu' ? (
-          <CompactMenuServices services={services} themeColor={themeColor} slug={slug} />
+          <CompactMenuServices services={services} themeColor={themeColor} slug={slug} bgTheme={bgTheme} />
         ) : (
           /* Default: 2-Column Split & Gallery Grid */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* ============================================================ */}
             {/* 1. RIGHT COLUMN: PRICE LIST & SERVICES                       */}
             {/* ============================================================ */}
-            <div className="lg:col-span-7 bg-[#202020] rounded-3xl border border-white/10 p-5 sm:p-7 shadow-xl">
-              <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+            <div className={`lg:col-span-7 rounded-3xl p-5 sm:p-7 shadow-xl ${t.cardBg}`}>
+              <div className={`flex items-center justify-between pb-4 mb-4 border-b ${t.borderColor}`}>
                 <div className="flex items-center gap-2">
                   <Scissors className="w-5 h-5" style={{ color: themeColor }} />
-                  <h3 className="font-black text-base sm:text-lg text-white">מחירון שירותים דיגיטלי</h3>
+                  <h3 className={`font-black text-base sm:text-lg ${t.textPrimary}`}>מחירון שירותים דיגיטלי</h3>
                 </div>
-                <span className="text-xs text-zinc-400">משך זמן ומחיר</span>
+                <span className={`text-xs ${t.textMuted}`}>משך זמן ומחיר</span>
               </div>
 
-              <div className="divide-y divide-white/5 space-y-1">
+              <div className={`divide-y ${t.divideColor} space-y-1`}>
                 {services.map((service, idx) => (
                   <div
                     key={idx}
-                    className="py-3.5 flex items-center justify-between gap-3 group hover:bg-white/[0.03] px-2 rounded-2xl transition-colors"
+                    className={`py-3.5 flex items-center justify-between gap-3 group px-2 rounded-2xl transition-colors ${t.hoverItemBg}`}
                   >
                     {/* Service Info (Right in RTL) */}
                     <div className="flex-1 text-right">
                       <div className="flex items-center gap-2">
-                        <span className="font-black text-sm text-white group-hover:text-amber-200 transition-colors">
+                        <span className={`font-black text-sm transition-colors ${t.textPrimary}`}>
                           {service.name}
                         </span>
                         {service.popular && (
@@ -149,14 +152,14 @@ export default function PriceListAndGallerySection({
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-[#9E9891] mt-0.5 leading-relaxed font-sans">
+                      <p className={`text-xs mt-0.5 leading-relaxed font-sans ${t.textSecondary}`}>
                         {service.description}
                       </p>
                     </div>
 
                     {/* Duration & Price (Left in RTL) */}
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-xs text-zinc-400 font-sans">
+                      <span className={`text-xs font-sans ${t.textMuted}`}>
                         {service.duration} דק׳
                       </span>
                       <span
@@ -167,7 +170,8 @@ export default function PriceListAndGallerySection({
                       </span>
                       <Link
                         href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
-                        className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors"
+                        className="p-1.5 rounded-xl transition-colors"
+                        style={{ backgroundColor: `${themeColor}20`, color: themeColor }}
                         title="הזמן שירות זה"
                       >
                         <ChevronLeft className="w-4 h-4" />
@@ -181,11 +185,11 @@ export default function PriceListAndGallerySection({
             {/* ============================================================ */}
             {/* 2. LEFT COLUMN: GALLERY PHOTOS PREVIEW                       */}
             {/* ============================================================ */}
-            <div className="lg:col-span-5 bg-[#202020] rounded-3xl border border-white/10 p-5 sm:p-7 shadow-xl space-y-4">
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+            <div className={`lg:col-span-5 rounded-3xl p-5 sm:p-7 shadow-xl space-y-4 ${t.cardBg}`}>
+              <div className={`flex items-center justify-between pb-4 border-b ${t.borderColor}`}>
                 <div className="flex items-center gap-2">
                   <Camera className="w-5 h-5" style={{ color: themeColor }} />
-                  <h3 className="font-black text-base sm:text-lg text-white">גלריית עבודות</h3>
+                  <h3 className={`font-black text-base sm:text-lg ${t.textPrimary}`}>גלריית עבודות</h3>
                 </div>
                 <a
                   href={instagram}
@@ -227,7 +231,7 @@ export default function PriceListAndGallerySection({
                 href={instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/5"
+                className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-colors border ${t.buttonSecondaryBg}`}
               >
                 <span>צפה בעבודות נוספות באינסטגרם של {bizName} ←</span>
               </a>
@@ -247,7 +251,7 @@ export default function PriceListAndGallerySection({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="relative max-w-lg w-full bg-[#1C1C1C] rounded-3xl overflow-hidden border p-4 shadow-2xl"
+              className={`relative max-w-lg w-full rounded-3xl overflow-hidden border p-4 shadow-2xl ${t.isLight ? 'bg-white' : 'bg-[#1C1C1C]'}`}
               style={{ borderColor: `${themeColor}60` }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -262,13 +266,13 @@ export default function PriceListAndGallerySection({
 
               <div className="flex items-center justify-between">
                 <div className="text-right">
-                  <h4 className="font-bold text-sm text-white">{selectedPhoto.title}</h4>
+                  <h4 className={`font-bold text-sm ${t.textPrimary}`}>{selectedPhoto.title}</h4>
                   <span className="text-xs font-semibold" style={{ color: themeColor }}>{selectedPhoto.category}</span>
                 </div>
 
                 <button
                   onClick={() => setSelectedPhoto(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer"
+                  className={`w-8 h-8 rounded-full flex items-center justify-center cursor-pointer ${t.isLight ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-white/10 hover:bg-white/20 text-white'}`}
                 >
                   <X className="w-4 h-4" />
                 </button>

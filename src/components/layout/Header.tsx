@@ -8,6 +8,7 @@ import { BusinessConfig } from '@/types/business';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 import AnnouncementBanner from '@/components/common/AnnouncementBanner';
 import SidebarDrawer from './SidebarDrawer';
+import { getThemeTokens } from '@/lib/theme-tokens';
 
 export default function Header({
   business,
@@ -21,6 +22,8 @@ export default function Header({
   const bizName = business?.name || 'המספרה של דביר';
   const city = business?.city || 'אריאל & רחובות';
   const slug = business?.slug || 'dvir';
+  const bgTheme = business?.layout?.bgTheme || 'dark-obsidian';
+  const t = getThemeTokens(bgTheme);
 
   const basePath = slug === 'dvir' || slug === 'thecut' ? '' : `/${slug}`;
 
@@ -40,7 +43,7 @@ export default function Header({
 
   return (
     <>
-      <header className="sticky top-0 inset-x-0 z-50 bg-[#1C1C1C]/95 backdrop-blur-md border-b border-white/10 shadow-md transition-all duration-300">
+      <header className={`sticky top-0 inset-x-0 z-50 backdrop-blur-md border-b shadow-md transition-all duration-300 ${t.isLight ? 'bg-white/95 border-slate-200 text-slate-900' : 'bg-[#1C1C1C]/95 border-white/10 text-white'}`}>
         {/* Top Dynamic Announcement Banner */}
         <AnnouncementBanner business={business} />
 
@@ -49,7 +52,7 @@ export default function Header({
           <div className="flex items-center gap-3">
             {/* Hamburger Button opening Slide-out Sidebar Drawer on Right */}
             <button
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center border border-white/10 cursor-pointer"
+              className={`p-2 rounded-xl transition-colors flex items-center justify-center border cursor-pointer ${t.isLight ? 'bg-slate-100 hover:bg-slate-200 text-slate-900 border-slate-200' : 'bg-white/10 hover:bg-white/20 text-white border-white/10'}`}
               onClick={() => setIsSidebarOpen(true)}
               aria-label="פתח תפריט צד"
               title="תפריט אפליקציה"
@@ -70,10 +73,10 @@ export default function Header({
                 <Scissors className="w-5 h-5 -rotate-45" />
               </div>
               <div className="leading-tight">
-                <span className="block text-base sm:text-lg font-black tracking-wider text-white">
+                <span className={`block text-base sm:text-lg font-black tracking-wider ${t.textPrimary}`}>
                   {bizName}
                 </span>
-                <span className="text-[10px] text-[#9E9891]">{city}</span>
+                <span className={`text-[10px] ${t.textMuted}`}>{city}</span>
               </div>
             </Link>
           </div>
@@ -84,7 +87,7 @@ export default function Header({
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-xs font-bold text-white/80 hover:text-amber-200 transition-colors duration-200 relative group py-1"
+                className={`text-xs font-bold transition-colors duration-200 relative group py-1 ${t.isLight ? 'text-slate-600 hover:text-slate-900' : 'text-white/80 hover:text-amber-200'}`}
               >
                 {link.label}
                 <span
@@ -104,7 +107,7 @@ export default function Header({
             {/* Admin Login Button */}
             <Link
               href={slug ? `/admin/login?slug=${slug}` : '/admin/login'}
-              className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 text-white transition-all duration-200 shadow-xs"
+              className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-200 shadow-xs ${t.isLight ? 'border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-800' : 'border-white/20 bg-white/10 hover:bg-white/20 text-white'}`}
               id="header-admin-button"
               title={`כניסת מנהל ל-${bizName}`}
             >
