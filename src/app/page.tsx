@@ -29,6 +29,7 @@ import {
   Info,
 } from 'lucide-react';
 import { SaaSOnboardingModal } from '@/components/marketing/SaaSOnboardingModal';
+import { WixStyleHeroShowcase } from '@/components/marketing/WixStyleHeroShowcase';
 
 export default function SaaSPlatformLandingPage() {
   const [selectedIndustry, setSelectedIndustry] = useState<
@@ -143,99 +144,53 @@ export default function SaaSPlatformLandingPage() {
             <button
               type="button"
               onClick={() => openOnboarding('starter')}
-              className="text-xs font-black px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
+              className="text-xs font-black px-4 py-2.5 rounded-full bg-slate-950 hover:bg-slate-800 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
             >
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span>הקמת עסק חינם</span>
+              <span>התחילו בחינם</span>
             </button>
-            <Link
-              href="/dvir"
-              target="_blank"
-              className="text-xs font-bold px-3.5 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition-all border border-indigo-200/80 flex items-center gap-1.5 cursor-pointer"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>דמו חי</span>
-            </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero Section with Light Crisp Aesthetic */}
-      <section className="relative pt-12 sm:pt-20 pb-16 sm:pb-24 px-4 sm:px-8 overflow-hidden bg-gradient-to-b from-white via-[#F8FAFC] to-[#F1F5F9]">
-        {/* Subtle geometric & light gradient accents */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-r from-indigo-200/40 via-purple-100/30 to-sky-100/40 rounded-full blur-[100px] pointer-events-none -z-10" />
+      {/* Wix Style Hero Section */}
+      <section className="relative pt-12 sm:pt-20 pb-12 px-4 sm:px-8 overflow-hidden bg-gradient-to-b from-white via-[#F8FAFC] to-[#F1F5F9]">
+        {/* Soft atmospheric gradient accent */}
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-indigo-200/35 via-purple-100/25 to-sky-100/35 rounded-full blur-[120px] pointer-events-none -z-10" />
 
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          {/* Release Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200/70 text-indigo-700 text-xs font-bold shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-            <span>הפלטפורמה המתקדמת בישראל לניהול וזימון תורים</span>
-          </div>
-
-          {/* Main Headline */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15] tracking-tight">
-            הפכו את העסק שלכם למערכת{' '}
+          {/* Main Headline (Wix Style Clean Impact) */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-950 leading-[1.12] tracking-tight">
+            העתיד של העסק שלכם מתחיל{' '}
             <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 bg-clip-text text-transparent">
-              חכמה ויעילה לזימון תורים
+              במערכת התורים המובילה בישראל
             </span>
           </h1>
 
-          {/* Subtitle */}
+          {/* Minimal Subtitle */}
           <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            אתר נחיתה יוקרתי ומותאם אישית ללקוחות, יומן אדמין חי עם גרירת תורים (Drag & Drop), תזכורות WhatsApp אוטומטיות, וניהול לקוחות מתקדם — הכל בקישור מהיר ללא צורך בהורדת אפליקציה.
+            CutWeb היא המערכת שבה עסקים מקימים אתר לקוחות מותאם, יומן חכם לגרירת תורים (Drag & Drop) ואישורי WhatsApp – תוך 60 שניות.
           </p>
 
-          {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+          {/* Wix Style Pill Button & Micro-copy */}
+          <div className="pt-2 flex flex-col items-center justify-center gap-2">
             <button
               type="button"
               onClick={() => openOnboarding('starter')}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
+              className="px-9 py-4 rounded-full bg-slate-950 hover:bg-slate-800 text-white font-black text-sm sm:text-base transition-all shadow-xl shadow-slate-950/20 flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
             >
-              <span>התחילו עכשיו בחינם (Starter 0 ₪)</span>
+              <span>התחילו עכשיו בחינם</span>
               <ArrowLeft className="w-4 h-4" />
             </button>
-
-            <Link
-              href="/dvir"
-              target="_blank"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm border border-slate-200/90 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
-            >
-              <ExternalLink className="w-4 h-4 text-indigo-600" />
-              <span>צפו באתר לדוגמה (מספרת גברים)</span>
-            </Link>
-
-            <a
-              href="https://wa.me/972587815070?text=%D7%94%D7%99%D7%99%20%D7%99%D7%A9%D7%99%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%94%D7%A7%D7%9E%D7%AA%20%D7%90%D7%AA%D7%A8%20%D7%95%D7%9E%D7%A2%D7%A8%D7%9B%D7%AA%20%D7%AA%D7%95%D7%A8%D7%99%D7%9D%20%D7%9C%D7%A2%D7%A1%D7%A2%20%D7%A9%D7%9C%D7%99"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#128C7E] border border-[#25D366]/30 font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
-            >
-              <MessageCircle className="w-4 h-4 text-[#25D366]" />
-              <span>וואטסאפ מהיר לישי</span>
-            </a>
-          </div>
-
-          {/* Social Proof Trust Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 pt-8 text-xs text-slate-600 font-bold border-t border-slate-200/70 mt-10">
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>זימון תורים 24/7 ללא הפסקה</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>הפחתת ביטולים עם WhatsApp</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>עובד ישירות בדפדפן (ללא הורדת אפליקציה)</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>סנכרון ענן בזמן אמת</span>
-            </div>
+            <span className="text-[11px] text-slate-400 font-medium">
+              התחלה מיידית בחינם · ללא צורך בכרטיס אשראי
+            </span>
           </div>
         </div>
+
+        {/* 3D Multi-Site Interactive Showcase Carousel */}
+        <WixStyleHeroShowcase
+          onOpenOnboarding={(plan, ind) => openOnboarding(plan, ind)}
+        />
       </section>
 
       {/* Interactive Industry Solutions Showcase */}
