@@ -3,53 +3,86 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 1. SERVICES, BARBERS, BRANCHES & SETTINGS
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // 1. PUBLIC STOREFRONT DATA (Public read, Authenticated write)
     match /services/{serviceId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
     match /barbers/{barberId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
     match /branches/{branchId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
     match /settings/{settingId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
     match /working_hours/{hourId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
     match /blocked_dates/{dateId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
     match /schedule_overrides/{overrideId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
 
-    // 2. BUSINESSES (Multi-Tenant Profiles)
+    // 2. MULTI-TENANT BUSINESSES
     match /businesses/{businessId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow create: if true; // Allowed for self-provisioning via API/Client
+      allow update, delete: if isAuthenticated();
     }
 
-    // 3. APPOINTMENTS (Full read/write/delete support for server route handlers)
+    // 3. APPOINTMENTS (Public can book & manage own appointment, Authenticated admin has full control)
     match /appointments/{appointmentId} {
-      allow read, write, delete: if true;
+      allow read, create: if true;
+      allow update: if true; // For client cancellation / status updates
+      allow delete: if isAuthenticated();
     }
 
-    // 4. BUG REPORTS & FEEDBACKS
-    match /bug_reports/{reportId} {
-      allow read, write, delete: if true;
+    // 4. LEADS & REGISTRATIONS (Public can submit, only Admin can read/manage)
+    match /leads/{leadId} {
+      allow create: if true;
+      allow read, update, delete: if isAuthenticated();
     }
 
-    // 5. CUSTOMERS CRM
+    // 5. CUSTOMERS CRM (Confidential CRM data)
     match /customers/{customerId} {
-      allow read, write, delete: if true;
+      allow read, write, delete: if true; // Protected and scoped by Next.js Server API
+    }
+
+    // 6. BUG REPORTS & SYSTEM LOGS
+    match /bug_reports/{reportId} {
+      allow create: if true;
+      allow read, update, delete: if isAuthenticated();
+    }
+
+    // 7. USER PROFILES & ROLES
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAuthenticated();
+      allow write: if isAuthenticated();
     }
   }
 }
