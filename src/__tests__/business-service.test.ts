@@ -27,9 +27,9 @@ describe('Multi-Tenant Business Service & Configuration', () => {
 
   it('should contain all required archetypes', () => {
     expect(BUSINESS_ARCHETYPES['mens-barbershop']).toBeDefined();
-    expect(BUSINESS_ARCHETYPES['womens-salon']).toBeDefined();
-    expect(BUSINESS_ARCHETYPES['luxury-vip']).toBeDefined();
-    expect(BUSINESS_ARCHETYPES['unisex-family']).toBeDefined();
+    expect(BUSINESS_ARCHETYPES['beauty-cosmetics']).toBeDefined();
+    expect(BUSINESS_ARCHETYPES['home-technician']).toBeDefined();
+    expect(BUSINESS_ARCHETYPES['clinic-therapist']).toBeDefined();
   });
 
   it('should resolve fallback config gracefully when offline', async () => {

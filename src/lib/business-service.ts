@@ -186,19 +186,21 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
     }
   }
 
-  // 2. Fetch from backend /api/admin/businesses
-  try {
-    const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(cleanSlug)}`, {
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.business) {
-        return mergeWithDefaults(data.business);
+  // 2. Fetch from backend /api/admin/businesses (in browser environment)
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch(`/api/admin/businesses?slug=${encodeURIComponent(cleanSlug)}`, {
+        cache: 'no-store',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.business) {
+          return mergeWithDefaults(data.business);
+        }
       }
+    } catch (err) {
+      console.error('Failed to fetch business by slug via API:', err);
     }
-  } catch (err) {
-    console.error('Failed to fetch business by slug via API:', err);
   }
 
   // 3. Default fallback if not found
