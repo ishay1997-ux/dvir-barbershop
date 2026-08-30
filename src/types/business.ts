@@ -95,12 +95,12 @@ export interface BusinessConfig {
   ownerName: string;
   phone: string;
   city: string;
-  slogan: string;
+  slogan?: string;
   announcement?: string;
   themeColor?: string;
   branchesCount: number;
   status: 'active' | 'pending' | 'suspended';
-  plan: 'pro' | 'starter' | 'enterprise';
+  plan: 'starter' | 'pro' | 'team' | 'enterprise';
   createdAt?: string;
   heroImages?: string[];
   galleryImages?: string[];

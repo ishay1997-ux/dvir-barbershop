@@ -55,7 +55,7 @@ export interface Business {
   layout?: BusinessLayoutConfig;
   branchesCount?: number;
   status: 'active' | 'pending' | 'suspended';
-  plan: 'starter' | 'pro' | 'enterprise';
+  plan: 'starter' | 'pro' | 'team' | 'enterprise';
   createdAt: string;
   branches?: BranchItem[];
   services?: ServiceItem[];

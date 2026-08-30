@@ -22,7 +22,7 @@ export interface BusinessItem {
   websiteUrl?: string;
   branchesCount: number;
   status: 'active' | 'pending' | 'suspended';
-  plan: 'pro' | 'starter' | 'enterprise';
+  plan: 'starter' | 'pro' | 'team' | 'enterprise';
   createdAt: string;
   services?: Array<{ name: string; price: number; duration: number }>;
   branches?: Array<{ name: string; address: string; wazeLink?: string }>;
