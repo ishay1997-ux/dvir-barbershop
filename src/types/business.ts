@@ -147,6 +147,7 @@ export interface BusinessConfig {
   whatsappNumber?: string;
   websiteUrl?: string;
   avatarUrl?: string;
+  logoUrl?: string;
   experienceYears?: number;
   workingHours?: Array<{ day: string; open: string; close: string; closed: boolean; branch?: string }>;
   features?: {

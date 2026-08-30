@@ -26,6 +26,7 @@ import {
 import { useToast } from '@/components/common/ToastProvider';
 import type { ShopSettings, BusinessLayoutConfig } from '@/lib/types';
 import { INDUSTRY_PRESETS, IndustryPreset } from '@/lib/industry-presets';
+import { ImageUploadPicker } from '@/components/common/ImageUploadPicker';
 
 interface DesignStudioSettingsProps {
   settings: ShopSettings;
@@ -460,7 +461,54 @@ export default function DesignStudioSettings({
         </div>
       </div>
 
-      {/* 3. Hero Style, Card Curves & Typography Moods */}
+      {/* 3. Business Logo & Avatar Branding */}
+      <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm space-y-6">
+        <div className="flex items-center gap-2">
+          <ImageIcon className="w-5 h-5 text-gold" />
+          <h2 className="text-base font-black text-[#1C1C1C]">לוגו ותמונת מיתוג של העסק (Logo & Brand Asset)</h2>
+        </div>
+        <p className="text-xs text-[#6B6560]">
+          העלה את לוגו העסק או תמונת הפרופיל שלך. במידה ולא מועלה לוגו, המערכת תציג אוטומטית סמל יוקרתי לפי הענף הנבחר.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+          <ImageUploadPicker
+            label="לוגו העסק (Business Logo):"
+            sublabel="מוצג בראש האתר, בעיגול המרכזי של הפתיח ובמסמכי ההזמנה"
+            value={settings.logoUrl || ''}
+            onChange={(url) => {
+              const updated: ShopSettings = {
+                ...settings,
+                logoUrl: url,
+              };
+              onUpdateSettings(updated);
+              onNotifySave();
+              success('לוגו העסק עודכן בהצלחה');
+            }}
+            themeColor={currentColor}
+            placeholder="https://..."
+          />
+
+          <ImageUploadPicker
+            label="תמונת בעל העסק / מאסטר (Avatar):"
+            sublabel="מוצגת בסקשן 'הכירו את המאסטר' ובכרטיסי השירות"
+            value={settings.avatarUrl || ''}
+            onChange={(url) => {
+              const updated: ShopSettings = {
+                ...settings,
+                avatarUrl: url,
+              };
+              onUpdateSettings(updated);
+              onNotifySave();
+              success('תמונת המאסטר עודכנה בהצלחה');
+            }}
+            themeColor={currentColor}
+            placeholder="https://..."
+          />
+        </div>
+      </div>
+
+      {/* 4. Hero Style, Card Curves & Typography Moods */}
       <div className="bg-white rounded-3xl border border-[#E5DDD0] p-6 shadow-sm space-y-6">
         <div className="flex items-center gap-2">
           <Layers className="w-5 h-5 text-gold" />

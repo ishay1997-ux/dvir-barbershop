@@ -22,6 +22,7 @@ import {
 import { BusinessConfig } from '@/types/business';
 import { SaaSOnboardingModal } from '@/components/marketing/SaaSOnboardingModal';
 import { INDUSTRY_PRESETS, IndustryPreset } from '@/lib/industry-presets';
+import { ImageUploadPicker } from '@/components/common/ImageUploadPicker';
 
 interface LiveCustomizerDrawerProps {
   business: BusinessConfig;
@@ -618,9 +619,27 @@ export function LiveCustomizerDrawer({
             </div>
           )}
 
-          {/* Tab 4: Hero Layout, Card Curves & Typography Moods */}
+          {/* Tab 4: Hero Layout, Logo Upload, Card Curves & Typography Moods */}
           {activeTab === 'style' && (
             <div className="space-y-4">
+              {/* 0. Logo / Avatar Upload */}
+              <div className="pb-3 border-b border-slate-800">
+                <ImageUploadPicker
+                  label="לוגו או תמונת פרופיל של העסק:"
+                  sublabel="מוצג במרכז הפתיח, בכותרת הראשית ובתפריט הניווט"
+                  value={business.logoUrl || business.avatarUrl || ''}
+                  onChange={(url) => {
+                    onChangeBusiness({
+                      ...business,
+                      logoUrl: url,
+                      avatarUrl: url,
+                    });
+                  }}
+                  themeColor={business.themeColor || '#C9A84C'}
+                  placeholder="https://images.unsplash.com/..."
+                />
+              </div>
+
               {/* 1. Hero Layout Style */}
               <div className="space-y-2">
                 <div className="text-[11px] font-bold text-slate-300">סגנון פתיח ראשי (Hero Layout):</div>

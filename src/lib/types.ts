@@ -245,6 +245,7 @@ export interface ShopSettings {
   themeColor?: string;
   bgTheme?: 'dark-obsidian' | 'brand-midnight' | 'luxury-light' | 'cyber-carbon';
   avatarUrl?: string;
+  logoUrl?: string;
   heroImage?: string;
   whatsappGreeting: string;
   retentionMessageTemplate: string;

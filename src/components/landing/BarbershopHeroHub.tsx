@@ -119,6 +119,30 @@ export default function BarbershopHeroHub({
 
   const heroStyle = business?.layout?.heroStyle || 'hub-monogram';
 
+  // Determine dynamic Industry Info
+  const industryMeta = (() => {
+    const combined = `${bizName} ${business?.slogan || ''} ${business?.category || ''}`.toLowerCase();
+    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
+      return { icon: '💅', label: 'Beauty & Nails' };
+    }
+    if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
+      return { icon: '🌿', label: 'Spa & Wellness' };
+    }
+    if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
+      return { icon: '⚡', label: 'Tattoo Studio' };
+    }
+    if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
+      return { icon: '🏋️', label: 'Fitness & Coach' };
+    }
+    if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
+      return { icon: '🩺', label: 'Aesthetic Clinic' };
+    }
+    if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
+      return { icon: '🔧', label: 'Tech & Repair' };
+    }
+    return { icon: '✂️', label: 'Barbershop' };
+  })();
+
   return (
     <>
       {heroStyle === 'hub-monogram' && (
@@ -194,15 +218,26 @@ export default function BarbershopHeroHub({
               className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#1C1C1C] p-1.5 shadow-2xl border-2 flex items-center justify-center"
               style={{ borderColor: themeColor }}
             >
-              <div className="w-full h-full rounded-full bg-gradient-to-b from-[#2A2A2A] to-[#141414] flex flex-col items-center justify-center border border-white/10 text-center">
-                <Scissors className="w-6 h-6 sm:w-7 sm:h-7 mb-0.5" style={{ color: themeColor }} />
-                <span className="font-black text-xs sm:text-sm tracking-widest text-white uppercase truncate max-w-[80px]">
-                  {ownerName}
-                </span>
-                <span className="text-[9px] text-[#9E9891] tracking-wider uppercase font-semibold">
-                  Barbershop
-                </span>
-              </div>
+              {business?.logoUrl || business?.avatarUrl ? (
+                <div className="w-full h-full rounded-full overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={business.logoUrl || business.avatarUrl}
+                    alt={bizName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full rounded-full bg-gradient-to-b from-[#2A2A2A] to-[#141414] flex flex-col items-center justify-center border border-white/10 text-center p-1">
+                  <span className="text-xl sm:text-2xl mb-0.5">{industryMeta.icon}</span>
+                  <span className="font-black text-xs sm:text-sm tracking-widest text-white uppercase truncate max-w-[80px]">
+                    {ownerName}
+                  </span>
+                  <span className="text-[8px] text-[#9E9891] tracking-wider uppercase font-semibold truncate max-w-[80px]">
+                    {industryMeta.label}
+                  </span>
+                </div>
+              )}
 
               <div
                 className="absolute inset-0 rounded-full border animate-pulse pointer-events-none"
