@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     // 1. Try Firebase Admin SDK
     if (adminDb) {
       const snapshot = await adminDb.collection('users').orderBy('createdAt', 'desc').get();
-      const users = snapshot.docs.map(doc => ({
+      const users = snapshot.docs.map((doc: any) => ({
         uid: doc.id,
         ...doc.data(),
       }));
