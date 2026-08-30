@@ -29,13 +29,13 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
   onBranchFilterChange,
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-[#E5DDD0] p-3 shadow-sm mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div className="bg-[#111420] rounded-2xl border border-slate-800/80 p-3 shadow-md mb-6 flex flex-wrap items-center justify-between gap-4">
       {/* View Mode Switcher */}
-      <div className="flex items-center gap-1 bg-[#FAF7F2] p-1 rounded-xl border border-[#E5DDD0]">
+      <div className="flex items-center gap-1 bg-[#141827] p-1 rounded-xl border border-slate-800">
         <button
           onClick={() => onViewModeChange('day')}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            viewMode === 'day' ? 'bg-[#1C1C1C] text-gold shadow-sm' : 'text-[#6B6560] hover:text-[#1C1C1C]'
+            viewMode === 'day' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
           }`}
         >
           יומי
@@ -43,7 +43,7 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
         <button
           onClick={() => onViewModeChange('week')}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            viewMode === 'week' ? 'bg-[#1C1C1C] text-gold shadow-sm' : 'text-[#6B6560] hover:text-[#1C1C1C]'
+            viewMode === 'week' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
           }`}
         >
           שבועי
@@ -51,7 +51,7 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
         <button
           onClick={() => onViewModeChange('month')}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            viewMode === 'month' ? 'bg-[#1C1C1C] text-gold shadow-sm' : 'text-[#6B6560] hover:text-[#1C1C1C]'
+            viewMode === 'month' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
           }`}
         >
           חודשי
@@ -62,12 +62,12 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
       <div className="flex items-center gap-2">
         <button
           onClick={onPrev}
-          className="w-8 h-8 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] flex items-center justify-center hover:border-gold transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
         >
-          <ChevronRight className="w-4 h-4 text-[#1C1C1C]" />
+          <ChevronRight className="w-4 h-4" />
         </button>
 
-        <span className="font-bold text-sm text-[#1C1C1C] min-w-32 text-center">
+        <span className="font-bold text-sm text-white min-w-32 text-center font-sans">
           {viewMode === 'day' && format(currentDate, 'd בMMMM yyyy', { locale: he })}
           {viewMode === 'week' &&
             `${format(weekDays[0], 'd MMM', { locale: he })} - ${format(weekDays[6], 'd MMM yyyy', { locale: he })}`}
@@ -76,14 +76,14 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
 
         <button
           onClick={onNext}
-          className="w-8 h-8 rounded-xl bg-[#FAF7F2] border border-[#E5DDD0] flex items-center justify-center hover:border-gold transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
         >
-          <ChevronLeft className="w-4 h-4 text-[#1C1C1C]" />
+          <ChevronLeft className="w-4 h-4" />
         </button>
 
         <button
           onClick={onToday}
-          className="text-xs font-bold text-gold bg-gold/10 hover:bg-gold/20 px-3 py-1.5 rounded-xl border border-gold/30 transition-colors mr-2 cursor-pointer"
+          className="text-xs font-bold text-indigo-300 bg-indigo-950/60 hover:bg-indigo-900/80 px-3 py-1.5 rounded-xl border border-indigo-500/30 transition-colors mr-2 cursor-pointer shadow-xs"
         >
           היום
         </button>
@@ -91,7 +91,7 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
 
       {/* Branch Filter Switcher */}
       <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar">
-        <span className="text-xs font-bold text-[#6B6560] flex items-center gap-1">
+        <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
           <Filter className="w-3.5 h-3.5" />
           סניף:
         </span>
@@ -99,8 +99,8 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
           onClick={() => onBranchFilterChange('all')}
           className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedBranchFilter === 'all'
-              ? 'bg-zinc-800 text-white'
-              : 'bg-[#FAF7F2] text-[#6B6560] border'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'bg-slate-800/60 text-slate-400 border border-slate-700 hover:text-white'
           }`}
         >
           הכל
@@ -109,21 +109,11 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
           onClick={() => onBranchFilterChange('ariel')}
           className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedBranchFilter === 'ariel'
-              ? 'bg-gold text-[#1C1C1C] font-black'
-              : 'bg-[#FAF7F2] text-[#6B6560] border hover:border-gold'
+              ? 'bg-indigo-600 text-white font-bold shadow-sm'
+              : 'bg-slate-800/60 text-slate-400 border border-slate-700 hover:text-white'
           }`}
         >
-          📍 סניף אריאל
-        </button>
-        <button
-          onClick={() => onBranchFilterChange('rehovot')}
-          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            selectedBranchFilter === 'rehovot'
-              ? 'bg-amber-800 text-white font-black'
-              : 'bg-[#FAF7F2] text-[#6B6560] border hover:border-amber-800'
-          }`}
-        >
-          📍 סניף רחובות
+          📍 סניף מרכזי
         </button>
       </div>
     </div>

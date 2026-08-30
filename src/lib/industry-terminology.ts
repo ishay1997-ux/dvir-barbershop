@@ -6,6 +6,9 @@ export interface IndustryTerminology {
   staffTitle: string;
   staffPlural: string;
   serviceTitle: string;
+  serviceTitlePlural?: string;
+  clientTitle?: string;
+  clientPlural?: string;
   bookingAction: string;
   bioHeading: string;
   bioBadge: string;
@@ -36,6 +39,9 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
     staffTitle: 'ספר ראשי',
     staffPlural: 'ספרים',
     serviceTitle: 'תספורת וזקן',
+    serviceTitlePlural: 'תספורות',
+    clientTitle: 'לקוח',
+    clientPlural: 'לקוחות',
     bookingAction: 'קביעת תור',
     bioHeading: 'הכירו את המאסטר',
     bioBadge: 'המאסטר שלכם',
@@ -62,6 +68,9 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
     staffTitle: 'קוסמטיקאית ואמנית ציפורניים',
     staffPlural: 'מטפלות',
     serviceTitle: 'טיפול יופי וציפורניים',
+    serviceTitlePlural: 'טיפולים',
+    clientTitle: 'לקוחה',
+    clientPlural: 'לקוחות',
     bookingAction: 'קביעת תור',
     bioHeading: 'הכירו את המומחית',
     bioBadge: 'המומחית שלכן',
@@ -88,6 +97,9 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
     staffTitle: 'מטפל/ת מוסמך/ת',
     staffPlural: 'מטפלים',
     serviceTitle: 'עיסוי וטיפול גוף',
+    serviceTitlePlural: 'טיפולים',
+    clientTitle: 'מטופל/ת',
+    clientPlural: 'מטופלים',
     bookingAction: 'הזמנת טיפול',
     bioHeading: 'אודות המטפלים המוסמכים',
     bioBadge: 'צוות הטיפול',
@@ -114,6 +126,9 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
     staffTitle: 'מאמן כושר אישי',
     staffPlural: 'מאמנים',
     serviceTitle: 'אימון כושר אישי',
+    serviceTitlePlural: 'אימונים',
+    clientTitle: 'מתאמן/ת',
+    clientPlural: 'מתאמנים',
     bookingAction: 'תיאום אימון',
     bioHeading: 'הכירו את המאמן',
     bioBadge: 'המאמן שלכם',
@@ -140,6 +155,9 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
     staffTitle: 'רופא מומחה לאסתטיקה',
     staffPlural: 'רופאים',
     serviceTitle: 'טיפול רפואי ואסתטי',
+    serviceTitlePlural: 'טיפולים',
+    clientTitle: 'מטופל/ת',
+    clientPlural: 'מטופלים',
     bookingAction: 'קביעת ייעוץ',
     bioHeading: 'אודות הצוות הרפואי',
     bioBadge: 'מומחיות רפואית',
@@ -166,6 +184,9 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
     staffTitle: 'אמן קעקועים ראשי',
     staffPlural: 'אמנים',
     serviceTitle: 'סשן קעקוע וסקיצה',
+    serviceTitlePlural: 'סשנים וקעקועים',
+    clientTitle: 'לקוח',
+    clientPlural: 'לקוחות',
     bookingAction: 'תיאום סשן',
     bioHeading: 'הכירו את האמן',
     bioBadge: 'אמן הסטודיו',
@@ -192,6 +213,9 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
     staffTitle: 'טכנאי מוסמך וחשמלאי',
     staffPlural: 'טכנאים',
     serviceTitle: 'קריאת שירות וביקור',
+    serviceTitlePlural: 'קריאות שירות',
+    clientTitle: 'לקוח',
+    clientPlural: 'לקוחות',
     bookingAction: 'הזמנת שירות',
     bioHeading: 'אודות איש המקצוע',
     bioBadge: 'מוסמך ומורשה',
@@ -215,29 +239,128 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
 };
 
 /**
- * Helper to infer the appropriate terminology given a BusinessConfig or category string.
+ * Helper to infer the appropriate terminology given a BusinessConfig, settings, or category/slug string.
  */
-export function getIndustryTerminology(business?: Partial<BusinessConfig> | string): IndustryTerminology {
-  let cat = typeof business === 'string' ? business : business?.category;
-  
-  if (!cat && typeof business === 'object' && business) {
-    const combined = `${business.name || ''} ${business.slogan || ''}`.toLowerCase();
-    const themeColor = business.themeColor;
-    
-    if (combined.includes('ציפורניים') || combined.includes('קוסמטיקה') || combined.includes('יופי') || themeColor === '#EC4899' || themeColor === '#A855F7') {
-      cat = 'beauty_salon';
-    } else if (combined.includes('ספא') || combined.includes('עיסוי') || combined.includes('רפואה') || themeColor === '#14B8A6') {
-      cat = 'clinic_therapist';
-    } else if (combined.includes('קעקוע') || combined.includes('פירסינג') || themeColor === '#E2E8F0') {
-      cat = 'tattoo_piercing';
-    } else if (combined.includes('כושר') || combined.includes('מאמן') || combined.includes('אימונים') || themeColor === '#10B981') {
-      cat = 'private_instructor';
-    } else if (combined.includes('קליניקה') || combined.includes('אסתטיקה') || combined.includes('טיפולי פנים') || themeColor === '#3B82F6') {
-      cat = 'clinics_aesthetics';
-    } else if (combined.includes('טכנאי') || combined.includes('מנעולן') || combined.includes('תיקונים') || themeColor === '#0EA5E9') {
-      cat = 'home_technician';
-    }
+export function getIndustryTerminology(business?: any): IndustryTerminology {
+  if (!business) return INDUSTRY_TERMINOLOGIES.barber;
+
+  if (typeof business === 'string') {
+    const raw = business.trim().toLowerCase();
+    if (INDUSTRY_TERMINOLOGIES[raw]) return INDUSTRY_TERMINOLOGIES[raw];
+    if (raw === 'beauty' || raw === 'nails' || raw === 'nails-beauty' || raw === 'cosmetics') return INDUSTRY_TERMINOLOGIES.beauty_salon;
+    if (raw === 'trainer' || raw === 'fitness' || raw === 'fitness-trainer' || raw === 'coach') return INDUSTRY_TERMINOLOGIES.private_instructor;
+    if (raw === 'spa' || raw === 'massage' || raw === 'spa-massage') return INDUSTRY_TERMINOLOGIES.clinic_therapist;
+    if (raw === 'clinic' || raw === 'clinics' || raw === 'clinics-aesthetics' || raw === 'doctor' || raw === 'aesthetics') return INDUSTRY_TERMINOLOGIES.clinics_aesthetics;
+    if (raw === 'services' || raw === 'tech' || raw === 'home-technician' || raw === 'plumber' || raw === 'ac') return INDUSTRY_TERMINOLOGIES.home_technician;
+    if (raw === 'tattoo' || raw === 'tattoo-piercing' || raw === 'piercing') return INDUSTRY_TERMINOLOGIES.tattoo_piercing;
+    return INDUSTRY_TERMINOLOGIES.barber;
   }
 
-  return (cat && INDUSTRY_TERMINOLOGIES[cat]) || INDUSTRY_TERMINOLOGIES.barber;
+  let cat = business?.category;
+
+  // Direct category alias map
+  if (cat) {
+    if (INDUSTRY_TERMINOLOGIES[cat]) return INDUSTRY_TERMINOLOGIES[cat];
+    if (cat === 'beauty' || cat === 'nails' || cat === 'nails-beauty' || cat === 'cosmetics') return INDUSTRY_TERMINOLOGIES.beauty_salon;
+    if (cat === 'trainer' || cat === 'fitness' || cat === 'fitness-trainer' || cat === 'coach') return INDUSTRY_TERMINOLOGIES.private_instructor;
+    if (cat === 'spa' || cat === 'massage' || cat === 'spa-massage') return INDUSTRY_TERMINOLOGIES.clinic_therapist;
+    if (cat === 'clinic' || cat === 'clinics' || cat === 'clinics-aesthetics' || cat === 'doctor' || cat === 'aesthetics') return INDUSTRY_TERMINOLOGIES.clinics_aesthetics;
+    if (cat === 'services' || cat === 'tech' || cat === 'home-technician' || cat === 'plumber' || cat === 'ac') return INDUSTRY_TERMINOLOGIES.home_technician;
+    if (cat === 'tattoo' || cat === 'tattoo-piercing' || cat === 'piercing') return INDUSTRY_TERMINOLOGIES.tattoo_piercing;
+  }
+
+  // Keyword-based detection from business name, shopName, slogan
+  const name = business.name || business.shopName || '';
+  const slogan = business.slogan || '';
+  const combined = `${name} ${slogan}`.toLowerCase();
+  const themeColor = (business.themeColor || '').toUpperCase();
+
+  if (
+    combined.includes('ביוטי') ||
+    combined.includes('beauty') ||
+    combined.includes('שירן') ||
+    combined.includes('ציפורניים') ||
+    combined.includes('ציפורן') ||
+    combined.includes('קוסמטיקה') ||
+    combined.includes('יופי') ||
+    combined.includes('פדיקור') ||
+    combined.includes('מניקור') ||
+    combined.includes('לק') ||
+    combined.includes('מבנה אנטומי') ||
+    combined.includes('ריסים') ||
+    themeColor === '#EC4899' ||
+    themeColor === '#A855F7'
+  ) {
+    return INDUSTRY_TERMINOLOGIES.beauty_salon;
+  }
+
+  if (
+    combined.includes('כושר') ||
+    combined.includes('מאמן') ||
+    combined.includes('אימונים') ||
+    combined.includes('אימון') ||
+    combined.includes('אופק') ||
+    combined.includes('סטודיו אופק') ||
+    combined.includes('fitness') ||
+    combined.includes('trainer') ||
+    combined.includes('gym') ||
+    combined.includes('פילאטיס') ||
+    combined.includes('יוגה') ||
+    themeColor === '#10B981'
+  ) {
+    return INDUSTRY_TERMINOLOGIES.private_instructor;
+  }
+
+  if (
+    combined.includes('ספא') ||
+    combined.includes('עיסוי') ||
+    combined.includes('מסאז') ||
+    combined.includes('לוטוס') ||
+    combined.includes('רפלקסולוגיה') ||
+    combined.includes('טיפולי גוף') ||
+    themeColor === '#14B8A6'
+  ) {
+    return INDUSTRY_TERMINOLOGIES.clinic_therapist;
+  }
+
+  if (
+    combined.includes('קליניקה') ||
+    combined.includes('אסתטיקה') ||
+    combined.includes('ד״ר') ||
+    combined.includes('דוקטור') ||
+    combined.includes('לוי') ||
+    combined.includes('רופא') ||
+    combined.includes('הזרקות') ||
+    combined.includes('בוטוקס') ||
+    combined.includes('טיפולי פנים') ||
+    themeColor === '#3B82F6'
+  ) {
+    return INDUSTRY_TERMINOLOGIES.clinics_aesthetics;
+  }
+
+  if (
+    combined.includes('טכנאי') ||
+    combined.includes('מנעולן') ||
+    combined.includes('תיקונים') ||
+    combined.includes('מיזוג') ||
+    combined.includes('חשמל') ||
+    combined.includes('אינסטלטור') ||
+    combined.includes('שרון') ||
+    themeColor === '#0EA5E9'
+  ) {
+    return INDUSTRY_TERMINOLOGIES.home_technician;
+  }
+
+  if (
+    combined.includes('קעקוע') ||
+    combined.includes('קעקועים') ||
+    combined.includes('פירסינג') ||
+    combined.includes('אינק') ||
+    combined.includes('tattoo') ||
+    themeColor === '#E2E8F0'
+  ) {
+    return INDUSTRY_TERMINOLOGIES.tattoo_piercing;
+  }
+
+  return INDUSTRY_TERMINOLOGIES.barber;
 }

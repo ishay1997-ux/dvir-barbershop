@@ -274,7 +274,12 @@ export default function CustomersPage() {
     });
   };
 
-  const terminology = getIndustryTerminology({ name: settings.shopName });
+  const terminology = getIndustryTerminology({
+    name: settings.shopName,
+    shopName: settings.shopName,
+    category: settings.category,
+    themeColor: settings.themeColor,
+  });
   const bizName = settings.shopName || 'העסק';
 
   const generateRetentionWhatsAppUrl = (customer: Customer) => {
@@ -293,19 +298,19 @@ export default function CustomersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-white">
-            מאגר לקוחות וכרטיס לקוח 360 (Smart CRM)
+            מאגר לקוחות וכרטיס 360 (Smart CRM)
           </h1>
-          <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-sans">
-            היסטוריית ביקורים מלאה, מפרט טכני לכל לקוח ושימור לקוחות בוואטסאפ
+          <p className="text-slate-400 text-xs sm:text-sm mt-1 font-sans">
+            היסטוריית ביקורים מלאה, מפרט טכני לכל לקוח ותזכורות שימור בוואטסאפ
           </p>
         </div>
 
         <Link
           href="/booking"
-          className="text-xs font-black text-slate-950 bg-amber-400 hover:bg-amber-300 py-2.5 px-4 rounded-xl flex items-center gap-1.5 self-start sm:self-auto shadow-md transition-transform hover:scale-105 active:scale-95"
+          className="text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 py-2.5 px-4 rounded-xl flex items-center gap-1.5 self-start sm:self-auto shadow-md shadow-indigo-600/30 transition-transform hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>הוסף לקוח חדש / תור</span>
+          <span>הוסף לקוח / תור חדש</span>
         </Link>
       </div>
 
@@ -318,16 +323,16 @@ export default function CustomersPage() {
       />
 
       {/* Filters & Search */}
-      <div className="bg-[#16171B] rounded-2xl border border-white/10 p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-[#111420] rounded-2xl border border-slate-800/80 p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Search */}
         <div className="relative w-full sm:w-80">
-          <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"
             placeholder="חפש לפי שם, טלפון או הערות..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-10 py-2 rounded-xl border border-white/10 bg-zinc-900 text-white text-xs outline-none focus:border-amber-400 transition-colors placeholder-zinc-500"
+            className="w-full pl-3 pr-10 py-2 rounded-xl border border-slate-800 bg-slate-900 text-white text-xs outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-500"
           />
         </div>
 
@@ -335,10 +340,10 @@ export default function CustomersPage() {
         <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto no-scrollbar">
           <button
             onClick={() => setFilterType('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               filterType === 'all'
-                ? 'bg-amber-400 text-slate-950 font-black shadow-md'
-                : 'bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10 hover:text-white'
+                ? 'bg-indigo-600 text-white font-black shadow-md shadow-indigo-600/30'
+                : 'bg-slate-800/60 text-slate-400 border border-slate-700/80 hover:bg-slate-700 hover:text-white'
             }`}
           >
             כל הלקוחות ({processedCustomers.length})
@@ -346,10 +351,10 @@ export default function CustomersPage() {
 
           <button
             onClick={() => setFilterType('at_risk')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               filterType === 'at_risk'
-                ? 'bg-rose-500 text-white font-black shadow-md'
-                : 'bg-rose-500/10 text-rose-300 border border-rose-500/20 hover:bg-rose-500/20'
+                ? 'bg-rose-600 text-white font-black shadow-md shadow-rose-600/30'
+                : 'bg-rose-950/30 text-rose-300 border border-rose-500/30 hover:bg-rose-900/40'
             }`}
           >
             לשימור דחוף ({atRiskCount})
@@ -357,10 +362,10 @@ export default function CustomersPage() {
 
           <button
             onClick={() => setFilterType('vip')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap cursor-pointer ${
               filterType === 'vip'
-                ? 'bg-gold text-[#1C1C1C]'
-                : 'bg-[#FAF7F2] text-[#6B6560] hover:bg-[#F0EBE1]'
+                ? 'bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/30'
+                : 'bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20'
             }`}
           >
             לקוחות VIP 👑 ({vipCount})

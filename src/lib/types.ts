@@ -264,6 +264,10 @@ export interface ShopSettings {
   phone?: string;
   city?: string;
   slogan?: string;
+  category?: string;
+  slug?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
   announcement?: string;
   bio?: string;
   experienceYears?: number;

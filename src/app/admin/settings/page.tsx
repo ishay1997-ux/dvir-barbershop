@@ -159,10 +159,10 @@ function SettingsContent() {
           <button
             onClick={handleSyncToCloud}
             disabled={isSyncingCloud}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#16171B] border border-white/10 text-white hover:border-amber-400 text-xs font-bold transition-all shadow-md cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-700 text-xs font-bold transition-all shadow-xs cursor-pointer"
             title="סנכרון מיידי עם הענן"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin text-amber-400' : 'text-zinc-400'}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin text-indigo-400' : 'text-slate-400'}`} />
             <span>סנכרן ענן</span>
           </button>
 
@@ -170,7 +170,7 @@ function SettingsContent() {
             href={activeSlug === 'dvir' || activeSlug === 'thecut' ? '/dvir' : `/${activeSlug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-md hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-md shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all"
           >
             <span>צפה באתר הלקוחות</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -199,13 +199,13 @@ function SettingsContent() {
         {/* Right Active Content Panel (8 cols on desktop) */}
         <main className="lg:col-span-8 w-full min-w-0">
           {/* Active Category Header */}
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-white/10">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-800/80">
             <div>
               <h2 className="text-xl font-black text-white flex items-center gap-2">
-                {currentCategory && <currentCategory.icon className="w-5 h-5 text-amber-400" />}
+                {currentCategory && <currentCategory.icon className="w-5 h-5 text-indigo-400" />}
                 <span>{currentCategory?.label}</span>
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5 font-sans">{currentCategory?.description}</p>
+              <p className="text-xs text-slate-400 mt-0.5 font-sans">{currentCategory?.description}</p>
             </div>
           </div>
 
