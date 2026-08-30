@@ -145,7 +145,7 @@ export function LiveCustomizerDrawer({
         </button>
       )}
 
-      {/* Slide-over Drawer - Always on the Left Side */}
+      {/* Slide-over Drawer - Opens from Right Side (Natural Hebrew RTL) */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -158,13 +158,13 @@ export function LiveCustomizerDrawer({
               className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 cursor-pointer"
             />
 
-            {/* Panel (Left side slide) */}
+            {/* Panel (Right side slide) */}
             <motion.div
-              initial={{ x: '-100%' }}
+              initial={{ x: '100%' }}
               animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
+              exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed top-0 left-0 bottom-0 w-full max-w-sm sm:max-w-md bg-zinc-950 text-white z-50 shadow-2xl border-r border-white/10 flex flex-col live-customizer-drawer live-customizer-panel"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-sm sm:max-w-md bg-zinc-950 text-white z-50 shadow-2xl border-l border-white/10 flex flex-col live-customizer-drawer live-customizer-panel"
               dir="rtl"
             >
               {/* Drawer Header */}
