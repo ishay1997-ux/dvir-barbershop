@@ -103,10 +103,10 @@ export default function Header({
 
             {/* Admin Login Button */}
             <Link
-              href="/admin"
+              href={slug ? `/admin/login?slug=${slug}` : '/admin/login'}
               className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 text-white transition-all duration-200 shadow-xs"
               id="header-admin-button"
-              title="כניסת מנהל למספרה"
+              title={`כניסת מנהל ל-${bizName}`}
             >
               <Lock className="w-3.5 h-3.5" style={{ color: themeColor }} />
               <span className="hidden sm:inline">ניהול</span>
