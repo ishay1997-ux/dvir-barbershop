@@ -48,27 +48,27 @@ export const EditLayoutTab: React.FC<EditLayoutTabProps> = ({
           {[
             {
               id: 'dark-obsidian',
-              name: 'שחור אובסידיאן',
+              name: 'שחור פחם מט',
               sub: 'Dark Obsidian',
               icon: '🌑',
             },
             {
               id: 'brand-midnight',
-              name: 'כהה גוון מותג',
+              name: 'כחול נייבי-ספיר',
               sub: 'Brand Midnight',
               icon: '🌌',
             },
             {
-              id: 'luxury-light',
-              name: 'בהיר פרימיום',
-              sub: 'Luxury Light',
-              icon: '☀️',
-            },
-            {
               id: 'cyber-carbon',
-              name: 'קרבון וניאון',
+              name: 'קרבון שחור מוחלט',
               sub: 'Cyber Carbon',
               icon: '⚡',
+            },
+            {
+              id: 'luxury-light',
+              name: 'קרם אלבסטר חם',
+              sub: 'Luxury Alabaster',
+              icon: '✨',
             },
           ].map((th) => {
             const currentBg = editingBiz.layout?.bgTheme || 'dark-obsidian';

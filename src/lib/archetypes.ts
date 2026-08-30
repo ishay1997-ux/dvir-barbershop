@@ -73,6 +73,22 @@ export const THEME_PALETTES = [
     borderTint: 'rgba(239, 68, 68, 0.35)',
   },
   {
+    id: 'amber',
+    name: 'קופר & שקיעה · Sunset Amber',
+    color: '#F59E0B',
+    gradient: 'from-[#FDE68A] via-[#F59E0B] to-[#B45309]',
+    bgTint: 'rgba(245, 158, 11, 0.12)',
+    borderTint: 'rgba(245, 158, 11, 0.35)',
+  },
+  {
+    id: 'teal',
+    name: 'טורקיז מנטה · Nordic Teal',
+    color: '#14B8A6',
+    gradient: 'from-[#99F6E4] via-[#14B8A6] to-[#0F766E]',
+    bgTint: 'rgba(20, 184, 166, 0.12)',
+    borderTint: 'rgba(20, 184, 166, 0.35)',
+  },
+  {
     id: 'sunset',
     name: 'שקיעה לוהטת · Sunset Orange',
     color: '#F97316',
