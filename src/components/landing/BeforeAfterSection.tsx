@@ -120,6 +120,72 @@ const CLINIC_TRANSFORMATIONS: Transformation[] = [
   },
 ];
 
+const COSMETICS_TRANSFORMATIONS: Transformation[] = [
+  {
+    id: '1',
+    title: 'שיקום עור אקנאי ואיזון בלוטות שומן',
+    category: 'טיפול אקנה פרא-רפואי',
+    description: 'תהליך ריפוי דלקות פעילות והאחדת מרקם העור לאחר 4 מפגשים קליניים.',
+    beforeGradient: 'from-stone-900 via-rose-950 to-stone-900',
+    afterGradient: 'from-rose-900 via-pink-800 to-rose-700',
+    beforeLabel: 'דלקות פעילות ואדמומיות',
+    afterLabel: 'עור רגוע ואחיד ✨',
+  },
+  {
+    id: '2',
+    title: 'הבהרת כתמי פיגמנטציה ופוסט-אקנה',
+    category: 'פילינג חומצות משולב',
+    description: 'פילינג מותאם אישית בשילוב חומצות אלפא-הידרוקסי להבהרה אחידה וזוהרת.',
+    beforeGradient: 'from-zinc-900 via-neutral-900 to-stone-900',
+    afterGradient: 'from-fuchsia-950 via-pink-900 to-rose-700',
+    beforeLabel: 'כתמי שמש ופוסט אקנה',
+    afterLabel: 'גוון עור אחיד ומואר',
+  },
+  {
+    id: '3',
+    title: 'חידוש והצערת עור הפנים (Glow Rejuvenation)',
+    category: 'אנטי-אייג׳ינג & מזותרפיה',
+    description: 'החדרת פפטידים וחומצה היאלורונית למיצוק העור וטשטוש קמטוטים.',
+    beforeGradient: 'from-neutral-900 via-zinc-800 to-stone-900',
+    afterGradient: 'from-pink-950 via-rose-900 to-purple-800',
+    beforeLabel: 'עור עמום וקמטוטים',
+    afterLabel: 'מיצוק וזוהר מקסימלי',
+  },
+];
+
+const NAILS_TRANSFORMATIONS: Transformation[] = [
+  {
+    id: '1',
+    title: 'מניקור רוסי נקי ומריחה צמודה לעור',
+    category: 'מניקור משולב & לק ג׳ל',
+    description: 'ניקוי קוטיקולה מושלם ללא פציעות ומריחת גוון ניוד מתחת לקוטיקולה.',
+    beforeGradient: 'from-stone-900 via-purple-950 to-stone-900',
+    afterGradient: 'from-purple-900 via-fuchsia-800 to-pink-700',
+    beforeLabel: 'קוטיקולה יבשה',
+    afterLabel: 'מריחה מדויקת ונקייה 💅',
+  },
+  {
+    id: '2',
+    title: 'חיזוק ציפורן דקה במבנה אנטומי עמיד',
+    category: 'Apex Rubber Base',
+    description: 'יצירת קשת אנטומית יציבה ועמידה במיוחד המונעת סדקים ושבירות למשך 4 שבועות.',
+    beforeGradient: 'from-zinc-900 via-neutral-900 to-stone-900',
+    afterGradient: 'from-pink-950 via-purple-900 to-indigo-800',
+    beforeLabel: 'ציפורניים שבירות',
+    afterLabel: 'מבנה אנטומי חזק',
+  },
+  {
+    id: '3',
+    title: 'עיצוב פרנץ׳ ואפקט כרום מזוגג (Glazed Chrome)',
+    category: 'נייל ארט פרימיום',
+    description: 'מראה מואר, נקי וטרנדי בהשראת היילי ביבר בגימור מבריק כראי.',
+    beforeGradient: 'from-neutral-900 via-zinc-800 to-stone-900',
+    afterGradient: 'from-fuchsia-950 via-pink-900 to-rose-700',
+    beforeLabel: 'לק רגיל',
+    afterLabel: 'אפקט כרום מבריק',
+  },
+];
+
 export default function BeforeAfterSection({
   business,
 }: {
@@ -154,18 +220,37 @@ export default function BeforeAfterSection({
 
   const catKey = resolveIndustryCategoryKey(business);
   
-  let transformations = BARBER_TRANSFORMATIONS;
+  let transformations: Transformation[] = BARBER_TRANSFORMATIONS;
   let industryBadge = 'מהפך ושינוי סגנון';
   let SectionIcon = Scissors;
 
-  if (catKey === 'private_instructor') {
+  if (Array.isArray(business?.transformations) && business.transformations.length > 0) {
+    transformations = business.transformations.map((tItem: any, idx: number) => ({
+      id: tItem.id || String(idx + 1),
+      title: tItem.title,
+      category: tItem.category || 'מהפך פרימיום',
+      description: tItem.description || '',
+      beforeGradient: tItem.beforeGradient || 'from-stone-900 via-stone-800 to-zinc-900',
+      afterGradient: tItem.afterGradient || 'from-amber-900 via-amber-800 to-yellow-700',
+      beforeLabel: tItem.beforeLabel || 'לפני',
+      afterLabel: tItem.afterLabel || 'אחרי',
+    }));
+  } else if (catKey === 'private_instructor') {
     transformations = FITNESS_TRANSFORMATIONS;
     industryBadge = 'תוצאות ושינוי גוף';
     SectionIcon = Dumbbell;
-  } else if (catKey === 'clinics_aesthetics' || catKey === 'clinic_therapist') {
+  } else if (catKey === 'clinics_aesthetics') {
     transformations = CLINIC_TRANSFORMATIONS;
     industryBadge = 'תוצאות טיפולים ואסתטיקה';
     SectionIcon = Stethoscope;
+  } else if (catKey === 'cosmetics_aesthetician') {
+    transformations = COSMETICS_TRANSFORMATIONS;
+    industryBadge = 'תוצאות טיפולי פנים ועור';
+    SectionIcon = Sparkles;
+  } else if (catKey === 'beauty_salon') {
+    transformations = NAILS_TRANSFORMATIONS;
+    industryBadge = 'תוצאות מבנה אנטומי ולק ג׳ל';
+    SectionIcon = Sparkles;
   }
 
   const current = transformations[activeItem] || transformations[0];

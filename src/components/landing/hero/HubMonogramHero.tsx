@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 import { getThemeTokens } from '@/lib/theme-tokens';
-import { getIndustryHeroImage } from '@/lib/industry-media';
+import { getIndustryHeroImage, getIndustryAvatarUrl } from '@/lib/industry-media';
 import {
   HeroSharedProps,
   InstagramIcon,
@@ -97,7 +97,7 @@ export function HubMonogramHero({
             transition={{ delay: 0.15 }}
             className="text-xs sm:text-sm text-[#E0E0E0] mt-1.5 font-medium flex items-center justify-center gap-2 drop-shadow-sm"
           >
-            <span>מספרת בוטיק</span>
+            <span>{industryMeta.label || 'בוטיק פרימיום'}</span>
             <span>·</span>
             <span>{business?.city || 'ישראל'}</span>
             <span>·</span>
@@ -118,11 +118,11 @@ export function HubMonogramHero({
           className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#1C1C1C] p-1.5 shadow-2xl border-2 flex items-center justify-center"
           style={{ borderColor: themeColor }}
         >
-          {business?.logoUrl || business?.avatarUrl ? (
+          {business?.logoUrl || business?.avatarUrl || getIndustryAvatarUrl(business) ? (
             <div className="w-full h-full rounded-full overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={business.logoUrl || business.avatarUrl}
+                src={business?.logoUrl || business?.avatarUrl || getIndustryAvatarUrl(business)}
                 alt={bizName}
                 className="w-full h-full object-cover"
               />

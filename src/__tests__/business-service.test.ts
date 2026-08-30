@@ -93,7 +93,7 @@ describe('Multi-Tenant Business Service & Configuration', () => {
       archetypeId: 'cosmetics-aesthetician',
     });
 
-    expect(config.category).toBe('beauty_salon');
+    expect(config.category).toBe('cosmetics_aesthetician');
     expect(config.layout?.bgTheme).toBe('lavender-mist');
     expect(config.layout?.fontStyle).toBe('luxury-serif');
     expect(config.services.some(s => s.name.includes('אקנה'))).toBe(true);
@@ -103,7 +103,7 @@ describe('Multi-Tenant Business Service & Configuration', () => {
     // 3. Demo slug resolution
     const demoCosmetics = await getBusinessBySlug('cosmetics');
     expect(demoCosmetics).toBeDefined();
-    expect(demoCosmetics.category).toBe('beauty_salon');
+    expect(demoCosmetics.category).toBe('cosmetics_aesthetician');
     expect(demoCosmetics.transformations?.length).toBeGreaterThan(0);
     expect(demoCosmetics.transformations?.[0].title).toContain('אקנאי');
   });

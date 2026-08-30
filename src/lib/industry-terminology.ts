@@ -91,6 +91,35 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
     icon: '💅',
     badge: 'Luxury Beauty Lounge',
   },
+  cosmetics_aesthetician: {
+    id: 'cosmetics_aesthetician',
+    businessType: 'קליניקה לקוסמטיקה פרא-רפואית ועור',
+    staffTitle: 'קוסמטיקאית פרא-רפואית P.M.E',
+    staffPlural: 'קוסמטיקאיות',
+    serviceTitle: 'טיפול פנים ועור',
+    serviceTitlePlural: 'טיפולים',
+    clientTitle: 'מטופלת',
+    clientPlural: 'מטופלות',
+    bookingAction: 'קביעת תור',
+    bioHeading: 'הכירו את המומחית',
+    bioBadge: 'קוסמטיקאית P.M.E מוסמכת',
+    clientNotesTitle: 'תיק אבחון עור ופרוטוקול',
+    clientNotesSubtitle: 'תיעוד סוג העור, רגישויות, פילינג ושגרת בית',
+    clientNotesFields: {
+      field1Label: 'אבחון עור ורמת רגישות',
+      field1Placeholder: 'לדוגמה: עור מעורב, נטייה לאקנה הורמונלי, מחסום עור פגוע',
+      field2Label: 'חומצות ופרוטוקול טיפול',
+      field2Placeholder: 'לדוגמה: חומצה סליצילית 2%, אזלאית 10%, רטינול עדין',
+      field3Label: 'שגרת טיפוח ביתית מומלצת',
+      field3Placeholder: 'לדוגמה: סבון מקציף עדין, לחות לא קומדוגנית, מקדם הגנה 50+',
+      notesLabel: 'הנחיות רפואיות ודגשים',
+      notesPlaceholder: 'היריון/הנקה, נטילת רואקוטן בעבר, רגישות לחומצות...',
+    },
+    whatsappGreeting: 'היי שירן, ראיתי את האתר של הקליניקה ואשמח לפרטים על תור:',
+    retentionMessage: 'היי {name}, עבר כחודש מאז טיפול הפנים הקודם שלך 🌸 הגיע הזמן לרענון עמוק ולחות לעור. מתי מתאים לך?',
+    icon: '🌸',
+    badge: 'Clinical Skincare Aesthetics',
+  },
   clinic_therapist: {
     id: 'clinic_therapist',
     businessType: 'מרכז ספא, עיסויים ובריאות',
@@ -270,6 +299,16 @@ export const INDUSTRY_META_MAP: Record<string, IndustryMeta> = {
     actionIcon: '💅',
     actionLabel: 'קביעת תור',
   },
+  cosmetics_aesthetician: {
+    categoryKey: 'cosmetics_aesthetician',
+    icon: '🌸',
+    label: 'Cosmetics & Skincare',
+    heroImage: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1600&q=80',
+    masterTitle: 'קוסמטיקאית פרא-רפואית P.M.E',
+    vipBadge: 'CLINICAL SKINCARE & AESTHETICS',
+    actionIcon: '🌸',
+    actionLabel: 'קביעת תור',
+  },
   clinic_therapist: {
     categoryKey: 'clinic_therapist',
     icon: '🌿',
@@ -331,7 +370,8 @@ export function resolveIndustryCategoryKey(business?: any): string {
   if (typeof business === 'string') {
     const raw = business.trim().toLowerCase();
     if (INDUSTRY_META_MAP[raw]) return raw;
-    if (raw === 'beauty' || raw === 'nails' || raw === 'nails-beauty' || raw === 'cosmetics' || raw === 'cosmetics-aesthetician' || raw === 'glow' || raw === 'skin') return 'beauty_salon';
+    if (raw === 'cosmetics' || raw === 'cosmetics-aesthetician' || raw === 'glow' || raw === 'skin') return 'cosmetics_aesthetician';
+    if (raw === 'beauty' || raw === 'nails' || raw === 'nails-beauty') return 'beauty_salon';
     if (raw === 'trainer' || raw === 'fitness' || raw === 'fitness-trainer' || raw === 'coach') return 'private_instructor';
     if (raw === 'spa' || raw === 'massage' || raw === 'spa-massage') return 'clinic_therapist';
     if (raw === 'clinic' || raw === 'clinics' || raw === 'clinics-aesthetics' || raw === 'doctor' || raw === 'aesthetics') return 'clinics_aesthetics';
@@ -344,18 +384,20 @@ export function resolveIndustryCategoryKey(business?: any): string {
   // Priority 1: Flagship or explicit slug
   const slug = (business.slug || '').toLowerCase().trim();
   if (slug === 'dvir' || slug === 'thecut') return 'barber';
-  if (slug === 'beauty' || slug === 'cosmetics' || slug === 'glow' || slug === 'skin') return 'beauty_salon';
-  if (slug === 'spa') return 'clinic_therapist';
-  if (slug === 'trainer') return 'private_instructor';
-  if (slug === 'clinic') return 'clinics_aesthetics';
-  if (slug === 'services') return 'home_technician';
+  if (slug === 'cosmetics' || slug === 'glow' || slug === 'skin') return 'cosmetics_aesthetician';
+  if (slug === 'beauty' || slug === 'nails') return 'beauty_salon';
+  if (slug === 'spa' || slug === 'massage') return 'clinic_therapist';
+  if (slug === 'trainer' || slug === 'fitness') return 'private_instructor';
+  if (slug === 'clinic' || slug === 'aesthetics') return 'clinics_aesthetics';
+  if (slug === 'services' || slug === 'tech' || slug === 'plumber' || slug === 'ac') return 'home_technician';
   if (slug === 'tattoo') return 'tattoo_piercing';
 
   // Priority 2: Explicit category field
   const cat = business.category;
   if (cat) {
     if (INDUSTRY_META_MAP[cat]) return cat;
-    if (cat === 'beauty' || cat === 'nails' || cat === 'nails-beauty' || cat === 'cosmetics' || cat === 'cosmetics-aesthetician' || cat === 'glow' || cat === 'skin') return 'beauty_salon';
+    if (cat === 'cosmetics' || cat === 'cosmetics-aesthetician' || cat === 'glow' || cat === 'skin') return 'cosmetics_aesthetician';
+    if (cat === 'beauty' || cat === 'nails' || cat === 'nails-beauty') return 'beauty_salon';
     if (cat === 'trainer' || cat === 'fitness' || cat === 'fitness-trainer' || cat === 'coach') return 'private_instructor';
     if (cat === 'spa' || cat === 'massage' || cat === 'spa-massage') return 'clinic_therapist';
     if (cat === 'clinic' || cat === 'clinics' || cat === 'clinics-aesthetics' || cat === 'doctor' || cat === 'aesthetics') return 'clinics_aesthetics';
@@ -385,12 +427,23 @@ export function resolveIndustryCategoryKey(business?: any): string {
   }
 
   if (
+    combined.includes('קוסמטיקה') ||
+    combined.includes('שירן') ||
+    combined.includes('פרא-רפואית') ||
+    combined.includes('אקנה') ||
+    combined.includes('פילינג') ||
+    combined.includes('p.m.e') ||
+    combined.includes('skincare')
+  ) {
+    return 'cosmetics_aesthetician';
+  }
+
+  if (
     combined.includes('ביוטי') ||
     combined.includes('beauty') ||
-    combined.includes('שירן') ||
+    combined.includes('מיה') ||
     combined.includes('ציפורניים') ||
     combined.includes('ציפורן') ||
-    combined.includes('קוסמטיקה') ||
     combined.includes('מניקור') ||
     combined.includes('פדיקור') ||
     combined.includes('לק ג׳ל') ||

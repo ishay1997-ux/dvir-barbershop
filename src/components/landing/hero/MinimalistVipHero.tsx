@@ -58,7 +58,7 @@ export function MinimalistVipHero({
         </h1>
 
         <p className={`text-base sm:text-xl font-sans max-w-2xl mx-auto mb-6 leading-relaxed ${t.textSecondary}`}>
-          {business?.slogan || 'עיצוב שיער גברים, פיידים מדויקים ופיסול זקן ברמה הגבוהה ביותר.'}
+          {business?.slogan || 'שירות פרימיום, יחס אישי ומקצועיות ברמה הגבוהה ביותר בישראל.'}
         </p>
 
         <div className="flex items-center justify-center gap-3 flex-wrap mb-8">
@@ -74,7 +74,7 @@ export function MinimalistVipHero({
             className="w-full sm:w-auto px-8 py-4 rounded-2xl text-slate-950 font-black text-base shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-2 border border-white/20"
             style={{ backgroundColor: themeColor }}
           >
-            <Scissors className="w-5 h-5" /> קבע תור עכשיו
+            <span className="text-lg">{industryMeta.actionIcon}</span> {industryMeta.actionLabel}
           </Link>
           <button
             onClick={onOpenMyAppointments}

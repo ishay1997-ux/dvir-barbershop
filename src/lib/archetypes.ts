@@ -146,7 +146,7 @@ export const BUSINESS_ARCHETYPES: Record<string, BusinessArchetype> = {
 
   'cosmetics-aesthetician': {
     id: 'cosmetics-aesthetician',
-    category: 'beauty_salon',
+    category: 'cosmetics_aesthetician' as any,
     name: 'קליניקה לקוסמטיקה פרא-רפואית ואסתטיקה',
     badge: 'קוסמטיקה פרא-רפואית',
     icon: '🌸',

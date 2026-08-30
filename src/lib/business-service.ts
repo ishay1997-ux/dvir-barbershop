@@ -37,10 +37,28 @@ export function presetToBusinessConfig(preset: IndustryPreset, slug: string): Bu
     branchesCount: preset.showBranches ? 2 : 1,
     status: 'active',
     plan: 'pro',
+    category: (
+      preset.id === 'barbershop'
+        ? 'barber'
+        : preset.id === 'nails-beauty'
+        ? 'beauty_salon'
+        : preset.id === 'cosmetics-aesthetician'
+        ? 'cosmetics_aesthetician'
+        : preset.id === 'spa-massage'
+        ? 'clinic_therapist'
+        : preset.id === 'fitness-trainer'
+        ? 'private_instructor'
+        : preset.id === 'clinics-aesthetics'
+        ? 'clinics_aesthetics'
+        : preset.id === 'home-technician'
+        ? 'home_technician'
+        : preset.id === 'tattoo-piercing'
+        ? 'tattoo_piercing'
+        : 'barber'
+    ) as any,
     experienceYears: 7,
     instagramHandle: preset.id,
     whatsappNumber: '0548889999',
-    category: (preset.id === 'barbershop' ? 'barber' : (preset.id === 'cosmetics-aesthetician' || preset.id === 'nails-beauty') ? 'beauty_salon' : preset.id === 'spa-massage' ? 'clinic_therapist' : preset.id === 'fitness-trainer' ? 'private_instructor' : preset.id === 'home-technician' ? 'home_technician' : 'barber') as any,
     services: preset.services,
     transformations: preset.transformations,
     branches: [
