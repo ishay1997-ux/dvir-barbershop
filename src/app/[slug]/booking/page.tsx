@@ -20,7 +20,11 @@ export default function DynamicBusinessBookingPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = use(params);
-  const slug = resolvedParams.slug.toLowerCase().trim();
+  let rawSlug = resolvedParams.slug || '';
+  let slug = rawSlug.toLowerCase().trim();
+  try {
+    slug = decodeURIComponent(rawSlug).toLowerCase().trim();
+  } catch {}
   const searchParams = useSearchParams();
   const preSelectedServiceName = searchParams.get('service');
   const { success, error } = useToast();

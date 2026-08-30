@@ -153,7 +153,11 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const phoneFilter = searchParams.get('phone');
-    const slugFilter = searchParams.get('businessSlug');
+    const rawSlugFilter = searchParams.get('businessSlug');
+    let slugFilter = rawSlugFilter ? rawSlugFilter.trim().toLowerCase() : null;
+    try {
+      if (rawSlugFilter) slugFilter = decodeURIComponent(rawSlugFilter).trim().toLowerCase();
+    } catch {}
 
     // Search by customer phone
     if (phoneFilter) {
