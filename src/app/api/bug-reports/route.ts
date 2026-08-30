@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
-import { requireRole } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,6 +81,7 @@ export async function POST(request: Request) {
 // 2. GET ALL BUG REPORTS (GET)
 export async function GET(request: Request) {
   try {
+    const { requireRole } = await import('@/lib/firebase-admin');
     const authResult = await requireRole(request, ['super_admin', 'business_admin']);
     if (authResult instanceof NextResponse) {
       return authResult;
@@ -116,6 +116,7 @@ export async function GET(request: Request) {
 // 3. UPDATE STATUS (PATCH)
 export async function PATCH(request: Request) {
   try {
+    const { requireRole } = await import('@/lib/firebase-admin');
     const authResult = await requireRole(request, ['super_admin', 'business_admin']);
     if (authResult instanceof NextResponse) {
       return authResult;
@@ -158,6 +159,7 @@ export async function PATCH(request: Request) {
 // 4. DELETE REPORT (DELETE)
 export async function DELETE(request: Request) {
   try {
+    const { requireRole } = await import('@/lib/firebase-admin');
     const authResult = await requireRole(request, ['super_admin']);
     if (authResult instanceof NextResponse) {
       return authResult;
