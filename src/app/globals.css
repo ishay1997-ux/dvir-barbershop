@@ -895,3 +895,93 @@ input[type="tel"] {
   border-color: rgba(51, 65, 85, 0.8) !important;
 }
 
+/* ============================================================
+   WEBSITE DYNAMIC THEMES (BRAND MIDNIGHT - DEEP SAPPHIRE)
+   ============================================================ */
+.theme-brand-midnight {
+  background-color: #060B18 !important;
+  color: #F8FAFC !important;
+}
+
+.theme-brand-midnight .bg-\[\#121212\],
+.theme-brand-midnight .bg-\[\#141414\],
+.theme-brand-midnight .bg-\[\#181818\],
+.theme-brand-midnight .bg-\[\#1A1A1A\],
+.theme-brand-midnight .bg-\[\#1C1C1C\],
+.theme-brand-midnight .bg-\[\#202020\],
+.theme-brand-midnight .bg-\[\#222222\],
+.theme-brand-midnight .bg-\[\#242424\],
+.theme-brand-midnight .bg-\[\#252525\],
+.theme-brand-midnight .bg-zinc-900,
+.theme-brand-midnight .bg-black\/60,
+.theme-brand-midnight .bg-black\/40 {
+  background-color: #0D172E !important;
+  border-color: #1E293B !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.7) !important;
+}
+
+.theme-brand-midnight .border-white\/5,
+.theme-brand-midnight .border-white\/10,
+.theme-brand-midnight .border-white\/15,
+.theme-brand-midnight .border-white\/20,
+.theme-brand-midnight .border-white\/30 {
+  border-color: rgba(56, 189, 248, 0.15) !important;
+}
+
+.theme-brand-midnight .text-zinc-400,
+.theme-brand-midnight .text-\[\#9E9891\] {
+  color: #94A3B8 !important;
+}
+
+.theme-brand-midnight header,
+.theme-brand-midnight footer {
+  background-color: rgba(6, 11, 24, 0.96) !important;
+  border-color: #1E293B !important;
+}
+
+/* ============================================================
+   WEBSITE DYNAMIC THEMES (CYBER CARBON - PITCH BLACK & NEON)
+   ============================================================ */
+.theme-cyber-carbon {
+  background-color: #030305 !important;
+  color: #FFFFFF !important;
+}
+
+.theme-cyber-carbon .bg-\[\#121212\],
+.theme-cyber-carbon .bg-\[\#141414\],
+.theme-cyber-carbon .bg-\[\#181818\],
+.theme-cyber-carbon .bg-\[\#1A1A1A\],
+.theme-cyber-carbon .bg-\[\#1C1C1C\],
+.theme-cyber-carbon .bg-\[\#202020\],
+.theme-cyber-carbon .bg-\[\#222222\],
+.theme-cyber-carbon .bg-\[\#242424\],
+.theme-cyber-carbon .bg-\[\#252525\],
+.theme-cyber-carbon .bg-zinc-900,
+.theme-cyber-carbon .bg-black\/60,
+.theme-cyber-carbon .bg-black\/40 {
+  background-color: #090A0F !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 25px -5px rgba(0, 0, 0, 0.8) !important;
+}
+
+.theme-cyber-carbon .border-white\/5,
+.theme-cyber-carbon .border-white\/10,
+.theme-cyber-carbon .border-white\/15,
+.theme-cyber-carbon .border-white\/20,
+.theme-cyber-carbon .border-white\/30 {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.theme-cyber-carbon .text-zinc-400,
+.theme-cyber-carbon .text-\[\#9E9891\] {
+  color: #A1A1AA !important;
+}
+
+.theme-cyber-carbon header,
+.theme-cyber-carbon footer {
+  background-color: rgba(3, 3, 5, 0.97) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+

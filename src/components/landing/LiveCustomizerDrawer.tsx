@@ -24,6 +24,8 @@ interface LiveCustomizerDrawerProps {
 
 const colorPresets = [
   { name: 'Gold Obsidian', color: '#C9A84C', icon: '💈', label: 'מספרות גברים פרימיום' },
+  { name: 'Sunset Amber', color: '#F59E0B', icon: '🌅', label: 'קופר שקיעה & עץ חם' },
+  { name: 'Nordic Teal', color: '#14B8A6', icon: '🌊', label: 'טורקיז מנטה נורדי מרענן' },
   { name: 'Rose Blush', color: '#EC4899', icon: '💅', label: 'קוסמטיקה & ציפורניים' },
   { name: 'Royal Violet', color: '#A855F7', icon: '💇‍♀️', label: 'סלוני יופי ונשים' },
   { name: 'Cyber Emerald', color: '#10B981', icon: '🏋️', label: 'קליניקות ומאמנים' },
@@ -32,10 +34,10 @@ const colorPresets = [
 ];
 
 const bgThemePresets = [
-  { id: 'dark-obsidian', label: 'Dark Obsidian', icon: '🌌', desc: 'שחור גרפיט יוקרתי' },
-  { id: 'luxury-light', label: 'Luxury Light', icon: '💎', desc: 'לבן נקי בסטנדרט ווג' },
-  { id: 'cyber-carbon', label: 'Cyber Carbon', icon: '🛸', desc: 'קרבון היי-טק עם ניאון' },
-  { id: 'brand-midnight', label: 'Brand Midnight', icon: '✨', desc: 'אווירת לילה עמוקה' },
+  { id: 'dark-obsidian', label: 'Dark Obsidian', icon: '🌌', desc: 'שחור פחם מט יוקרתי' },
+  { id: 'brand-midnight', label: 'Brand Midnight', icon: '💎', desc: 'כחול נייבי-ספיר לילה עמוק' },
+  { id: 'cyber-carbon', label: 'Cyber Carbon', icon: '🛸', desc: 'קרבון שחור מוחלט והילות ניאון' },
+  { id: 'luxury-light', label: 'Luxury Alabaster', icon: '✨', desc: 'קרם אלבסטר ושמפניה נעימה' },
 ];
 
 export function LiveCustomizerDrawer({
