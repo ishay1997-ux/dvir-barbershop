@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
+import { checkRateLimit } from '@/lib/rateLimit';
 import {
   collection,
   addDoc,
@@ -84,6 +85,16 @@ export async function POST(request: Request) {
     const resolvedDate = String(date).trim();
     const resolvedTime = String(time).trim();
     const resolvedBarberId = String(barberId || 'dvir').trim();
+
+    // Rate Limiting Protection (Max 15 bookings per minute per IP / phone)
+    const ip = request.headers.get('x-forwarded-for') || 'anon';
+    const rateCheck = checkRateLimit(`book:${ip}:${cleanPhone}`, 15, 60 * 1000);
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { error: 'בוצעו יותר מדי ניסיונות הזמנה בדקה האחרונה. אנא המתן מספר שניות ונסה שוב.' },
+        { status: 429 }
+      );
+    }
 
     if (cleanName.length < 2 || cleanPhone.length < 9) {
       return NextResponse.json(
@@ -277,23 +288,32 @@ export async function GET(request: Request) {
       return NextResponse.json({ appointments: memoryMatches, source: 'memory' });
     }
 
-    // Default: List all appointments
+    // Default: List appointments (Tenant-scoped indexed query for 1,000+ scale)
     if (isFirebaseConfigured && db) {
       try {
-        const q = query(collection(db, 'appointments'), orderBy('createdAt', 'desc'));
+        const q = slugFilter
+          ? query(
+              collection(db, 'appointments'),
+              where('businessSlug', '==', slugFilter),
+              orderBy('createdAt', 'desc')
+            )
+          : query(collection(db, 'appointments'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(q);
 
         if (!snapshot.empty) {
-          let list = snapshot.docs.map((docSnap) => ({
+          const list = snapshot.docs.map((docSnap) => ({
             id: docSnap.id,
             ...docSnap.data(),
           }));
 
-          if (slugFilter) {
-            list = list.filter((a: any) => a.businessSlug === slugFilter);
-          }
-
-          return NextResponse.json({ appointments: list, source: 'firestore' });
+          return NextResponse.json(
+            { appointments: list, source: 'firestore' },
+            {
+              headers: {
+                'Cache-Control': 'private, max-age=5, stale-while-revalidate=15',
+              },
+            }
+          );
         }
       } catch (fbError) {
         console.error('Firebase read error:', fbError);
@@ -305,7 +325,14 @@ export async function GET(request: Request) {
       result = result.filter((a) => a.businessSlug === slugFilter);
     }
 
-    return NextResponse.json({ appointments: result, source: 'memory' });
+    return NextResponse.json(
+      { appointments: result, source: 'memory' },
+      {
+        headers: {
+          'Cache-Control': 'private, max-age=5, stale-while-revalidate=15',
+        },
+      }
+    );
   } catch (error) {
     console.error('Appointment GET error:', error);
     return NextResponse.json(

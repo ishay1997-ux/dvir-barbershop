@@ -10,10 +10,24 @@ export async function GET() {
       snapshot.forEach((doc) => {
         overrides[doc.id] = { id: doc.id, ...doc.data() };
       });
-      return NextResponse.json({ overrides, provider: 'firebase' });
+      return NextResponse.json(
+        { overrides, provider: 'firebase' },
+        {
+          headers: {
+            'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120',
+          },
+        }
+      );
     }
 
-    return NextResponse.json({ overrides: {}, provider: 'local' });
+    return NextResponse.json(
+      { overrides: {}, provider: 'local' },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120',
+        },
+      }
+    );
   } catch (error: any) {
     console.error('Schedule GET API error:', error);
     return NextResponse.json({ error: error.message, overrides: {} }, { status: 500 });
