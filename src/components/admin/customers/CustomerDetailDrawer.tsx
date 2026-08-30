@@ -174,11 +174,11 @@ export const CustomerDetailDrawer: React.FC<CustomerDetailDrawerProps> = ({
 
             <div>
               <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                ☕ שתייה והעדפות אישיות:
+                {terminology.clientNotesFields?.field4Label || '☕ שתייה והעדפות אישיות:'}
               </label>
               <input
                 type="text"
-                placeholder="למשל: אספרסו קצר / מים קרים"
+                placeholder={terminology.clientNotesFields?.field4Placeholder || 'למשל: אספרסו קצר / מים קרים'}
                 value={editSpecs.beverage}
                 onChange={(e) => onChangeSpecs({ ...editSpecs, beverage: e.target.value })}
                 className="w-full px-3 py-2 bg-white rounded-xl border border-slate-300 text-slate-900 text-xs outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-400"

@@ -21,6 +21,8 @@ export interface IndustryTerminology {
     field2Placeholder: string;
     field3Label: string;
     field3Placeholder: string;
+    field4Label?: string;
+    field4Placeholder?: string;
     notesLabel: string;
     notesPlaceholder: string;
   };
@@ -54,6 +56,8 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
       field2Placeholder: 'לדוגמה: מספריים, קיצור 2 ס״מ, טקסטורה',
       field3Label: 'עיצוב זקן וקווי מתאר',
       field3Placeholder: 'לדוגמה: קו לחיים ישר בתער, חיבור זקן דק',
+      field4Label: '☕ שתייה והעדפות אירוח',
+      field4Placeholder: 'לדוגמה: אספרסו קצר בלי סוכר / מים קרים',
       notesLabel: 'העדפות ודגשים מיוחדים',
       notesPlaceholder: 'רגישות בעורף, צמיחה הפוכה, ווקס מט...',
     },
@@ -83,6 +87,8 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
       field2Placeholder: 'לדוגמה: קודי קולור #42 ניוד, פרנץ׳ עדין',
       field3Label: 'רגישויות ומצב ציפורניים',
       field3Placeholder: 'לדוגמה: קוטיקולה רגישה, נטייה להתפצלויות',
+      field4Label: '✨ סגנון, צורה ואלמנטים מיוחדים',
+      field4Placeholder: 'לדוגמה: צורת שקד בינוני, אבנים, פויל מוזהב',
       notesLabel: 'העדפות ועיצובים מיוחדים',
       notesPlaceholder: 'עיצוב אומנותי, אבנים, אורך בינוני שקד...',
     },
@@ -112,6 +118,8 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
       field2Placeholder: 'לדוגמה: חומצה סליצילית 2%, אזלאית 10%, רטינול עדין',
       field3Label: 'שגרת טיפוח ביתית מומלצת',
       field3Placeholder: 'לדוגמה: סבון מקציף עדין, לחות לא קומדוגנית, מקדם הגנה 50+',
+      field4Label: '🧪 תכשירים טיפוליים פעילים',
+      field4Placeholder: 'לדוגמה: סרום ויטמין C 15%, חומצה היאלורונית ללחות',
       notesLabel: 'הנחיות רפואיות ודגשים',
       notesPlaceholder: 'היריון/הנקה, נטילת רואקוטן בעבר, רגישות לחומצות...',
     },
@@ -141,6 +149,8 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
       field2Placeholder: 'לדוגמה: שכמות תפוסות, גב תחתון, צוואר',
       field3Label: 'שמנים וארומתרפיה',
       field3Placeholder: 'לדוגמה: שמן שקדים טבעי, לבנדר להרגעה',
+      field4Label: '🌿 מוזיקה ואווירה מועדפת',
+      field4Placeholder: 'לדוגמה: צלילי טבע שקטים, חימום מיטת טיפולים',
       notesLabel: 'הנחיות רפואיות ומגבלות',
       notesPlaceholder: 'פריצת דיסק, רגישות למגע חזק, לחץ דם...',
     },
@@ -170,6 +180,8 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
       field2Placeholder: 'לדוגמה: 18.5% שומן, היקף מותניים 84 ס״מ',
       field3Label: 'משקלי עבודה עיקריים',
       field3Placeholder: 'לדוגמה: סקוואט 90 ק״ג, בנץ׳ 75 ק״ג',
+      field4Label: '🎯 תדירות אימונים שבועית',
+      field4Placeholder: 'לדוגמה: 3 אימוני כוח + 2 אירובי',
       notesLabel: 'דגשי תזונה ופציעות קודמות',
       notesPlaceholder: 'דגש על 150 גרם חלבון, להימנע מעומס על ברך שמאל...',
     },
@@ -199,6 +211,8 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
       field2Placeholder: 'לדוגמה: Juvederm Volift 1.0ml לשפתיים',
       field3Label: 'מועד ביקורת ומעקב',
       field3Placeholder: 'לדוגמה: ביקורת בעוד 14 יום לטאץ׳-אפ',
+      field4Label: '🩺 טפסי הסכמה ואלרגיות',
+      field4Placeholder: 'לדוגמה: טופס הסכמה חתום, ללא רגישות ללטקס',
       notesLabel: 'רגישויות לתרופות והנחיות',
       notesPlaceholder: 'ללא אלרגיות ידועות, נטילת ויטמינים...',
     },
@@ -228,6 +242,8 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
       field2Placeholder: 'לדוגמה: Black & Grey ריאליסטי, הצללות עדינות',
       field3Label: 'סטטוס מקדמה וסקיצה',
       field3Placeholder: 'לדוגמה: שולמה מקדמה 200₪, סקיצה אושרה בוואטסאפ',
+      field4Label: '🎨 סוג מחט, דיו וצבעים',
+      field4Placeholder: 'לדוגמה: 03RL לקווי מתאר, דיו שחור דינמיק',
       notesLabel: 'דגשים והחלמה',
       notesPlaceholder: 'הנחיות דרמפיקס, עור רגיש לאדום...',
     },
@@ -257,6 +273,8 @@ export const INDUSTRY_TERMINOLOGIES: Record<string, IndustryTerminology> = {
       field2Placeholder: 'לדוגמה: הוחלף קבל מדחס 45uF + מילוי גז R410',
       field3Label: 'תוקף אחריות ומספר חשבונית',
       field3Placeholder: 'לדוגמה: 12 חודשי אחריות על הקבל (עד 08/2027)',
+      field4Label: '📍 פרטי הגעה וגישה לבית',
+      field4Placeholder: 'לדוגמה: קומה 3 עם מעלית, חניה מסודרת בחצר',
       notesLabel: 'דגשים וגישה למקום',
       notesPlaceholder: 'מסתור כביסה קומה 3, קוד כניסה לבניין 1234...',
     },

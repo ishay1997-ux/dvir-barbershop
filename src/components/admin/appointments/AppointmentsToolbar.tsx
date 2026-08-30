@@ -9,12 +9,13 @@ interface AppointmentsToolbarProps {
   viewMode: 'day' | 'week' | 'month';
   currentDate: Date;
   weekDays: Date[];
-  selectedBranchFilter: 'all' | 'ariel' | 'rehovot';
+  selectedBranchFilter: string;
+  branches?: { id: string; name: string }[];
   onViewModeChange: (mode: 'day' | 'week' | 'month') => void;
   onPrev: () => void;
   onNext: () => void;
   onToday: () => void;
-  onBranchFilterChange: (branch: 'all' | 'ariel' | 'rehovot') => void;
+  onBranchFilterChange: (branch: any) => void;
 }
 
 export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
@@ -22,6 +23,7 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
   currentDate,
   weekDays,
   selectedBranchFilter,
+  branches = [],
   onViewModeChange,
   onPrev,
   onNext,
@@ -105,16 +107,32 @@ export const AppointmentsToolbar: React.FC<AppointmentsToolbarProps> = ({
         >
           הכל
         </button>
-        <button
-          onClick={() => onBranchFilterChange('ariel')}
-          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            selectedBranchFilter === 'ariel'
-              ? 'bg-indigo-600 text-white shadow-xs'
-              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-          }`}
-        >
-          סניף מרכזי
-        </button>
+        {branches.length > 0 ? (
+          branches.map((b) => (
+            <button
+              key={b.id}
+              onClick={() => onBranchFilterChange(b.id)}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                selectedBranchFilter === b.id
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {b.name}
+            </button>
+          ))
+        ) : (
+          <button
+            onClick={() => onBranchFilterChange('main')}
+            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              selectedBranchFilter === 'main'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            סניף מרכזי
+          </button>
+        )}
       </div>
     </div>
   );

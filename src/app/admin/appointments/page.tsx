@@ -48,6 +48,7 @@ export default function AppointmentsPage() {
     settings,
     waitlist,
     customers,
+    branches,
     saveSettings,
     removeFromWaitlist,
     updateWaitlistStatus,
@@ -62,7 +63,7 @@ export default function AppointmentsPage() {
   const [calendarType, setCalendarType] = useState<'classic' | 'schedulex'>('classic');
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('week');
   const [currentDate, setCurrentDate] = useState<Date>(today);
-  const [selectedBranchFilter, setSelectedBranchFilter] = useState<'all' | 'ariel' | 'rehovot'>('all');
+  const [selectedBranchFilter, setSelectedBranchFilter] = useState<string>('all');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('all');
 
   // Modals state
@@ -346,6 +347,7 @@ export default function AppointmentsPage() {
                 currentDate={currentDate}
                 weekDays={weekDays}
                 selectedBranchFilter={selectedBranchFilter}
+                branches={branches}
                 onViewModeChange={setViewMode}
                 onPrev={handlePrev}
                 onNext={handleNext}

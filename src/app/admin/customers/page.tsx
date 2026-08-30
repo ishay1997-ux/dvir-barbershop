@@ -14,7 +14,7 @@ import { CustomerStatsKPI } from '@/components/admin/customers/CustomerStatsKPI'
 import { CustomerListCard } from '@/components/admin/customers/CustomerListCard';
 import { CustomerDetailDrawer } from '@/components/admin/customers/CustomerDetailDrawer';
 
-const getCustomerHistory = (customer: Customer): CustomerHistoryItem[] => {
+const getCustomerHistory = (customer: Customer, defaultServiceTitle?: string): CustomerHistoryItem[] => {
   if (!customer.lastVisit) return [];
   const d = new Date(customer.lastVisit);
   return [
@@ -22,9 +22,9 @@ const getCustomerHistory = (customer: Customer): CustomerHistoryItem[] => {
       id: 'h1',
       date: isNaN(d.getTime()) ? customer.lastVisit : d.toLocaleDateString('he-IL'),
       time: isNaN(d.getTime()) ? '' : d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }),
-      service: 'תספורת גברים',
-      branch: customer.favoriteBranchId === 'rehovot' ? 'סניף רחובות' : 'סניף אריאל',
-      price: 80,
+      service: customer.preferences?.notes?.includes('הוזמן תור') ? 'הזמנת תור אונליין' : (defaultServiceTitle || 'טיפול / שירות'),
+      branch: 'סניף מרכזי',
+      price: customer.totalSpent || 80,
       status: 'הושלם',
     },
   ];
@@ -286,6 +286,7 @@ export default function CustomersPage() {
     const template =
       settings.retentionMessageTemplate ||
       terminology.whatsappRetentionTemplate ||
+      terminology.retentionMessage ||
       `היי {name}, מה קורה? עבר כבר זמן מאז הטיפול הקודם שלך ב-${bizName} 🌟 רוצה שאשריין לך תור להשבוע?`;
     const message = template.replace('{name}', customer.name);
     const cleanPhone = customer.phone.replace(/\D/g, '').replace(/^0/, '972');
