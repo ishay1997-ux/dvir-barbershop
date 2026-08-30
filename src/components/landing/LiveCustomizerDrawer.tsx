@@ -290,6 +290,68 @@ export function LiveCustomizerDrawer({
             </button>
           </div>
 
+          {/* Tab 0: 1-Click Industry Presets Switcher */}
+          {activeTab === 'niches' && (
+            <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
+              <div className="text-[10px] text-slate-300 pb-1 flex items-center justify-between">
+                <span>בחר תחום עיסוק להחלפת האתר ב-1-Click:</span>
+                <span className="text-amber-400 font-bold">7 תבניות מוכנות 🎯</span>
+              </div>
+              <div className="space-y-2">
+                {INDUSTRY_PRESETS.map((preset) => {
+                  const isSelected = business.themeColor === preset.themeColor && business.layout?.bgTheme === preset.bgTheme;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => handleApplyPreset(preset)}
+                      className={`w-full p-3 rounded-2xl border text-right transition-all cursor-pointer flex items-center justify-between gap-3 group ${
+                        isSelected
+                          ? 'border-amber-400 bg-indigo-950/90 shadow-md ring-2 ring-amber-400/40'
+                          : 'border-slate-800 bg-slate-800/70 hover:bg-slate-800 hover:border-slate-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 border border-white/10 shadow-xs"
+                          style={{ backgroundColor: `${preset.themeColor}30` }}
+                        >
+                          {preset.icon}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-black text-white group-hover:text-amber-300 transition-colors">
+                              {preset.name}
+                            </span>
+                            <span
+                              className="text-[9px] px-1.5 py-0.5 rounded font-bold text-slate-950"
+                              style={{ backgroundColor: preset.themeColor }}
+                            >
+                              {preset.categoryName}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-300 mt-0.5 leading-snug line-clamp-1">
+                            {preset.description}
+                          </p>
+                        </div>
+                      </div>
+
+                      {isSelected ? (
+                        <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center shrink-0">
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-amber-400 font-bold shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                          החל ←
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Tab 1: Color Presets */}
           {activeTab === 'colors' && (
             <div className="space-y-3">
