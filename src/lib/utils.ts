@@ -49,16 +49,98 @@ export function fromDateKey(dateKey: string): Date {
   }
 }
 
+export const RESERVED_SYSTEM_SLUGS = [
+  'admin',
+  'super-admin',
+  'api',
+  'booking',
+  'accessibility',
+  'privacy',
+  'terms',
+  'auth',
+  'login',
+  'register',
+  'dashboard',
+  '_next',
+  'static',
+  'public',
+  'favicon.ico',
+  'robots.txt',
+  'sitemap.xml',
+  'manifest.webmanifest',
+] as const;
+
+/**
+ * Checks if a slug collides with a reserved system route
+ */
+export function isReservedSlug(slug: string): boolean {
+  if (!slug) return true;
+  const clean = slug.toLowerCase().trim().replace(/^\/+|\/+$/g, '');
+  return (RESERVED_SYSTEM_SLUGS as readonly string[]).includes(clean);
+}
+
 /**
  * Sanitizes a business name into a URL-friendly slug
  */
 export function sanitizeSlug(input: string): string {
+  if (!input) return '';
   return input
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9-_]/g, '-')
     .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+    .replace(/^[-_]+|[-_]+$/g, '');
+}
+
+/**
+ * Strips dangerous HTML tags and script injections from free-form user inputs
+ */
+export function sanitizeInputText(input: string): string {
+  if (!input) return '';
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .trim();
+}
+
+export interface BusinessRoiResult {
+  monthlyAppointments: number;
+  hoursSavedPerMonth: number;
+  recoveredNoShowsMonthly: number;
+  recoveredRevenueMonthly: number;
+  recoveredRevenueYearly: number;
+}
+
+/**
+ * Calculates time and revenue savings for a business based on monthly volume
+ */
+export function calculateBusinessRoi(
+  dailyAppointments: number,
+  avgPrice: number,
+  workDaysPerMonth: number = 24
+): BusinessRoiResult {
+  const safeDaily = Math.max(0, Math.floor(Number(dailyAppointments) || 0));
+  const safePrice = Math.max(0, Number(avgPrice) || 0);
+  const safeDays = Math.max(0, Math.min(31, Math.floor(Number(workDaysPerMonth) || 0)));
+
+  const monthlyAppointments = safeDaily * safeDays;
+  // 5 minutes saved per appointment on telephone coordination / calendar entry
+  const hoursSavedPerMonth = Math.round((monthlyAppointments * 5) / 60);
+  // Estimated 8% reduction in no-shows via automated WhatsApp confirmations
+  const recoveredNoShowsMonthly = Math.round(monthlyAppointments * 0.08);
+  const recoveredRevenueMonthly = recoveredNoShowsMonthly * safePrice;
+  const recoveredRevenueYearly = recoveredRevenueMonthly * 12;
+
+  return {
+    monthlyAppointments,
+    hoursSavedPerMonth,
+    recoveredNoShowsMonthly,
+    recoveredRevenueMonthly,
+    recoveredRevenueYearly,
+  };
 }
 
 export function addDuration(time: string, minutes: number): string {

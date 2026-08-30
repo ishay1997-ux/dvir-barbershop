@@ -240,7 +240,7 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessConfig> {
   });
 }
 
-function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: BusinessConfig): BusinessConfig {
+export function mergeWithDefaults(raw: Partial<BusinessConfig>, fallbackBase?: BusinessConfig): BusinessConfig {
   const base = fallbackBase || generateTailoredBusinessConfig({
     name: raw.name || 'המספרה',
     slug: raw.slug || 'tenant',
