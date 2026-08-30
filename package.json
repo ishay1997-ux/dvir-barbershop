@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "verify": "npm test && npm run build",
     "check:dead-code": "knip",
     "check:duplicates": "jscpd src/ --threshold 5",
     "check:all": "npm run check:dead-code && npm run check:duplicates && npm test"

@@ -214,7 +214,7 @@ export const INDUSTRY_MEDIA_MAP: Record<string, IndustryMediaBundle> = {
         id: 4,
         title: 'אנטי-אייג׳ינג ומזותרפיה למיצוק',
         category: 'אנטי-אייג׳ינג',
-        src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=700&q=80',
+        src: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=700&q=80',
         likes: 365,
       },
       {
@@ -228,7 +228,7 @@ export const INDUSTRY_MEDIA_MAP: Record<string, IndustryMediaBundle> = {
         id: 6,
         title: 'עיסוי פנים ממצק ומסיכת קולגן',
         category: 'מיצוק וזוהר',
-        src: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=700&q=80',
+        src: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=700&q=80',
         likes: 315,
       },
     ],
