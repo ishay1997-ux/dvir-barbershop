@@ -3,6 +3,8 @@ import { db, isFirebaseConfigured } from '@/lib/firebase';
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { requireRole } from '@/lib/firebase-admin';
 
+export const dynamic = 'force-dynamic';
+
 export interface BugReportPayload {
   id: string;
   fullName: string;
