@@ -78,6 +78,16 @@ export function LiveCustomizerDrawer({
     });
   };
 
+  const handleReorderSections = (newOrder: SectionId[]) => {
+    onChangeBusiness({
+      ...business,
+      layout: {
+        ...business.layout,
+        sectionsOrder: newOrder,
+      },
+    });
+  };
+
   const handleReset = () => {
     onChangeBusiness({
       ...business,
@@ -279,6 +289,7 @@ export function LiveCustomizerDrawer({
                     sectionsOrder={business.layout?.sectionsOrder || []}
                     onToggleSection={handleToggleSection}
                     onMoveSection={handleMoveSection}
+                    onReorderSections={handleReorderSections}
                   />
                 )}
               </div>

@@ -1,13 +1,15 @@
 'use client';
 
 import React from 'react';
-import { ArrowUp, ArrowDown, Eye, EyeOff } from 'lucide-react';
+import { Reorder, motion } from 'framer-motion';
+import { GripVertical, ArrowUp, ArrowDown, Eye, EyeOff } from 'lucide-react';
 import type { SectionId } from '@/types/business';
 
 interface SectionsReorderTabProps {
   sectionsOrder: SectionId[];
   onToggleSection: (id: SectionId) => void;
   onMoveSection: (id: SectionId, direction: 'up' | 'down') => void;
+  onReorderSections?: (newOrder: SectionId[]) => void;
 }
 
 const SECTION_LABELS: Record<string, string> = {
@@ -31,6 +33,7 @@ export function SectionsReorderTab({
   sectionsOrder,
   onToggleSection,
   onMoveSection,
+  onReorderSections,
 }: SectionsReorderTabProps) {
   const allPossible: SectionId[] = [
     'hero',
@@ -46,62 +49,151 @@ export function SectionsReorderTab({
   ];
 
   const hiddenSections = allPossible.filter(
-    (s) => !sectionsOrder.includes(s) && !((s === 'gallery' && sectionsOrder.includes('before-after')) || (s === 'bio' && sectionsOrder.includes('about')) || (s === 'faqs' && sectionsOrder.includes('faq')))
+    (s) =>
+      !sectionsOrder.includes(s) &&
+      !(
+        (s === 'gallery' && sectionsOrder.includes('before-after')) ||
+        (s === 'bio' && sectionsOrder.includes('about')) ||
+        (s === 'faqs' && sectionsOrder.includes('faq'))
+      )
   );
 
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-xs font-black text-white">סדר סקשנים פעילים בעמוד:</h3>
-        <p className="text-[11px] text-zinc-400 mt-0.5">שנה את סדר הסקשנים בעמוד או הסתר חלקים</p>
+        <h3 className="text-xs font-black text-white flex items-center justify-between">
+          <span>סדר סקשנים פעילים בעמוד:</span>
+          <span className="text-[10px] text-amber-400 font-bold bg-amber-400/10 px-2 py-0.5 rounded-md">
+            ניתן לגרור ↕️ או להשתמש בחיצים
+          </span>
+        </h3>
+        <p className="text-[11px] text-zinc-400 mt-0.5">
+          תפוס וגרור סקשן למעלה/למטה כדי לשנות את סדר הופעתו באתר בלייב:
+        </p>
       </div>
 
-      <div className="space-y-2">
-        {sectionsOrder.map((sectionId, idx) => (
-          <div
-            key={sectionId}
-            className="flex items-center justify-between p-2.5 rounded-xl border border-white/10 bg-zinc-900/80 text-right"
-          >
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-md bg-zinc-800 text-zinc-300 font-mono text-[10px] flex items-center justify-center font-bold">
-                {idx + 1}
-              </span>
-              <span className="text-xs font-bold text-white">
-                {SECTION_LABELS[sectionId] || sectionId}
-              </span>
-            </div>
+      {onReorderSections ? (
+        <Reorder.Group
+          axis="y"
+          values={sectionsOrder}
+          onReorder={onReorderSections}
+          className="space-y-2"
+        >
+          {sectionsOrder.map((sectionId, idx) => (
+            <Reorder.Item
+              key={sectionId}
+              value={sectionId}
+              className="flex items-center justify-between p-2.5 rounded-xl border border-white/10 bg-zinc-900/90 hover:bg-zinc-850 text-right cursor-grab active:cursor-grabbing hover:border-amber-400/40 select-none shadow-sm transition-colors group"
+              whileDrag={{
+                scale: 1.03,
+                boxShadow: '0 12px 28px rgba(0,0,0,0.6)',
+                borderColor: 'rgba(251, 191, 36, 0.9)',
+                backgroundColor: '#18181B',
+              }}
+            >
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div
+                  className="p-1 text-zinc-500 group-hover:text-amber-400 transition-colors shrink-0"
+                  title="גרור לשינוי מיקום"
+                >
+                  <GripVertical className="w-4 h-4" />
+                </div>
+                <span className="w-5 h-5 rounded-md bg-zinc-800 text-zinc-300 font-mono text-[10px] flex items-center justify-center font-bold shrink-0">
+                  {idx + 1}
+                </span>
+                <span className="text-xs font-bold text-white truncate">
+                  {SECTION_LABELS[sectionId] || sectionId}
+                </span>
+              </div>
 
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                disabled={idx === 0}
-                onClick={() => onMoveSection(sectionId, 'up')}
-                className="p-1 rounded-md bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-30 cursor-pointer"
-                title="למעלה"
-              >
-                <ArrowUp className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                disabled={idx === sectionsOrder.length - 1}
-                onClick={() => onMoveSection(sectionId, 'down')}
-                className="p-1 rounded-md bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-30 cursor-pointer"
-                title="למטה"
-              >
-                <ArrowDown className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => onToggleSection(sectionId)}
-                className="p-1 rounded-md bg-red-950/40 text-red-400 hover:bg-red-900/60 cursor-pointer mr-1"
-                title="הסתר"
-              >
-                <EyeOff className="w-3.5 h-3.5" />
-              </button>
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  disabled={idx === 0}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMoveSection(sectionId, 'up');
+                  }}
+                  className="p-1 rounded-md bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-30 cursor-pointer transition-colors"
+                  title="הזז למעלה"
+                >
+                  <ArrowUp className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  disabled={idx === sectionsOrder.length - 1}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMoveSection(sectionId, 'down');
+                  }}
+                  className="p-1 rounded-md bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-30 cursor-pointer transition-colors"
+                  title="הזז למטה"
+                >
+                  <ArrowDown className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleSection(sectionId);
+                  }}
+                  className="p-1 rounded-md bg-red-950/40 text-red-400 hover:bg-red-900/60 cursor-pointer mr-1 transition-colors"
+                  title="הסתר סקשן"
+                >
+                  <EyeOff className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </Reorder.Item>
+          ))}
+        </Reorder.Group>
+      ) : (
+        <div className="space-y-2">
+          {sectionsOrder.map((sectionId, idx) => (
+            <div
+              key={sectionId}
+              className="flex items-center justify-between p-2.5 rounded-xl border border-white/10 bg-zinc-900/80 text-right"
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-md bg-zinc-800 text-zinc-300 font-mono text-[10px] flex items-center justify-center font-bold">
+                  {idx + 1}
+                </span>
+                <span className="text-xs font-bold text-white">
+                  {SECTION_LABELS[sectionId] || sectionId}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  disabled={idx === 0}
+                  onClick={() => onMoveSection(sectionId, 'up')}
+                  className="p-1 rounded-md bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                  title="למעלה"
+                >
+                  <ArrowUp className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  disabled={idx === sectionsOrder.length - 1}
+                  onClick={() => onMoveSection(sectionId, 'down')}
+                  className="p-1 rounded-md bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                  title="למטה"
+                >
+                  <ArrowDown className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onToggleSection(sectionId)}
+                  className="p-1 rounded-md bg-red-950/40 text-red-400 hover:bg-red-900/60 cursor-pointer mr-1"
+                  title="הסתר"
+                >
+                  <EyeOff className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {hiddenSections.length > 0 && (
         <div className="pt-3 border-t border-white/10">
@@ -114,7 +206,7 @@ export function SectionsReorderTab({
                 key={s}
                 type="button"
                 onClick={() => onToggleSection(s)}
-                className="px-2.5 py-1 rounded-lg border border-dashed border-zinc-700 bg-zinc-900 hover:border-emerald-500 hover:text-emerald-400 text-[11px] text-zinc-400 flex items-center gap-1 cursor-pointer"
+                className="px-2.5 py-1 rounded-lg border border-dashed border-zinc-700 bg-zinc-900 hover:border-emerald-500 hover:text-emerald-400 text-[11px] text-zinc-400 flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <Eye className="w-3 h-3" />
                 <span>{SECTION_LABELS[s] || s}</span>
