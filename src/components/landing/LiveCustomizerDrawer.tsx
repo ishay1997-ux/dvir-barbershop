@@ -14,7 +14,6 @@ import {
   Save,
 } from 'lucide-react';
 import { useToast } from '@/components/common/ToastProvider';
-import { IndustryPreset } from '@/lib/industry-presets';
 import { NichesTab } from './customizer/NichesTab';
 import { ColorsThemeTab } from './customizer/ColorsThemeTab';
 import { SectionsReorderTab } from './customizer/SectionsReorderTab';
@@ -40,51 +39,8 @@ export function LiveCustomizerDrawer({
 }: LiveCustomizerDrawerProps) {
   const { success, info } = useToast();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'niches' | 'colors' | 'layout' | 'sections'>('niches');
+  const [activeTab, setActiveTab] = useState<'colors' | 'layout' | 'sections' | 'niches'>('colors');
   const [isSaving, setIsSaving] = useState(false);
-
-  const handleApplyPreset = (preset: IndustryPreset) => {
-    const updated: BusinessConfig = {
-      ...business,
-      name: preset.shopName || business.name,
-      ownerName: preset.ownerName || business.ownerName,
-      slogan: preset.slogan || business.slogan,
-      announcement: preset.announcement || business.announcement,
-      services: preset.services && preset.services.length > 0 ? preset.services : business.services,
-      faqs: preset.faqs && preset.faqs.length > 0 ? preset.faqs : business.faqs,
-      category: (preset.id === 'barbershop' ? 'barber' : preset.id === 'nails-beauty' ? 'beauty_salon' : preset.id === 'spa-massage' ? 'clinic_therapist' : preset.id === 'fitness-coach' ? 'private_instructor' : preset.id === 'home-tech' ? 'home_technician' : 'barber') as any,
-      themeColor: preset.themeColor,
-      layout: {
-        ...business.layout,
-        bgTheme: preset.bgTheme,
-        heroStyle: preset.heroStyle,
-        servicesStyle: preset.servicesStyle,
-        cardRadius: preset.cardRadius || 'smooth',
-        galleryStyle: preset.galleryStyle,
-        typographyMood: preset.typographyMood || 'modern-clean',
-        sectionsOrder: preset.sectionsOrder || [
-          'hero',
-          'trust-badges',
-          'services',
-          'gallery',
-          'bio',
-          'policies',
-          'branches',
-          'reviews',
-          'faqs',
-        ],
-        trustBadges: preset.trustBadges,
-        sectionTitles: {
-          services: preset.sectionTitles?.services || 'מחירון ושירותים',
-          gallery: preset.sectionTitles?.gallery || 'תוצאות ועבודות',
-          bio: preset.sectionTitles?.bio || 'הכירו את הצוות',
-          reviews: preset.sectionTitles?.reviews || 'מה הלקוחות אומרים',
-        },
-      },
-    };
-    onChangeBusiness(updated);
-    info(`הוחלה תבנית ענף: "${preset.name}"! כל נתוני ההדגמה עודכנו.`);
-  };
 
   const handleToggleSection = (id: SectionId) => {
     const currentOrder = business.layout?.sectionsOrder || [];
@@ -215,10 +171,10 @@ export function LiveCustomizerDrawer({
               {/* Tabs Navigation */}
               <div className="grid grid-cols-4 p-2 bg-zinc-900/50 border-b border-white/10 gap-1 text-center">
                 {[
-                  { id: 'niches', label: 'ענפים', icon: Target },
                   { id: 'colors', label: 'צבעים', icon: Palette },
                   { id: 'layout', label: 'סגנון', icon: Layout },
                   { id: 'sections', label: 'סקשנים', icon: Layers },
+                  { id: 'niches', label: 'ענפים', icon: Target },
                 ].map((t) => {
                   const Icon = t.icon;
                   const isActive = activeTab === t.id;
@@ -242,7 +198,7 @@ export function LiveCustomizerDrawer({
               {/* Scrollable Content Body */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {activeTab === 'niches' && (
-                  <NichesTab business={business} onApplyPreset={handleApplyPreset} />
+                  <NichesTab business={business} />
                 )}
 
                 {activeTab === 'colors' && (
