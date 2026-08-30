@@ -8,10 +8,15 @@ import { ShieldCheck, AlertCircle } from 'lucide-react';
 export default function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading, isAuthenticated, isSuperAdmin, isBusinessAdmin, firebaseUser } = useAuth();
+  const { user, loading, isAuthenticated, isSuperAdmin, isBusinessAdmin, isDemoMode, firebaseUser } = useAuth();
 
   // If we're on the login page, don't block
   if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
+  // Allow access in Demo Sandbox Mode
+  if (isDemoMode) {
     return <>{children}</>;
   }
 
@@ -25,8 +30,8 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
     );
   }
 
-  // Not logged in to Firebase at all
-  if (!firebaseUser) {
+  // Not logged in to Firebase at all (and not in demo mode)
+  if (!firebaseUser && !isDemoMode) {
     router.replace('/admin/login');
     return null;
   }
@@ -41,7 +46,7 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
           </div>
           <h2 className="text-xl font-black text-white">אין הרשאה</h2>
           <p className="text-sm text-[#9E9891]">
-            החשבון <span className="text-white font-bold">{firebaseUser.email}</span> אינו מורשה לגשת למערכת הניהול.
+            החשבון <span className="text-white font-bold">{firebaseUser?.email || ''}</span> אינו מורשה לגשת למערכת הניהול.
           </p>
           <p className="text-xs text-[#9E9891]">
             אנא פנה למנהל המערכת כדי לקבל הרשאת גישה.

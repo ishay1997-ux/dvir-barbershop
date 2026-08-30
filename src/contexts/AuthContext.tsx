@@ -32,6 +32,10 @@ interface AuthContextType {
   isSuperAdmin: boolean;
   /** True if user is a business admin */
   isBusinessAdmin: boolean;
+  /** True if operating in interactive demo sandbox */
+  isDemoMode: boolean;
+  /** Enter guest demo sandbox */
+  loginAsDemo: () => void;
   /** Get Authorization headers for API calls */
   getAuthHeaders: () => Promise<Record<string, string>>;
   /** Authenticated fetch wrapper */
@@ -49,6 +53,8 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   isSuperAdmin: false,
   isBusinessAdmin: false,
+  isDemoMode: false,
+  loginAsDemo: () => {},
   getAuthHeaders: async () => ({}),
   authFetch: async () => new Response(),
   logout: async () => {},
@@ -62,7 +68,42 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
+
+  // Check if session had demo flag in localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const demoFlag = localStorage.getItem('cutweb_demo_session');
+      const urlParams = new URLSearchParams(window.location.search);
+      if (demoFlag === 'true' || urlParams.get('demo') === 'true') {
+        setIsDemoMode(true);
+        setUser({
+          uid: 'demo-sandbox-uid',
+          email: 'demo@cutweb.co.il',
+          displayName: 'אורח (מצב הדגמה)',
+          photoURL: '',
+          role: 'business_admin',
+          businessSlugs: ['dvir', 'thecut', 'demo'],
+        });
+      }
+    }
+  }, []);
+
+  const loginAsDemo = useCallback(() => {
+    setIsDemoMode(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cutweb_demo_session', 'true');
+    }
+    setUser({
+      uid: 'demo-sandbox-uid',
+      email: 'demo@cutweb.co.il',
+      displayName: 'אורח (מצב הדגמה)',
+      photoURL: '',
+      role: 'business_admin',
+      businessSlugs: ['dvir', 'thecut', 'demo'],
+    });
+  }, []);
 
   // Fetch user role from /api/auth/me (with guaranteed fallback for master super admin)
   const fetchUserRole = useCallback(async (fbUser: User): Promise<AuthUser | null> => {
@@ -160,6 +201,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign out
   const logout = useCallback(async () => {
     try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cutweb_demo_session');
+      }
+      setIsDemoMode(false);
       if (auth) {
         await firebaseSignOut(auth);
       }
@@ -185,6 +230,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: !!user,
     isSuperAdmin: user?.role === 'super_admin',
     isBusinessAdmin: user?.role === 'business_admin',
+    isDemoMode,
+    loginAsDemo,
     getAuthHeaders,
     authFetch,
     logout,

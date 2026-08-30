@@ -188,6 +188,22 @@ export default function DynamicBusinessLandingPage({
 
   return (
     <div className={`min-h-screen transition-colors duration-500 theme-${bgTheme} ${bgTheme === 'luxury-light' ? 'theme-luxury-light' : ''}`} style={bgStyles}>
+      {/* Flagship Demo Top Ribbon */}
+      {(isDvir || slug === 'demo') && (
+        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-2 px-4 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md sticky top-0 z-50 border-b border-indigo-500/30">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+            <span>🎯 אתר הדגמה חי (Flagship Showcase) · התנסו בקביעת תור עצמאית</span>
+          </div>
+          <Link
+            href="/admin?demo=true"
+            className="py-1 px-3.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-black text-[11px] transition-transform hover:scale-105 shadow-xs flex items-center gap-1.5"
+          >
+            <Sparkles className="w-3 h-3 text-amber-300" />
+            <span>כניסה לדאשבורד הניהול של העסק ↗</span>
+          </Link>
+        </div>
+      )}
       <Header business={business || undefined} />
       <main
         id="main-content"

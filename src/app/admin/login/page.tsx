@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { user, loading, firebaseUser } = useAuth();
+  const { user, loading, firebaseUser, loginAsDemo } = useAuth();
   const [error, setError] = useState('');
   const [googleLoading, setGoogleLoading] = useState(false);
   const [checkingRole, setCheckingRole] = useState(false);
@@ -175,8 +175,29 @@ export default function AdminLoginPage() {
             )}
           </button>
 
+          {/* 1-Click Interactive Demo Sandbox Access */}
+          <div className="pt-1 pb-4">
+            <div className="flex items-center gap-3 py-2">
+              <div className="h-px bg-white/10 flex-1" />
+              <span className="text-[11px] text-[#9E9891] font-bold">מעוניין להתרשם?</span>
+              <div className="h-px bg-white/10 flex-1" />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                loginAsDemo();
+                router.push('/admin?demo=true');
+              }}
+              className="w-full py-3.5 px-4 rounded-2xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 hover:text-white font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm hover:scale-[1.02]"
+            >
+              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <span>כניסה למצב הדגמה חופשי (Demo Sandbox) 🚀</span>
+            </button>
+          </div>
+
           <p className="text-[11px] text-[#9E9891] leading-relaxed mb-4">
-            הגישה מותרת אך ורק למנהלי העסק המורשים (דביר אטיאס ומנהל-על).
+            הגישה לחשבונות פעילים מותרת למנהלי העסק הרשומים ולמנהלי-על.
           </p>
 
           {/* Security info */}
