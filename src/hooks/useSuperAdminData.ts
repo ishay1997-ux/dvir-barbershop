@@ -93,9 +93,12 @@ export function useSuperAdminData() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('cutweb_admin_theme');
+      const saved = localStorage.getItem('cutweb_admin_theme_v2');
       if (saved === 'light' || saved === 'dark') {
         setAdminTheme(saved);
+      } else {
+        setAdminTheme('light');
+        localStorage.setItem('cutweb_admin_theme_v2', 'light');
       }
     } catch (_) {}
   }, []);
@@ -104,7 +107,7 @@ export function useSuperAdminData() {
     const next = adminTheme === 'dark' ? 'light' : 'dark';
     setAdminTheme(next);
     try {
-      localStorage.setItem('cutweb_admin_theme', next);
+      localStorage.setItem('cutweb_admin_theme_v2', next);
     } catch (_) {}
   };
 

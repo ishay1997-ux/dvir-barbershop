@@ -76,10 +76,10 @@ export const BusinessesTab: React.FC<BusinessesTabProps> = ({
 
           <button
             onClick={onOpenCreateModal}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-[#1C1C1C] font-black text-xs transition-colors shadow-md cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs transition-all shadow-md shadow-indigo-500/20 cursor-pointer hover:scale-[1.02]"
           >
             <Plus className="w-4 h-4" />
-            <span>הקמת עסק / מספרה חדשה ✨</span>
+            <span>הקמת עסק חדש במערכת ✨</span>
           </button>
         </div>
       </div>
@@ -243,9 +243,15 @@ export const BusinessesTab: React.FC<BusinessesTabProps> = ({
                     >
                       חבילה:
                     </span>
-                    <strong className="uppercase" style={{ color: bizColor }}>
-                      {biz.plan} Plan
-                    </strong>
+                    <span
+                      className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                        adminTheme === 'light'
+                          ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                          : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                      }`}
+                    >
+                      {biz.plan || 'pro'} Plan
+                    </span>
                   </div>
                 </div>
 
@@ -253,7 +259,11 @@ export const BusinessesTab: React.FC<BusinessesTabProps> = ({
                 <div className="pt-2 flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => onOpenEditModal(biz)}
-                    className="flex-1 py-2 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black text-center text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                    className={`flex-1 py-2 rounded-xl text-center text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer ${
+                      adminTheme === 'light'
+                        ? 'bg-slate-900 hover:bg-slate-800 text-white'
+                        : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    }`}
                   >
                     <Edit className="w-3.5 h-3.5" /> ערוך והתאם אישית
                   </button>

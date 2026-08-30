@@ -35,8 +35,8 @@ export const SuperAdminStatsBar: React.FC<SuperAdminStatsBarProps> = ({
           >
             מספרות ועסקים פעילים
           </span>
-          <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-amber-50' : 'bg-white/5'}`}>
-            <Building2 className="w-4 h-4 text-[#C9A84C]" />
+          <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-indigo-50' : 'bg-indigo-500/10'}`}>
+            <Building2 className="w-4 h-4 text-indigo-600" />
           </div>
         </div>
         <div
@@ -46,7 +46,13 @@ export const SuperAdminStatsBar: React.FC<SuperAdminStatsBarProps> = ({
         >
           {businesses.length}
         </div>
-        <span className="text-[10px] text-[#B89230] font-bold">The Cut Multi-Tenant</span>
+        <span
+          className={`text-[10px] font-bold ${
+            adminTheme === 'light' ? 'text-indigo-600' : 'text-indigo-400'
+          }`}
+        >
+          CutWeb Multi-Tenant
+        </span>
       </div>
 
       {/* 2. Bug Reports */}
@@ -65,7 +71,7 @@ export const SuperAdminStatsBar: React.FC<SuperAdminStatsBarProps> = ({
           >
             דיווחי תקלות חדשים
           </span>
-          <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-rose-50' : 'bg-white/5'}`}>
+          <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-rose-50' : 'bg-rose-500/10'}`}>
             <Bug className="w-4 h-4 text-rose-500" />
           </div>
         </div>
@@ -97,8 +103,8 @@ export const SuperAdminStatsBar: React.FC<SuperAdminStatsBarProps> = ({
           >
             תורים בפלטפורמה
           </span>
-          <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-amber-50' : 'bg-white/5'}`}>
-            <Calendar className="w-4 h-4 text-[#C9A84C]" />
+          <div className={`p-1.5 rounded-xl ${adminTheme === 'light' ? 'bg-sky-50' : 'bg-sky-500/10'}`}>
+            <Calendar className="w-4 h-4 text-sky-600" />
           </div>
         </div>
         <div

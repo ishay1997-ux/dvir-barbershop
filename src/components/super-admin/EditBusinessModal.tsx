@@ -43,10 +43,10 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
     >
       <div className="absolute inset-0" onClick={onClose} />
       <div
-        className={`relative max-w-2xl w-full border-2 rounded-3xl p-6 shadow-2xl z-10 my-auto text-right transition-colors ${
+        className={`relative max-w-2xl w-full border rounded-3xl p-6 shadow-2xl z-10 my-auto text-right transition-colors ${
           adminTheme === 'light'
-            ? 'bg-white border-[#C9A84C] text-slate-900'
-            : 'bg-[#1C1C1C] border-[#C9A84C]/50 text-white'
+            ? 'bg-white border-slate-200 text-slate-900 shadow-xl shadow-slate-200/50'
+            : 'bg-[#1C1C1C] border-white/10 text-white shadow-black/60'
         }`}
       >
         {/* Header */}
@@ -55,7 +55,7 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
             adminTheme === 'light' ? 'border-slate-200' : 'border-white/10'
           }`}
         >
-          <div className="flex items-center gap-2 text-[#C9A84C]">
+          <div className="flex items-center gap-2.5 text-indigo-600">
             <Settings2 className="w-6 h-6" />
             <div>
               <h3
@@ -117,8 +117,8 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
               className={`pb-2 px-2.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 editTab === tab.id
                   ? adminTheme === 'light'
-                    ? 'border-[#C9A84C] text-[#B89230] font-black'
-                    : 'border-[#C9A84C] text-[#C9A84C]'
+                    ? 'border-indigo-600 text-indigo-600 font-black'
+                    : 'border-indigo-500 text-indigo-400 font-black'
                   : adminTheme === 'light'
                   ? 'border-transparent text-slate-500 hover:text-slate-900'
                   : 'border-transparent text-zinc-400 hover:text-white'
@@ -208,7 +208,7 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
             type="button"
             onClick={onSave}
             disabled={isSavingBiz}
-            className="px-6 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors flex items-center gap-1.5 cursor-pointer shadow-md disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-md shadow-indigo-500/20 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             <span>{isSavingBiz ? 'שומר שינויים...' : 'שמור שינויים באתר'}</span>

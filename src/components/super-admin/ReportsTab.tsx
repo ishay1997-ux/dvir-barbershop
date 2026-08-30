@@ -64,7 +64,7 @@ export const ReportsTab: React.FC<ReportsTabProps> = ({
                 onClick={() => onFilterChange(st)}
                 className={`px-3 py-1 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                   statusFilter === st
-                    ? 'bg-[#C9A84C] text-[#1C1C1C]'
+                    ? 'bg-indigo-600 text-white shadow-xs'
                     : adminTheme === 'light'
                     ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     : 'bg-white/5 text-zinc-400 hover:text-white'

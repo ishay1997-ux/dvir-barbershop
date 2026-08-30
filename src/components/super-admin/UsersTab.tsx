@@ -179,8 +179,8 @@ export const UsersTab: React.FC<UsersTabProps> = ({
                 onChange={(e) => onChangeBusinessSlugs(e.target.value)}
                 className={`w-full rounded-xl px-3 py-2 text-xs outline-none border transition-colors cursor-pointer font-bold ${
                   adminTheme === 'light'
-                    ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-[#C9A84C]'
-                    : 'bg-[#141414] border-white/15 text-white focus:border-[#C9A84C]'
+                    ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-indigo-600'
+                    : 'bg-[#141414] border-white/15 text-white focus:border-indigo-500'
                 }`}
               >
                 {businesses.map((b) => (
@@ -198,7 +198,7 @@ export const UsersTab: React.FC<UsersTabProps> = ({
             type="button"
             onClick={onAddUser}
             disabled={isAddingUser || !newUserEmail}
-            className="px-5 py-2.5 rounded-xl bg-[#C9A84C] hover:bg-[#DFCA85] text-black font-black text-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-md shadow-indigo-500/20 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>{isAddingUser ? 'מוסיף...' : 'הוסף משתמש למערכת'}</span>

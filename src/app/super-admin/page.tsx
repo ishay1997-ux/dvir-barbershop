@@ -124,8 +124,8 @@ export default function SuperAdminPage() {
             className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
               activeTab === 'businesses'
                 ? adminTheme === 'light'
-                  ? 'border-[#C9A84C] text-[#B89230] bg-amber-50/60 rounded-t-xl'
-                  : 'border-[#C9A84C] text-[#C9A84C]'
+                  ? 'border-indigo-600 text-indigo-600 bg-indigo-50/70 rounded-t-xl'
+                  : 'border-indigo-500 text-indigo-400 bg-indigo-500/10 rounded-t-xl'
                 : adminTheme === 'light'
                 ? 'border-transparent text-slate-500 hover:text-slate-900'
                 : 'border-transparent text-zinc-400 hover:text-white'
@@ -140,8 +140,8 @@ export default function SuperAdminPage() {
             className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer relative ${
               activeTab === 'reports'
                 ? adminTheme === 'light'
-                  ? 'border-[#C9A84C] text-[#B89230] bg-amber-50/60 rounded-t-xl'
-                  : 'border-[#C9A84C] text-[#C9A84C]'
+                  ? 'border-indigo-600 text-indigo-600 bg-indigo-50/70 rounded-t-xl'
+                  : 'border-indigo-500 text-indigo-400 bg-indigo-500/10 rounded-t-xl'
                 : adminTheme === 'light'
                 ? 'border-transparent text-slate-500 hover:text-slate-900'
                 : 'border-transparent text-zinc-400 hover:text-white'
@@ -159,8 +159,8 @@ export default function SuperAdminPage() {
             className={`pb-3 px-4 font-black text-sm transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
               activeTab === 'users'
                 ? adminTheme === 'light'
-                  ? 'border-[#C9A84C] text-[#B89230] bg-amber-50/60 rounded-t-xl'
-                  : 'border-[#C9A84C] text-[#C9A84C]'
+                  ? 'border-indigo-600 text-indigo-600 bg-indigo-50/70 rounded-t-xl'
+                  : 'border-indigo-500 text-indigo-400 bg-indigo-500/10 rounded-t-xl'
                 : adminTheme === 'light'
                 ? 'border-transparent text-slate-500 hover:text-slate-900'
                 : 'border-transparent text-zinc-400 hover:text-white'
