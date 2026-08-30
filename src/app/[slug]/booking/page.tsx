@@ -24,12 +24,7 @@ import { he } from 'date-fns/locale';
 import { useToast } from '@/components/common/ToastProvider';
 import { getBusinessBySlug } from '@/lib/business-service';
 import { BusinessConfig } from '@/types/business';
-
-const AVAILABLE_HOURS = [
-  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-  '12:00', '14:00', '14:30', '15:00', '15:30', '16:00',
-  '16:30', '17:00', '17:30', '18:00', '18:30', '19:00',
-];
+import { getAvailableSlots, getAvailableTimeWindows } from '@/lib/slot-engine';
 
 export default function DynamicBusinessBookingPage({
   params,
@@ -56,6 +51,24 @@ export default function DynamicBusinessBookingPage({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [bookedAppointment, setBookedAppointment] = useState<any>(null);
+
+  const dynamicSlots = useMemo(() => {
+    return getAvailableSlots({
+      date: selectedDate,
+      workingHours: { open: '09:00', close: '20:00', closed: false },
+      serviceDurationMinutes: selectedService?.duration || 30,
+      bufferMinutes: selectedService?.bufferAfterMinutes || 0,
+      filterPastIfToday: true,
+    });
+  }, [selectedDate, selectedService]);
+
+  const timeWindows = useMemo(() => {
+    return getAvailableTimeWindows({
+      date: selectedDate,
+      workingHours: { open: '08:30', close: '20:00', closed: false },
+      filterPastIfToday: true,
+    });
+  }, [selectedDate]);
 
   useEffect(() => {
     async function loadBusiness() {
@@ -368,35 +381,63 @@ export default function DynamicBusinessBookingPage({
 
               {/* 3. Choose Time */}
               <div>
-                <label className="block text-xs font-bold text-zinc-300 mb-2">3. בחר שעה פנויה:</label>
-                <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5" dir="ltr">
-                  {AVAILABLE_HOURS.map((t) => {
-                    const isToday = selectedDate === format(new Date(), 'yyyy-MM-dd');
-                    const isPast = isToday && t <= format(new Date(), 'HH:mm');
+                <label className="block text-xs font-bold text-zinc-300 mb-2">
+                  {selectedService?.bookingType === 'TIME_WINDOW' ? '3. בחר חלון הגעה נוח:' : '3. בחר שעה פנויה:'}
+                </label>
 
-                    return (
+                {selectedService?.bookingType === 'TIME_WINDOW' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {timeWindows.map((w) => (
                       <button
-                        key={t}
+                        key={w.id}
                         type="button"
-                        disabled={isPast}
-                        onClick={() => !isPast && setSelectedTime(t)}
-                        className={`py-2 rounded-xl text-xs font-bold border transition-all ${
-                          isPast
-                            ? 'opacity-25 bg-white/5 border-transparent text-zinc-600 cursor-not-allowed line-through'
-                            : selectedTime === t
-                            ? 'text-black cursor-pointer shadow-md'
-                            : 'bg-[#141414] border-white/10 text-zinc-300 hover:text-white cursor-pointer'
+                        disabled={!w.available}
+                        onClick={() => setSelectedTime(w.range)}
+                        className={`p-3 rounded-xl border text-right transition-all cursor-pointer ${
+                          !w.available
+                            ? 'opacity-40 bg-white/5 border-transparent text-zinc-500 cursor-not-allowed'
+                            : selectedTime === w.range
+                            ? 'text-black font-black shadow-md'
+                            : 'bg-[#141414] border-white/10 text-white hover:border-white/30'
                         }`}
                         style={{
-                          backgroundColor: !isPast && selectedTime === t ? themeColor : '#141414',
-                          borderColor: !isPast && selectedTime === t ? themeColor : 'rgba(255,255,255,0.1)',
+                          backgroundColor: selectedTime === w.range ? themeColor : undefined,
+                          borderColor: selectedTime === w.range ? themeColor : undefined,
                         }}
                       >
-                        {t}
+                        <div className="text-xs font-bold">{w.label}</div>
+                        <div className="text-[11px] opacity-80">{w.range}</div>
                       </button>
-                    );
-                  })}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5" dir="ltr">
+                    {dynamicSlots.length === 0 ? (
+                      <div className="col-span-full py-4 text-center text-xs text-zinc-500" dir="rtl">
+                        אין שעות פנויות זמינות למועד זה. נא לבחור תאריך אחר.
+                      </div>
+                    ) : (
+                      dynamicSlots.map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setSelectedTime(t)}
+                          className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                            selectedTime === t
+                              ? 'text-black cursor-pointer shadow-md'
+                              : 'bg-[#141414] border-white/10 text-zinc-300 hover:text-white cursor-pointer'
+                          }`}
+                          style={{
+                            backgroundColor: selectedTime === t ? themeColor : '#141414',
+                            borderColor: selectedTime === t ? themeColor : 'rgba(255,255,255,0.1)',
+                          }}
+                        >
+                          {t}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* 4. Customer Details */}

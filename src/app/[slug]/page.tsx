@@ -136,6 +136,33 @@ export default function DynamicBusinessLandingPage({
     }
   })();
 
+  const sectionMap: Record<string, React.ReactNode> = {
+    hero: <BarbershopHeroHub business={business || undefined} />,
+    services: <PriceListAndGallerySection business={business || undefined} />,
+    bio: business?.layout?.showBio !== false ? (
+      <div id="about">
+        <BarberShowcase business={business || undefined} />
+      </div>
+    ) : null,
+    branches: business?.layout?.showBranches !== false ? (
+      <BranchNavigationSection business={business || undefined} />
+    ) : null,
+    gallery: business?.layout?.showBeforeAfter !== false ? (
+      <BeforeAfterSection business={business || undefined} />
+    ) : null,
+    reviews: business?.layout?.showReviews !== false ? (
+      <ReviewsSection business={business || undefined} />
+    ) : null,
+    faqs: business?.layout?.showFaqs !== false ? (
+      <div id="faq">
+        <FaqSection business={business || undefined} />
+      </div>
+    ) : null,
+  };
+
+  const defaultOrder = ['hero', 'services', 'bio', 'branches', 'gallery', 'reviews', 'faqs'];
+  const activeOrder = business?.layout?.sectionsOrder || defaultOrder;
+
   return (
     <div className={`min-h-screen transition-colors duration-500 theme-${bgTheme} ${bgTheme === 'luxury-light' ? 'theme-luxury-light' : ''}`} style={bgStyles}>
       <Header business={business || undefined} />
@@ -143,40 +170,11 @@ export default function DynamicBusinessLandingPage({
         id="main-content"
         className="relative overflow-hidden transition-colors duration-500"
       >
-        {/* 1. Sleek Hero Banner Hub: Cover Image, Monogram Logo, Waze, WhatsApp & 4 Action Pills */}
-        <BarbershopHeroHub business={business || undefined} />
-
-        {/* 2. Side-by-Side Clean Price List & Recent Haircuts Gallery */}
-        <PriceListAndGallerySection business={business || undefined} />
-
-        {/* 3. About Master Barber (Bio, Experience, Philosophy) */}
-        {business?.layout?.showBio !== false && (
-          <div id="about">
-            <BarberShowcase business={business || undefined} />
+        {activeOrder.map((sectionKey) => (
+          <div key={sectionKey}>
+            {sectionMap[sectionKey]}
           </div>
-        )}
-
-        {/* 4. Interactive Branch Maps & One-Tap Waze Navigation */}
-        {business?.layout?.showBranches !== false && (
-          <BranchNavigationSection business={business || undefined} />
-        )}
-
-        {/* 5. Interactive Before & After Transformation Slider */}
-        {business?.layout?.showBeforeAfter !== false && (
-          <BeforeAfterSection business={business || undefined} />
-        )}
-
-        {/* 6. Customer Testimonials & 5.0★ Google Reviews */}
-        {business?.layout?.showReviews !== false && (
-          <ReviewsSection business={business || undefined} />
-        )}
-
-        {/* 7. Frequently Asked Questions (FAQ) */}
-        {business?.layout?.showFaqs !== false && (
-          <div id="faq">
-            <FaqSection business={business || undefined} />
-          </div>
-        )}
+        ))}
       </main>
       <Footer business={business || undefined} />
 

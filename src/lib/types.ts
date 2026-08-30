@@ -202,6 +202,7 @@ export interface BusinessLayoutConfig {
   showFaqs?: boolean;
   showBranches?: boolean;
   showBio?: boolean;
+  sectionsOrder?: Array<'hero' | 'services' | 'gallery' | 'bio' | 'reviews' | 'faqs' | 'branches'>;
 }
 
 export interface ShopSettings {
