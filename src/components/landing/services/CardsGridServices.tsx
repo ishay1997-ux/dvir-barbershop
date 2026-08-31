@@ -20,7 +20,7 @@ export default function CardsGridServices({
   slug = 'dvir',
   bgTheme,
 }: CardsGridServicesProps) {
-  const bookingUrl = slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`;
+  const bookingUrl = `/${slug}/booking`;
   const t = getThemeTokens(bgTheme);
 
   return (

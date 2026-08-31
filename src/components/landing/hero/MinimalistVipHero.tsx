@@ -70,7 +70,7 @@ export function MinimalistVipHero({
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto mb-8">
           <Link
-            href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+            href={`/${slug}/booking`}
             className="w-full sm:w-auto px-8 py-4 rounded-2xl text-slate-950 font-black text-base shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-2 border border-white/20"
             style={{ backgroundColor: themeColor }}
           >

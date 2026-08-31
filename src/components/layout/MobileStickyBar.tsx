@@ -13,7 +13,7 @@ export default function MobileStickyBar({ business }: MobileStickyBarProps) {
   const slug = business?.slug || 'dvir';
   const themeColor = business?.themeColor || '#C9A84C';
   const cleanPhone = (business?.phone || '052-1234567').replace(/\D/g, '').replace(/^0/, '972');
-  const bookingUrl = slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`;
+  const bookingUrl = `/${slug}/booking`;
   const wazeUrl = business?.branches?.[0]?.wazeUrl || (business?.branches?.[0] as any)?.wazeLink || business?.wazeUrl || `https://waze.com/ul?q=${encodeURIComponent(business?.address || business?.city || 'ישראל')}`;
   const stickyStyle = business?.layout?.mobileStickyStyle || 'dual-action';
 

@@ -124,7 +124,7 @@ export default function PriceListAndGallerySection({
                         {formatPrice(service.price)}
                       </span>
                       <Link
-                        href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+                        href={`/${slug}/booking`}
                         className="p-1.5 rounded-xl transition-colors"
                         style={{ backgroundColor: `${themeColor}20`, color: themeColor }}
                         title="הזמן שירות זה"

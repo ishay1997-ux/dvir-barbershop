@@ -3,10 +3,11 @@
 import { use, useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles, MapPin, Phone, ShieldCheck } from 'lucide-react';
 import { format, addDays, startOfToday } from 'date-fns';
 import { useToast } from '@/components/common/ToastProvider';
 import { getBusinessBySlug } from '@/lib/business-service';
+import { getIndustryTerminology } from '@/lib/industry-terminology';
 import type { BusinessConfig, BusinessService } from '@/types/business';
 import { getAvailableSlots, getAvailableTimeWindows } from '@/lib/slot-engine';
 import { BookingConfirmationCard } from '@/components/booking/wizard/BookingConfirmationCard';
@@ -40,6 +41,8 @@ export default function DynamicBusinessBookingPage({
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
+  const [faultDescription, setFaultDescription] = useState('');
+  const [urgency, setUrgency] = useState<'normal' | 'urgent'>('normal');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [bookedAppointment, setBookedAppointment] = useState<any>(null);
@@ -91,15 +94,19 @@ export default function DynamicBusinessBookingPage({
   const today = startOfToday();
   const next7Days = Array.from({ length: 7 }, (_, i) => addDays(today, i));
   const themeColor = business?.themeColor || '#C9A84C';
+  const terminology = getIndustryTerminology(business || undefined);
+  const isHomeService =
+    business?.category === 'home_technician' ||
+    selectedService?.locationType === 'CLIENT_ADDRESS';
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName.trim() || !customerPhone.trim()) {
-      error('נא למלא שם ומספר טלפון');
+      error('נא למלא שם ומספר טלפון לקבלת אישור');
       return;
     }
-    if (selectedService?.locationType === 'CLIENT_ADDRESS' && !customerAddress.trim()) {
-      error('שירות זה מתבצע בבית הלקוח – נא להזין כתובת להגעת הטכנאי/נותן השירות');
+    if (isHomeService && !customerAddress.trim()) {
+      error('שירות זה מתבצע בבית הלקוח – נא להזין כתובת מלאה להגעת איש המקצוע');
       return;
     }
 
@@ -109,16 +116,18 @@ export default function DynamicBusinessBookingPage({
         customerName,
         customerPhone,
         customerAddress: customerAddress || undefined,
-        service: selectedService?.name || 'תספורת',
+        faultDescription: faultDescription || undefined,
+        urgency: isHomeService ? urgency : undefined,
+        service: selectedService?.name || terminology.serviceTitle || 'שירות',
         price: selectedService?.price || 80,
         date: selectedDate,
         time: selectedTime,
-        branchName: selectedBranch || business?.city || 'סניף ראשי',
+        branchName: selectedBranch || business?.city || 'סניף מרכזי',
         businessSlug: slug,
         businessName: business?.name || 'The Cut',
         status: 'confirmed',
-        locationType: selectedService?.locationType || 'BUSINESS_LOCATION',
-        bookingType: selectedService?.bookingType || 'FIXED_SLOT',
+        locationType: selectedService?.locationType || (isHomeService ? 'CLIENT_ADDRESS' : 'BUSINESS_LOCATION'),
+        bookingType: selectedService?.bookingType || (isHomeService ? 'TIME_WINDOW' : 'FIXED_SLOT'),
       };
 
       const res = await fetch('/api/appointments', {
@@ -130,7 +139,10 @@ export default function DynamicBusinessBookingPage({
       if (res.ok) {
         setBookedAppointment(apptData);
         setIsConfirmed(true);
-        success('התור נקבע בהצלחה! 🎉', `נקבע ל-${selectedService?.name || 'טיפול'} בשעה ${selectedTime}`);
+        success(
+          isHomeService ? 'קריאת השירות נרשמה בהצלחה! 🔧' : 'התור נקבע בהצלחה! 🎉',
+          `נקבע ל-${selectedService?.name || 'טיפול'} (${selectedTime})`
+        );
       } else {
         error('שגיאה בשמירת התור', 'נסה שוב בעוד מספר רגעים');
       }
@@ -143,17 +155,18 @@ export default function DynamicBusinessBookingPage({
 
   const handleDownloadIcs = () => {
     if (!bookedAppointment) return;
+    const locationStr = bookedAppointment.customerAddress || `${bookedAppointment.branchName}, ${business?.city || ''}`;
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//The Cut//Appointment Calendar//HE',
+      'PRODID:-//CutWeb//Industry Booking System//HE',
       'CALSCALE:GREGORIAN',
       'BEGIN:VEVENT',
-      `SUMMARY:תור ל-${bookedAppointment.service} אצל ${business?.name}`,
-      `DESCRIPTION:תור שנקבע אצל ${business?.name} (${bookedAppointment.branchName}) עבור ${bookedAppointment.customerName}. טלפון: ${business?.phone}`,
-      `LOCATION:${bookedAppointment.branchName}, ${business?.city}`,
-      `DTSTART:${bookedAppointment.date.replace(/-/g, '')}T${bookedAppointment.time.replace(':', '')}00`,
-      `DTEND:${bookedAppointment.date.replace(/-/g, '')}T${bookedAppointment.time.replace(':', '')}00`,
+      `SUMMARY:${bookedAppointment.service} - ${business?.name}`,
+      `DESCRIPTION:הזמנה עבור ${bookedAppointment.customerName}. טלפון לבירורים: ${business?.phone}`,
+      `LOCATION:${locationStr}`,
+      `DTSTART:${bookedAppointment.date.replace(/-/g, '')}T${bookedAppointment.time.replace(/[^0-9]/g, '').slice(0, 4) || '1000'}00`,
+      `DTEND:${bookedAppointment.date.replace(/-/g, '')}T${bookedAppointment.time.replace(/[^0-9]/g, '').slice(0, 4) || '1100'}00`,
       'STATUS:CONFIRMED',
       'END:VEVENT',
       'END:VCALENDAR',
@@ -183,13 +196,13 @@ export default function DynamicBusinessBookingPage({
     return (
       <div className="min-h-screen bg-[#121212] text-white flex items-center justify-center p-4 font-sans" dir="rtl">
         <div className="text-center">
-          <p className="text-sm font-bold text-zinc-400 mb-4">עסק לא נמצא</p>
+          <p className="text-sm font-bold text-zinc-400 mb-4">בית העסק אינו קיים במערכת</p>
           <Link
             href="/"
-            className="px-4 py-2 text-black font-bold rounded-xl text-xs cursor-pointer"
+            className="px-5 py-2.5 text-black font-black rounded-xl text-xs cursor-pointer shadow-lg inline-flex items-center gap-1.5"
             style={{ backgroundColor: themeColor }}
           >
-            חזרה לדף הראשי
+            חזרה לדף הראשי של CutWeb
           </Link>
         </div>
       </div>
@@ -198,7 +211,7 @@ export default function DynamicBusinessBookingPage({
 
   return (
     <div
-      className="min-h-screen bg-[#141414] text-white font-sans selection:bg-[#C9A84C] selection:text-black py-8 px-4"
+      className="min-h-screen bg-[#111216] text-white font-sans selection:bg-[#C9A84C] selection:text-black py-8 px-4"
       dir="rtl"
     >
       <div className="max-w-lg mx-auto">
@@ -206,34 +219,57 @@ export default function DynamicBusinessBookingPage({
         <div className="flex items-center justify-between mb-6">
           <Link
             href={`/${slug}`}
-            className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 px-3 py-1.5 rounded-xl border border-white/10"
+            className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2 rounded-xl border border-white/10 transition-colors"
           >
-            <ArrowRight className="w-4 h-4" /> חזרה לדף העסק
+            <ArrowRight className="w-4 h-4" /> חזרה לדף העסק של {business.name}
           </Link>
-          <span className="text-xs font-bold" style={{ color: themeColor }}>
-            {business.name}
+          <span className="text-xs font-black flex items-center gap-1.5" style={{ color: themeColor }}>
+            <span>{terminology.icon}</span>
+            <span>{business.name}</span>
           </span>
         </div>
 
         {/* Card */}
         <div
-          className="bg-[#1C1C1C] border rounded-3xl p-6 sm:p-8 shadow-2xl"
-          style={{ borderColor: `${themeColor}40` }}
+          className="bg-[#181920] border rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden"
+          style={{ borderColor: `${themeColor}35` }}
         >
-          <div className="text-center mb-6">
+          {/* Top Decorative Glow */}
+          <div
+            className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl pointer-events-none opacity-15"
+            style={{ backgroundColor: themeColor }}
+          />
+
+          <div className="text-center mb-6 relative z-10">
             <div
-              className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 border font-black text-lg"
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 border font-black text-xl shadow-lg"
               style={{
-                backgroundColor: `${themeColor}15`,
-                borderColor: `${themeColor}40`,
+                backgroundColor: `${themeColor}20`,
+                borderColor: `${themeColor}50`,
                 color: themeColor,
               }}
             >
-              {business.name.trim().charAt(0)}
+              {business.logoUrl || business.avatarUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={business.logoUrl || business.avatarUrl}
+                  alt={business.name}
+                  className="w-full h-full object-cover rounded-2xl"
+                />
+              ) : (
+                <span>{terminology.icon}</span>
+              )}
             </div>
-            <h1 className="text-xl font-black text-white">זימון תור מהיר</h1>
-            <p className="text-xs text-[#9E9891] mt-0.5">
-              {business.name} · {business.city}
+            <h1 className="text-xl sm:text-2xl font-black text-white">
+              {isHomeService ? 'הזמנת קריאת שירות אונליין' : `זימון תור ל-${business.name}`}
+            </h1>
+            <p className="text-xs text-zinc-400 mt-1 flex items-center justify-center gap-2">
+              <span>{business.name}</span>
+              <span>·</span>
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3 text-zinc-500" />
+                {business.city || 'ישראל'}
+              </span>
             </p>
           </div>
 
@@ -246,7 +282,7 @@ export default function DynamicBusinessBookingPage({
               onDownloadIcs={handleDownloadIcs}
             />
           ) : (
-            <div className="space-y-5">
+            <div className="space-y-5 relative z-10">
               <BookingServicePicker
                 business={business}
                 selectedBranch={selectedBranch}
@@ -272,12 +308,16 @@ export default function DynamicBusinessBookingPage({
                 customerName={customerName}
                 customerPhone={customerPhone}
                 customerAddress={customerAddress}
+                faultDescription={faultDescription}
+                urgency={urgency}
                 selectedService={selectedService}
                 themeColor={themeColor}
                 isSubmitting={isSubmitting}
                 onChangeName={setCustomerName}
                 onChangePhone={setCustomerPhone}
                 onChangeAddress={setCustomerAddress}
+                onChangeFaultDescription={setFaultDescription}
+                onChangeUrgency={setUrgency}
                 onSubmit={handleBookingSubmit}
               />
             </div>

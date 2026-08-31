@@ -20,7 +20,7 @@ export default function CompactMenuServices({
   slug = 'dvir',
   bgTheme,
 }: CompactMenuServicesProps) {
-  const bookingUrl = slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`;
+  const bookingUrl = `/${slug}/booking`;
   const t = getThemeTokens(bgTheme);
 
   return (

@@ -223,7 +223,7 @@ export function HubMonogramHero({
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 w-full max-w-2xl mt-5">
           <Link
-            href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+            href={`/${slug}/booking`}
             id="action-pill-book"
             className="py-3 px-4 rounded-2xl text-slate-950 font-black text-xs sm:text-sm text-center shadow-lg active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-white/20 cursor-pointer"
             style={{ backgroundColor: themeColor }}

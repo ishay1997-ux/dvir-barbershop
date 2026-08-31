@@ -79,7 +79,7 @@ export function SplitCinemaHero({
                   <span className={`text-sm font-black ${t.textPrimary}`}>בחר שירות, שעה והבטח מקום</span>
                 </div>
                 <Link
-                  href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+                  href={`/${slug}/booking`}
                   className="px-6 py-3 rounded-2xl text-slate-950 font-black text-sm shadow-xl active:scale-95 transition-all flex items-center gap-2 cursor-pointer border border-white/20"
                   style={{ backgroundColor: themeColor }}
                 >

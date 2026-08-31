@@ -42,7 +42,8 @@ export default function Header({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const industryIcon = getIndustryMeta(business).icon;
+  const industryMeta = getIndustryMeta(business);
+  const industryIcon = industryMeta.icon;
 
   return (
     <>
@@ -129,12 +130,12 @@ export default function Header({
 
             {/* Book Appointment CTA */}
             <Link
-              href={slug === 'dvir' || slug === 'thecut' ? '/booking' : `/${slug}/booking`}
+              href={slug && slug !== 'thecut' ? `/${slug}/booking` : '/booking'}
               className="text-[#1C1C1C] font-black text-xs px-4 sm:px-5 py-2 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
               style={{ backgroundColor: themeColor }}
               id="header-cta-button"
             >
-              הזמן תור
+              {industryMeta.actionLabel || 'הזמן תור'}
             </Link>
           </div>
         </div>
