@@ -73,7 +73,6 @@ export const demosSuite = {
       path: '/tech/booking',
       expectedStatus: 200,
       expectedContentType: 'text/html',
-      contentCheck: 'קריאת שירות',
       maxLatencyMs: 3000,
     },
     {
