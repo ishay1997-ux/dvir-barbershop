@@ -84,12 +84,16 @@ export function validateAppointmentPayload(body: any): {
     return { isValid: false, error: 'שם מלא (לפחות 2 תווים) או מספר טלפון תקין (לפחות 9 ספרות) נדרשים' };
   }
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(resolvedDate) || !/^\d{2}:\d{2}$/.test(resolvedTime)) {
+  const isRangeTime = /^\d{2}:\d{2}\s*[-–]\s*\d{2}:\d{2}$/.test(resolvedTime);
+  const isExactTime = /^\d{2}:\d{2}$/.test(resolvedTime);
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(resolvedDate) || (!isExactTime && !isRangeTime)) {
     return { isValid: false, error: 'פורמט תאריך או שעה אינו תקין' };
   }
 
   try {
-    const appointmentDateTime = new Date(`${resolvedDate}T${resolvedTime}:00`);
+    const startTimeStr = isRangeTime ? resolvedTime.split(/[-–]/)[0].trim() : resolvedTime;
+    const appointmentDateTime = new Date(`${resolvedDate}T${startTimeStr}:00`);
     if (isNaN(appointmentDateTime.getTime()) || appointmentDateTime.getTime() < Date.now() - 5 * 60 * 1000) {
       return { isValid: false, error: 'לא ניתן לקבוע תור למועד שעבר. אנא בחר שעה עתידית.' };
     }
