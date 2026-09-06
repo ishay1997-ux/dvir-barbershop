@@ -57,7 +57,7 @@ export const FeatureTilesGrid: React.FC<FeatureTilesGridProps> = ({
             {/* Hover State: Display the descriptive explanation inside the tile */}
             {isHovered ? (
               <div className="flex items-center justify-center w-full h-full px-1">
-                <span className="text-xs sm:text-[12.5px] font-bold text-white leading-snug text-center animate-fadeIn">
+                <span className="text-xs sm:text-[12.5px] font-bold text-white leading-snug text-center animate-a11y-fadeIn">
                   {tile.desc}
                 </span>
               </div>

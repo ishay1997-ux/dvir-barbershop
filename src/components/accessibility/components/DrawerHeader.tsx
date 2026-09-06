@@ -106,9 +106,9 @@ export const DrawerHeader: React.FC<DrawerHeaderProps> = ({
 
       {/* Centered Outline Pill: "נגישות" */}
       <div className="flex justify-center mt-3 pb-1">
-        <div className="px-8 py-1 rounded-full border border-white/70 text-white font-black text-xs tracking-wider shadow-xs">
+        <h2 id="a11y-main-title" className="px-8 py-1 rounded-full border border-white/70 text-white font-black text-xs tracking-wider shadow-xs m-0">
           {t.title}
-        </div>
+        </h2>
       </div>
     </div>
   );

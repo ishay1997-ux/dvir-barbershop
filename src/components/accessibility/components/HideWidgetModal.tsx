@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useFocusTrap } from '../useFocusTrap';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, EyeOff } from 'lucide-react';
+import { X } from 'lucide-react';
 import { A11Y_I18N } from '../i18n';
 
 export type HideDuration = 'session' | '24h' | '1w' | '1m';
@@ -13,7 +14,6 @@ interface HideWidgetModalProps {
   onConfirmHide: (duration: HideDuration) => void;
   t: typeof A11Y_I18N.he;
   currentDirection?: 'rtl' | 'ltr';
-  isRtl?: boolean;
 }
 
 export const HideWidgetModal: React.FC<HideWidgetModalProps> = ({
@@ -22,7 +22,6 @@ export const HideWidgetModal: React.FC<HideWidgetModalProps> = ({
   onConfirmHide,
   t,
   currentDirection = 'rtl',
-  isRtl = true,
 }) => {
   const [selectedDuration, setSelectedDuration] = useState<HideDuration>('session');
 
@@ -32,6 +31,8 @@ export const HideWidgetModal: React.FC<HideWidgetModalProps> = ({
     { id: '1w', label: t.hide1w || 'לשבוע' },
     { id: '1m', label: t.hide1m || 'לחודש' },
   ];
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  useFocusTrap(modalRef, isOpen);
 
   return (
     <AnimatePresence>
@@ -44,6 +45,7 @@ export const HideWidgetModal: React.FC<HideWidgetModalProps> = ({
           <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
 
           <motion.div
+            ref={modalRef}
             initial={{ opacity: 0, scale: 0.94, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 15 }}
@@ -80,13 +82,21 @@ export const HideWidgetModal: React.FC<HideWidgetModalProps> = ({
                   return (
                     <label
                       key={option.id}
-                      onClick={() => setSelectedDuration(option.id)}
-                      className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-colors ${
+                      className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-[#085B7A] ${
                         isChecked ? 'bg-slate-50' : 'hover:bg-slate-50/60'
                       }`}
                     >
-                      {/* Custom Stylized Radio Circle */}
+                      {/* Real radio input (keyboard + screen reader); the circle below is decoration */}
+                      <input
+                        type="radio"
+                        name="a11y-hide-duration"
+                        value={option.id}
+                        checked={isChecked}
+                        onChange={() => setSelectedDuration(option.id)}
+                        className="sr-only"
+                      />
                       <div
+                        aria-hidden="true"
                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
                           isChecked ? 'border-[#085B7A] bg-white' : 'border-slate-400 bg-white'
                         }`}

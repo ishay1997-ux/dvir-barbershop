@@ -9,9 +9,8 @@ interface ColorSpectrumCardProps {
   colorTarget: A11yState['colorTarget'];
   onSelectTarget: (target: A11yState['colorTarget']) => void;
   currentTargetHue: number | null;
-  onColorSpectrumClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onHueChange: (hue: number) => void;
   onResetColors: () => void;
-  colorSliderRef: React.RefObject<HTMLDivElement | null>;
   t: typeof A11Y_I18N.he;
   currentDirection?: 'rtl' | 'ltr';
   isRtl?: boolean;
@@ -21,18 +20,16 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
   colorTarget,
   onSelectTarget,
   currentTargetHue,
-  onColorSpectrumClick,
+  onHueChange,
   onResetColors,
-  colorSliderRef,
   t,
   currentDirection = 'rtl',
-  isRtl = true,
 }) => {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-4.5 shadow-xs" dir={currentDirection}>
       {/* Header with Title and Droplet Icon */}
       <div className="flex items-center justify-between mb-3">
-        <div className={isRtl ? 'text-right' : 'text-left'}>
+        <div className="text-start">
           <h3 className="font-bold text-sm sm:text-base text-[#085B7A] leading-snug">
             {t.colorSectionTitle}
           </h3>
@@ -82,27 +79,26 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
         </button>
       </div>
 
-      {/* Rainbow Spectrum Color Bar - Mathematically aligned 0° to 360° */}
-      <div
-        ref={colorSliderRef}
-        onClick={onColorSpectrumClick}
-        className="relative h-7 sm:h-8 rounded-full cursor-pointer shadow-inner mb-3 border border-black/10 select-none overflow-hidden"
+      {/* Rainbow Spectrum Color Bar - a real range input: keyboard (arrows / Home / End), screen-reader value, mouse.
+          dir="ltr" keeps hue 0 (red) on the physical left, matching the gradient, in RTL locales too. */}
+      <input
+        type="range"
+        min={0}
+        max={360}
+        step={1}
+        dir="ltr"
+        value={currentTargetHue ?? 0}
+        onChange={(e) => onHueChange(Number(e.target.value))}
+        className="a11y-hue-range w-full h-7 sm:h-8 rounded-full shadow-inner mb-3 border border-black/10 cursor-pointer"
         style={{
           background:
             'linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)',
         }}
+        aria-label={t.colorSectionTitle}
+        aria-valuetext={currentTargetHue === null ? t.colorNoneSelected : `${currentTargetHue}°`}
+        data-inactive={currentTargetHue === null ? 'true' : 'false'}
         title={t.colorSectionTitle}
-      >
-        {currentTargetHue !== null && (
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-white shadow-md -ml-3 pointer-events-none transition-all duration-75"
-            style={{
-              left: `${(currentTargetHue / 360) * 100}%`,
-              backgroundColor: `hsl(${currentTargetHue}, 90%, 50%)`,
-            }}
-          />
-        )}
-      </div>
+      />
 
       {/* Reset Colors Button */}
       <div className="flex items-center justify-between pt-0.5">

@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
+import { useFocusTrap } from '../useFocusTrap';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronDown, Minus, Plus } from 'lucide-react';
 import { LANGUAGES, A11yState } from '../types';
@@ -33,6 +34,8 @@ export const SpeechSettingsModal: React.FC<SpeechSettingsModalProps> = ({
   setSpeechRate,
   t,
 }) => {
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  useFocusTrap(panelRef, isOpen);
   return (
     <AnimatePresence>
       {isOpen && (
@@ -40,9 +43,15 @@ export const SpeechSettingsModal: React.FC<SpeechSettingsModalProps> = ({
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 20 }}
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="a11y-speech-settings-title"
           className="fixed bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 z-[9999999] w-[92vw] max-w-[370px] bg-white rounded-3xl shadow-[0_16px_50px_rgba(0,0,0,0.22)] border border-slate-200 p-4 sm:p-5 a11y-ignore text-slate-800 select-none"
           dir="rtl"
         >
+          {/* Accessible name for the dialog (visually hidden) */}
+          <h2 id="a11y-speech-settings-title" className="sr-only">{t.speechSettingsTitle}</h2>
           {/* Top Close X Button */}
           <div className="flex items-center justify-end pb-1 mb-2">
             <button

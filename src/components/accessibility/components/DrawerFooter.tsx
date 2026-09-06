@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { RotateCcw } from 'lucide-react';
 import { A11Y_I18N } from '../i18n';
 
@@ -29,13 +28,13 @@ export const DrawerFooter: React.FC<DrawerFooterProps> = ({
       </button>
 
       <div className="flex items-center justify-between text-[11px] text-white/80 pt-1">
-        <Link
+        <a
           href={statementUrl}
           onClick={onClose}
           className="hover:underline font-bold text-white"
         >
           {t.statementLink}
-        </Link>
+        </a>
 
         <span className="opacity-70 text-[10px]">{t.standardBadge}</span>
       </div>
