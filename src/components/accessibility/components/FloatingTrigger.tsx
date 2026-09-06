@@ -49,7 +49,7 @@ export const FloatingTrigger: React.FC<FloatingTriggerProps> = ({
       </div>
 
       {/* Text that only shows smoothly on hover */}
-      <div className="text-right hidden group-hover:block whitespace-nowrap animate-fadeIn">
+      <div className="text-start hidden group-hover:block whitespace-nowrap animate-a11y-fadeIn">
         <span className="block text-xs font-black text-white leading-tight">
           {t.triggerBtn}
         </span>

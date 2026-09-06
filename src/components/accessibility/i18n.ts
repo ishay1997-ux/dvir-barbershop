@@ -47,6 +47,7 @@ export const A11Y_I18N = {
     targetHeadings: 'כותרות',
     targetText: 'תכנים',
     resetColors: 'איפוס צבעים',
+    colorNoneSelected: 'לא נבחר צבע',
     activeCustomColor: 'צבע מותאם פעיל ✓',
 
     // Font section
@@ -161,6 +162,7 @@ export const A11Y_I18N = {
     targetHeadings: 'Headings',
     targetText: 'Text Content',
     resetColors: 'Reset Colors',
+    colorNoneSelected: 'No colour selected',
     activeCustomColor: 'Custom Color Active ✓',
 
     // Font section
@@ -275,6 +277,7 @@ export const A11Y_I18N = {
     targetHeadings: 'العناوين',
     targetText: 'النصوص',
     resetColors: 'إعادة ضبط الألوان',
+    colorNoneSelected: 'لم يتم اختيار لون',
     activeCustomColor: 'الألوان المخصصة نشطة ✓',
 
     // Font section
@@ -389,6 +392,7 @@ export const A11Y_I18N = {
     targetHeadings: 'Заголовки',
     targetText: 'Текст',
     resetColors: 'Сброс цветов',
+    colorNoneSelected: 'Цвет не выбран',
     activeCustomColor: 'Пользовательский цвет активен ✓',
 
     // Font section

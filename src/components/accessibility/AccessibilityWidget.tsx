@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { A11yState, TileItem } from './types';
@@ -8,6 +8,7 @@ import { A11Y_I18N } from './i18n';
 import { useAccessibility } from './useAccessibility';
 import { useSpeechSynthesis } from './useSpeechSynthesis';
 import { useA11yShortcuts } from './useA11yShortcuts';
+import { useFocusTrap } from './useFocusTrap';
 import { buildA11yTiles } from './a11yTilesConfig';
 import {
   FloatingTrigger,
@@ -56,6 +57,9 @@ export default function AccessibilityWidget({
   const [showReaderModal, setShowReaderModal] = useState(false);
   const [showFloatingFontToolbar, setShowFloatingFontToolbar] = useState(false);
   const [hoveredTile, setHoveredTile] = useState<TileItem | null>(null);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  // Trap focus in the drawer; modals stacked on top register their own trap and take over Tab.
+  useFocusTrap(drawerRef, isOpen, { returnTo: () => document.getElementById('a11y-trigger-btn') });
 
   const activeHideStorageKey = storageKey ? `${storageKey}_hidden_until` : 'thecut_a11y_hidden_until';
   const activeHideSessionKey = storageKey ? `${storageKey}_hidden_session` : 'thecut_a11y_hidden_session';
@@ -66,11 +70,10 @@ export default function AccessibilityWidget({
     state,
     setState,
     isModified,
-    colorSliderRef,
     currentTargetHue,
     currentLevel,
     maxLevel,
-    handleColorSpectrumClick,
+    handleHueChange,
     handleResetColors,
     handleToggleCursor,
     handleStepperIncrease,
@@ -88,6 +91,9 @@ export default function AccessibilityWidget({
 
   // 4. Shortcuts & Virtual Keyboard Input Listener
   const { handleVirtualKeyPress, handleVirtualBackspace } = useA11yShortcuts({
+    isLanguageOpen,
+    showReaderModal,
+    isHideModalOpen,
     setState,
     setIsOpen,
     setIsLanguageOpen,
@@ -196,6 +202,7 @@ export default function AccessibilityWidget({
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: dockSide === 'right' ? 80 : -80, scale: 0.98 }}
               transition={{ duration: 0.24, ease: 'easeOut' }}
+              ref={drawerRef}
               className="relative w-full sm:w-[490px] sm:max-w-[94vw] h-full sm:h-auto max-h-full sm:max-h-[96vh] overflow-y-auto bg-white rounded-none sm:rounded-3xl shadow-2xl border border-slate-300 text-[#1C1C1C] flex flex-col z-10 font-sans"
               role="dialog"
               aria-modal="true"
@@ -254,9 +261,8 @@ export default function AccessibilityWidget({
                   colorTarget={state.colorTarget}
                   onSelectTarget={(target) => setState((prev) => ({ ...prev, colorTarget: target }))}
                   currentTargetHue={currentTargetHue}
-                  onColorSpectrumClick={handleColorSpectrumClick}
+                  onHueChange={handleHueChange}
                   onResetColors={handleResetColors}
-                  colorSliderRef={colorSliderRef}
                   t={t}
                   currentDirection={currentDirection}
                   isRtl={isRtl}
@@ -359,7 +365,6 @@ export default function AccessibilityWidget({
         onConfirmHide={handleConfirmHide}
         t={t}
         currentDirection={currentDirection}
-        isRtl={isRtl}
       />
     </>
   );

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useRef, useMemo } from 'react';
+import { useFocusTrap } from '../useFocusTrap';
 import { X, Printer } from 'lucide-react';
 import { A11Y_I18N } from '../i18n';
 
@@ -57,6 +58,9 @@ export const ReaderModal: React.FC<ReaderModalProps> = ({
     return extracted;
   }, [isOpen]);
 
+  const readerRef = useRef<HTMLDivElement | null>(null);
+  useFocusTrap(readerRef, isOpen);
+
   if (!isOpen) return null;
 
   const displayTitle = siteName
@@ -65,6 +69,10 @@ export const ReaderModal: React.FC<ReaderModalProps> = ({
 
   return (
     <div
+      ref={readerRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="a11y-reader-title"
       className="fixed inset-0 z-[999999] bg-white text-[#1C1C1C] p-6 sm:p-12 overflow-y-auto a11y-ignore font-sans select-text"
       dir={currentDirection}
     >
@@ -72,7 +80,7 @@ export const ReaderModal: React.FC<ReaderModalProps> = ({
         {/* Header with Title and Print / Close buttons */}
         <div className="flex items-center justify-between pb-4 mb-6 border-b-2 border-slate-900 gap-3">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+            <h2 id="a11y-reader-title" className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
               {displayTitle}
             </h2>
             <p className="text-xs text-slate-500 font-medium mt-1">

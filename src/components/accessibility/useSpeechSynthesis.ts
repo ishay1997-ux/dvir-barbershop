@@ -53,10 +53,11 @@ export function useSpeechSynthesis({ language }: UseSpeechSynthesisProps) {
     };
 
     loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
+    // addEventListener, not the singleton onvoiceschanged property: never overwrite a handler the host page registered.
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
     return () => {
       if (window.speechSynthesis) {
-        window.speechSynthesis.onvoiceschanged = null;
+        window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
       }
     };
   }, [language]);
@@ -267,7 +268,7 @@ export function useSpeechSynthesis({ language }: UseSpeechSynthesisProps) {
   useEffect(() => {
     if (!continuousReading || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
 
-    let hoverTimeout: NodeJS.Timeout | null = null;
+    let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
     let hoveredEl: HTMLElement | null = null;
 
     const handleHover = (e: MouseEvent) => {
