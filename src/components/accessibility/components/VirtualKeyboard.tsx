@@ -32,30 +32,30 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 100 }}
-          className="fixed bottom-4 inset-x-4 max-w-2xl mx-auto z-[999999] bg-[#1E293B] text-white p-3 rounded-2xl shadow-2xl border-2 border-cyan-500/40 select-none a11y-ignore"
+          className="acc:fixed acc:bottom-4 acc:inset-x-4 acc:max-w-2xl acc:mx-auto acc:z-[999999] acc:bg-[#1E293B] acc:text-white acc:p-3 acc:rounded-2xl acc:shadow-2xl acc:border-2 acc:border-cyan-500/40 acc:select-none a11y-widget-root a11y-ignore"
           dir={currentDirection}
         >
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-700 text-xs">
-            <span className="font-black text-cyan-300 flex items-center gap-1.5">
+          <div className="acc:flex acc:items-center acc:justify-between acc:pb-2 acc:mb-2 acc:border-b acc:border-slate-700 acc:text-xs">
+            <span className="acc:font-black acc:text-cyan-300 acc:flex acc:items-center acc:gap-1.5">
               {t.keyboardTitle}
             </span>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-white p-1 cursor-pointer"
+              className="acc:text-slate-400 acc:hover:text-white acc:p-1 acc:cursor-pointer"
               aria-label={t.close}
             >
-              <X className="w-4 h-4" />
+              <X className="acc:w-4 acc:h-4" />
             </button>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="acc:space-y-1.5">
             {(KEYBOARD_LAYOUTS[language] || KEYBOARD_LAYOUTS.he).map((row, rIdx) => (
-              <div key={rIdx} className="flex justify-center gap-1">
+              <div key={rIdx} className="acc:flex acc:justify-center acc:gap-1">
                 {row.map((char) => (
                   <button
                     key={char}
                     onClick={() => onKeyPress(char)}
-                    className="flex-1 min-w-[24px] h-9 sm:h-10 bg-slate-800 hover:bg-slate-700 active:bg-cyan-600 rounded-lg text-sm sm:text-base font-bold text-white shadow-xs border border-slate-600 transition-colors cursor-pointer"
+                    className="acc:flex-1 acc:min-w-[24px] acc:h-9 acc:sm:h-10 acc:bg-slate-800 acc:hover:bg-slate-700 acc:active:bg-cyan-600 acc:rounded-lg acc:text-sm acc:sm:text-base acc:font-bold acc:text-white acc:shadow-xs acc:border acc:border-slate-600 acc:transition-colors acc:cursor-pointer"
                   >
                     {char}
                   </button>
@@ -63,19 +63,19 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
               </div>
             ))}
 
-            <div className="flex gap-1.5 pt-1">
+            <div className="acc:flex acc:gap-1.5 acc:pt-1">
               <button
                 onClick={() => onKeyPress(' ')}
-                className="flex-1 h-9 bg-slate-800 hover:bg-slate-700 active:bg-cyan-600 rounded-lg text-xs font-bold text-white shadow-xs border border-slate-600 cursor-pointer"
+                className="acc:flex-1 acc:h-9 acc:bg-slate-800 acc:hover:bg-slate-700 acc:active:bg-cyan-600 acc:rounded-lg acc:text-xs acc:font-bold acc:text-white acc:shadow-xs acc:border acc:border-slate-600 acc:cursor-pointer"
               >
                 {t.spaceKey}
               </button>
               <button
                 onClick={onBackspace}
-                className="w-16 h-9 bg-red-950/60 hover:bg-red-900 border border-red-500/40 text-red-300 rounded-lg text-xs font-bold flex items-center justify-center cursor-pointer"
+                className="acc:w-16 acc:h-9 acc:bg-red-950/60 acc:hover:bg-red-900 acc:border acc:border-red-500/40 acc:text-red-300 acc:rounded-lg acc:text-xs acc:font-bold acc:flex acc:items-center acc:justify-center acc:cursor-pointer"
                 aria-label={t.backspaceKey}
               >
-                <Delete className="w-4 h-4" />
+                <Delete className="acc:w-4 acc:h-4" />
               </button>
             </div>
           </div>

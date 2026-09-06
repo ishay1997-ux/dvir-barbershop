@@ -27,6 +27,9 @@ import {
   HideWidgetModal,
   HideDuration,
 } from './components';
+// Import order is load-bearing — see accessibility.base.css header. Host-page rules come LAST.
+import './accessibility.widget.css'; // generated: npm run build:a11y-css
+import './accessibility.base.css';
 import './accessibility.css';
 
 export interface AccessibilityWidgetProps {
@@ -189,13 +192,13 @@ export default function AccessibilityWidget({
       <AnimatePresence>
         {isOpen && (
           <div
-            className={`fixed inset-0 z-[99999] flex items-stretch ${
-              dockSide === 'right' ? 'justify-end' : 'justify-start'
-            } p-0 sm:p-4 bg-black/60 backdrop-blur-xs a11y-ignore`}
+            className={`acc:fixed acc:inset-0 acc:z-[99999] acc:flex acc:items-stretch ${
+              dockSide === 'right' ? 'acc:justify-end' : 'acc:justify-start'
+            } acc:p-0 acc:sm:p-4 acc:bg-black/60 acc:backdrop-blur-xs a11y-widget-root a11y-ignore`}
             dir="ltr"
           >
             {/* Backdrop click to close */}
-            <div className="absolute inset-0" onClick={() => setIsOpen(false)} aria-hidden="true" />
+            <div className="acc:absolute acc:inset-0" onClick={() => setIsOpen(false)} aria-hidden="true" />
 
             <motion.div
               initial={{ opacity: 0, x: dockSide === 'right' ? 80 : -80, scale: 0.98 }}
@@ -203,7 +206,7 @@ export default function AccessibilityWidget({
               exit={{ opacity: 0, x: dockSide === 'right' ? 80 : -80, scale: 0.98 }}
               transition={{ duration: 0.24, ease: 'easeOut' }}
               ref={drawerRef}
-              className="relative w-full sm:w-[490px] sm:max-w-[94vw] h-full sm:h-auto max-h-full sm:max-h-[96vh] overflow-y-auto bg-white rounded-none sm:rounded-3xl shadow-2xl border border-slate-300 text-[#1C1C1C] flex flex-col z-10 font-sans"
+              className="acc:relative acc:w-full acc:sm:w-[490px] acc:sm:max-w-[94vw] acc:h-full acc:sm:h-auto acc:max-h-full acc:sm:max-h-[96vh] acc:overflow-y-auto acc:bg-white acc:rounded-none acc:sm:rounded-3xl acc:shadow-2xl acc:border acc:border-slate-300 acc:text-[#1C1C1C] acc:flex acc:flex-col acc:z-10 acc:font-sans"
               role="dialog"
               aria-modal="true"
               aria-labelledby="a11y-main-title"
@@ -223,7 +226,7 @@ export default function AccessibilityWidget({
               />
 
               {/* BODY CONTENT */}
-              <div className="p-3.5 sm:p-4 space-y-4 overflow-y-auto flex-1 bg-slate-50/50">
+              <div className="acc:p-3.5 acc:sm:p-4 acc:space-y-4 acc:overflow-y-auto acc:flex-1 acc:bg-slate-50/50">
                 {/* 14 Tiles Grid */}
                 <FeatureTilesGrid
                   tiles={a11yTiles}
@@ -240,7 +243,6 @@ export default function AccessibilityWidget({
                   onToggleCursor={handleToggleCursor}
                   t={t}
                   currentDirection={currentDirection}
-                  isRtl={isRtl}
                 />
 
                 {/* Font Adjustments Card */}
@@ -253,7 +255,6 @@ export default function AccessibilityWidget({
                   onStepperDecrease={handleStepperDecrease}
                   t={t}
                   currentDirection={currentDirection}
-                  isRtl={isRtl}
                 />
 
                 {/* Color Spectrum Card */}
@@ -265,7 +266,6 @@ export default function AccessibilityWidget({
                   onResetColors={handleResetColors}
                   t={t}
                   currentDirection={currentDirection}
-                  isRtl={isRtl}
                 />
 
                 {/* Stop Animations Card */}

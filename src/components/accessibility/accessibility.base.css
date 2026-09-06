@@ -1,0 +1,71 @@
+/* =============================================================================
+   accessibility.base.css — the widget's OWN chrome only (speech highlight, animation, hue
+   slider, preflight stand-in). Never selects host elements. No !important here.
+   Import order in every entry component (load-bearing, see AccessibilityWidget.tsx):
+     1. accessibility.widget.css  (generated utilities, all !important, unlayered)
+     2. accessibility.base.css    (this file)
+     3. accessibility.css         (host-page rules — MUST be last so stop-animations / big
+                                   cursor / keyboard focus rings keep winning inside the widget)
+   ============================================================================= */
+
+/* 16. ACTIVE SPEECH / READING HIGHLIGHT */
+.a11y-speech-active {
+  outline: 3px solid #0088A9 !important;
+  outline-offset: 3px !important;
+  background-color: rgba(0, 136, 169, 0.18) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 0 12px rgba(0, 136, 169, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 17. WIDGET-OWN ANIMATION (namespaced so it never collides with a host `fadeIn`) */
+@keyframes a11y-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.animate-a11y-fadeIn { animation: a11y-fadeIn 0.5s ease both; }
+@media (prefers-reduced-motion: reduce) { .animate-a11y-fadeIn { animation: none; } }
+
+/* 18. HUE RANGE INPUT (keyboard-operable colour spectrum; the gradient is the element background) */
+.a11y-hue-range { -webkit-appearance: none; appearance: none; padding: 0; margin: 0; }
+.a11y-hue-range::-webkit-slider-runnable-track { background: transparent; height: 100%; border: 0; }
+.a11y-hue-range::-moz-range-track { background: transparent; height: 100%; border: 0; }
+.a11y-hue-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 9999px; background: #fff; border: 2px solid #085B7A; box-shadow: 0 1px 4px rgba(0,0,0,.35); margin-top: 0; }
+.a11y-hue-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 9999px; background: #fff; border: 2px solid #085B7A; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+.a11y-hue-range[data-inactive="true"]::-webkit-slider-thumb { opacity: 0.55; border-style: dashed; }
+.a11y-hue-range[data-inactive="true"]::-moz-range-thumb { opacity: 0.55; border-style: dashed; }
+.a11y-hue-range:focus-visible { outline: 3px solid #0088A9; outline-offset: 2px; }
+
+/* =============================================================================
+   WIDGET BASE (stands in for Tailwind's preflight, which is NOT shipped with the widget).
+   Scoped to the widget's own roots (.a11y-widget-root / .a11y-screen-reader-anchors) — never to
+   `.a11y-ignore`, which hosts put on THEIR elements to exclude them from the colour filters.
+   Specificity is one class + one element (0,1,1): beats a host's `button {…}` / `h2 {…}` element
+   rules, never the widget's utilities (all !important). In a Tailwind host the margin/padding/border
+   resets duplicate preflight; the font and colour declarations are additional and apply only here.
+   ============================================================================= */
+.a11y-widget-root, .a11y-widget-root *, .a11y-screen-reader-anchors, .a11y-screen-reader-anchors * {
+  box-sizing: border-box;
+}
+.a11y-widget-root, .a11y-screen-reader-anchors {
+  margin: 0;
+  padding: 0;
+  font-family: var(--acc-font-sans, var(--font-sans, ui-sans-serif, system-ui, sans-serif));
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1c1c1c;
+}
+.a11y-widget-root :is(div, span, p, h1, h2, h3, h4, h5, h6, ul, ol, li, label, a, button, input, select, textarea, svg, img),
+.a11y-screen-reader-anchors :is(div, span, p, a, button) {
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+.a11y-widget-root :is(h1, h2, h3, h4, h5, h6) { font-size: inherit; font-weight: inherit; }
+.a11y-widget-root :is(a), .a11y-screen-reader-anchors :is(a) { color: inherit; text-decoration: inherit; }
+.a11y-widget-root :is(img, svg, video) { display: block; vertical-align: middle; }
+.a11y-widget-root :is(button, input, select, textarea), .a11y-screen-reader-anchors :is(button) {
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+  border-radius: 0;
+  letter-spacing: inherit;
+}
+.a11y-widget-root :is(button, [type="button"], [type="submit"]), .a11y-screen-reader-anchors :is(button) { appearance: button; cursor: pointer; }

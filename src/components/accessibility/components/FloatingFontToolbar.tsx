@@ -42,42 +42,42 @@ export const FloatingFontToolbar: React.FC<FloatingFontToolbarProps> = ({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 25, scale: 0.95 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
-        className={`fixed bottom-6 ${
-          dockSide === 'right' ? 'left-4 sm:left-6' : 'right-4 sm:right-6'
-        } z-[99998] bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border-2 border-[#085B7A]/25 p-3.5 sm:p-4 shadow-2xl w-[350px] sm:w-[440px] max-w-[calc(100vw-32px)] a11y-ignore select-none font-sans`}
+        className={`acc:fixed acc:bottom-6 ${
+          dockSide === 'right' ? 'acc:left-4 acc:sm:left-6' : 'acc:right-4 acc:sm:right-6'
+        } acc:z-[99998] acc:bg-white/95 acc:backdrop-blur-md acc:rounded-2xl acc:sm:rounded-3xl acc:border-2 acc:border-[#085B7A]/25 acc:p-3.5 acc:sm:p-4 acc:shadow-2xl acc:w-[350px] acc:sm:w-[440px] acc:max-w-[calc(100vw-32px)] a11y-widget-root a11y-ignore acc:select-none acc:font-sans`}
         dir={isRtl ? 'rtl' : 'ltr'}
         role="region"
         aria-label={t.fontSectionTitle}
       >
         {/* Top Header with Close 'X' Button */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-[#085B7A]/10 text-[#085B7A] flex items-center justify-center font-black">
-              <Type className="w-4 h-4" />
+        <div className="acc:flex acc:items-center acc:justify-between acc:mb-3">
+          <div className="acc:flex acc:items-center acc:gap-2">
+            <div className="acc:w-7 acc:h-7 acc:rounded-full acc:bg-[#085B7A]/10 acc:text-[#085B7A] acc:flex acc:items-center acc:justify-center acc:font-black">
+              <Type className="acc:w-4 acc:h-4" />
             </div>
-            <span className="font-bold text-xs sm:text-sm text-[#085B7A]">
+            <span className="acc:font-bold acc:text-xs acc:sm:text-sm acc:text-[#085B7A]">
               {t.fontSectionTitle}
             </span>
           </div>
 
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer"
+            className="acc:w-7 acc:h-7 acc:rounded-full acc:bg-slate-100 acc:hover:bg-slate-200 acc:text-slate-600 acc:hover:text-slate-900 acc:flex acc:items-center acc:justify-center acc:transition-colors acc:cursor-pointer"
             aria-label="Close toolbar"
             title="סגור סרגל"
           >
-            <X className="w-4 h-4" />
+            <X className="acc:w-4 acc:h-4" />
           </button>
         </div>
 
         {/* 4 Mode Pills Row */}
-        <div className="grid grid-cols-4 gap-1.5 mb-3">
+        <div className="acc:grid acc:grid-cols-4 acc:gap-1.5 acc:mb-3">
           <button
             onClick={() => onSelectMode('size')}
-            className={`py-1.5 px-1 rounded-full text-[11px] sm:text-xs font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+            className={`acc:py-1.5 acc:px-1 acc:rounded-full acc:text-[11px] acc:sm:text-xs acc:font-bold acc:transition-all acc:border acc:text-center acc:cursor-pointer acc:whitespace-nowrap ${
               fontAdjustmentMode === 'size'
-                ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
-                : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs acc:font-black'
+                : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
             }`}
           >
             {t.fontSize}
@@ -85,10 +85,10 @@ export const FloatingFontToolbar: React.FC<FloatingFontToolbarProps> = ({
 
           <button
             onClick={() => onSelectMode('line')}
-            className={`py-1.5 px-1 rounded-full text-[11px] sm:text-xs font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+            className={`acc:py-1.5 acc:px-1 acc:rounded-full acc:text-[11px] acc:sm:text-xs acc:font-bold acc:transition-all acc:border acc:text-center acc:cursor-pointer acc:whitespace-nowrap ${
               fontAdjustmentMode === 'line'
-                ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
-                : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs acc:font-black'
+                : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
             }`}
           >
             {t.lineHeight}
@@ -96,10 +96,10 @@ export const FloatingFontToolbar: React.FC<FloatingFontToolbarProps> = ({
 
           <button
             onClick={() => onSelectMode('word')}
-            className={`py-1.5 px-1 rounded-full text-[11px] sm:text-xs font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+            className={`acc:py-1.5 acc:px-1 acc:rounded-full acc:text-[11px] acc:sm:text-xs acc:font-bold acc:transition-all acc:border acc:text-center acc:cursor-pointer acc:whitespace-nowrap ${
               fontAdjustmentMode === 'word'
-                ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
-                : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs acc:font-black'
+                : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
             }`}
           >
             {t.wordSpacing}
@@ -107,10 +107,10 @@ export const FloatingFontToolbar: React.FC<FloatingFontToolbarProps> = ({
 
           <button
             onClick={() => onSelectMode('letter')}
-            className={`py-1.5 px-1 rounded-full text-[11px] sm:text-xs font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+            className={`acc:py-1.5 acc:px-1 acc:rounded-full acc:text-[11px] acc:sm:text-xs acc:font-bold acc:transition-all acc:border acc:text-center acc:cursor-pointer acc:whitespace-nowrap ${
               fontAdjustmentMode === 'letter'
-                ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
-                : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+                ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs acc:font-black'
+                : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
             }`}
           >
             {t.letterSpacing}
@@ -119,21 +119,21 @@ export const FloatingFontToolbar: React.FC<FloatingFontToolbarProps> = ({
 
         {/* Range Slider with [-] and [+] Buttons */}
         <div
-          className="relative h-9 sm:h-10 bg-slate-100/90 rounded-full flex items-center p-1 border border-slate-200 shadow-inner"
+          className="acc:relative acc:h-9 acc:sm:h-10 acc:bg-slate-100/90 acc:rounded-full acc:flex acc:items-center acc:p-1 acc:border acc:border-slate-200 acc:shadow-inner"
           dir="ltr"
         >
           <button
             onClick={onStepperDecrease}
             disabled={currentLevel <= 0}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#085B7A] text-white flex items-center justify-center font-black text-sm disabled:opacity-30 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer shadow-xs shrink-0 z-10"
+            className="acc:w-7 acc:h-7 acc:sm:w-8 acc:sm:h-8 acc:rounded-full acc:bg-[#085B7A] acc:text-white acc:flex acc:items-center acc:justify-center acc:font-black acc:text-sm acc:disabled:opacity-30 acc:hover:bg-[#064961] acc:active:scale-95 acc:transition-all acc:cursor-pointer acc:shadow-xs acc:shrink-0 acc:z-10"
             aria-label="Decrease level"
           >
-            <Minus className="w-3.5 h-3.5" />
+            <Minus className="acc:w-3.5 acc:h-3.5" />
           </button>
 
-          <div className="flex-1 h-full mx-2 relative overflow-hidden rounded-full flex items-center bg-slate-200/70">
+          <div className="acc:flex-1 acc:h-full acc:mx-2 acc:relative acc:overflow-hidden acc:rounded-full acc:flex acc:items-center acc:bg-slate-200/70">
             <div
-              className="h-full bg-[#085B7A] rounded-full transition-all duration-150 shadow-xs"
+              className="acc:h-full acc:bg-[#085B7A] acc:rounded-full acc:transition-all acc:duration-150 acc:shadow-xs"
               style={{
                 width: `${Math.max(6, (currentLevel / maxLevel) * 100)}%`,
               }}
@@ -143,10 +143,10 @@ export const FloatingFontToolbar: React.FC<FloatingFontToolbarProps> = ({
           <button
             onClick={onStepperIncrease}
             disabled={currentLevel >= maxLevel}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#085B7A] text-white flex items-center justify-center font-black text-sm disabled:opacity-30 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer shadow-xs shrink-0 z-10"
+            className="acc:w-7 acc:h-7 acc:sm:w-8 acc:sm:h-8 acc:rounded-full acc:bg-[#085B7A] acc:text-white acc:flex acc:items-center acc:justify-center acc:font-black acc:text-sm acc:disabled:opacity-30 acc:hover:bg-[#064961] acc:active:scale-95 acc:transition-all acc:cursor-pointer acc:shadow-xs acc:shrink-0 acc:z-10"
             aria-label="Increase level"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="acc:w-3.5 acc:h-3.5" />
           </button>
         </div>
       </motion.div>
