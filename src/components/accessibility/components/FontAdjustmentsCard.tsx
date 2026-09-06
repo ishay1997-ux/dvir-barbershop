@@ -14,7 +14,6 @@ interface FontAdjustmentsCardProps {
   onStepperDecrease: () => void;
   t: typeof A11Y_I18N.he;
   currentDirection: 'rtl' | 'ltr';
-  isRtl: boolean;
 }
 
 export const FontAdjustmentsCard: React.FC<FontAdjustmentsCardProps> = ({
@@ -26,32 +25,31 @@ export const FontAdjustmentsCard: React.FC<FontAdjustmentsCardProps> = ({
   onStepperDecrease,
   t,
   currentDirection,
-  isRtl,
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-4.5 shadow-xs">
-      <div className="flex items-center justify-between mb-3" dir={currentDirection}>
-        <div className={isRtl ? 'text-right' : 'text-left'}>
-          <h3 className="font-bold text-sm sm:text-base text-[#085B7A] leading-snug">
+    <div className="acc:bg-white acc:rounded-2xl acc:border acc:border-slate-200 acc:p-4 acc:sm:p-4.5 acc:shadow-xs">
+      <div className="acc:flex acc:items-center acc:justify-between acc:mb-3" dir={currentDirection}>
+        <div className="acc:text-start">
+          <h3 className="acc:font-bold acc:text-sm acc:sm:text-base acc:text-[#085B7A] acc:leading-snug">
             {t.fontSectionTitle}
           </h3>
-          <p className="text-xs sm:text-[13px] text-[#085B7A]/80 font-medium leading-snug">
+          <p className="acc:text-xs acc:sm:text-[13px] acc:text-[#085B7A]/80 acc:font-medium acc:leading-snug">
             {t.fontSectionDesc}
           </p>
         </div>
-        <div className="text-[#085B7A] shrink-0 font-bold flex items-center justify-center">
-          <Type className="w-5 h-5 sm:w-6 sm:h-6" />
+        <div className="acc:text-[#085B7A] acc:shrink-0 acc:font-bold acc:flex acc:items-center acc:justify-center">
+          <Type className="acc:w-5 acc:h-5 acc:sm:w-6 acc:sm:h-6" />
         </div>
       </div>
 
       {/* 4 Mode Pills in a single row */}
-      <div className="grid grid-cols-4 gap-1.5 mb-3.5" dir={currentDirection}>
+      <div className="acc:grid acc:grid-cols-4 acc:gap-1.5 acc:mb-3.5" dir={currentDirection}>
         <button
           onClick={() => onSelectMode('size')}
-          className={`py-2 px-1.5 rounded-full text-xs sm:text-[12.5px] font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+          className={`acc:py-2 acc:px-1.5 acc:rounded-full acc:text-xs acc:sm:text-[12.5px] acc:font-bold acc:transition-all acc:border acc:text-center acc:cursor-pointer acc:whitespace-nowrap ${
             fontAdjustmentMode === 'size'
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs acc:font-black'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
         >
           {t.fontSize}
@@ -59,10 +57,10 @@ export const FontAdjustmentsCard: React.FC<FontAdjustmentsCardProps> = ({
 
         <button
           onClick={() => onSelectMode('line')}
-          className={`py-2 px-1.5 rounded-full text-xs sm:text-[12.5px] font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+          className={`acc:py-2 acc:px-1.5 acc:rounded-full acc:text-xs acc:sm:text-[12.5px] acc:font-bold acc:transition-all acc:border acc:text-center acc:cursor-pointer acc:whitespace-nowrap ${
             fontAdjustmentMode === 'line'
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs acc:font-black'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
         >
           {t.lineHeight}
@@ -70,10 +68,10 @@ export const FontAdjustmentsCard: React.FC<FontAdjustmentsCardProps> = ({
 
         <button
           onClick={() => onSelectMode('word')}
-          className={`py-2 px-1.5 rounded-full text-xs sm:text-[12.5px] font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+          className={`acc:py-2 acc:px-1.5 acc:rounded-full acc:text-xs acc:sm:text-[12.5px] acc:font-bold acc:transition-all acc:border acc:text-center acc:cursor-pointer acc:whitespace-nowrap ${
             fontAdjustmentMode === 'word'
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs acc:font-black'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
         >
           {t.wordSpacing}
@@ -81,10 +79,10 @@ export const FontAdjustmentsCard: React.FC<FontAdjustmentsCardProps> = ({
 
         <button
           onClick={() => onSelectMode('letter')}
-          className={`py-2 px-1.5 rounded-full text-xs sm:text-[12.5px] font-bold transition-all border text-center cursor-pointer whitespace-nowrap ${
+          className={`acc:py-2 acc:px-1.5 acc:rounded-full acc:text-xs acc:sm:text-[12.5px] acc:font-bold acc:transition-all acc:border acc:text-center acc:cursor-pointer acc:whitespace-nowrap ${
             fontAdjustmentMode === 'letter'
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs font-black'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs acc:font-black'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
         >
           {t.letterSpacing}
@@ -93,21 +91,21 @@ export const FontAdjustmentsCard: React.FC<FontAdjustmentsCardProps> = ({
 
       {/* Smooth Range Slider Bar */}
       <div
-        className="relative h-9 sm:h-10 bg-slate-100/90 rounded-full flex items-center p-1 border border-slate-200/80 shadow-inner select-none"
+        className="acc:relative acc:h-9 acc:sm:h-10 acc:bg-slate-100/90 acc:rounded-full acc:flex acc:items-center acc:p-1 acc:border acc:border-slate-200/80 acc:shadow-inner acc:select-none"
         dir="ltr"
       >
         <button
           onClick={onStepperDecrease}
           disabled={currentLevel <= 0}
-          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#085B7A] text-white flex items-center justify-center font-black text-sm disabled:opacity-40 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer shadow-xs shrink-0 z-10"
+          className="acc:w-7 acc:h-7 acc:sm:w-8 acc:sm:h-8 acc:rounded-full acc:bg-[#085B7A] acc:text-white acc:flex acc:items-center acc:justify-center acc:font-black acc:text-sm acc:disabled:opacity-40 acc:hover:bg-[#064961] acc:active:scale-95 acc:transition-all acc:cursor-pointer acc:shadow-xs acc:shrink-0 acc:z-10"
           aria-label="Decrease"
         >
-          <Minus className="w-3.5 h-3.5" />
+          <Minus className="acc:w-3.5 acc:h-3.5" />
         </button>
 
-        <div className="flex-1 h-full mx-2 relative overflow-hidden rounded-full flex items-center bg-slate-200/60">
+        <div className="acc:flex-1 acc:h-full acc:mx-2 acc:relative acc:overflow-hidden acc:rounded-full acc:flex acc:items-center acc:bg-slate-200/60">
           <div
-            className="h-full bg-[#085B7A] rounded-full transition-all duration-200 shadow-xs"
+            className="acc:h-full acc:bg-[#085B7A] acc:rounded-full acc:transition-all acc:duration-200 acc:shadow-xs"
             style={{
               width: `${(currentLevel / maxLevel) * 100}%`,
             }}
@@ -117,10 +115,10 @@ export const FontAdjustmentsCard: React.FC<FontAdjustmentsCardProps> = ({
         <button
           onClick={onStepperIncrease}
           disabled={currentLevel >= maxLevel}
-          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#085B7A] text-white flex items-center justify-center font-black text-sm disabled:opacity-40 hover:bg-[#064961] active:scale-95 transition-all cursor-pointer shadow-xs shrink-0 z-10"
+          className="acc:w-7 acc:h-7 acc:sm:w-8 acc:sm:h-8 acc:rounded-full acc:bg-[#085B7A] acc:text-white acc:flex acc:items-center acc:justify-center acc:font-black acc:text-sm acc:disabled:opacity-40 acc:hover:bg-[#064961] acc:active:scale-95 acc:transition-all acc:cursor-pointer acc:shadow-xs acc:shrink-0 acc:z-10"
           aria-label="Increase"
         >
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="acc:w-3.5 acc:h-3.5" />
         </button>
       </div>
     </div>

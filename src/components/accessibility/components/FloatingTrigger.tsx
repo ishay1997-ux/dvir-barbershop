@@ -28,19 +28,19 @@ export const FloatingTrigger: React.FC<FloatingTriggerProps> = ({
   return (
     <button
       onClick={() => setIsOpen((prev) => !prev)}
-      className={`fixed bottom-6 ${
-        dockSide === 'right' ? 'right-6' : 'left-6'
-      } z-[9999] h-13 w-13 hover:w-auto bg-[#085B7A] text-white hover:bg-[#064961] shadow-2xl border-2 border-white/40 rounded-full hover:rounded-2xl flex items-center justify-center hover:justify-start gap-2.5 p-2.5 hover:px-4 transition-all duration-300 transform hover:scale-105 active:scale-95 a11y-ignore group cursor-pointer overflow-hidden`}
+      className={`acc:fixed acc:bottom-6 ${
+        dockSide === 'right' ? 'acc:right-6' : 'acc:left-6'
+      } acc:z-[9999] acc:h-13 acc:w-13 acc:hover:w-auto acc:bg-[#085B7A] acc:text-white acc:hover:bg-[#064961] acc:shadow-2xl acc:border-2 acc:border-white/40 acc:rounded-full acc:hover:rounded-2xl acc:flex acc:items-center acc:justify-center acc:hover:justify-start acc:gap-2.5 acc:p-2.5 acc:hover:px-4 acc:transition-all acc:duration-300 acc:transform acc:hover:scale-105 acc:active:scale-95 a11y-widget-root a11y-ignore acc:group acc:cursor-pointer acc:overflow-hidden`}
       aria-label={`${t.title} (Alt + A)`}
       aria-expanded={isOpen}
       id="a11y-trigger-btn"
       dir={currentDirection}
     >
       {/* Universal Accessibility Icon + 4 Directional Arrows on hover */}
-      <div className="flex flex-col items-center justify-center text-white shrink-0 group-hover:border-l group-hover:border-white/20 group-hover:pl-2">
-        <Move className="w-3.5 h-3.5 text-cyan-300 opacity-0 group-hover:opacity-100 transition-opacity hidden group-hover:block -mb-0.5" />
+      <div className="acc:flex acc:flex-col acc:items-center acc:justify-center acc:text-white acc:shrink-0 acc:group-hover:border-l acc:group-hover:border-white/20 acc:group-hover:pl-2">
+        <Move className="acc:w-3.5 acc:h-3.5 acc:text-cyan-300 acc:opacity-0 acc:group-hover:opacity-100 acc:transition-opacity acc:hidden acc:group-hover:block acc:-mb-0.5" />
         <svg
-          className="w-7 h-7 fill-current text-white transition-transform group-hover:scale-90"
+          className="acc:w-7 acc:h-7 acc:fill-current acc:text-white acc:transition-transform acc:group-hover:scale-90"
           viewBox="0 0 24 24"
           aria-hidden="true"
         >
@@ -49,11 +49,11 @@ export const FloatingTrigger: React.FC<FloatingTriggerProps> = ({
       </div>
 
       {/* Text that only shows smoothly on hover */}
-      <div className="text-start hidden group-hover:block whitespace-nowrap animate-a11y-fadeIn">
-        <span className="block text-xs font-black text-white leading-tight">
+      <div className="acc:text-start acc:hidden acc:group-hover:block acc:whitespace-nowrap animate-a11y-fadeIn">
+        <span className="acc:block acc:text-xs acc:font-black acc:text-white acc:leading-tight">
           {t.triggerBtn}
         </span>
-        <span className="block text-[11px] font-bold text-cyan-300 leading-tight">
+        <span className="acc:block acc:text-[11px] acc:font-bold acc:text-cyan-300 acc:leading-tight">
           {t.triggerA11y}
         </span>
       </div>
@@ -61,7 +61,7 @@ export const FloatingTrigger: React.FC<FloatingTriggerProps> = ({
       {/* Active State Red Badge matching reference */}
       {isModified && (
         <span
-          className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-600 text-white font-black text-[10px] rounded-full border-2 border-white flex items-center justify-center shadow-md animate-pulse"
+          className="acc:absolute acc:-top-0.5 acc:-right-0.5 acc:w-5 acc:h-5 acc:bg-red-600 acc:text-white acc:font-black acc:text-[10px] acc:rounded-full acc:border-2 acc:border-white acc:flex acc:items-center acc:justify-center acc:shadow-md acc:animate-pulse"
           title={t.activeSettingsBadge}
         >
           ✕

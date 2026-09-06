@@ -56,125 +56,125 @@ export const SpeechPlayer: React.FC<SpeechPlayerProps> = ({
           initial={{ opacity: 0, y: 50, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.9 }}
-          className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-[999999] bg-white rounded-2xl sm:rounded-3xl shadow-[0_12px_45px_rgba(0,0,0,0.18)] border border-slate-200/90 py-2 sm:py-2.5 px-3 sm:px-4 flex items-center gap-1.5 sm:gap-3 select-none a11y-ignore"
+          className="acc:fixed acc:bottom-6 acc:sm:bottom-8 acc:left-1/2 acc:-translate-x-1/2 acc:z-[999999] acc:bg-white acc:rounded-2xl acc:sm:rounded-3xl acc:shadow-[0_12px_45px_rgba(0,0,0,0.18)] acc:border acc:border-slate-200/90 acc:py-2 acc:sm:py-2.5 acc:px-3 acc:sm:px-4 acc:flex acc:items-center acc:gap-1.5 acc:sm:gap-3 acc:select-none a11y-widget-root a11y-ignore"
           dir="ltr"
         >
           {/* Top-Left Floating Circular Close X Button */}
           <button
             onClick={onClose}
-            className="absolute -top-3 -left-3 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white border border-slate-300 shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:scale-110 active:scale-95 transition-all cursor-pointer"
+            className="acc:absolute acc:-top-3 acc:-left-3 acc:w-6 acc:h-6 acc:sm:w-7 acc:sm:h-7 acc:rounded-full acc:bg-white acc:border acc:border-slate-300 acc:shadow-md acc:flex acc:items-center acc:justify-center acc:text-slate-500 acc:hover:text-slate-900 acc:hover:scale-110 acc:active:scale-95 acc:transition-all acc:cursor-pointer"
             aria-label={t.speechClose}
             title={t.speechClose}
           >
-            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <X className="acc:w-3.5 acc:h-3.5 acc:sm:w-4 acc:sm:h-4" />
           </button>
 
           {/* 1. Volume / Mute Speaker (🔊 / 🔇) */}
           <button
             onClick={onToggleMute}
-            className={`p-1.5 sm:p-2 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+            className={`acc:p-1.5 acc:sm:p-2 acc:rounded-xl acc:transition-all acc:cursor-pointer acc:flex acc:items-center acc:justify-center ${
               isMuted
-                ? 'text-red-500 bg-red-50 hover:bg-red-100'
-                : 'text-[#0088A9] hover:bg-[#0088A9]/10'
+                ? 'acc:text-red-500 acc:bg-red-50 acc:hover:bg-red-100'
+                : 'acc:text-[#0088A9] acc:hover:bg-[#0088A9]/10'
             }`}
             title={isMuted ? t.speechUnmute : t.speechMute}
             aria-label={isMuted ? t.speechUnmute : t.speechMute}
           >
             {isMuted ? (
-              <VolumeX className="w-5 h-5" />
+              <VolumeX className="acc:w-5 acc:h-5" />
             ) : (
               <Volume2
-                className={`w-5 h-5 ${
-                  isSpeaking ? 'animate-pulse text-[#0088A9]' : 'text-[#0088A9]'
+                className={`acc:w-5 acc:h-5 ${
+                  isSpeaking ? 'acc:animate-pulse acc:text-[#0088A9]' : 'acc:text-[#0088A9]'
                 }`}
               />
             )}
           </button>
 
           {/* Vertical Divider */}
-          <div className="w-[1px] h-6 bg-slate-200" />
+          <div className="acc:w-[1px] acc:h-6 acc:bg-slate-200" />
 
           {/* 2. Play / Pause (▶️ / ⏸️) */}
           <button
             onClick={onPlayPause}
-            className="p-1.5 sm:p-2 rounded-xl text-[#0088A9] hover:bg-[#0088A9]/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+            className="acc:p-1.5 acc:sm:p-2 acc:rounded-xl acc:text-[#0088A9] acc:hover:bg-[#0088A9]/10 acc:active:scale-95 acc:transition-all acc:cursor-pointer acc:flex acc:items-center acc:justify-center"
             title={isSpeaking ? t.speechPause : t.speechPlay}
             aria-label={isSpeaking ? t.speechPause : t.speechPlay}
           >
             {isSpeaking ? (
-              <Pause className="w-5 h-5 fill-current" />
+              <Pause className="acc:w-5 acc:h-5 acc:fill-current" />
             ) : (
-              <Play className="w-5 h-5 fill-current" />
+              <Play className="acc:w-5 acc:h-5 acc:fill-current" />
             )}
           </button>
 
           {/* 3. Rewind << (Previous section) */}
           <button
             onClick={onPrev}
-            className="p-1.5 sm:p-2 rounded-xl text-[#0088A9] hover:bg-[#0088A9]/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+            className="acc:p-1.5 acc:sm:p-2 acc:rounded-xl acc:text-[#0088A9] acc:hover:bg-[#0088A9]/10 acc:active:scale-95 acc:transition-all acc:cursor-pointer acc:flex acc:items-center acc:justify-center"
             title={t.speechPrev}
             aria-label={t.speechPrev}
           >
-            <ChevronsLeft className="w-5 h-5" />
+            <ChevronsLeft className="acc:w-5 acc:h-5" />
           </button>
 
           {/* 4. Forward >> (Next section) */}
           <button
             onClick={onNext}
-            className="p-1.5 sm:p-2 rounded-xl text-[#0088A9] hover:bg-[#0088A9]/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+            className="acc:p-1.5 acc:sm:p-2 acc:rounded-xl acc:text-[#0088A9] acc:hover:bg-[#0088A9]/10 acc:active:scale-95 acc:transition-all acc:cursor-pointer acc:flex acc:items-center acc:justify-center"
             title={t.speechNext}
             aria-label={t.speechNext}
           >
-            <ChevronsRight className="w-5 h-5" />
+            <ChevronsRight className="acc:w-5 acc:h-5" />
           </button>
 
           {/* Vertical Divider */}
-          <div className="w-[1px] h-6 bg-slate-200" />
+          <div className="acc:w-[1px] acc:h-6 acc:bg-slate-200" />
 
           {/* 5. Restart 🔄 (From beginning) */}
           <button
             onClick={onRestart}
-            className="p-1.5 sm:p-2 rounded-xl text-[#0088A9] hover:bg-[#0088A9]/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center"
+            className="acc:p-1.5 acc:sm:p-2 acc:rounded-xl acc:text-[#0088A9] acc:hover:bg-[#0088A9]/10 acc:active:scale-95 acc:transition-all acc:cursor-pointer acc:flex acc:items-center acc:justify-center"
             title={t.speechRestart}
             aria-label={t.speechRestart}
           >
-            <RotateCcw className="w-5 h-5" />
+            <RotateCcw className="acc:w-5 acc:h-5" />
           </button>
 
           {/* Vertical Divider */}
-          <div className="w-[1px] h-6 bg-slate-200" />
+          <div className="acc:w-[1px] acc:h-6 acc:bg-slate-200" />
 
           {/* 6. Continuous / Hover-To-Read Mode 📑 (Notepad icon) */}
           <button
             onClick={onToggleContinuous}
-            className={`p-1.5 sm:p-2 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+            className={`acc:p-1.5 acc:sm:p-2 acc:rounded-xl acc:transition-all acc:cursor-pointer acc:flex acc:items-center acc:justify-center ${
               continuousReading
-                ? 'bg-[#0088A9] text-white shadow-md ring-2 ring-[#0088A9]/30'
-                : 'text-[#0088A9] hover:bg-[#0088A9]/10'
+                ? 'acc:bg-[#0088A9] acc:text-white acc:shadow-md acc:ring-2 acc:ring-[#0088A9]/30'
+                : 'acc:text-[#0088A9] acc:hover:bg-[#0088A9]/10'
             }`}
             title={`${t.continuousReadingTitle}: ${t.continuousReadingDesc}`}
             aria-label={t.continuousReadingTitle}
             aria-pressed={continuousReading}
           >
-            <FileText className="w-5 h-5" />
+            <FileText className="acc:w-5 acc:h-5" />
           </button>
 
           {/* Vertical Divider */}
-          <div className="w-[1px] h-6 bg-slate-200" />
+          <div className="acc:w-[1px] acc:h-6 acc:bg-slate-200" />
 
           {/* 7. Settings Gear ⚙️ (Opens speech settings popup) */}
           <button
             onClick={onToggleSpeechSettings}
-            className={`p-1.5 sm:p-2 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+            className={`acc:p-1.5 acc:sm:p-2 acc:rounded-xl acc:transition-all acc:cursor-pointer acc:flex acc:items-center acc:justify-center ${
               isSpeechSettingsOpen
-                ? 'bg-[#0088A9] text-white shadow-md'
-                : 'text-[#0088A9] hover:bg-[#0088A9]/10'
+                ? 'acc:bg-[#0088A9] acc:text-white acc:shadow-md'
+                : 'acc:text-[#0088A9] acc:hover:bg-[#0088A9]/10'
             }`}
             title={t.speechSettingsTitle}
             aria-label={t.speechSettingsTitle}
             aria-expanded={isSpeechSettingsOpen}
           >
-            <Settings className="w-5 h-5" />
+            <Settings className="acc:w-5 acc:h-5" />
           </button>
         </motion.div>
       )}

@@ -433,7 +433,9 @@ html.a11y-keyboard-nav *:focus-visible {
 
 /* ============================================================
    UNIVERSAL ACCESSIBILITY SYSTEM (THE CUT / ANY WEBSITE)
-   100% Plug-and-Play CSS for AccessibilityWidget
+   HOST-PAGE RULES: everything in this file deliberately restyles the host page (contrast, font
+   scaling, filters). The widget's own chrome lives in accessibility.base.css. Keep this file LAST
+   in the import order — its !important rules must outrank the widget utilities by source order.
    ============================================================ */
 
 /* 1. DARK HIGH CONTRAST */
@@ -747,28 +749,3 @@ html.a11y-keyboard-nav *:focus-visible {
   outline-offset: 4px !important;
   box-shadow: 0 0 16px rgba(0, 136, 204, 0.8) !important;
 }
-
-/* 16. ACTIVE SPEECH / READING HIGHLIGHT */
-.a11y-speech-active {
-  outline: 3px solid #0088A9 !important;
-  outline-offset: 3px !important;
-  background-color: rgba(0, 136, 169, 0.18) !important;
-  border-radius: 6px !important;
-  box-shadow: 0 0 12px rgba(0, 136, 169, 0.3) !important;
-  transition: all 0.2s ease !important;
-}
-
-/* 17. WIDGET-OWN ANIMATION (namespaced so it never collides with a host `fadeIn`) */
-@keyframes a11y-fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.animate-a11y-fadeIn { animation: a11y-fadeIn 0.5s ease both; }
-@media (prefers-reduced-motion: reduce) { .animate-a11y-fadeIn { animation: none; } }
-
-/* 18. HUE RANGE INPUT (keyboard-operable colour spectrum; the gradient is the element background) */
-.a11y-hue-range { -webkit-appearance: none; appearance: none; padding: 0; margin: 0; }
-.a11y-hue-range::-webkit-slider-runnable-track { background: transparent; height: 100%; border: 0; }
-.a11y-hue-range::-moz-range-track { background: transparent; height: 100%; border: 0; }
-.a11y-hue-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 9999px; background: #fff; border: 2px solid #085B7A; box-shadow: 0 1px 4px rgba(0,0,0,.35); margin-top: 0; }
-.a11y-hue-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 9999px; background: #fff; border: 2px solid #085B7A; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
-.a11y-hue-range[data-inactive="true"]::-webkit-slider-thumb { opacity: 0.55; border-style: dashed; }
-.a11y-hue-range[data-inactive="true"]::-moz-range-thumb { opacity: 0.55; border-style: dashed; }
-.a11y-hue-range:focus-visible { outline: 3px solid #0088A9; outline-offset: 2px; }

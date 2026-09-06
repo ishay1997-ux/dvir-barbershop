@@ -11,7 +11,6 @@ interface MouseCursorCardProps {
   onToggleCursor: (mode: 'white' | 'black') => void;
   t: typeof A11Y_I18N.he;
   currentDirection: 'rtl' | 'ltr';
-  isRtl: boolean;
 }
 
 export const MouseCursorCard: React.FC<MouseCursorCardProps> = ({
@@ -20,32 +19,31 @@ export const MouseCursorCard: React.FC<MouseCursorCardProps> = ({
   onToggleCursor,
   t,
   currentDirection,
-  isRtl,
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-4.5 shadow-xs">
-      <div className="flex items-center justify-between mb-3" dir={currentDirection}>
-        <div className={isRtl ? 'text-right' : 'text-left'}>
-          <h3 className="font-bold text-sm sm:text-base text-[#085B7A] leading-snug">
+    <div className="acc:bg-white acc:rounded-2xl acc:border acc:border-slate-200 acc:p-4 acc:sm:p-4.5 acc:shadow-xs">
+      <div className="acc:flex acc:items-center acc:justify-between acc:mb-3" dir={currentDirection}>
+        <div className="acc:text-start">
+          <h3 className="acc:font-bold acc:text-sm acc:sm:text-base acc:text-[#085B7A] acc:leading-snug">
             {t.cursorSectionTitle}
           </h3>
-          <p className="text-xs sm:text-[13px] text-[#085B7A]/80 font-medium leading-snug">
+          <p className="acc:text-xs acc:sm:text-[13px] acc:text-[#085B7A]/80 acc:font-medium acc:leading-snug">
             {t.cursorSectionDesc}
           </p>
         </div>
-        <div className="text-[#085B7A] shrink-0">
-          <MousePointer className="w-5 h-5 sm:w-6 sm:h-6" />
+        <div className="acc:text-[#085B7A] acc:shrink-0">
+          <MousePointer className="acc:w-5 acc:h-5 acc:sm:w-6 acc:sm:h-6" />
         </div>
       </div>
 
       {/* 2 Pills: לבן / שחור */}
-      <div className="grid grid-cols-2 gap-2.5" dir={currentDirection}>
+      <div className="acc:grid acc:grid-cols-2 acc:gap-2.5" dir={currentDirection}>
         <button
           onClick={() => onToggleCursor('black')}
-          className={`py-2 px-3 rounded-full text-xs sm:text-[13px] font-bold transition-all border cursor-pointer text-center ${
+          className={`acc:py-2 acc:px-3 acc:rounded-full acc:text-xs acc:sm:text-[13px] acc:font-bold acc:transition-all acc:border acc:cursor-pointer acc:text-center ${
             cursorMode === 'black' || (bigCursor && cursorMode !== 'white')
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
           aria-pressed={cursorMode === 'black'}
         >
@@ -54,10 +52,10 @@ export const MouseCursorCard: React.FC<MouseCursorCardProps> = ({
 
         <button
           onClick={() => onToggleCursor('white')}
-          className={`py-2 px-3 rounded-full text-xs sm:text-[13px] font-bold transition-all border cursor-pointer text-center ${
+          className={`acc:py-2 acc:px-3 acc:rounded-full acc:text-xs acc:sm:text-[13px] acc:font-bold acc:transition-all acc:border acc:cursor-pointer acc:text-center ${
             cursorMode === 'white'
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
           aria-pressed={cursorMode === 'white'}
         >

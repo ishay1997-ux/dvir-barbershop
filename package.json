@@ -16,7 +16,8 @@
     "verify": "npm test && npm run build",
     "check:dead-code": "knip",
     "check:duplicates": "jscpd src/ --threshold 5",
-    "check:all": "npm run check:dead-code && npm run check:duplicates && npm test"
+    "check:all": "npm run check:dead-code && npm run check:duplicates && npm test",
+    "build:a11y-css": "node scripts/build-a11y-css.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -44,6 +45,8 @@
     "zod": "^4.5.2"
   },
   "devDependencies": {
+    "@tailwindcss/node": "^4",
+    "@tailwindcss/oxide": "^4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -13,7 +13,6 @@ interface ColorSpectrumCardProps {
   onResetColors: () => void;
   t: typeof A11Y_I18N.he;
   currentDirection?: 'rtl' | 'ltr';
-  isRtl?: boolean;
 }
 
 export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
@@ -26,30 +25,30 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
   currentDirection = 'rtl',
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-4.5 shadow-xs" dir={currentDirection}>
+    <div className="acc:bg-white acc:rounded-2xl acc:border acc:border-slate-200 acc:p-4 acc:sm:p-4.5 acc:shadow-xs" dir={currentDirection}>
       {/* Header with Title and Droplet Icon */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="text-start">
-          <h3 className="font-bold text-sm sm:text-base text-[#085B7A] leading-snug">
+      <div className="acc:flex acc:items-center acc:justify-between acc:mb-3">
+        <div className="acc:text-start">
+          <h3 className="acc:font-bold acc:text-sm acc:sm:text-base acc:text-[#085B7A] acc:leading-snug">
             {t.colorSectionTitle}
           </h3>
-          <p className="text-xs sm:text-[13px] text-[#085B7A]/80 font-medium leading-snug">
+          <p className="acc:text-xs acc:sm:text-[13px] acc:text-[#085B7A]/80 acc:font-medium acc:leading-snug">
             {t.colorSectionDesc}
           </p>
         </div>
-        <div className="text-[#085B7A] shrink-0">
-          <Droplet className="w-5 h-5 sm:w-6 sm:h-6" />
+        <div className="acc:text-[#085B7A] acc:shrink-0">
+          <Droplet className="acc:w-5 acc:h-5 acc:sm:w-6 acc:sm:h-6" />
         </div>
       </div>
 
       {/* Target Pills: רקעים / כותרות / תכנים */}
-      <div className="grid grid-cols-3 gap-2 mb-3.5">
+      <div className="acc:grid acc:grid-cols-3 acc:gap-2 acc:mb-3.5">
         <button
           onClick={() => onSelectTarget('background')}
-          className={`py-2 px-3 rounded-full text-xs sm:text-[13px] font-bold transition-all border cursor-pointer text-center ${
+          className={`acc:py-2 acc:px-3 acc:rounded-full acc:text-xs acc:sm:text-[13px] acc:font-bold acc:transition-all acc:border acc:cursor-pointer acc:text-center ${
             colorTarget === 'background'
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
           aria-pressed={colorTarget === 'background'}
         >
@@ -57,10 +56,10 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
         </button>
         <button
           onClick={() => onSelectTarget('headings')}
-          className={`py-2 px-3 rounded-full text-xs sm:text-[13px] font-bold transition-all border cursor-pointer text-center ${
+          className={`acc:py-2 acc:px-3 acc:rounded-full acc:text-xs acc:sm:text-[13px] acc:font-bold acc:transition-all acc:border acc:cursor-pointer acc:text-center ${
             colorTarget === 'headings'
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
           aria-pressed={colorTarget === 'headings'}
         >
@@ -68,10 +67,10 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
         </button>
         <button
           onClick={() => onSelectTarget('text')}
-          className={`py-2 px-3 rounded-full text-xs sm:text-[13px] font-bold transition-all border cursor-pointer text-center ${
+          className={`acc:py-2 acc:px-3 acc:rounded-full acc:text-xs acc:sm:text-[13px] acc:font-bold acc:transition-all acc:border acc:cursor-pointer acc:text-center ${
             colorTarget === 'text'
-              ? 'bg-[#085B7A] text-white border-[#085B7A] shadow-xs'
-              : 'bg-white text-[#085B7A] border-[#085B7A]/35 hover:border-[#085B7A] hover:bg-[#085B7A]/5'
+              ? 'acc:bg-[#085B7A] acc:text-white acc:border-[#085B7A] acc:shadow-xs'
+              : 'acc:bg-white acc:text-[#085B7A] acc:border-[#085B7A]/35 acc:hover:border-[#085B7A] acc:hover:bg-[#085B7A]/5'
           }`}
           aria-pressed={colorTarget === 'text'}
         >
@@ -89,7 +88,7 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
         dir="ltr"
         value={currentTargetHue ?? 0}
         onChange={(e) => onHueChange(Number(e.target.value))}
-        className="a11y-hue-range w-full h-7 sm:h-8 rounded-full shadow-inner mb-3 border border-black/10 cursor-pointer"
+        className="a11y-hue-range acc:w-full acc:h-7 acc:sm:h-8 acc:rounded-full acc:shadow-inner acc:mb-3 acc:border acc:border-black/10 acc:cursor-pointer"
         style={{
           background:
             'linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)',
@@ -101,17 +100,17 @@ export const ColorSpectrumCard: React.FC<ColorSpectrumCardProps> = ({
       />
 
       {/* Reset Colors Button */}
-      <div className="flex items-center justify-between pt-0.5">
+      <div className="acc:flex acc:items-center acc:justify-between acc:pt-0.5">
         <button
           onClick={onResetColors}
-          className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-bold text-[#085B7A] hover:underline cursor-pointer"
+          className="acc:inline-flex acc:items-center acc:gap-1.5 acc:text-xs acc:sm:text-[13px] acc:font-bold acc:text-[#085B7A] acc:hover:underline acc:cursor-pointer"
         >
           <span>{t.resetColors}</span>
-          <RotateCcw className="w-3.5 h-3.5" />
+          <RotateCcw className="acc:w-3.5 acc:h-3.5" />
         </button>
 
         {currentTargetHue !== null && (
-          <span className="text-[11px] sm:text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+          <span className="acc:text-[11px] acc:sm:text-xs acc:text-emerald-700 acc:font-bold acc:bg-emerald-50 acc:px-2.5 acc:py-0.5 acc:rounded-full acc:border acc:border-emerald-200">
             {t.activeCustomColor}
           </span>
         )}

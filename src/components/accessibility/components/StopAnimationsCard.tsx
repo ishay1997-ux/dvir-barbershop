@@ -19,14 +19,14 @@ export const StopAnimationsCard: React.FC<StopAnimationsCardProps> = ({
     <div>
       <button
         onClick={onToggleStopAnimations}
-        className={`w-full p-2.5 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+        className={`acc:w-full acc:p-2.5 acc:rounded-2xl acc:border acc:text-xs acc:font-bold acc:flex acc:items-center acc:justify-center acc:gap-2 acc:transition-all acc:cursor-pointer ${
           stopAnimations
-            ? 'border-[#085B7A] bg-[#085B7A]/10 text-[#085B7A] font-black'
-            : 'border-slate-200 bg-white text-[#3D3D3D] hover:border-[#085B7A]'
+            ? 'acc:border-[#085B7A] acc:bg-[#085B7A]/10 acc:text-[#085B7A] acc:font-black'
+            : 'acc:border-slate-200 acc:bg-white acc:text-[#3D3D3D] acc:hover:border-[#085B7A]'
         }`}
         aria-pressed={stopAnimations}
       >
-        <Sparkles className="w-4 h-4 text-[#085B7A]" />
+        <Sparkles className="acc:w-4 acc:h-4 acc:text-[#085B7A]" />
         {t.stopAnimations}
       </button>
     </div>

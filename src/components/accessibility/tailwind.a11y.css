@@ -1,0 +1,22 @@
+/* Input for scripts/build-a11y-css.mjs — NOT loaded by the app directly.
+   Theme + utilities only (no preflight), prefixed `acc`, all utilities !important. */
+@import "tailwindcss/theme" prefix(acc);
+@import "tailwindcss/utilities" prefix(acc) important;
+
+/* Only the widget's own components feed the class scanner. */
+@source "./**/*.tsx";
+
+/* Follow the host's font when it defines --font-sans (a Tailwind host does); otherwise a system stack.
+   The inner var() is NOT rewritten by the prefix, so this reads the host variable at runtime. */
+@theme {
+  --font-sans: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+}
+
+/* @keyframes names are NOT renamed by the prefix and are document-global. Point the only
+   animation the widget uses at a namespaced keyframe so a host `@keyframes pulse` cannot collide. */
+@theme {
+  --animate-pulse: a11y-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes a11y-pulse {
+  50% { opacity: 0.5; }
+}
